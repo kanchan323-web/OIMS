@@ -14,4 +14,5 @@ class DashboardController extends Controller
     public function get_stock(){
         return view('admin.dashboard');
       }
+
 }
