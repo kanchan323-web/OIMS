@@ -39,9 +39,9 @@ Route::get('/admin/logout',[AdminLoginController::class,'logout'])->name('admin.
 
 
 
-Route::get('/forgotpassword', [User::class, 'forgotpassword'])->name('forgotpassword');
+Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
 
-Route::post('/submitpassword', [User::class, 'submitpassword'])->name('submitpassword');
+Route::post('/submitpassword', [LoginController::class, 'submitpassword'])->name('submitpassword');
 
 Route::any('/add_stock', [StockController::class, 'add_stock'])->name('add_stock');
 Route::any('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');

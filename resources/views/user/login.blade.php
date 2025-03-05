@@ -7,7 +7,7 @@
     <title>OIMS Login</title>
     <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js?render={{ env('GOOGLE_RECAPTCHA_KEY') }}"></script>
+    
 </head>
 
 <body class="bg-light">
@@ -38,13 +38,13 @@
                                     <div class="col-12">
                                         <div class="form-floating mb-3">
                                             <input type="text"
-                                                class="form-control @error('email') is-invalid @enderror "
-                                                name="email" value="{{ old('email') }}" placeholder="Enter Email Id"
-                                                id="email">
-                                            @error('email')
+                                                class="form-control @error('login') is-invalid @enderror "
+                                                name="login" value="{{ old('login') }}" placeholder="Enter Email or Username"
+                                                id="login">
+                                            @error('login')
                                                 <p class="invalid-feedback">{{ $message }}</p>
                                             @enderror
-                                            <label for="email">Email Id</label>
+                                            <label for="login">Email or Username</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -59,12 +59,21 @@
                                         </div>
                                     </div>
 
-                                    <input type="hidden"
-                                        class="form-control @error('g-recaptcha-response') is-invalid @enderror"
-                                        name="g-recaptcha-response" id="g-recaptcha-response">
-                                    @if ($errors->has('g-recaptcha-response'))
-                                        <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
-                                    @endif
+                                    <div class="form-group text-center">
+                                        <label for="captcha">CAPTCHA</label>
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <input type="text" name="captcha" id="captcha"
+                                                class="form-control @error('captcha') is-invalid @enderror"
+                                                placeholder="Enter CAPTCHA" required>
+                                            <img src="{{ captcha_src() }}" alt="CAPTCHA" class="ml-2 border rounded">
+                                            <button type="button" class="btn btn-sm btn-light ml-2" onclick="refreshCaptcha()">
+                                                🔄
+                                            </button>
+                                        </div>
+                                        @error('captcha') 
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
 
                                     <div class="col-12">
                                         <div class="d-grid">
@@ -88,34 +97,14 @@
 </body>
 
 <script type="text/javascript">
-    $('#loginForm').submit(function(event) {
-        event.preventDefault();
-        grecaptcha.ready(function() {
-            grecaptcha.execute("{{ env('GOOGLE_RECAPTCHA_KEY') }}", {
-                action: 'subscribe_newsletter'
-            }).then(function(token) {
-                $('#loginForm').prepend(
-                    '<input type="hidden" name="g-recaptcha-response" value="' + token +
-                    '">');
-                $('#loginForm').unbind('submit').submit();
-            });;
-        });
-    });
-
-    $("#email").keypress(function() {
-        $('#email_error').css('display', 'none');
-        /* debugger
-         if($('#email_error').val() == ''){
-         $('#email_error').css('display','block');
-         }else{
-             $('#email_error').css('display','none');
-         }
-             */
-    });
 
     $("#password").keypress(function() {
         $('#password_error').css('display', 'none');
     });
+
+    function refreshCaptcha() {
+        document.querySelector('img[alt="CAPTCHA"]').src = "{{ captcha_src() }}" + "?" + Math.random();
+    }
 </script>
 
 </html>

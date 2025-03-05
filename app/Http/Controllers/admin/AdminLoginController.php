@@ -10,42 +10,57 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminLoginController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('admin.login');
     }
 
-    public function authenticate(Request $request){
+    public function authenticate(Request $request)
+    {
+        
         $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+            'login'    => 'required|string',
+            'password' => 'required|min:3',
+            'captcha'  => ['required', 'captcha'],
+        ], [
+            'login.required'    => 'Please enter your email or username.',
+            'password.required' => 'Please enter your password.',
+            'password.min'      => 'Password must be at least 3 characters long.',
+            'captcha.required'  => 'Please enter the CAPTCHA.',
+            'captcha.captcha'   => 'Incorrect CAPTCHA! Try again.',
         ]);
+        
+        $fieldType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
-    /*   if ($validated->fails()) {
-        return redirect()->route('admin.login')->withErrors($validated)->withInput();
-        }else{ */
-            if(Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])){
-                if(Auth::guard('admin')->user()->user_type != "admin"){
-                    Auth::guard('admin')->logout();
-                    return redirect()->route('admin.login')->with('error','You are not authorized a person');
-                }
-                return redirect()->route('admin.dashboard')->with('Login successfully');
-            }else{
-                 return redirect()->route('admin.login')->with('error','Either email or password is incorrect');
-            }
-      //  }
+        $user = User::where($fieldType, $request->login)->first();
 
+        if (!$user) {
+            return back()->withErrors(['login' => 'User not found.'])->withInput();
+        }
+
+        if ($user->user_type != 'admin') {
+            return back()->withErrors(['login' => 'You are not authorized to log in.'])->withInput();
+        }
+
+        if (Auth::attempt([$fieldType => $request->login, 'password' => $request->password])) {
+            return redirect()->route('admin.dashboard')->with('success', 'Login successful');
+        } else {
+            return back()->withErrors(['login' => 'Invalid credentials.'])->withInput();
+        }
     }
 
-    public function logout(){
+    public function logout()
+    {
         Auth::guard('admin')->logout();
         return redirect()->route('admin.login');
     }
 
-    public function test(){
+    public function test()
+    {
         return view('admin.login');
     }
 
- /*    public function register(){
+    /*    public function register(){
         return view('register');
     }
 
