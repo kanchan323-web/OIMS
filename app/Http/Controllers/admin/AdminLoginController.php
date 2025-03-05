@@ -30,7 +30,7 @@ class AdminLoginController extends Controller
                 }
                 return redirect()->route('admin.dashboard')->with('Login successfully');
             }else{
-                return redirect()->route('admin.login')->with('error','Either email or password is incorrect');
+                 return redirect()->route('admin.login')->with('error','Either email or password is incorrect');
             }
       //  }
 
@@ -39,6 +39,10 @@ class AdminLoginController extends Controller
     public function logout(){
         Auth::guard('admin')->logout();
         return redirect()->route('admin.login');
+    }
+
+    public function test(){
+        return view('admin.login');
     }
 
  /*    public function register(){
