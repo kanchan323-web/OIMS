@@ -2,75 +2,81 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
-use App\Rules\ReCaptcha;
-use Mail;
-use App\Mail\SendMail;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
+use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('user.login');
     }
 
-    public function authenticate(Request $request){
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+    public function authenticate(Request $request)
+    {
+        $validatedData = $request->validate([
+            'login'    => 'required|string',
+            'password' => 'required|string|min:3',
+            'captcha'  => ['required', 'captcha'],
+        ], [
+            'login.required'    => 'Please enter your email or username.',
+            'password.required' => 'Please enter your password.',
+            'password.min'      => 'Password must be at least 3 characters long.',
+            'captcha.required'  => 'Please enter the CAPTCHA.',
+            'captcha.captcha'   => 'Incorrect CAPTCHA! Try again.',
         ]);
 
-    /*   if ($validated->fails()) {
-        return redirect()->route('user.login')->withErrors($validated)->withInput();
-        }else{ */
-            if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-                return redirect()->route('user.dashboard')->with('Login successfully');
-            }else{
-                return redirect()->route('user.login')->with('error','Either email or password is incorrect');
-            }
-      //  }
+        // Check if user exists by email or username
+        $user = User::where('email', $request->login)
+            ->orWhere('user_name', $request->login)
+            ->first();
 
+        if ($user && Auth::attempt(['email' => $user->email, 'password' => $request->password])) {
+            return redirect()->route('user.dashboard');
+        }
+
+        return back()->with('error', 'Invalid credentials.')->withInput();
     }
 
-    public function logout(){
+    public function logout()
+    {
         Auth::logout();
         return redirect()->route('user.login');
     }
 
-    public function forgotpassword(){
+    public function forgotpassword()
+    {
         return view('user.forgotpassword');
     }
 
-    public function submitpassword(Request $request){
-        $credentials = $request->validate([
-            'email' => 'required|email|exists:users',
-        // 'g-recaptcha-response' => 'required|captcha',
+    public function submitPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
         ]);
 
-        $token = Str::random(64);
-        //DB::table('users')->where(email,$request->email->delete);
+        try {
+            $user = User::where('email', $request->email)->first();
+            $token = Str::random(64);
 
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
 
-        //echo $token;
-    /*  $mailData = [
-            'title' => 'Mail from gmail.com',
-            'body' => 'This is for testing email using smtp.'
-        ];
-        Mail::to('kanchansilvertouch@gmail.com')->send(new SendMail($mailData));
-    // dd("Email is sent successfully.");
-    */
-    Mail::to('kanchansilvertouch@gmail.com')->send(new SendMail([
-        'title' => 'The Title',
-        'body' => 'The Body',
-    ]));
+            DB::table('password_reset_tokens')->insert([
+                'email'      => $user->email,
+                'token'      => $token,
+                'created_at' => now(),
+            ]);
 
+            Mail::to($user->email)->send(new ResetPasswordMail($user, $token));
 
-    // var_dump($credentials);
+            return back()->with('success', 'A password reset link has been sent to your email.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong! Please try again.');
+        }
     }
-    }
-
-?>
+}

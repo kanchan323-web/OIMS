@@ -38,13 +38,12 @@
                                     <div class="col-12">
                                         <div class="form-floating mb-3">
                                             <input type="text"
-                                                class="form-control @error('email') is-invalid @enderror "
-                                                name="email" value="{{ old('email') }}" placeholder="Enter Email Id"
-                                                id="email">
-                                            @error('email')
+                                                class="form-control @error('login') is-invalid @enderror " name="login"
+                                                value="{{ old('login') }}" placeholder="Enter Email or Username" id="login">
+                                            @error('login')
                                                 <p class="invalid-feedback">{{ $message }}</p>
                                             @enderror
-                                            <label for="email">Email Id</label>
+                                            <label for="login">Email or Username</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -59,12 +58,23 @@
                                         </div>
                                     </div>
 
-                                    <input type="hidden"
-                                        class="form-control @error('g-recaptcha-response') is-invalid @enderror"
-                                        name="g-recaptcha-response" id="g-recaptcha-response">
-                                    @if ($errors->has('g-recaptcha-response'))
-                                        <span class="text-danger">{{ $errors->first('g-recaptcha-response') }}</span>
-                                    @endif
+                                    <!-- CAPTCHA Input -->
+                                    <div class="form-group text-center">
+                                        <label for="captcha">CAPTCHA</label>
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <input type="text" name="captcha" id="captcha"
+                                                class="form-control @error('captcha') is-invalid @enderror"
+                                                placeholder="Enter CAPTCHA" required>
+                                            <img src="{{ captcha_src() }}" alt="CAPTCHA" class="ml-2 border rounded">
+                                            <button type="button" class="btn btn-sm btn-light ml-2"
+                                                onclick="refreshCaptcha()">
+                                                🔄
+                                            </button>
+                                        </div>
+                                        @error('captcha') 
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
 
                                     <div class="col-12">
                                         <div class="d-grid">
@@ -82,22 +92,12 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
-    </script>
+        </script>
 </body>
 <script type="text/javascript">
-    $('#adminLoginForm').submit(function(event) {
-        event.preventDefault();
-        grecaptcha.ready(function() {
-            grecaptcha.execute("{{ env('GOOGLE_RECAPTCHA_KEY') }}", {
-                action: 'subscribe_newsletter'
-            }).then(function(token) {
-                $('#adminLoginForm').prepend(
-                    '<input type="hidden" name="g-recaptcha-response" value="' + token +
-                    '">');
-                $('#adminLoginForm').unbind('submit').submit();
-            });;
-        });
-    });
+    function refreshCaptcha() {
+        document.querySelector('img[alt="CAPTCHA"]').src = "{{ captcha_src() }}" + "?" + Math.random();
+    }
 </script>
 
 </html>
