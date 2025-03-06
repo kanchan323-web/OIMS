@@ -47,7 +47,7 @@
         <p>Hello {{ $user->name }},</p>
         <p>We received a request to reset your password. Click the button below to reset it:</p>
         <p>
-            <a href="{{ url('/reset-password/' . $token) }}" class="btn">Reset Password</a>
+            <a href="{{ url('/reset-password/' . $user->id . '/' . $token) }}" class="btn">Reset Password</a>
         </p>
         <p>If you didn't request this, you can ignore this email.</p>
         <p class="footer">This is an automated email. Please do not reply.</p>

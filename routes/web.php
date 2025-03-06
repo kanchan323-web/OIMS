@@ -47,8 +47,9 @@ Route::delete('/admin/destroy/{id}',[UserController::class,'destroy'])->name('ad
 
 
 Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
-
 Route::post('/submitpassword', [LoginController::class, 'submitpassword'])->name('submitpassword');
+Route::get('/reset-password/{user_id}/{token}', [LoginController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [LoginController::class, 'updatePassword'])->name('password.update');
 
 Route::any('/add_stock', [StockController::class, 'add_stock'])->name('add_stock');
 Route::post('/stockSubmit', [StockController::class, 'stockSubmit'])->name('stockSubmit');
