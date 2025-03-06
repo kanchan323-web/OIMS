@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Hash;
 
 
 class LoginController extends Controller
@@ -55,6 +56,7 @@ class LoginController extends Controller
         return view('forgotpassword');
     }
 
+    
     public function submitPassword(Request $request)
     {
         $request->validate([
@@ -133,4 +135,57 @@ class LoginController extends Controller
           "data" => $data
       ]);
   }
+
+    public function showResetForm($user_id, $token)
+    {
+        $user = User::find($user_id);
+
+        if (!$user) {
+            return redirect()->route('user.login')->with('error', 'Invalid token or user!');
+        }
+
+        return view('new-password', [
+            'token' => $token,
+            'email' => $user->email,
+            'user_id' => $user_id
+        ]);
+    }
+
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6|confirmed',
+            'token' => 'required',
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $tokenData = DB::table('password_reset_tokens')
+            ->where('token', $request->token)
+            ->first();
+
+        if (!$tokenData) {
+            return back()->withErrors(['email' => 'Invalid token!']);
+        }
+
+        $user = User::where('id', $request->user_id)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'User not found!']);
+        }
+
+        // Update the password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Delete token after successful reset
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        // Redirect based on user type
+        if ($user->user_type === 'admin') {
+            return redirect()->route('admin.login')->with('success', 'Password has been reset successfully!');
+        } else {
+            return redirect()->route('user.login')->with('success', 'Password has been reset successfully!');
+        }
+    }
 }
