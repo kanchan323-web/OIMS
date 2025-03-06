@@ -83,6 +83,59 @@ class LoginController extends Controller
         }
     }
 
+    
+    public function mapuserlist(Request $request){
+
+        $data =  DB::table('users')->get();
+
+
+      return view('user.map_user_list',compact('data'));
+  }
+
+  public function mapuserdataget(Request $request){
+
+          $id = $request->data;
+
+          if (!$id) {
+              return response()->json([
+                  "error" => "User ID is required"
+              ], 400);
+          }
+
+          $tally = DB::table('users')
+                  ->join('stocks', 'users.id', '=', 'stocks.user_id')
+                  ->select('users.*', 'stocks.*')
+                  ->where('users.id', $id)
+                  ->get();
+
+          $data =  DB::table('users')->where('id',$id)->get();
+
+          if ($tally->isEmpty()) {
+                      return response()->json([
+                          "error" => "No data found for the given user ID"
+                      ]);
+                  }
+
+                  return response()->json([
+                      "data" => $data
+                  ]);
+  }
+
+  public function mapspecificuserdata(Request $request){
+
+      $id = $request->data;
+
+      $data = DB::table('users')
+                  ->join('stocks', 'users.id', '=', 'stocks.user_id')
+                  ->select('users.*', 'stocks.*')
+                  ->where('users.id', $id)
+                  ->get();
+
+      return response()->json([
+          "data" => $data
+      ]);
+  }
+
     public function showResetForm($user_id, $token)
     {
         $user = User::find($user_id);

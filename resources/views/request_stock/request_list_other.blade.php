@@ -61,8 +61,7 @@
                     <div class="col-sm-6 col-md-3">
                        <div class="user-list-files d-flex">
                          <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Add Stock</a>
-                         <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks </a>
-
+                         <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks </a>
                        </div>
                     </div>
                  </div>
@@ -101,23 +100,22 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div>
-                                    {{$stockdata->id}}         
+                                    {{$stockdata->req_id}}         
                                     </div>
                                 </div>
                             </td>
-                            <td>{{$stockdata->location_name}}</td>
-                            <td>{{$stockdata->edp_code}}</td>
+                            <td>{{$stockdata->supplier_location_name}}</td>
+                            <td>{{$stockdata->stock_code}}</td>
                             <td>{{$stockdata->section}}</td>
-                            <td>{{$stockdata->description}}</td>
+                            <td>{{$stockdata->remarks}}</td>
                             <td>{{$stockdata->qty}}</td>
                             <td>
                                 <div class="d-flex align-items-center list-action">
-                                    <a class="badge badge-info mr-2" data-toggle="modal" onclick="viewstockdata({{$stockdata->id}})"  data-target=".bd-example-modal-xl" data-placement="top" title="" data-original-title="View"
+                                    <a class="badge badge-info mr-2" data-toggle="modal" onclick="RequestStockData({{$stockdata->req_id}})"  data-target=".bd-example-modal-xl" data-placement="top" title="" data-original-title="View"
                                         href="#"><i class="ri-eye-line mr-0"></i></a>
-                                    <a class="badge bg-success mr-2" data-toggle="tooltip"   data-placement="top" title="" data-original-title="Edit"
-                                        href="{{url('/edit_stock/'.$stockdata->id)}}"><i class="ri-pencil-line mr-0"></i></a>
-                                    <a class="badge bg-warning mr-2" data-toggle="modal" data-target="#DeleteModal"  onclick="deleteStockdata({{$stockdata->id}})"  data-placement="top" title="" data-original-title="Delete"
-                                        href="#"><i class="ri-delete-bin-line mr-0"></i></a>
+                                    <a class="badge badge-success mr-2" data-toggle="modal" onclick="viewstockdata({{$stockdata->id}})"  data-target=".bd-example-modal-xl" data-placement="top" title="" data-original-title="View"
+                                        href="#"><i class="ri-arrow-right-circle-line"></i></a>
+                                    
                                 </div>
                             </td>
                         </tr>
@@ -133,37 +131,12 @@
     </div>
 </div>
 
-<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-        <form action="{{route('Delete_stock')}}"  method="post">
-            @csrf
-        <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Are you sure?</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>You are about to delete <span class=""></span> and all of its contents.
-                    </br>
-                    <span style="font-weight:bold">This operation is permanent and cannot be undone.</span>
-                    </p>
-                            <input type="hidden" name="delete_id"  id="delete_id">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class=" btn btn-primary " data-dismiss="modal">Cancle</button>
-                    <button type="submit" class=" btn btn-secondary " >Delete</button>
-                </div>
-      </form>
-    </div>
-  </div>
-</div>
+
 <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
   <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">View Stock</h5>
+        <h5 class="modal-title" id="exampleModalLabel"> View Request</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -174,24 +147,38 @@
                 
                 <div class="form-row">
                 <div class="col-md-6 mb-3">
-                    <label for="">Location Id</label>
-                    <input type="text" class="form-control" name="location_id" placeholder=" Location Id" id="location_id" readonly>
+                    <label for="">Requester Name</label>
+                    <input type="text" class="form-control" name="" placeholder=" " id="location_id" readonly>
                     <div class="invalid-feedback">
-                        Enter location id
+                        Enter Requester Name
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="">Location Name</label>
-                    <input type="text" class="form-control" placeholder=" Location Name" name="location_name" id="location_name" readonly>
+                    <label for="">Requester Id</label>
+                    <input type="text" class="form-control" placeholder=" Location Name" name="" id="requester_Id" readonly>
                     <div class="invalid-feedback">
-                        Enter Location Name
+                        Enter Requester Id
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="">Suppler Location Name</label>
+                    <input type="text" class="form-control" name="" placeholder=" EDP Code" id="Suppler_Location_Name" readonly>
+                    <div class="invalid-feedback">
+                        Suppler Location Name
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="">Suppler Location ID</label>
+                    <input type="text" class="form-control" name="" placeholder="" id="Suppler_Location_Id" readonly>
+                    <div class="invalid-feedback">
+                        Suppler Location Name
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="">EDP Code</label>
-                    <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code" id="edp_code" readonly>
+                    <input type="text" class="form-control" name="" placeholder="" id="EDP_Code" readonly>
                     <div class="invalid-feedback">
-                        Enter EDP Code
+                        Suppler Location Name
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -207,14 +194,9 @@
                             Please select a category
                         </div>
                 </div>
+             
 
-                <div class="col-md-6 mb-3">
-                    <label for="">Description </label>
-                    <textarea class="form-control" id="description" name="description" placeholder="Enter Description" readonly></textarea>
-                    <div class="invalid-feedback">
-                        Enter Description
-                    </div>
-                </div>
+         
                 <div class="col-md-6 mb-3">
                     <label for="section">Section</label>
                     <select class="form-control" name="section" id="section" disabled>
@@ -230,43 +212,70 @@
                 </div>
 
               
-
-
                 <div class="col-md-6 mb-3">
-                    <label for="">Available Quantity</label>
-                    <input type="text" class="form-control" placeholder=" Available Quantity" name="qty" id="qty" readonly>
+                    <label for="">Description </label>
+                    <textarea class="form-control" id="description" name="description" placeholder="Enter Description" readonly></textarea>
                     <div class="invalid-feedback">
-                        Enter Available Quantity
-                    </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="">Unit of Measurement </label>
-                    <input type="text" class="form-control" name="measurement" placeholder="Unit of Measurement" id="measurement" readonly>
-                    <div class="invalid-feedback">
-                        Enter Unit of Measurement
-                    </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                    <label for="">New Spareable </label>
-                    <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable" id="new_spareable" readonly>
-                    <div class="invalid-feedback">
-                        Enter New Spareable
-                    </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="">Used Spareable </label>
-                    <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable" id="used_spareable" readonly>
-                    <div class="invalid-feedback">
-                        Enter Used Spareable
-                    </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                    <label for="">Remarks / Notes  </label>
-                    <textarea class="form-control" id="remarks" name="remarks" placeholder=" Remarks / Notes" readonly></textarea>
-                    <div class="invalid-feedback">
-                        Enter Remarks / Notes
+                        Enter Description
                     </div>
                 </div>
+
+
+                    <div class="col-md-6 mb-3">
+                            <label for="">Request Quantity</label>
+                            <input type="text" class="form-control" placeholder=" Available Quantity" name="qty" id="req_qty" readonly>
+                            <div class="invalid-feedback">
+                                Enter Request Quantity
+                            </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="">Unit of Measurement </label>
+                        <input type="text" class="form-control" name="measurement" placeholder="" id="measurement" readonly>
+                        <div class="invalid-feedback">
+                            Enter Unit of Measurement
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="">New Spearable </label>
+                        <input type="text" class="form-control" placeholder="" name="new_spareable" id="new_spearable" readonly>
+                        <div class="invalid-feedback">
+                            Enter New Spareable
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="">Used Spareable </label>
+                        <input type="text" class="form-control" placeholder=" " name="used_spareable" id="used_spareable" readonly>
+                        <div class="invalid-feedback">
+                            Enter Used Spareable
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                            <label for="">Remarks / Notes  </label>
+                            <textarea class="form-control" id="remarks" name="remarks" placeholder=" Remarks / Notes" readonly></textarea>
+                            <div class="invalid-feedback">
+                                Enter Remarks / Notes
+                            </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="">Status </label>
+                        <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable" id="status" readonly>
+                        <div class="invalid-feedback">
+                            Enter Used Spareable
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="">Created At </label>
+                        <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable" id="createdAt" readonly>
+                        <div class="invalid-feedback">
+                            Enter Used Spareable
+                        </div>
+                    </div>
+
                 </div>
                 <!-- <button class="btn btn-primary" type="submit">Submit form</button>
                 <button type="reset" class="btn btn-danger">Reset</button>
@@ -283,7 +292,7 @@
 </div>
 
 <script>
-    function viewstockdata(id){
+    function RequestStockData(id){
        var id = id;
         // console.log(id);
         // return false;
@@ -291,29 +300,28 @@
         $.ajaxSetup({headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')}});
                        $.ajax({
                         type: "GET",
-                        url: "{{route('stock_list_view')}}",
+                        url: "{{route('request_stock_view.get')}}",
                         data:{ data: id },
                         success: function(response){
-                                // console.log(response.viewdata['category']);
-                                $("#location_id").val(response.viewdata['location_id']);
-                                $("#location_name").val(response.viewdata['location_name']);
-                                $("#edp_code").val(response.viewdata['edp_code']);
+
+                            $("#location_id").val(response.data[0].user_name);
+                            $("#requester_Id").val(response.data[0].req_id);
+                            $("#Suppler_Location_Name").val(response.data[0].supplier_location_name);
+                            $("#Suppler_Location_Id").val(response.data[0].user_name);
+                            $("#EDP_Code").val(response.data[0].user_name);
+                            $("#category").val(response.data[0].user_name);
+                            $("#section").val(response.data[0].user_name);
+                            $("#description").val(response.data[0].user_name);
+                            $("#req_qty").val(response.data[0].request_quantity);
+                            $("#measurement").val(response.data[0].measurement);
+                            $("#new_spearable").val(response.data[0].new_spareable);
+                            $("#used_spareable").val(response.data[0].used_spareable);
+                            $("#remarks").val(response.data[0].remarks);
+                            $("#status").val(response.data[0].user_name);
+                            $("#createdAt").val(response.data[0].user_name);
                             
-                           
-                                    var sectionValue = response.viewdata['section'];
-                                    $("#section").val(sectionValue).trigger("change");
-                                    $("#hidden_section").val(sectionValue);
-
-                                    var categoryValue = response.viewdata['category'];
-                                    $("#category").val(categoryValue).trigger("change");
-                                    $("#hidden_category").val(categoryValue);
-
-
-                                $("#qty").val(response.viewdata['qty']);
-                                $("#measurement").val(response.viewdata['measurement']);
-                                $("#new_spareable").val(response.viewdata['new_spareable']);
-                                $("#used_spareable").val(response.viewdata['used_spareable']);
-                                $("#remarks").val(response.viewdata['remarks']); 
+                            
+                               
                         }   
                        });
     }

@@ -7,7 +7,7 @@
     <title>OIMS Login</title>
     <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    
+
 </head>
 
 <body class="bg-light">
@@ -58,7 +58,6 @@
                                             <label for="password">Password</label>
                                         </div>
                                     </div>
-                                    <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot Password</a>
                                     <div class="form-group text-center">
                                         <label for="captcha">CAPTCHA</label>
                                         <div class="d-flex justify-content-center align-items-center">
@@ -70,7 +69,7 @@
                                                 🔄
                                             </button>
                                         </div>
-                                        @error('captcha') 
+                                        @error('captcha')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -80,8 +79,7 @@
                                             <button class="btn bsb-btn-xl btn-primary py-3" type="submit">Log in
                                                 now</button>
                                         </div>
-                                        <!--   <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot
-                                            Password</a> -->
+                                        <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot Password</a>
                                     </div>
                                 </div>
                             </form>
