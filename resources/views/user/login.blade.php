@@ -58,7 +58,7 @@
                                             <label for="password">Password</label>
                                         </div>
                                     </div>
-
+                                    <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot Password</a>
                                     <div class="form-group text-center">
                                         <label for="captcha">CAPTCHA</label>
                                         <div class="d-flex justify-content-center align-items-center">
