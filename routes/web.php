@@ -56,3 +56,21 @@ Route::any('/stock_list', [StockController::class, 'stock_list'])->name('stock_l
 Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('all_stock_list');
 Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
 Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');
+
+Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('stock_list_view');
+Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');
+Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');
+Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
+
+
+Route::get('/request_stock_list',[StockController::class, 'stock_list'])->name('stock_list');
+Route::prefix('request-stock')->group(function () {
+    Route::get('/list', [StockController::class, 'RequestStockList'])->name('request_stock_list');
+    Route::get('/add', [StockController::class, 'RequestStockAdd'])->name('request_stock_add');
+    Route::post('/addSubmit', [StockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
+    Route::get('/view', [StockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
+});
+
+Route::get('/mapuserlist',[LoginController::class,'mapuserlist'])->name('map_all_user_list');
+Route::post('/mapusergetdata',[LoginController::class,'mapuserdataget'])->name('map_all_user_data.post');
+Route::post('/mapspecificuserdata',[LoginController::class,'mapspecificuserdata'])->name('map_user_data_specific.post');
