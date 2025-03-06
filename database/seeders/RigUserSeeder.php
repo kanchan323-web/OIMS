@@ -17,6 +17,9 @@ class RigUserSeeder extends Seeder
        $rigUsers = collect(
             [
                 [
+                    'name' => 'admin',
+                ],
+                [
                     'name' => 'Sagar Bhushan',
                 ],
                 [
