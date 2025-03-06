@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+
 
 class LoginController extends Controller
 {
@@ -31,7 +33,6 @@ class LoginController extends Controller
             'captcha.captcha'   => 'Incorrect CAPTCHA! Try again.',
         ]);
 
-        // Check if user exists by email or username
         $user = User::where('email', $request->login)
             ->orWhere('user_name', $request->login)
             ->first();
