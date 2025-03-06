@@ -52,7 +52,7 @@ class LoginController extends Controller
 
     public function forgotpassword()
     {
-        return view('user.forgotpassword');
+        return view('forgotpassword');
     }
 
     public function submitPassword(Request $request)

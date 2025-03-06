@@ -7,7 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
-
+use App\Http\Controllers\admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +21,6 @@ use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 */
 
 Route::get('/user/login',[LoginController::class,'index'])->name('user.login');
-
 Route::get('/user/register',[LoginController::class,'register'])->name('user.register');
 Route::get('/user/logout',[LoginController::class,'logout'])->name('user.logout');
 
@@ -36,6 +35,14 @@ Route::get('/admin/dashboard',[AdminDashboardController::class,'index'])->name('
 Route::post('/admin/authenticate',[AdminLoginController::class,'authenticate'])->name('admin.authenticate');
 Route::get('/admin/logout',[AdminLoginController::class,'logout'])->name('admin.logout');
 
+
+Route::get('/admin/index',[UserController::class,'index'])->name('admin.index');
+Route::get('/admin/create',[UserController::class,'create'])->name('admin.create');
+Route::post('/admin/store',[UserController::class,'store'])->name('admin.store');
+Route::get('/admin/show/{id}',[UserController::class,'show'])->name('admin.show');
+Route::get('/admin/edit/{id}',[UserController::class,'edit'])->name('admin.edit');	
+Route::put('/admin/update/{id}',[UserController::class,'update'])->name('admin.update');	
+Route::delete('/admin/destroy/{id}',[UserController::class,'destroy'])->name('admin.destroy');
 
 
 
