@@ -38,7 +38,7 @@ class AdminLoginController extends Controller
             return back()->withErrors(['login' => 'User not found.'])->withInput();
         }
 
-        if ($user->user_type != 'admin') {
+        if ($user->user_type !== 'admin') {
             return back()->withErrors(['login' => 'You are not authorized to log in.'])->withInput();
         }
 
