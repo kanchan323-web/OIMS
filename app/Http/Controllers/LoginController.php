@@ -56,7 +56,7 @@ class LoginController extends Controller
         return view('forgotpassword');
     }
 
-    
+
     public function submitPassword(Request $request)
     {
         $request->validate([
@@ -83,58 +83,61 @@ class LoginController extends Controller
         }
     }
 
-    
-    public function mapuserlist(Request $request){
+
+    public function mapuserlist(Request $request)
+    {
 
         $data =  DB::table('users')->get();
 
 
-      return view('user.map_user_list',compact('data'));
-  }
+        return view('user.map_user_list', compact('data'));
+    }
 
-  public function mapuserdataget(Request $request){
+    public function mapuserdataget(Request $request)
+    {
 
-          $id = $request->data;
+        $id = $request->data;
 
-          if (!$id) {
-              return response()->json([
-                  "error" => "User ID is required"
-              ], 400);
-          }
+        if (!$id) {
+            return response()->json([
+                "error" => "User ID is required"
+            ], 400);
+        }
 
-          $tally = DB::table('users')
-                  ->join('stocks', 'users.id', '=', 'stocks.user_id')
-                  ->select('users.*', 'stocks.*')
-                  ->where('users.id', $id)
-                  ->get();
+        $tally = DB::table('users')
+            ->join('stocks', 'users.id', '=', 'stocks.user_id')
+            ->select('users.*', 'stocks.*')
+            ->where('users.id', $id)
+            ->get();
 
-          $data =  DB::table('users')->where('id',$id)->get();
+        $data =  DB::table('users')->where('id', $id)->get();
 
-          if ($tally->isEmpty()) {
-                      return response()->json([
-                          "error" => "No data found for the given user ID"
-                      ]);
-                  }
+        if ($tally->isEmpty()) {
+            return response()->json([
+                "error" => "No data found for the given user ID"
+            ]);
+        }
 
-                  return response()->json([
-                      "data" => $data
-                  ]);
-  }
+        return response()->json([
+            "data" => $data
+        ]);
+    }
 
-  public function mapspecificuserdata(Request $request){
+    public function mapspecificuserdata(Request $request)
+    {
 
-      $id = $request->data;
+        $id = $request->data;
 
-      $data = DB::table('users')
-                  ->join('stocks', 'users.id', '=', 'stocks.user_id')
-                  ->select('users.*', 'stocks.*')
-                  ->where('users.id', $id)
-                  ->get();
+        $data = DB::table('users')
+            ->join('stocks', 'users.id', '=', 'stocks.user_id')
+            ->select('users.*', 'stocks.*')
+            ->where('users.id', $id)
+            ->get();
 
-      return response()->json([
-          "data" => $data
-      ]);
-  }
+        return response()->json([
+            "data" => $data
+        ]);
+    }
 
     public function showResetForm($user_id, $token)
     {
@@ -174,14 +177,11 @@ class LoginController extends Controller
             return back()->withErrors(['email' => 'User not found!']);
         }
 
-        // Update the password
         $user->password = Hash::make($request->password);
         $user->save();
 
-        // Delete token after successful reset
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
-        // Redirect based on user type
         if ($user->user_type === 'admin') {
             return redirect()->route('admin.login')->with('success', 'Password has been reset successfully!');
         } else {
