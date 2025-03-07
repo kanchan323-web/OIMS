@@ -9,26 +9,7 @@ use App\Models\Stock;
 
 class RequestStockController extends Controller
 {
-    public function stock_list(Request $request){
-        // $todayDate = Carbon::now()->format('Y-m-d');
-        // return $todayDate;
-    
-        // $data =  DB::table('stocks')->get();
-        $data = Stock::when($request->category, function ($query, $category) {
-            return $query->where('category', $category);
-        })
-        ->when($request->location_name, function ($query, $location_name) {
-            return $query->where('location_name', 'like', "%{$location_name}%");
-        })
-        ->when($request->form_date && $request->to_date, function ($query) use ($request) {
-            return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
-        })
-        ->get();
-        
-    // return $data;
-    
-        return view('user.stock.list_stock',compact('data'));
-    }
+   
 
     public function RequestStockList(Request $request){
     

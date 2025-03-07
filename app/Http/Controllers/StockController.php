@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class StockController extends Controller
 {
@@ -20,22 +21,56 @@ class StockController extends Controller
     public function add_stock(){
          return view('user.stock.add_stock');
     }
+    public function stock_list(Request $request){
+        // $todayDate = Carbon::now()->format('Y-m-d');
+        // return $todayDate;
+    
+        // $data =  DB::table('stocks')->get();
+        $data = Stock::when($request->category, function ($query, $category) {
+            return $query->where('category', $category);
+        })
+        ->when($request->location_name, function ($query, $location_name) {
+            return $query->where('location_name', 'like', "%{$location_name}%");
+        })
+        ->when($request->form_date && $request->to_date, function ($query) use ($request) {
+            return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
+        })
+
+        ->get();
+        
+    // return $data;
+    
+        return view('user.stock.list_stock',compact('data'));
+    }
 
     public function stockSubmit(Request $request){
         
-        $insert_data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
             'edp_code' => 'required',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
-            'qty' => 'required',
+            'qty' => 'required|numeric',
             'measurement' => 'required',
-            'new_spareable' => 'required',
-            'used_spareable' => 'required',
+            'new_spareable' => 'required|numeric',
+            'used_spareable' => 'required|numeric',
             'remarks' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                             ->withErrors($validator) 
+                             ->withInput(); 
+        }
+    
+        
+        if($insert_data){
+            echo "done";
+        }else{
+            echo "Not done";
+        }
 
         $stock = new Stock;
         $stock->location_id = $request->location_id;

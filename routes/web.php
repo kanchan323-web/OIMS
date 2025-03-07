@@ -54,9 +54,8 @@ Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->na
 Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');
 Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');
 Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
+Route::get('/stock_list',[StockController::class, 'stock_list'])->name('stock_list');
 
-
-Route::get('/request_stock_list',[RequestStockController::class, 'stock_list'])->name('stock_list');
 Route::prefix('request-stock')->group(function () {
     Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
     Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
