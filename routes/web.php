@@ -60,13 +60,17 @@ Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->na
 Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');
 Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');
 Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
+
 Route::get('/stock_list',[StockController::class, 'stock_list'])->name('stock_list');
+Route::post('/stock_filter',[StockController::class, 'stock_filter'])->name('stock_filter');
+
 
 Route::prefix('request-stock')->group(function () {
     Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
     Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
     Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
     Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
+    Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
 });
 
 Route::get('/mapuserlist',[LoginController::class,'mapuserlist'])->name('map_all_user_list');
