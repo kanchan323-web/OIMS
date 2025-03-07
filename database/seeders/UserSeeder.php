@@ -19,47 +19,53 @@ class UserSeeder extends Seeder
         $users=collect(
         [
             [
-            'name' => 'kanchan',
-            'email' => 'kanchan123@gmail.com',
-            'password' => Hash::make('kanchan123'),
-            'role' => 'admin',
+            'user_name' => 'admin',
+            'cpf_no'    => '12345',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('admin'),
+            'user_type' => 'admin',
             'rig_id' => '1',
             ],
             [
-                'name' => 'vijay',
-            'email' => 'vijay123@gmail.com',
-            'password' => Hash::make('vijay123'),
-            'role' => 'user',
-            'rig_id' => '1',
+            'user_name' => '105914',
+            'cpf_no'    => '105914',
+            'email' => 'test@gmail.com',
+            'password' => Hash::make('test123'),
+            'user_type' => 'user',
+            'rig_id' => '2',
             ],
             [
-                'name' => 'anu',
-            'email' => 'anu123@gmail.com',
-            'password' => Hash::make('anu123'),
-            'role' => 'user',
-            'rig_id' => '1',
+            'user_name' => '105927',
+            'cpf_no'    => '105927',
+            'email' => 'test2@gmail.com',
+            'password' => Hash::make('test123'),
+            'user_type' => 'user',
+            'rig_id' => '2',
             ],
             [
-                'name' => 'shiv',
-            'email' => 'shiv123@gmail.com',
-            'password' => Hash::make('shiv123'),
-            'role' => 'user',
-            'rig_id' => '1',
+            'user_name' => '121312',
+            'cpf_no'    => '121312',
+            'email' => 'test3@gmail.com',
+            'password' => Hash::make('test123'),
+            'user_type' => 'user',
+            'rig_id' => '3',
             ],
             [
-                'name' => 'kusum',
-            'email' => 'kusum123@gmail.com',
-            'password' => Hash::make('kusm123'),
-            'role' => 'user',
-            'rig_id' => '1',
+            'user_name' => '124991',
+            'cpf_no'    => '124991',
+            'email' => 'test4@gmail.com',
+            'password' => Hash::make('test123'),
+            'user_type' => 'user',
+            'rig_id' => '3',
 
             ],
             [
-                'name' => 'shubham',
-            'email' => 'shubham123@gmail.com',
-            'password' => Hash::make('shubham123'),
-            'role' => 'user',
-            'rig_id' => '2',
+            'user_name' => '135641',
+            'cpf_no'    => '135641',
+            'email' => 'test5@gmail.com',
+            'password' => Hash::make('test123'),
+            'user_type' => 'user',
+            'rig_id' => '4',
             ]
         ]);
 
@@ -72,7 +78,7 @@ class UserSeeder extends Seeder
    /*     user::create([
             'email' => 'shubham123@gmail.com',
             'password' => Hash::make('shubham123'),
-            'role' => 'rig_user',
+            'user_type' => 'rig_user',
             'rig_id' => '2'
         ]);
    */

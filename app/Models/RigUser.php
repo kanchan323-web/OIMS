@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class RigUser extends Model
 {
     use HasFactory;
+
+    protected $table = 'rig_users'; 
+
+    protected $fillable = ['name'];
 }
