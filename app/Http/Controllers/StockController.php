@@ -19,50 +19,52 @@ use Carbon\Carbon;
 class StockController extends Controller
 {
 
-    public function add_stock(){
-         return view('user.stock.add_stock');
+    public function add_stock()
+    {
+        return view('user.stock.add_stock');
     }
    
 
-        public function stock_list(Request $request)
-                {
-                    $data = Stock::when($request->category, function ($query, $category) {
-                        return $query->where('category', $category);
-                    })
-                    ->when($request->location_name, function ($query, $location_name) {
-                        return $query->where('location_name', 'like', "%{$location_name}%");
-                    })
-                    ->when($request->form_date && $request->to_date, function ($query) use ($request) {
-                        return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
-                    })
-                    ->get();
-            
+    public function stock_list(Request $request)
+    {
+        $data = Stock::when($request->category, function ($query, $category) {
+            return $query->where('category', $category);
+        })
+            ->when($request->location_name, function ($query, $location_name) {
+                return $query->where('location_name', 'like', "%{$location_name}%");
+            })
+            ->when($request->form_date && $request->to_date, function ($query) use ($request) {
+                return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
+            })
+            ->get();
 
-                    return view('user.stock.list_stock', compact('data'));
-                }
 
-        public function stock_filter(Request $request){
+        return view('user.stock.list_stock', compact('data'));
+    }
 
-                    $data = Stock::when($request->category, function ($query, $category) {
-                        return $query->where('category', $category);
-                    })
-                    ->when($request->location_name, function ($query, $location_name) {
-                        return $query->where('location_name', 'like', "%{$location_name}%");
-                    })
-                    ->when($request->form_date, function ($query) use ($request) {
-                        return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-                    })
-                    ->when($request->to_date, function ($query) use ($request) {
-                        return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-                    })->get();
-    
+    public function stock_filter(Request $request)
+    {
 
-                    return view('user.stock.list_stock', compact('data'));
+        $data = Stock::when($request->category, function ($query, $category) {
+            return $query->where('category', $category);
+        })
+            ->when($request->location_name, function ($query, $location_name) {
+                return $query->where('location_name', 'like', "%{$location_name}%");
+            })
+            ->when($request->form_date, function ($query) use ($request) {
+                return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+            })
+            ->when($request->to_date, function ($query) use ($request) {
+                return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+            })->get();
 
-                }
 
-    public function stockSubmit(Request $request){
-        
+        return view('user.stock.list_stock', compact('data'));
+    }
+
+    public function stockSubmit(Request $request)
+    {
+
         $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
@@ -79,9 +81,10 @@ class StockController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()
-                             ->withErrors($validator) 
-                             ->withInput(); 
+                ->withErrors($validator)
+                ->withInput();
         }
+
 
         $stock = new Stock;
         $stock->location_id = $request->location_id;
@@ -97,18 +100,17 @@ class StockController extends Controller
         $stock->remarks = $request->remarks;
         $stock->user_id = Auth::id();
         $stock->save();
-        
+
         Session::flash('success', 'Stock submitted successfully!');
-   
+
         return redirect()->route('stock_list');
-      
-   }
+    }
 
     // public function stock_list(){
     //     return view('user.stock.list_stock');
     // }
 
-  
+
 
 
     public function showImportForm()
@@ -128,7 +130,7 @@ class StockController extends Controller
             $spreadsheet = IOFactory::load(storage_path('app/' . $filePath));
             $sheet = $spreadsheet->getActiveSheet();
             $rows = $sheet->toArray();
-           
+
             $expectedHeaders = [
                 'SLoc',
                 'Location',
@@ -141,15 +143,15 @@ class StockController extends Controller
                 'Used Spareable',
                 'UoM',
             ];
-           
+
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
-            
+
             if ($actualHeaders !== $expectedHeaders) {
                 Storage::delete($filePath);
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
                 return redirect()->back();
             }
-            
+
             foreach (array_slice($rows, 1) as $row) {
 
                 Stock::create([
@@ -171,7 +173,7 @@ class StockController extends Controller
             Storage::delete($filePath);
 
             if (!empty($errors)) {
-                session()->flash('error', implode('<br>', $errors)); 
+                session()->flash('error', implode('<br>', $errors));
                 return redirect()->back();
             }
 
@@ -182,27 +184,31 @@ class StockController extends Controller
             return redirect()->back();
         }
     }
-    
-    
-    public function stock_list_view(Request $request){
+
+
+    public function stock_list_view(Request $request)
+    {
         $id = $request->data;
 
-      $viewdata =   Stock::where('id',$id)->get()->first();
+        $viewdata =   Stock::where('id', $id)->get()->first();
 
-        return response()->json([
-            'viewdata' => $viewdata 
-        ]
+        return response()->json(
+            [
+                'viewdata' => $viewdata
+            ]
         );
     }
-    public function EditStock(Request $request ,$id){
-      
-        $editData = Stock::where('id',$id)->get()->first();
+    public function EditStock(Request $request, $id)
+    {
+
+        $editData = Stock::where('id', $id)->get()->first();
 
         // dd($editData);
-        return view('user.stock.edit_stock',['editData'=>$editData]);
+        return view('user.stock.edit_stock', ['editData' => $editData]);
     }
 
-    public function UpdateStock(Request $request){
+    public function UpdateStock(Request $request)
+    {
         $dataid = $request->id;
         $update_data = $request->validate([
             'location_id' => 'required',
@@ -217,15 +223,14 @@ class StockController extends Controller
             'used_spareable' => 'required',
             'remarks' => 'required'
         ]);
-        $UData = Stock::where('id',$dataid)->update($update_data);
-       return redirect()->route('stock_list');
-    }
-
-    public function DeleteStock(Request $request){
-        $deleteId = $request->delete_id;
-        $UData = Stock::where('id',$deleteId)->delete();
+        $UData = Stock::where('id', $dataid)->update($update_data);
         return redirect()->route('stock_list');
     }
 
-   
+    public function DeleteStock(Request $request)
+    {
+        $deleteId = $request->delete_id;
+        $UData = Stock::where('id', $deleteId)->delete();
+        return redirect()->route('stock_list');
+    }
 }

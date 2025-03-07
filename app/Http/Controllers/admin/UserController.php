@@ -13,14 +13,18 @@ class UserController extends Controller
     public function index()
     {
         $users = User::paginate(10);
-        return view('admin.user.index', compact('users'));
+        $moduleName = "Users";
+        return view('admin.user.index', compact('users', 'moduleName'));
     }
 
     // Show form for creating a new user
     public function create()
     {
-        $rigUsers = RigUser::all(); // Fetch all rig users
-        return view('admin.user.create', compact('rigUsers'));
+        $rigUsers = RigUser::where('name', '!=', 'Admin')
+            ->where('name', '!=', 'admin')
+            ->get(); 
+            $moduleName = "Create Users";
+        return view('admin.user.create', compact('rigUsers', 'moduleName'));
     }
 
     // Store a new user
@@ -32,7 +36,7 @@ class UserController extends Controller
             'cpf_no'     => 'required|string|max:255',
             'password'   => 'required|min:6',
             'user_status' => 'required|integer',
-            'user_type'  => 'required|string',
+            'user_type'  => 'required|string|in:admin,user',
             'rig_id'     => 'nullable|integer',
         ]);
 
@@ -53,28 +57,31 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view('admin.user.show', compact('user'));
+        $moduleName = "View Users";
+        return view('admin.user.show', compact('user','moduleName'));
     }
 
     // Show form for editing a user
     public function edit($id)
     {
-        $user = User::findOrFail($id); 
-        $rigUsers = RigUser::all();
-        return view('admin.user.edit', compact('user', 'rigUsers'));
+        $user = User::findOrFail($id);
+        $rigUsers = RigUser::where('name', '!=', 'Admin')
+            ->where('name', '!=', 'admin')
+            ->get();
+        $moduleName = "Edit Users";
+        return view('admin.user.edit', compact('user', 'rigUsers', 'moduleName'));
     }
 
     // Update user details
     public function update(Request $request, $id)
     {
         $user = User::findOrFail((int) $id);
-        // dd($id, User::find($id));
         $request->validate([
             'user_name'  => 'required|string|max:255',
             'email'      => 'required|email|unique:users,email,' . $id,
             'cpf_no'     => 'required|string|max:255',
             'user_status' => 'required|integer',
-            'user_type'  => 'required|string',
+            'user_type'  => 'required|string|in:admin,user',
             'rig_id'     => 'required|integer',
         ]);
 

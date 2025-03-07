@@ -33,7 +33,6 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::put('/admin/update/{id}', [UserController::class, 'update'])->name('admin.update');
     Route::delete('/admin/destroy/{id}', [UserController::class, 'destroy'])->name('admin.destroy');
 
-
     //rig user master
     Route::get('/admin/rig_users', [RigUserController::class, 'index'])->name('admin.rig_users.index');
     Route::get('/admin/rig_users/create', [RigUserController::class, 'create'])->name('admin.rig_users.create');
