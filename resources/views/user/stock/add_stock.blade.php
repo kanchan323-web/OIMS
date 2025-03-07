@@ -109,7 +109,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="qty">Available Quantity</label>
-                                    <input type="text" class="form-control @error('qty') is-invalid @enderror"
+                                    <input type="number" class="form-control @error('qty') is-invalid @enderror"
                                         placeholder="Available Quantity" name="qty" id="qty" value="{{ old('qty') }}"
                                         required>
                                     @error('qty')
@@ -133,7 +133,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="">New Spareable </label>
-                                    <input type="text" class="form-control" placeholder=" New Spareable"
+                                    <input type="number" class="form-control" placeholder=" New Spareable"
                                         name="new_spareable" id="" required>
                                     @error('new_spareable')
                                     <div class="invalid-feedback">
@@ -143,7 +143,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="">Used Spareable </label>
-                                    <input type="text" class="form-control" placeholder=" Used Spareable"
+                                    <input type="number" class="form-control" placeholder=" Used Spareable"
                                         name="used_spareable" id="" required>
                                     @error('used_spareable')
                                     <div class="invalid-feedback">
