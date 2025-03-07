@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Masters\RigUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User;
 use App\Http\Controllers\StockController;
@@ -36,7 +37,12 @@ Route::get('/admin/edit/{id}',[UserController::class,'edit'])->name('admin.edit'
 Route::put('/admin/update/{id}',[UserController::class,'update'])->name('admin.update');	
 Route::delete('/admin/destroy/{id}',[UserController::class,'destroy'])->name('admin.destroy');
 
-
+Route::get('/admin/rig_users', [RigUserController::class, 'index'])->name('admin.rig_users.index');
+Route::get('/admin/rig_users/create', [RigUserController::class, 'create'])->name('admin.rig_users.create');
+Route::post('/admin/rig_users', [RigUserController::class, 'store'])->name('admin.rig_users.store');
+Route::get('/admin/rig_users/{id}/edit', [RigUserController::class, 'edit'])->name('admin.rig_users.edit');
+Route::post('/admin/rig_users/{id}', [RigUserController::class, 'update'])->name('admin.rig_users.update');
+Route::delete('/admin/rig_users/{id}', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
 
 Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
 Route::post('/submitpassword', [LoginController::class, 'submitpassword'])->name('submitpassword');
