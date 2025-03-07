@@ -92,7 +92,7 @@
                                 <label for="">New Spareable </label>
                                 <input type="number" value="{{$editData->new_spareable}}" class="form-control" placeholder=" New Spareable" name="new_spareable" id="" required>
                                 <div class="invalid-feedback">
-                                    Enter New Spareable
+                                    Enter New Spareable 
                                 </div>
                                 </div>
                                 <div class="col-md-6 mb-3">

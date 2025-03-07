@@ -75,13 +75,13 @@
                       
                             <tr class="ligth ligth-data">
 
-                                <th>
+                                <!-- <th>
                                     <div class="checkbox ">
-                                        <input type="checkbox" class="checkbox-input" id="checkbox1">
+                                        <input type="checkbox" class="checkbox-input" id="checkbox1"> -->
                                         <!-- <label for="checkbox1" class="mb-0"></label> -->
-                                    </div>
+                                    <!-- </div>
                                 </th>
-                                
+                                 -->
                                 <th>User Name</th>
                                 <th>Email</th>
                                
@@ -96,12 +96,12 @@
                                 data-user-type="{{$userData->user_type}}" 
                                 data-rig-id="{{$userData->rig_id}}">
 
-                                        <td>
+                                        <!-- <td>
                                             <div class="checkbox d-inline-block">
                                                 <input type="checkbox" class="checkbox-input" id="checkbox{{$userData->id}}">
                                                 
                                             </div>
-                                        </td>
+                                        </td> -->
                                         
                                         <td>{{$userData->user_name}}</td>
                                         <td>{{$userData->email}}</td>
@@ -210,61 +210,68 @@
         $(".user-row").click(function() {
             let userId = $(this).data("id");
 
+        
             $.ajaxSetup({
                 headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') }
             });
 
+        
             $.ajax({
                 type: "POST",
                 url: "{{ route('map_all_user_data.post') }}",
                 data: { data: userId },
                 success: function(response) {
+                    console.log(response); 
+
                     if (response.data && response.data.length > 0) {
                         let id = response.data[0].id;
-                        // alert(id);
 
-                        
+                        // Show the modal
                         $("#staticBackdrop").modal("show");
 
+                 
                         $.ajax({
-                            type:"POST",
-                            url:"{{route('map_user_data_specific.post')}}",
-                            data:{ data: id },
-                            success:function(response){
-                                console.log(response.data);
+                            type: "POST",
+                            url: "{{ route('map_user_data_specific.post') }}",
+                            data: { data: id },
+                            success: function(response) {
+                                console.log(response); 
 
-                                if (response.data && response.data.length > 0) {
+                            
+                                if (response.data && Array.isArray(response.data) && response.data.length > 0) {
                                     let tableBody = "";
 
-                                        response.data.forEach((user, index) => {
-                                            tableBody += `<tr>
-                                                <td>
-                                                    <div class="checkbox d-inline-block">
-                                                        <input type="checkbox" class="checkbox-input" id="checkbox${index}">
-                                                        <label for="checkbox${index}" class="mb-0"></label>
-                                                    </div>
-                                                </td>
-                                                <td>${index + 1}</td>
-                                                <td>${user.location_name}</td>
-                                                <td>${user.edp}</td>
-                                                <td>${user.section}</td>
-                                                <td>${user.description}</td>
-                                                <td>${user.quantity}</td>
-                                                <td>
-                                                    
-                                                </td>
-                                            </tr>`;
-                                        });
-
-                        // Injecting the new rows into the table body
-                        $(".light-body-userdata").html(tableBody);
-                    } else {
-                        $(".light-body-userdata").html("<tr><td colspan='8' class='text-center'>No data found</td></tr>");
-                    }
+                                 
+                                    response.data.forEach((item, index) => {
+                                        tableBody += `<tr>
+                                            <td>
+                                                <div class="checkbox d-inline-block">
+                                                    <input type="checkbox" class="checkbox-input" id="checkbox${index}">
+                                                    <label for="checkbox${index}" class="mb-0"></label>
+                                                </div>
+                                            </td>
+                                            <td>${index + 1}</td>
+                                            <td>${item.location_name || ''}</td>
+                                            <td>${item.edp_code || ''}</td>
+                                            <td>${item.section || ''}</td>
+                                            <td>${item.description || ''}</td>
+                                            <td>${item.qty || ''}</td>
+                                            <td></td>
+                                        </tr>`;
+                                    });
+                                    $(".light-body-userdata").html(tableBody);
+                                } else {
+                                  
+                                    $(".light-body-userdata").html("<tr><td colspan='8' class='text-center'>No data found</td></tr>");
+                                }
+                            },
+                            error: function(xhr) {
+                                console.error("Error fetching specific user data:", xhr);
+                                alert("Something went wrong while fetching specific user data.");
                             }
                         });
-
                     } else {
+                 
                         $("#noDataFoundModal").modal("show");
                     }
                 },
@@ -280,8 +287,5 @@
             });
         });
     });
-
-    
 </script>
-
 

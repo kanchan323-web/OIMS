@@ -86,7 +86,9 @@ class LoginController extends Controller
     
     public function mapuserlist(Request $request){
 
-        $data =  DB::table('users')->get();
+        $data = DB::table('users')
+        ->where('user_type', '!=', 'admin') 
+        ->get();
 
 
       return view('user.map_user_list',compact('data'));
@@ -117,7 +119,8 @@ class LoginController extends Controller
                   }
 
                   return response()->json([
-                      "data" => $data
+                      "data" => $data,
+                      "tally" => $tally
                   ]);
   }
 

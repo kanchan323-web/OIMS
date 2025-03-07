@@ -198,12 +198,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                         <label for="category">Category</label>
-                        <select class="form-control" id="category" name="category" disabled>
-                            <option selected disabled value="">Select Category...</option>
-                            <option value="Spares">Spares</option>
-                            <option value="Stores">Stores</option>
-                            <option value="Capital items">Capital items</option>
-                        </select>
+                        <input type="text" class="form-control" name="category" placeholder=" Category " id="category" readonly>
                         <input type="hidden" name="category" id="hidden_category">
                         <div class="invalid-feedback">
                             Please select a category
@@ -219,12 +214,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="section">Section</label>
-                    <select class="form-control" name="section" id="section" disabled>
-                        <option selected disabled value="">Select Section...</option>
-                        <option value="Section1">Section1</option>
-                        <option value="Section2">Section2</option>
-                        <option value="Section3">Section3</option>
-                    </select>
+                    <input type="text" class="form-control" name="section" placeholder=" Section " id="section" readonly>
                     <input type="hidden" name="section" id="hidden_section">
                     <div class="invalid-feedback">
                         Please select a Section
@@ -303,11 +293,11 @@
                             
                            
                                     var sectionValue = response.viewdata['section'];
-                                    $("#section").val(sectionValue).trigger("change");
+                                    $("#section").val(sectionValue);
                                     $("#hidden_section").val(sectionValue);
 
                                     var categoryValue = response.viewdata['category'];
-                                    $("#category").val(categoryValue).trigger("change");
+                                    $("#category").val(categoryValue);
                                     $("#hidden_category").val(categoryValue);
 
 
