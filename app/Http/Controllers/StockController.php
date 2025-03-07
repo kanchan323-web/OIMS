@@ -23,24 +23,7 @@ class StockController extends Controller
     {
         return view('user.stock.add_stock');
     }
-    // public function stock_list(Request $request){
-
-    //     $data = Stock::when($request->category, function ($query, $category) {
-    //         return $query->where('category', $category);
-    //     })
-    //     ->when($request->location_name, function ($query, $location_name) {
-    //         return $query->where('location_name', 'like', "%{$location_name}%");
-    //     })
-    //     ->when($request->from_date && $request->to_date, function ($query) use ($request) {
-    //         return $query->whereBetween('created_at', [
-    //             Carbon\Carbon::parse($request->from_date)->startOfDay(),
-    //             Carbon\Carbon::parse($request->to_date)->endOfDay()
-    //         ]);
-    //     })
-    //     ->get();
-
-    //     return view('user.stock.list_stock',compact('data'));
-    // }
+   
 
     public function stock_list(Request $request)
     {
@@ -101,6 +84,7 @@ class StockController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
+
 
         $stock = new Stock;
         $stock->location_id = $request->location_id;

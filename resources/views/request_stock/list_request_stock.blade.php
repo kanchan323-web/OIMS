@@ -19,7 +19,8 @@
                 <div class="col-sm-6 col-md-9">
                        <div id="user_list_datatable_info" class="dataTables_filter">
 
-                        <form action="{{ route('stock_list') }}" method="get" class="mr-3 position-relative">
+                       <form action="{{ route('request_stock_filter') }}" method="post" class="mr-3 position-relative">
+                        @csrf
                             <div class="row">
                                 <div class="col-md-2 mb-2">
                                     <label for="category">Category</label>
@@ -48,12 +49,10 @@
                         
                                 <div class="col-md-4 mb-2 d-flex align-items-end">
                                     <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                    <a href="{{ route('stock_list') }}" class="btn btn-secondary">Reset</a>
+                                    <a href="{{ route('request_stock_list') }}" class="btn btn-secondary">Reset</a>
                                 </div>
                             </div>
                         </form>
-                        
-                        
                        </div>
                     </div>
 
@@ -61,7 +60,7 @@
                     <div class="col-sm-6 col-md-3">
                        <div class="user-list-files d-flex">
                          <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Add Stock</a>
-                         <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks </a>
+                         <a href="#" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks </a>
                        </div>
                     </div>
                  </div>
@@ -88,7 +87,7 @@
                         </tr>
                     </thead>
                     <tbody class="ligth-body">
-                    @foreach($data as $stockdata)
+                    @foreach($data as $index=>$stockdata)
                         <tr>
                             
                             <td>
@@ -100,7 +99,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div>
-                                    {{$stockdata->req_id}}         
+                                    {{ $loop->iteration }}     
                                     </div>
                                 </div>
                             </td>
@@ -331,5 +330,20 @@
         $("#delete_id").val(id);
 
     }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#selectAll").on("change", function () {
+            $(".row-checkbox").prop("checked", $(this).prop("checked"));
+        });
+
+        $(".row-checkbox").on("change", function () {
+            if ($(".row-checkbox:checked").length === $(".row-checkbox").length) {
+                $("#selectAll").prop("checked", true);
+            } else {
+                $("#selectAll").prop("checked", false);
+            }
+        });
+    });
 </script>
 
