@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'cpf_no'    => '12345',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
-            'role' => 'admin',
+            'user_type' => 'admin',
             'rig_id' => '1',
             ],
             [
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             'cpf_no'    => '105914',
             'email' => 'test@gmail.com',
             'password' => Hash::make('test123'),
-            'role' => 'user',
+            'user_type' => 'user',
             'rig_id' => '2',
             ],
             [
@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
             'cpf_no'    => '105927',
             'email' => 'test2@gmail.com',
             'password' => Hash::make('test123'),
-            'role' => 'user',
+            'user_type' => 'user',
             'rig_id' => '2',
             ],
             [
@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
             'cpf_no'    => '121312',
             'email' => 'test3@gmail.com',
             'password' => Hash::make('test123'),
-            'role' => 'user',
+            'user_type' => 'user',
             'rig_id' => '3',
             ],
             [
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
             'cpf_no'    => '124991',
             'email' => 'test4@gmail.com',
             'password' => Hash::make('test123'),
-            'role' => 'user',
+            'user_type' => 'user',
             'rig_id' => '3',
 
             ],
@@ -64,7 +64,7 @@ class UserSeeder extends Seeder
             'cpf_no'    => '135641',
             'email' => 'test5@gmail.com',
             'password' => Hash::make('test123'),
-            'role' => 'user',
+            'user_type' => 'user',
             'rig_id' => '4',
             ]
         ]);
@@ -78,7 +78,7 @@ class UserSeeder extends Seeder
    /*     user::create([
             'email' => 'shubham123@gmail.com',
             'password' => Hash::make('shubham123'),
-            'role' => 'rig_user',
+            'user_type' => 'rig_user',
             'rig_id' => '2'
         ]);
    */

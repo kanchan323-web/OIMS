@@ -10,7 +10,7 @@ class RigUserController extends Controller
 {
     public function index()
     {
-        $rigUsers = RigUser::all();
+        $rigUsers = RigUser::where('name', '!=', 'admin')->get();
         return view('admin.rig_users.index', compact('rigUsers'));
     }
 
