@@ -103,7 +103,7 @@
                                             </div>
                                         </td>
                                         
-                                        <td>{{$userData->email}}</td>
+                                        <td>{{$userData->user_name}}</td>
                                         <td>{{$userData->email}}</td>
                            
                             </tr>
@@ -138,9 +138,9 @@
       <div class="modal-body">
       <div class="col-lg-12">
                 <div class="table-responsive rounded mb-3">
-                    <table class="data-tables table mb-0 tbl-server-info text-left">
+                    <table class="data-tables table mb-0 tbl-server-info">
                         <thead class="bg-white text-uppercase">
-                            <tr class="ligth ligth-data"  >
+                            <tr class="ligth ligth-data">
 
                                 <th>
                                     <div class="checkbox d-inline-block">
@@ -280,6 +280,8 @@
             });
         });
     });
+
+    
 </script>
 
 

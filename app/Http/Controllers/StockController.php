@@ -21,8 +21,8 @@ class StockController extends Controller
          return view('user.stock.add_stock');
     }
 
-    public function stockSubmit(Request $request)
-    {
+    public function stockSubmit(Request $request){
+        
         $insert_data = $request->validate([
             'location_id' => 'required',
             'location_name' => 'required',
@@ -37,51 +37,33 @@ class StockController extends Controller
             'remarks' => 'required'
         ]);
 
-        // $id = Auth::id();
-        // print_r($id);
-        // die;
         $stock = new Stock;
         $stock->location_id = $request->location_id;
-        $stock->location_name = $request->location_id;
-        $stock->edp_code = $request->location_id;
-        $stock->category = $request->location_id;
-        $stock->description = $request->location_id;
-        $stock->section = $request->location_id;
-        $stock->qty = $request->location_id;
-        $stock->measurement = $request->location_id;
-        $stock->new_spareable = $request->location_id;
-        $stock->used_spareable = $request->location_id;
-        $stock->remarks = $request->location_id;
+        $stock->location_name = $request->location_name;
+        $stock->edp_code = $request->edp_code;
+        $stock->category = $request->category;
+        $stock->description = $request->description;
+        $stock->section = $request->section;
+        $stock->qty = $request->qty;
+        $stock->measurement = $request->measurement;
+        $stock->new_spareable = $request->new_spareable;
+        $stock->used_spareable = $request->used_spareable;
+        $stock->remarks = $request->remarks;
         $stock->user_id = Auth::id();
         $stock->save();
+        
+       
         Session::flash('success', 'Stock submitted successfully!');
+   
         return redirect()->route('stock_list');
-    }
+      
+   }
 
     // public function stock_list(){
     //     return view('user.stock.list_stock');
     // }
 
-    public function stock_list(Request $request){
-        // $todayDate = Carbon::now()->format('Y-m-d');
-        // return $todayDate;
-    
-        // $data =  DB::table('stocks')->get();
-        $data = Stock::when($request->category, function ($query, $category) {
-            return $query->where('category', $category);
-        })
-        ->when($request->location_name, function ($query, $location_name) {
-            return $query->where('location_name', 'like', "%{$location_name}%");
-        })
-        ->when($request->form_date && $request->to_date, function ($query) use ($request) {
-            return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
-        })
-        ->get();
-        
-    // return $data;
-    
-        return view('user.stock.list_stock',compact('data'));
-    }
+  
 
 
     public function showImportForm()
@@ -147,7 +129,7 @@ class StockController extends Controller
                 session()->flash('error', implode('<br>', $errors)); 
                 return redirect()->back();
             }
-    
+
             session()->flash('success', 'Excel file imported successfully!');
             return redirect()->route('stock_list');
         } catch (\Exception $e) {
@@ -200,52 +182,5 @@ class StockController extends Controller
         return redirect()->route('stock_list');
     }
 
-    public function RequestStockList(Request $request){
-    
-        // $data = RequestStock::when($request->category, function ($query, $category) {
-        //     return $query->where('category', $category);
-        // })
-        // ->when($request->location_name, function ($query, $location_name) {
-        //     return $query->where('location_name', 'like', "%{$location_name}%");
-        // })
-        // ->when($request->form_date && $request->to_date, function ($query) use ($request) {
-        //     return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
-        // })
-        // ->get();
-        // Stock
-        $data = RequestStock::get();
-        return view('request_stock.list_request_stock',compact('data'));
-    }
-    public function RequestStockAdd(Request $request){
-        return view('request_stock.add_request_stock');
-    }
-    public function RequestStockAddPost(Request $request){
-
-        $insert_request_data = $request->validate([
-            'user_name' => 'required',
-            'user_id' => 'required',
-            'section' => 'required',
-            'stock_item' => 'required',
-            'stock_code' => 'required',
-            'request_quantity' => 'required',
-            'qty' => 'required',
-            'measurement' => 'required',
-            'new_spareable' => 'required',
-            'used_spareable' => 'required',
-            'remarks' => 'required',
-            'supplier_location_name' => 'required',
-        ]);
-
-        $data = RequestStock::insert($insert_request_data);
-        return redirect()->route('request_stock_list');
-        
-    }
-
-    public function RequestStockViewPost(Request $request){
-       $id =  $request->data;
-       $data = RequestStock::where('req_id',$id)->get();
-            return response()->json([
-                'data' =>$data
-            ]);
-    }
+   
 }
