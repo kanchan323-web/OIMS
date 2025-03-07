@@ -3,22 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\RequestStockController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\admin\UserController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+
 
 Route::get('/user/login',[LoginController::class,'index'])->name('user.login');
 Route::get('/user/register',[LoginController::class,'register'])->name('user.register');
@@ -64,12 +56,12 @@ Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('upd
 Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
 
 
-Route::get('/request_stock_list',[StockController::class, 'stock_list'])->name('stock_list');
+Route::get('/request_stock_list',[RequestStockController::class, 'stock_list'])->name('stock_list');
 Route::prefix('request-stock')->group(function () {
-    Route::get('/list', [StockController::class, 'RequestStockList'])->name('request_stock_list');
-    Route::get('/add', [StockController::class, 'RequestStockAdd'])->name('request_stock_add');
-    Route::post('/addSubmit', [StockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
-    Route::get('/view', [StockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
+    Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
+    Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
+    Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
+    Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
 });
 
 Route::get('/mapuserlist',[LoginController::class,'mapuserlist'])->name('map_all_user_list');
