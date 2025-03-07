@@ -61,7 +61,8 @@
                     <div class="col-sm-6 col-md-3">
                        <div class="user-list-files d-flex">
                          <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Add Stock</a>
-                         <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks </a>
+                         <a href="{{ route('stock.import') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks </a>
+                         <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Export to PDF</a>
                        </div>
                     </div>
                  </div>
