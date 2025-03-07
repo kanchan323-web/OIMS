@@ -114,7 +114,8 @@
                         
                             <button class="btn btn-primary" type="submit">Submit form</button>
                             <button type="reset" class="btn btn-danger">Reset</button>
-                            <a href="{{ url()->previous() }}" class="btn btn-light">Go Back</a>
+                            <a href="{{ route('stock_list') }}" class="btn btn-light">Go Back</a>
+
                         </form>
                     </div>
                 </div>

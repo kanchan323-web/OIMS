@@ -19,7 +19,8 @@
                 <div class="col-sm-6 col-md-9">
                        <div id="user_list_datatable_info" class="dataTables_filter">
 
-                        <form action="{{ route('stock_list') }}" method="get" class="mr-3 position-relative">
+                       <form action="{{ route('stock_filter') }}" method="POST" class="mr-3 position-relative">
+                       @csrf
                             <div class="row">
                                 <div class="col-md-2 mb-2">
                                     <label for="category">Category</label>
@@ -33,14 +34,15 @@
                         
                                 <div class="col-md-2 mb-2">
                                     <label for="location_name">Location Name</label>
-                                    <input type="text" class="form-control" placeholder="Location Name" name="location_name" value="{{ request('location_name') }}">
+                                    <input type="text" class="form-control" placeholder="Location Name" name="location_name" value="">
                                 </div>
                         
+
                                 <div class="col-md-2 mb-2">
                                     <label for="form_date">From Date</label>
                                     <input type="date" class="form-control" name="form_date" value="{{ request('form_date') }}">
                                 </div>
-                        
+
                                 <div class="col-md-2 mb-2">
                                     <label for="to_date">To Date</label>
                                     <input type="date" class="form-control" name="to_date" value="{{ request('to_date') }}">
@@ -74,10 +76,10 @@
                     <thead class="bg-white text-uppercase">
                         <tr class="ligth ligth-data">
                             <th>
-                                <div class="checkbox d-inline-block">
-                                    <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                    <label for="checkbox1" class="mb-0"></label>
-                                </div>
+                            <div class="checkbox d-inline-block">
+                                <input type="checkbox" class="checkbox-input" id="selectAll">
+                                <label for="selectAll" class="mb-0"></label>
+                            </div>
                             </th>
                             <th>Sr.No</th>
                             <th>Location Name</th>
@@ -89,7 +91,7 @@
                         </tr>
                     </thead>
                     <tbody class="ligth-body">
-                    @foreach($data as $stockdata)
+                    @foreach( $data as $index => $stockdata)
                         <tr>
                             
                             <td>
@@ -101,7 +103,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div>
-                                    {{$stockdata->id}}         
+                                    {{ $loop->iteration }}     
                                     </div>
                                 </div>
                             </td>
@@ -314,6 +316,7 @@
                                 $("#new_spareable").val(response.viewdata['new_spareable']);
                                 $("#used_spareable").val(response.viewdata['used_spareable']);
                                 $("#remarks").val(response.viewdata['remarks']); 
+                                $("#description").val(response.viewdata['description']); 
                         }   
                        });
     }
@@ -323,5 +326,20 @@
         $("#delete_id").val(id);
 
     }
+</script>
+<script>
+    $(document).ready(function () {
+        $("#selectAll").on("change", function () {
+            $(".row-checkbox").prop("checked", $(this).prop("checked"));
+        });
+
+        $(".row-checkbox").on("change", function () {
+            if ($(".row-checkbox:checked").length === $(".row-checkbox").length) {
+                $("#selectAll").prop("checked", true);
+            } else {
+                $("#selectAll").prop("checked", false);
+            }
+        });
+    });
 </script>
 
