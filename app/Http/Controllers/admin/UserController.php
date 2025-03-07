@@ -19,7 +19,10 @@ class UserController extends Controller
     // Show form for creating a new user
     public function create()
     {
-        $rigUsers = RigUser::all(); // Fetch all rig users
+        $rigUsers = RigUser::where('name', '!=', 'Admin')
+            ->where('name', '!=', 'admin')
+            ->get(); 
+
         return view('admin.user.create', compact('rigUsers'));
     }
 
@@ -32,7 +35,7 @@ class UserController extends Controller
             'cpf_no'     => 'required|string|max:255',
             'password'   => 'required|min:6',
             'user_status' => 'required|integer',
-            'user_type'  => 'required|string',
+            'user_type'  => 'required|string|in:admin,user',
             'rig_id'     => 'nullable|integer',
         ]);
 
@@ -59,8 +62,10 @@ class UserController extends Controller
     // Show form for editing a user
     public function edit($id)
     {
-        $user = User::findOrFail($id); 
-        $rigUsers = RigUser::all();
+        $user = User::findOrFail($id);
+        $rigUsers = RigUser::where('name', '!=', 'Admin')
+            ->where('name', '!=', 'admin')
+            ->get();
         return view('admin.user.edit', compact('user', 'rigUsers'));
     }
 
@@ -74,7 +79,7 @@ class UserController extends Controller
             'email'      => 'required|email|unique:users,email,' . $id,
             'cpf_no'     => 'required|string|max:255',
             'user_status' => 'required|integer',
-            'user_type'  => 'required|string',
+            'user_type'  => 'required|string|in:admin,user',
             'rig_id'     => 'required|integer',
         ]);
 
