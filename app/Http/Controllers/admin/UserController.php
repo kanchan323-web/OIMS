@@ -13,7 +13,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::paginate(10);
-        return view('admin.user.index', compact('users'));
+        $moduleName = "Users";
+        return view('admin.user.index', compact('users', 'moduleName'));
     }
 
     // Show form for creating a new user
@@ -22,8 +23,8 @@ class UserController extends Controller
         $rigUsers = RigUser::where('name', '!=', 'Admin')
             ->where('name', '!=', 'admin')
             ->get(); 
-
-        return view('admin.user.create', compact('rigUsers'));
+            $moduleName = "Create Users";
+        return view('admin.user.create', compact('rigUsers', 'moduleName'));
     }
 
     // Store a new user
@@ -56,7 +57,8 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view('admin.user.show', compact('user'));
+        $moduleName = "View Users";
+        return view('admin.user.show', compact('user','moduleName'));
     }
 
     // Show form for editing a user
@@ -66,14 +68,14 @@ class UserController extends Controller
         $rigUsers = RigUser::where('name', '!=', 'Admin')
             ->where('name', '!=', 'admin')
             ->get();
-        return view('admin.user.edit', compact('user', 'rigUsers'));
+        $moduleName = "Edit Users";
+        return view('admin.user.edit', compact('user', 'rigUsers', 'moduleName'));
     }
 
     // Update user details
     public function update(Request $request, $id)
     {
         $user = User::findOrFail((int) $id);
-        // dd($id, User::find($id));
         $request->validate([
             'user_name'  => 'required|string|max:255',
             'email'      => 'required|email|unique:users,email,' . $id,

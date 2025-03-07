@@ -11,12 +11,14 @@ class RigUserController extends Controller
     public function index()
     {
         $rigUsers = RigUser::where('name', '!=', 'admin')->get();
-        return view('admin.rig_users.index', compact('rigUsers'));
+        $moduleName = "Rigs";
+        return view('admin.rig_users.index', compact('rigUsers', 'moduleName'));
     }
 
     public function create()
     {
-        return view('admin.rig_users.create');
+        $moduleName = "Create Rigs";
+        return view('admin.rig_users.create', compact('moduleName'));
     }
 
     public function store(Request $request)
@@ -33,7 +35,8 @@ class RigUserController extends Controller
     public function edit($id)
     {
         $rigUser = RigUser::findOrFail($id);
-        return view('admin.rig_users.edit', compact('rigUser'));
+        $moduleName = "Edit Rigs";
+        return view('admin.rig_users.edit', compact('rigUser', 'moduleName'));
     }
 
     public function update(Request $request, $id)
