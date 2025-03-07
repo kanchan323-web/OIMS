@@ -18,7 +18,7 @@ return new class extends Migration
             //$table->timestamp('email_verified_at')->nullable();
             $table->string('password',150);
             $table->tinyInteger('user_status')->default('1');
-            $table->enum('role',['user','admin'])->default('user');
+            $table->enum('user_type',['user','admin'])->default('user');
             $table->integer('rig_id');
             $table->rememberToken();
             $table->timestamps();
