@@ -89,7 +89,7 @@
                         </tr>
                     </thead>
                     <tbody class="ligth-body">
-                    @foreach($data as $stockdata)
+                    @foreach($data as $index =>$stockdata)
                         <tr>
                             
                             <td>
@@ -101,7 +101,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div>
-                                    {{$stockdata->id}}         
+                                    {{ $loop->iteration }}         
                                     </div>
                                 </div>
                             </td>

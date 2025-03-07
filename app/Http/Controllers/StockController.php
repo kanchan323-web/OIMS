@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class StockController extends Controller
 {
@@ -21,27 +22,61 @@ class StockController extends Controller
     public function add_stock(){
          return view('user.stock.add_stock');
     }
-    public function stock_list(Request $request){
-        // $todayDate = Carbon::now()->format('Y-m-d');
-        // return $todayDate;
-    
-        // $data =  DB::table('stocks')->get();
-        $data = Stock::when($request->category, function ($query, $category) {
-            return $query->where('category', $category);
-        })
-        ->when($request->location_name, function ($query, $location_name) {
-            return $query->where('location_name', 'like', "%{$location_name}%");
-        })
-        ->when($request->form_date && $request->to_date, function ($query) use ($request) {
-            return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
-        })
+    // public function stock_list(Request $request){
 
-        ->get();
-        
-    // return $data;
+    //     $data = Stock::when($request->category, function ($query, $category) {
+    //         return $query->where('category', $category);
+    //     })
+    //     ->when($request->location_name, function ($query, $location_name) {
+    //         return $query->where('location_name', 'like', "%{$location_name}%");
+    //     })
+    //     ->when($request->from_date && $request->to_date, function ($query) use ($request) {
+    //         return $query->whereBetween('created_at', [
+    //             Carbon\Carbon::parse($request->from_date)->startOfDay(),
+    //             Carbon\Carbon::parse($request->to_date)->endOfDay()
+    //         ]);
+    //     })
+    //     ->get();
     
-        return view('user.stock.list_stock',compact('data'));
-    }
+    //     return view('user.stock.list_stock',compact('data'));
+    // }
+
+        public function stock_list(Request $request)
+                {
+                    $data = Stock::when($request->category, function ($query, $category) {
+                        return $query->where('category', $category);
+                    })
+                    ->when($request->location_name, function ($query, $location_name) {
+                        return $query->where('location_name', 'like', "%{$location_name}%");
+                    })
+                    ->when($request->form_date && $request->to_date, function ($query) use ($request) {
+                        return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
+                    })
+                    ->get();
+            
+
+                    return view('user.stock.list_stock', compact('data'));
+                }
+
+        public function stock_filter(Request $request){
+
+                    $data = Stock::when($request->category, function ($query, $category) {
+                        return $query->where('category', $category);
+                    })
+                    ->when($request->location_name, function ($query, $location_name) {
+                        return $query->where('location_name', 'like', "%{$location_name}%");
+                    })
+                    ->when($request->form_date, function ($query) use ($request) {
+                        return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                    })
+                    ->when($request->to_date, function ($query) use ($request) {
+                        return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                    })->get();
+    
+
+                    return view('user.stock.list_stock', compact('data'));
+
+                }
 
     public function stockSubmit(Request $request){
         
@@ -65,13 +100,6 @@ class StockController extends Controller
                              ->withInput(); 
         }
     
-        
-        if($insert_data){
-            echo "done";
-        }else{
-            echo "Not done";
-        }
-
         $stock = new Stock;
         $stock->location_id = $request->location_id;
         $stock->location_name = $request->location_name;
@@ -87,7 +115,6 @@ class StockController extends Controller
         $stock->user_id = Auth::id();
         $stock->save();
         
-       
         Session::flash('success', 'Stock submitted successfully!');
    
         return redirect()->route('stock_list');
