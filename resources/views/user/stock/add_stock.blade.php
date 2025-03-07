@@ -78,9 +78,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="">Description</label>
-                                    <textarea class="form-control @error('description') is-invalid @enderror"
-                                        name="description"
-                                        placeholder="Enter Description">{{ old('description') }}</textarea>
+                                    <textarea class="form-control "name="description" placeholder="Enter Description" required>{{ old('description') }}</textarea>
 
                                     @error('description')
                                     <div class="invalid-feedback">
@@ -89,9 +87,11 @@
                                     @enderror
                                 </div>
 
+                                
+
                                 <div class="col-md-6 mb-3">
                                     <label for="">Section</label>
-                                    <select class="form-control @error('section') is-invalid @enderror" name="section">
+                                    <select class="form-control @error('section') is-invalid @enderror" name="section" required>
                                         <option selected disabled value="">Select Section...</option>
                                         <option value="Section1" {{ old('section') == 'Section1' ? 'selected' : '' }}>
                                             Section1</option>
@@ -122,7 +122,7 @@
                                     <label for="">Unit of Measurement</label>
                                     <input type="text" class="form-control @error('measurement') is-invalid @enderror"
                                         name="measurement" value="{{ old('measurement') }}"
-                                        placeholder="Unit of Measurement">
+                                        placeholder="Unit of Measurement" required>
 
                                     @error('measurement')
                                     <div class="invalid-feedback">
@@ -154,7 +154,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="">Remarks / Notes</label>
                                     <textarea class="form-control @error('remarks') is-invalid @enderror" name="remarks"
-                                        placeholder="Remarks / Notes">{{ old('remarks') }}</textarea>
+                                        placeholder="Remarks / Notes" required>{{ old('remarks') }}</textarea>
 
                                     @error('remarks')
                                     <div class="invalid-feedback">
