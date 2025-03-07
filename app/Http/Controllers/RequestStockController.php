@@ -15,7 +15,8 @@ class RequestStockController extends Controller
     public function RequestStockList(Request $request){
     
         $data = RequestStock::get();
-        return view('request_stock.list_request_stock',compact('data'));
+        $moduleName = "Request Stocks";
+        return view('request_stock.list_request_stock',compact('data', 'moduleName'));
     }
 
     public function request_stock_filter(Request $request){
@@ -33,12 +34,13 @@ class RequestStockController extends Controller
             return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
         })->get();
         
-        return view('request_stock.list_request_stock',compact('data'));
+        return view('request_stock.list_request_stock',compact('data', 'moduleName'));
 
     }
 
     public function RequestStockAdd(Request $request){
-        return view('request_stock.add_request_stock');
+        $moduleName = "Add Stock";
+        return view('request_stock.add_request_stock', compact('moduleName'));
     }
     public function RequestStockAddPost(Request $request){
 

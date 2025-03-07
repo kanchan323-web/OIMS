@@ -21,7 +21,8 @@ class StockController extends Controller
 
     public function add_stock()
     {
-        return view('user.stock.add_stock');
+        $moduleName = "Add Stock";
+        return view('user.stock.add_stock', compact('moduleName'));
     }
    
 
@@ -38,13 +39,13 @@ class StockController extends Controller
             })
             ->get();
 
-
-        return view('user.stock.list_stock', compact('data'));
+        $moduleName = "Stock";
+        return view('user.stock.list_stock', compact('data', 'moduleName'));
     }
 
     public function stock_filter(Request $request)
     {
-
+        $moduleName = "Stock";
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
         })
@@ -59,7 +60,7 @@ class StockController extends Controller
             })->get();
 
 
-        return view('user.stock.list_stock', compact('data'));
+        return view('user.stock.list_stock', compact('data', 'moduleName'));
     }
 
     public function stockSubmit(Request $request)
@@ -115,7 +116,8 @@ class StockController extends Controller
 
     public function showImportForm()
     {
-        return view('user.stock.import_bulk_stock');
+        $moduleName = "Import Bulk Stock";
+        return view('user.stock.import_bulk_stock', compact('moduleName'));
     }
 
     public function import(Request $request)
@@ -202,9 +204,9 @@ class StockController extends Controller
     {
 
         $editData = Stock::where('id', $id)->get()->first();
-
+        $moduleName = "Edit Stock";
         // dd($editData);
-        return view('user.stock.edit_stock', ['editData' => $editData]);
+        return view('user.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName]);
     }
 
     public function UpdateStock(Request $request)
