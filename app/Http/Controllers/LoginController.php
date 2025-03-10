@@ -98,14 +98,6 @@ class LoginController extends Controller
     }
     public function mapuserstockview(Request $request)
     {
-
-        // $rig_id = Auth::user()->rig_id;
-    
-        // $data = User::where('user_type', '!=', 'admin')
-        // ->where('rig_id', Auth::user()->rig_id)
-        // ->get();
-
-
         return view('user.map_user_add_stock_view');
     }
 
@@ -113,6 +105,8 @@ class LoginController extends Controller
 
     public function mapuserdataget(Request $request)
         {
+
+            $moduleName = "Map User Stock";
             $id = $request->id;
 
             if (!$id) {
@@ -131,7 +125,7 @@ class LoginController extends Controller
                 return redirect()->back()->with('error', 'No data found for the given user ID');
             }
 
-            return view('user.map_user_add_stock_view', compact('data', 'tally'));
+            return view('user.map_user_add_stock_view', compact('data', 'tally','moduleName'));
         }
 
 

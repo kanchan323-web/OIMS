@@ -29,6 +29,7 @@
                             </div>
                             </th>
                             <th>Sr.No</th>
+                            <th>Location Id</th>
                             <th>Location Name</th>
                             <th>EDP</th>
                             <th>Section</th>
@@ -55,6 +56,7 @@
                             <td>{{$daa->edp_code}}</td>
                             <td>{{$daa->section}}</td>
                             <td>{{$daa->description}}</td>
+                            <td>{{$daa->qty}}</td>
                         </tr>
                          
                     @endforeach         
