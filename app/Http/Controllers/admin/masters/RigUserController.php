@@ -32,6 +32,15 @@ class RigUserController extends Controller
         return redirect()->route('admin.rig_users.index')->with('success', 'Rig User created successfully.');
     }
 
+    public function show($id)
+    {
+        $rigUser = RigUser::findOrFail($id);
+        $moduleName = "View Rig User";
+
+        return view('admin.rig_users.show', compact('rigUser', 'moduleName'));
+    }
+
+
     public function edit($id)
     {
         $rigUser = RigUser::findOrFail($id);
@@ -59,4 +68,3 @@ class RigUserController extends Controller
         return redirect()->route('admin.rig_users.index')->with('success', 'Rig User deleted successfully.');
     }
 }
-
