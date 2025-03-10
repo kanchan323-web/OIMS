@@ -10,6 +10,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\masters\EdpController;
+use App\Http\Controllers\admin\masters\CategoryController;
 
 
 //Admin Portal Section
@@ -40,6 +42,22 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/rig_users/{id}/edit', [RigUserController::class, 'edit'])->name('admin.rig_users.edit');
     Route::post('/admin/rig_users/{id}', [RigUserController::class, 'update'])->name('admin.rig_users.update');
     Route::delete('/admin/rig_users/{id}', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
+
+    //EDP master
+    Route::get('/admin/edp', [EdpController::class, 'index'])->name('admin.edp.index');
+    Route::get('/admin/edp/create', [EdpController::class, 'create'])->name('admin.edp.create');
+    Route::post('/admin/edp', [EdpController::class, 'store'])->name('admin.edp.store');
+    Route::get('/admin/edp/{id}/edit', [EdpController::class, 'edit'])->name('admin.edp.edit');
+    Route::post('/admin/edp/{id}', [EdpController::class, 'update'])->name('admin.edp.update');
+    Route::delete('/admin/edp/{id}', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
+
+    //Category master
+    Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category.index');
+    Route::get('/admin/category/create', [CategoryController::class, 'create'])->name('admin.category.create');
+    Route::post('/admin/category', [CategoryController::class, 'store'])->name('admin.category.store');
+    Route::get('/admin/category/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
+    Route::post('/admin/category/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
+    Route::delete('/admin/category/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
 });
 
 
@@ -81,7 +99,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
         Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
     });
-    
+
     //User mapping
     Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
     Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');

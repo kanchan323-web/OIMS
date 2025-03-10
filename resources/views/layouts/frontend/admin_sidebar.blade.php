@@ -89,7 +89,7 @@
                     </ul>
                 </li>
                 <li class=" ">
-                    <a href="#otherpage" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                    <a href="#masterpage" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash9" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -106,9 +106,9 @@
                             <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                         </svg>
                     </a>
-                    <ul id="otherpage" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                    <ul id="masterpage" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class=" ">
-                            <a href="#user" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                            <a href="#edp" class="collapsed" data-toggle="collapse" aria-expanded="false">
                                 <svg class="svg-icon" id="p-dash10" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -117,7 +117,7 @@
                                     <circle cx="8.5" cy="7" r="4"></circle>
                                     <polyline points="17 11 19 13 23 9"></polyline>
                                 </svg>
-                                <span class="ml-4">User Details</span>
+                                <span class="ml-4">EDP</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -126,27 +126,22 @@
                                     <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                                 </svg>
                             </a>
-                            <ul id="user" class="iq-submenu collapse" data-parent="#otherpage">
+                            <ul id="edp" class="iq-submenu collapse" data-parent="#masterpage">
                                 <li class="">
-                                    <a href="../app/user-profile.html">
-                                        <i class="las la-minus"></i><span>User Profile</span>
+                                    <a href="{{route('admin.edp.create')}}">
+                                        <i class="las la-minus"></i><span>EDP Add</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../app/user-add.html">
-                                        <i class="las la-minus"></i><span>User Add</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="../app/user-list.html">
-                                        <i class="las la-minus"></i><span>User List</span>
+                                    <a href="{{route('admin.edp.index')}}">
+                                        <i class="las la-minus"></i><span>EDP List</span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
 
                         <li class=" ">
-                            <a href="#auth" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                            <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
                                 <svg class="svg-icon" id="p-dash12" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -157,7 +152,7 @@
                                     <line x1="16" y1="17" x2="8" y2="17"></line>
                                     <polyline points="10 9 9 9 8 9"></polyline>
                                 </svg>
-                                <span class="ml-4">Authentication</span>
+                                <span class="ml-4">Category</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -166,15 +161,15 @@
                                     <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                                 </svg>
                             </a>
-                            <ul id="auth" class="iq-submenu collapse" data-parent="#otherpage">
+                            <ul id="category" class="iq-submenu collapse" data-parent="#masterpage">
                                 <li class="">
-                                    <a href="">
-                                        <i class="las la-minus"></i><span>Login</span>
+                                    <a href="{{route('admin.category.create')}}">
+                                        <i class="las la-minus"></i><span>Category Add</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/auth-sign-up.html">
-                                        <i class="las la-minus"></i><span>Register</span>
+                                    <a href="{{route('admin.category.index')}}">
+                                        <i class="las la-minus"></i><span>Category List</span>
                                     </a>
                                 </li>
                             </ul>
@@ -182,7 +177,7 @@
                     </ul>
                 </li>
                 <li class=" ">
-                    <a href="#product" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                    <a href="#stock" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -198,7 +193,7 @@
                             <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                         </svg>
                     </a>
-                    <ul id="product" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                    <ul id="stock" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class="">
                             <a href="{{ route('stock_list') }}">
                                 <i class="las la-minus"></i><span>Stock List</span>
@@ -212,7 +207,7 @@
                     </ul>
                 </li>
                 <li class=" ">
-                    <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                    <a href="#request" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -227,7 +222,7 @@
                             <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                         </svg>
                     </a>
-                    <ul id="category" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                    <ul id="request" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class="">
                             <a href="{{route('request_stock_list')}}">
                                 <i class="las la-minus"></i><span>All Stock Request List</span>
@@ -247,7 +242,7 @@
                 </li>
 
                 <li class=" ">
-                    <a href="#people" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                    <a href="#user_control" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash8" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -264,7 +259,7 @@
                             <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                         </svg>
                     </a>
-                    <ul id="people" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                    <ul id="user_control" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class="">
                             <a href="../backend/page-list-users.html">
                                 <i class="las la-minus"></i><span>Users</span>
