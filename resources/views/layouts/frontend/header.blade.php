@@ -14,6 +14,39 @@
       <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
       <meta name="csrf-token" content="{{ csrf_token() }}">
 
+      <style>
+    .custom-file-upload {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .file-input {
+        display: none; /* Hide default input */
+    }
+
+    .file-label {
+        display: block;
+        padding: 12px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s ease-in-out;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-label:hover {
+        background-color: #0056b3;
+    }
+
+    .file-label:active {
+        transform: scale(0.98);
+    }
+</style>
+
       <body class="  ">
     <!-- loader Start -->
     <div id="loading">
