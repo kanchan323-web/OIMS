@@ -8,6 +8,7 @@ use App\Rules\ReCaptcha;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
+use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
@@ -22,7 +23,9 @@ class StockController extends Controller
     public function add_stock()
     {
         $moduleName = "Add Stock";
-        return view('user.stock.add_stock', compact('moduleName'));
+        $rigId =  Auth::user()->rig_id;
+        $LocationName = RigUser::where('id',$rigId)->first();
+        return view('user.stock.add_stock', compact('moduleName','LocationName'));
     }
    
 
