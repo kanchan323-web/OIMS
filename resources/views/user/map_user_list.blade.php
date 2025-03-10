@@ -29,6 +29,7 @@
             </div>
 
             <div class="col-lg-12">
+                <h4>Map User List</h4>
                 <div class="table-responsive rounded mb-3">
                     <table class="data-tables table mb-0 tbl-server-info ">
                         <thead class="bg-white text-uppercase">
@@ -39,6 +40,7 @@
                               
                                 <th>User Name</th>
                                 <th>Email</th>
+                                <th>Rig Id</th>
                                
                             </tr>
                         </thead>
@@ -51,10 +53,10 @@
                                 data-user-type="{{$userData->user_type}}" 
                                 data-rig-id="{{$userData->rig_id}}">
 
-                                    
-                                        
                                         <td>{{$userData->user_name}}</td>
                                         <td>{{$userData->email}}</td>
+                                        <td>{{$userData->rig_id}}</td>
+
                            
                             </tr>
                             @endforeach
@@ -84,25 +86,20 @@
                     <table class="data-tables table mb-0 tbl-server-info">
                         <thead class="bg-white text-uppercase">
                             <tr class="ligth ligth-data">
-
-                                <th>
-                                    <div class="checkbox d-inline-block">
-                                        <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                        <label for="checkbox1" class="mb-0"></label>
-                                    </div>
-                                </th>
                                 <th>Sr.No</th>
                                 <th>Location Name</th>
                                 <th>EDP</th>
                                 <th>Section</th>
                                 <th>Description</th>
                                 <th>Quantity</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody class="light-body-userdata">
                         
-                           
+                       
+                     
+                                          
+                     
                         </tbody>
                     </table>
                 </div>
@@ -156,6 +153,8 @@
                     if (response.data && response.data.length > 0) {
                         let id = response.data[0].id;
 
+                        // window.location.href = "https://example.com";
+
                         // Show the modal
                         $("#staticBackdrop").modal("show");
 
@@ -174,20 +173,17 @@
                                  
                                     response.data.forEach((item, index) => {
                                         tableBody += `<tr>
-                                            <td>
-                                                <div class="checkbox d-inline-block">
-                                                    <input type="checkbox" class="checkbox-input" id="checkbox${index}">
-                                                    <label for="checkbox${index}" class="mb-0"></label>
-                                                </div>
-                                            </td>
-                                            <td>${index + 1}</td>
+                                            <td class='text-center'>${index + 1}</td>
                                             <td>${item.location_name || ''}</td>
                                             <td>${item.edp_code || ''}</td>
                                             <td>${item.section || ''}</td>
                                             <td>${item.description || ''}</td>
-                                            <td>${item.qty || ''}</td>
-                                            <td></td>
+                                            <td class='text-center'>${item.qty || ''}</td>
+                                            
                                         </tr>`;
+
+                                     
+
                                     });
                                     $(".light-body-userdata").html(tableBody);
                                 } else {

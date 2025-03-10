@@ -118,8 +118,8 @@
                                         href="#"><i class="ri-eye-line mr-0"></i></a>
                                     <a class="badge bg-success mr-2" data-toggle="tooltip"   data-placement="top" title="" data-original-title="Edit"
                                         href="{{url('/edit_stock/'.$stockdata->id)}}"><i class="ri-pencil-line mr-0"></i></a>
-                                    <a class="badge bg-warning mr-2" data-toggle="modal" data-target="#DeleteModal"  onclick="deleteStockdata({{$stockdata->id}})"  data-placement="top" title="" data-original-title="Delete"
-                                        href="#"><i class="ri-delete-bin-line mr-0"></i></a>
+                                    <!-- <a class="badge bg-warning mr-2" data-toggle="modal" data-target="#DeleteModal"  onclick="deleteStockdata({{$stockdata->id}})"  data-placement="top" title="" data-original-title="Delete"
+                                        href="#"><i class="ri-delete-bin-line mr-0"></i></a> -->
                                 </div>
                             </td>
                         </tr>
@@ -333,3 +333,4 @@
     });
 </script>
 
+@endsection
