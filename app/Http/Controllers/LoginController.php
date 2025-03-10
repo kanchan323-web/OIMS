@@ -87,12 +87,26 @@ class LoginController extends Controller
     public function mapuserlist(Request $request)
     {
 
-        $data = DB::table('users')
-        ->where('user_type', '!=', 'admin') 
+        $rig_id = Auth::user()->rig_id;
+    
+        $data = User::where('user_type', '!=', 'admin')
+        ->where('rig_id', Auth::user()->rig_id)
         ->get();
 
 
         return view('user.map_user_list', compact('data'));
+    }
+    public function mapuserstockview(Request $request)
+    {
+
+        // $rig_id = Auth::user()->rig_id;
+    
+        // $data = User::where('user_type', '!=', 'admin')
+        // ->where('rig_id', Auth::user()->rig_id)
+        // ->get();
+
+
+        return view('user.map_user_add_stock_view');
     }
 
     public function mapuserdataget(Request $request)

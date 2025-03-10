@@ -84,8 +84,10 @@ Route::middleware(['auth'])->group(function () {
     
     //User mapping
     Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
+    Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');
     Route::post('/mapusergetdata', [LoginController::class, 'mapuserdataget'])->name('map_all_user_data.post');
     Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
+
 });
 
 //Reset Password (No Auth Required)
