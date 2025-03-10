@@ -81,6 +81,7 @@
                                             <button class="btn bsb-btn-xl btn-primary py-3" type="submit">Log in
                                                 now</button>
                                         </div>
+                                        <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot Password</a>
                                     </div>
                                 </div>
                             </form>
