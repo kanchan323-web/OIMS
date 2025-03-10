@@ -17,9 +17,6 @@
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
 
-                       
-
-
                         </div>
                     </div>
 
@@ -40,7 +37,7 @@
                               
                                 <th>User Name</th>
                                 <th>Email</th>
-                                <th>Rig Id</th>
+                                <!-- <th>Rig Id</th> -->
                                
                             </tr>
                         </thead>
@@ -55,7 +52,7 @@
 
                                         <td>{{$userData->user_name}}</td>
                                         <td>{{$userData->email}}</td>
-                                        <td>{{$userData->rig_id}}</td>
+                                        <!-- <td>{{$userData->rig_id}}</td> -->
 
                            
                             </tr>
@@ -82,7 +79,8 @@
       </div>
       <div class="modal-body">
       <div class="col-lg-12">
-                <div class="table-responsive rounded mb-3">
+                <div class="table-responsive rounded mb-3" id="thiswillget">
+
                     <table class="data-tables table mb-0 tbl-server-info">
                         <thead class="bg-white text-uppercase">
                             <tr class="ligth ligth-data">
