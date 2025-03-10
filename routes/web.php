@@ -37,6 +37,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/rig_users', [RigUserController::class, 'index'])->name('admin.rig_users.index');
     Route::get('/admin/rig_users/create', [RigUserController::class, 'create'])->name('admin.rig_users.create');
     Route::post('/admin/rig_users', [RigUserController::class, 'store'])->name('admin.rig_users.store');
+    Route::get('/admin/rig_users/{id}', [RigUserController::class, 'show'])->name('admin.rig_users.show');
     Route::get('/admin/rig_users/{id}/edit', [RigUserController::class, 'edit'])->name('admin.rig_users.edit');
     Route::post('/admin/rig_users/{id}', [RigUserController::class, 'update'])->name('admin.rig_users.update');
     Route::delete('/admin/rig_users/{id}', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
@@ -65,7 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('all_stock_list');
     Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
     Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');
-
+    Route::get('/sample-download', [StockController::class, 'downloadSample'])->name('stock.downloadSample');
     Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('stock_list_view');
     Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');
     Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');

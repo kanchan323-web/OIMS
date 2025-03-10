@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Response;
 use Carbon\Carbon;
 
 class StockController extends Controller
@@ -27,7 +28,7 @@ class StockController extends Controller
         $LocationName = RigUser::where('id',$rigId)->first();
         return view('user.stock.add_stock', compact('moduleName','LocationName'));
     }
-   
+
 
     public function stock_list(Request $request)
     {
@@ -115,6 +116,11 @@ class StockController extends Controller
     // }
 
 
+    public function downloadSample()
+    {
+        $filePath = public_path('sample-files/sample_stock.xlsx'); 
+        return Response::download($filePath, 'Sample_Stock_File.xlsx');
+    }
 
 
     public function showImportForm()

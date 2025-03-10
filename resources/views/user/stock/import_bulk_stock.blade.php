@@ -6,10 +6,8 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Import Stock Data</h4>
-                            </div>
+                        <div class="card-header">
+                            <h4 class="card-title">Import Stock Data</h4>
                         </div>
                         <div class="card-body">
                             @if (session()->has('success'))
@@ -23,7 +21,7 @@
                             <form class="needs-validation" novalidate method="POST" action="{{ route('stock.import') }}"
                                 enctype="multipart/form-data">
                                 @csrf
-                                <div class="form-row">
+                                <div class="form-row align-items-center">
                                     <div class="col-md-6 mb-3">
                                         <label for="file">Upload Excel File</label>
                                         <input type="file" class="form-control @error('file') is-invalid @enderror"
@@ -34,6 +32,11 @@
                                                 {{ $message }}
                                             </div>
                                         @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3 d-flex align-items-end">
+                                        <a href="{{ route('stock.downloadSample') }}" class="ml-3 text-primary">
+                                            Download Sample File
+                                        </a>
                                     </div>
                                 </div>
                                 <button class="btn btn-primary" type="submit">Import</button>
