@@ -86,7 +86,7 @@ class LoginController extends Controller
 
     public function mapuserlist(Request $request)
     {
-
+        $moduleName = "Map User List";
         $rig_id = Auth::user()->rig_id;
     
         $data = User::where('user_type', '!=', 'admin')
@@ -94,7 +94,7 @@ class LoginController extends Controller
         ->get();
 
 
-        return view('user.map_user_list', compact('data'));
+        return view('user.map_user_list', compact('data','moduleName'));
     }
     public function mapuserstockview(Request $request)
     {
