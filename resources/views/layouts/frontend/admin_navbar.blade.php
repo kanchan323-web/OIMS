@@ -10,10 +10,20 @@
                  </a>
              </div>
 
-            <!--  @if (auth()->guard('admin')->check())
-                 <h5 class="mb-3">Welcome {{ Auth::guard('admin')->user()->email }}</h5>
-             @endif -->
-                 <h5 class="mb-3">Welcome {{ Auth::user()->email }}</h5>
+             @if (auth()->check())
+                        @php
+                            $user = Auth::user()->load('rig'); 
+                        @endphp
+
+                        <h5 class="mb-3">
+                            Welcome {{ $user->email }}
+                            @if($user->rig)
+                                to {{ $user->rig->name }}
+                            @else
+                                (No Rig Assigned)
+                            @endif
+                        </h5>
+            @endif
 
              <div class="d-flex align-items-center">
                  <button class="navbar-toggler" type="button" data-toggle="collapse"
