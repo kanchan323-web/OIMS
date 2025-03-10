@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rig_users', function (Blueprint $table) {
+        Schema::create('edps', function (Blueprint $table) {
             $table->id();
-            $table->string('location_id',60);
-            $table->string('name',60);
+            $table->string('edp_code',50);
+            $table->string('category',50);
+            $table->string('description',200);
+            $table->string('section',50);
+            $table->string('measurement',50);
             $table->timestamps();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rig_users');
+        Schema::dropIfExists('edps');
     }
 };
