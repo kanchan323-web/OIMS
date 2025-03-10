@@ -1,6 +1,6 @@
 @include('layouts.frontend.header')
 @include('layouts.frontend.admin_sidebar')
-@include('layouts.frontend.navbar')
+@include('layouts.frontend.admin_navbar')
 
                 @yield('page-content')
 
