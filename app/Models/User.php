@@ -52,4 +52,8 @@ class User extends Authenticatable
     ];
 
 
+    public function rig()
+    {
+        return $this->belongsTo(RigUser::class, 'rig_id');
+    }
 }
