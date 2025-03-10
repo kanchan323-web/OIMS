@@ -29,6 +29,7 @@
             </div>
 
             <div class="col-lg-12">
+                <h4>Map User List</h4>
                 <div class="table-responsive rounded mb-3">
                     <table class="data-tables table mb-0 tbl-server-info ">
                         <thead class="bg-white text-uppercase">
@@ -152,7 +153,7 @@
                     if (response.data && response.data.length > 0) {
                         let id = response.data[0].id;
 
-                        window.location.href = "https://example.com";
+                        // window.location.href = "https://example.com";
 
                         // Show the modal
                         $("#staticBackdrop").modal("show");
