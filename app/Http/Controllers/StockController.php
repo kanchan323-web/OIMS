@@ -115,7 +115,7 @@ class StockController extends Controller
 
     public function downloadSample()
     {
-        $filePath = public_path('sample-files/sample_stock.xlsx'); 
+        $filePath = public_path('sample-files/sample_stock.xlsx');
         return Response::download($filePath, 'Sample_Stock_File.xlsx');
     }
 
@@ -160,19 +160,38 @@ class StockController extends Controller
                 return redirect()->back();
             }
 
-            foreach (array_slice($rows, 1) as $row) {
+            $errors = [];
+            foreach (array_slice($rows, 1) as $index => $row) {
+                if (array_filter($row, fn($value) => !is_null($value) && trim($value) !== '') === []) {
+                    continue;
+                }
+
+                // Validate EDP code
+                if (!isset($row[2]) || !preg_match('/^\d{9}$/', $row[2])) {
+                    $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
+                    continue;
+                }
+
+                // Validate required fields (excluding optional fields)
+                $requiredFields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // Required field indexes
+                foreach ($requiredFields as $fieldIndex) {
+                    if (!isset($row[$fieldIndex]) || trim($row[$fieldIndex]) === '') {
+                        $errors[] = "Row " . ($index + 2) . ": Missing required field '" . $expectedHeaders[$fieldIndex] . "'.";
+                        continue 2; // Skip this row
+                    }
+                }
 
                 Stock::create([
-                    'location_id'   => $row[0] ?? null,
-                    'location_name' => $row[1] ?? null,
-                    'edp_code'      => $row[2] ?? null,
-                    'description'   => $row[3] ?? null,
-                    'section'       => $row[4] ?? null,
-                    'category'      => $row[5] ?? null,
-                    'qty'           => $row[6] ?? 0,
-                    'new_spareable' => $row[7] ?? 0,
-                    'used_spareable' => $row[8] ?? 0,
-                    'measurement'   => $row[9] ?? null,
+                    'location_id'   => $row[0],
+                    'location_name' => $row[1],
+                    'edp_code'      => $row[2],
+                    'description'   => $row[3],
+                    'section'       => $row[4],
+                    'category'      => $row[5],
+                    'qty'           => (int) $row[6],
+                    'new_spareable' => (int) $row[7],
+                    'used_spareable' => (int) $row[8],
+                    'measurement'   => $row[9],
                     'remarks'       => $row[10] ?? 'nill',
                     'user_id'       => Auth::id(),
                 ]);
@@ -192,6 +211,7 @@ class StockController extends Controller
             return redirect()->back();
         }
     }
+
 
 
     public function stock_list_view(Request $request)
