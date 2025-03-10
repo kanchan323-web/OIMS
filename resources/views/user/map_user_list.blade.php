@@ -5,8 +5,6 @@
     <div class="container-fluid">
         <div class="row">
 
-
-
             <div class="col-lg-12">
                 @if (Session::get('success'))
                 <div class="alert alert-success">{{ Session::get('success') }}</div>
@@ -19,51 +17,14 @@
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
 
-                            <!-- <form action="{{ route('stock_list') }}" method="get" class="mr-3 position-relative">
-                            <div class="row">
-                                <div class="col-md-2 mb-2">
-                                    <label for="category">Category</label>
-                                    <select class="form-control" name="category">
-                                        <option disabled {{ request('category') ? '' : 'selected' }}>Select Category...</option>
-                                        <option value="Spares" {{ request('category') == 'Spares' ? 'selected' : '' }}>Spares</option>
-                                        <option value="Stores" {{ request('category') == 'Stores' ? 'selected' : '' }}>Stores</option>
-                                        <option value="Capital items" {{ request('category') == 'Capital items' ? 'selected' : '' }}>Capital items</option>
-                                    </select>
-                                </div>
-                        
-                                <div class="col-md-2 mb-2">
-                                    <label for="location_name">Location Name</label>
-                                    <input type="text" class="form-control" placeholder="Location Name" name="location_name" value="{{ request('location_name') }}">
-                                </div>
-                        
-                                <div class="col-md-2 mb-2">
-                                    <label for="form_date">From Date</label>
-                                    <input type="date" class="form-control" name="form_date" value="{{ request('form_date') }}">
-                                </div>
-                        
-                                <div class="col-md-2 mb-2">
-                                    <label for="to_date">To Date</label>
-                                    <input type="date" class="form-control" name="to_date" value="{{ request('to_date') }}">
-                                </div>
-                        
-                                <div class="col-md-4 mb-2 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                    <a href="{{ route('stock_list') }}" class="btn btn-secondary">Reset</a>
-                                </div>
-                            </div>
-                        </form> -->
+                       
 
 
                         </div>
                     </div>
 
 
-                    <!-- <div class="col-sm-6 col-md-3">
-                       <div class="user-list-files d-flex">
-                         <a href="" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Add Stock</a>
-                         <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks </a>
-                       </div>
-                    </div> -->
+                   
                 </div>
             </div>
 
@@ -75,13 +36,7 @@
                       
                             <tr class="ligth ligth-data">
 
-                                <!-- <th>
-                                    <div class="checkbox ">
-                                        <input type="checkbox" class="checkbox-input" id="checkbox1"> -->
-                                        <!-- <label for="checkbox1" class="mb-0"></label> -->
-                                    <!-- </div>
-                                </th>
-                                 -->
+                              
                                 <th>User Name</th>
                                 <th>Email</th>
                                
@@ -96,12 +51,7 @@
                                 data-user-type="{{$userData->user_type}}" 
                                 data-rig-id="{{$userData->rig_id}}">
 
-                                        <!-- <td>
-                                            <div class="checkbox d-inline-block">
-                                                <input type="checkbox" class="checkbox-input" id="checkbox{{$userData->id}}">
-                                                
-                                            </div>
-                                        </td> -->
+                                    
                                         
                                         <td>{{$userData->user_name}}</td>
                                         <td>{{$userData->email}}</td>
@@ -117,13 +67,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 
 <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -159,19 +102,6 @@
                         </thead>
                         <tbody class="light-body-userdata">
                         
-
-                            <!-- <tr class="user-row" >
-                            <td>
-                                <div class="checkbox d-inline-block">
-                                    <input type="checkbox" class="checkbox-input" id="checkbox">
-                                    <label for="checkbox" class="mb-0"></label>
-                                </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr> -->
                            
                         </tbody>
                     </table>
@@ -288,4 +218,5 @@
         });
     });
 </script>
+@endsection
 
