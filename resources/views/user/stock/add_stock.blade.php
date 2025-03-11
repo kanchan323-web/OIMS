@@ -11,7 +11,7 @@
                             <h4 class="card-title">Add Stock </h4>
                         </div>
                     </div>
-                    @if ($errors->any())
+                    {{-- @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
                             @foreach ($errors->all() as $error)
@@ -19,7 +19,7 @@
                             @endforeach
                         </ul>
                     </div>
-                    @endif
+                    @endif --}}
                     <div class="card-body">
                         <form class="needs-validation" novalidate method="POST" action="{{ route('stockSubmit') }}"
                             id="addStockForm">
