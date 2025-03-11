@@ -28,7 +28,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="">Location Id</label>
                                     <input type="text" class="form-control" name="location_id"
-                                        placeholder=" Location Id" id="" required>
+                                        placeholder=" Location Id" id="" value="{{$LocationName->id}}" required readonly>
                                     @error('location_id')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -38,7 +38,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="">Location Name</label>
                                     <input type="text" class="form-control" placeholder=" Location Name"
-                                        name="location_name" id="" required>
+                                        name="location_name" id="" value="{{$LocationName->name}}" required readonly>
                                     @error('location_name')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -209,3 +209,5 @@
     });
 });
 </script>
+
+@endsection

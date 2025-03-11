@@ -35,14 +35,16 @@
                             <tr class="ligth ligth-data">
 
                               
+                                <th>Sr. No.</th>
                                 <th>User Name</th>
                                 <th>Email</th>
+                                <th>CPF No</th>
                                 <!-- <th>Rig Id</th> -->
                                
                             </tr>
                         </thead>
                         <tbody class="ligth-body">
-                            @foreach($data as $userData)
+                            @foreach($data as $index=> $userData)
 
                             <tr class="user-row" 
                                 data-id="{{$userData->id}}" 
@@ -50,9 +52,10 @@
                                 data-user-type="{{$userData->user_type}}" 
                                 data-rig-id="{{$userData->rig_id}}">
 
+                                        <td>{{$index + 1}}</td>
                                         <td>{{$userData->user_name}}</td>
                                         <td>{{$userData->email}}</td>
-                                        <!-- <td>{{$userData->rig_id}}</td> -->
+                                        <td>{{$userData->cpf_no}}</td>
 
                            
                             </tr>
@@ -131,86 +134,17 @@
 </div>
 
 <script>
+    
     $(document).ready(function() {
-        $(".user-row").click(function() {
-            let userId = $(this).data("id");
-
-        
-            $.ajaxSetup({
-                headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') }
-            });
-
-        
-            $.ajax({
-                type: "POST",
-                url: "{{ route('map_all_user_data.post') }}",
-                data: { data: userId },
-                success: function(response) {
-                    console.log(response); 
-
-                    if (response.data && response.data.length > 0) {
-                        let id = response.data[0].id;
-
-                        // window.location.href = "https://example.com";
-
-                        // Show the modal
-                        $("#staticBackdrop").modal("show");
-
-                 
-                        $.ajax({
-                            type: "POST",
-                            url: "{{ route('map_user_data_specific.post') }}",
-                            data: { data: id },
-                            success: function(response) {
-                                console.log(response); 
-
-                            
-                                if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-                                    let tableBody = "";
-
-                                 
-                                    response.data.forEach((item, index) => {
-                                        tableBody += `<tr>
-                                            <td class='text-center'>${index + 1}</td>
-                                            <td>${item.location_name || ''}</td>
-                                            <td>${item.edp_code || ''}</td>
-                                            <td>${item.section || ''}</td>
-                                            <td>${item.description || ''}</td>
-                                            <td class='text-center'>${item.qty || ''}</td>
-                                            
-                                        </tr>`;
-
-                                     
-
-                                    });
-                                    $(".light-body-userdata").html(tableBody);
-                                } else {
-                                  
-                                    $(".light-body-userdata").html("<tr><td colspan='8' class='text-center'>No data found</td></tr>");
-                                }
-                            },
-                            error: function(xhr) {
-                                console.error("Error fetching specific user data:", xhr);
-                                alert("Something went wrong while fetching specific user data.");
-                            }
-                        });
-                    } else {
-                 
-                        $("#noDataFoundModal").modal("show");
-                    }
-                },
-                error: function(xhr) {
-                    if (xhr.status === 400) {
-                        alert("Error: " + xhr.responseJSON.error);
-                    } else if (xhr.status === 404) {
-                        $("#noDataFoundModal").modal("show");
-                    } else {
-                        alert("Something went wrong! Please try again.");
-                    }
-                }
-            });
-        });
+    $(".user-row").click(function() {
+        let userId = $(this).data("id");
+        let form = $('<form action="{{ url('/mapusergetdata') }}" method="POST"></form>');
+        form.append('@csrf');
+        form.append('<input type="hidden" name="id" value="' + userId + '">');
+        $('body').append(form);
+        form.submit();
     });
+});
 </script>
 @endsection
 

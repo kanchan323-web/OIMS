@@ -16,39 +16,70 @@
                         @if(session('success'))
                             <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>User Name</th>
-                                    <th>Email</th>
-                                    <th>CPF No</th>
-                                    <th>User Type</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($users as $key => $user)
+
+                        <div class="table-responsive rounded mb-3">
+                            <table class="data-tables table mb-0 tbl-server-info">
+                                <thead class="bg-white text-uppercase">
+                                    <tr class="ligth ligth-data">
+                                        <th>
+                                            <div class="checkbox d-inline-block">
+                                                <input type="checkbox" class="checkbox-input" id="checkbox1">
+                                                <label for="checkbox1" class="mb-0"></label>
+                                            </div>
+                                        </th>
+                                        <th>#</th>
+                                        <th>User Name</th>
+                                        <th>Email</th>
+                                        <th>CPF No</th>
+                                        <th>User Type</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="ligth-body">
+                                    @foreach($users as $key => $user)
                                     <tr>
-                                        <td>{{ $key + 1 }}</td>
+                                        <td>
+                                            <div class="checkbox d-inline-block">
+                                                <input type="checkbox" class="checkbox-input" id="checkbox{{ $user->id }}">
+                                                <label for="checkbox{{ $user->id }}" class="mb-0"></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    {{ $loop->iteration }}
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td>{{ $user->user_name }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>{{ $user->cpf_no }}</td>
                                         <td>{{ ucfirst($user->user_type) }}</td>
                                         <td>{{ $user->user_status ? 'Active' : 'Inactive' }}</td>
                                         <td>
-                                            <a href="{{ route('admin.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                            <form action="{{ route('admin.destroy', $user->id) }}" method="POST" class="d-inline-block">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
-                                            </form>
+                                            <div class="d-flex align-items-center list-action">
+                                                <a class="badge badge-info mr-2" data-toggle="tooltip" title="View" href="{{ route('admin.show', $user->id) }}">
+                                                    <i class="ri-eye-line mr-0"></i>
+                                                </a>
+                                                <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit" href="{{ route('admin.edit', $user->id) }}">
+                                                    <i class="ri-pencil-line mr-0"></i>
+                                                </a>
+                                                <form action="{{ route('admin.destroy', $user->id) }}" method="POST" class="d-inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="badge bg-warning mr-2 border-0" onclick="return confirm('Are you sure?')" data-toggle="tooltip" title="Delete">
+                                                        <i class="ri-delete-bin-line mr-0"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
                         {{ $users->links() }} <!-- Pagination -->
                     </div>
                 </div>

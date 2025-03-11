@@ -9,13 +9,17 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
 use App\Models\Edp;
+use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class StockController extends Controller
 {
@@ -23,7 +27,9 @@ class StockController extends Controller
     public function add_stock()
     {
         $moduleName = "Add Stock";
-        return view('user.stock.add_stock', compact('moduleName'));
+        $rigId =  Auth::user()->rig_id;
+        $LocationName = RigUser::where('id', $rigId)->first();
+        return view('user.stock.add_stock', compact('moduleName', 'LocationName'));
     }
 
 
@@ -47,20 +53,27 @@ class StockController extends Controller
     public function stock_filter(Request $request)
     {
         $moduleName = "Stock";
-        $data = Stock::when($request->category, function ($query, $category) {
-            return $query->where('category', $category);
-        })
-            ->when($request->location_name, function ($query, $location_name) {
-                return $query->where('location_name', 'like', "%{$location_name}%");
-            })
-            ->when($request->form_date, function ($query) use ($request) {
-                return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-            })
-            ->when($request->to_date, function ($query) use ($request) {
-                return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-            })->get();
 
+        // If it's an AJAX request, apply filtering
+        if ($request->ajax()) {
+            $data = Stock::when($request->category, function ($query, $category) {
+                return $query->where('category', $category);
+            })
+                ->when($request->location_name, function ($query, $location_name) {
+                    return $query->where('location_name', 'like', "%{$location_name}%");
+                })
+                ->when($request->form_date, function ($query) use ($request) {
+                    return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                })
+                ->when($request->to_date, function ($query) use ($request) {
+                    return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                })->get();
 
+            return response()->json(['data' => $data]);
+        }
+
+        // Load all stock data initially
+        $data = Stock::all();
         return view('user.stock.list_stock', compact('data', 'moduleName'));
     }
 
@@ -113,6 +126,11 @@ class StockController extends Controller
     // }
 
 
+    public function downloadSample()
+    {
+        $filePath = public_path('sample-files/sample_stock.xlsx');
+        return Response::download($filePath, 'Sample_Stock_File.xlsx');
+    }
 
 
     public function showImportForm()
@@ -155,19 +173,38 @@ class StockController extends Controller
                 return redirect()->back();
             }
 
-            foreach (array_slice($rows, 1) as $row) {
+            $errors = [];
+            foreach (array_slice($rows, 1) as $index => $row) {
+                if (array_filter($row, fn($value) => !is_null($value) && trim($value) !== '') === []) {
+                    continue;
+                }
+
+                // Validate EDP code
+                if (!isset($row[2]) || !preg_match('/^\d{9}$/', $row[2])) {
+                    $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
+                    continue;
+                }
+
+                // Validate required fields (excluding optional fields)
+                $requiredFields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // Required field indexes
+                foreach ($requiredFields as $fieldIndex) {
+                    if (!isset($row[$fieldIndex]) || trim($row[$fieldIndex]) === '') {
+                        $errors[] = "Row " . ($index + 2) . ": Missing required field '" . $expectedHeaders[$fieldIndex] . "'.";
+                        continue 2; // Skip this row
+                    }
+                }
 
                 Stock::create([
-                    'location_id'   => $row[0] ?? null,
-                    'location_name' => $row[1] ?? null,
-                    'edp_code'      => $row[2] ?? null,
-                    'description'   => $row[3] ?? null,
-                    'section'       => $row[4] ?? null,
-                    'category'      => $row[5] ?? null,
-                    'qty'           => $row[6] ?? 0,
-                    'new_spareable' => $row[7] ?? 0,
-                    'used_spareable' => $row[8] ?? 0,
-                    'measurement'   => $row[9] ?? null,
+                    'location_id'   => $row[0],
+                    'location_name' => $row[1],
+                    'edp_code'      => $row[2],
+                    'description'   => $row[3],
+                    'section'       => $row[4],
+                    'category'      => $row[5],
+                    'qty'           => (int) $row[6],
+                    'new_spareable' => (int) $row[7],
+                    'used_spareable' => (int) $row[8],
+                    'measurement'   => $row[9],
                     'remarks'       => $row[10] ?? 'nill',
                     'user_id'       => Auth::id(),
                 ]);
@@ -189,10 +226,11 @@ class StockController extends Controller
     }
 
 
+
     public function stock_list_view(Request $request)
     {
+        Log::info('AJAX request received.', ['data' => $request->all()]);
         $id = $request->data;
-
         $viewdata =   Stock::where('id', $id)->get()->first();
 
         return response()->json(
@@ -246,5 +284,33 @@ class StockController extends Controller
                 'viewdata' => $viewdata
             ]
         );
+    }
+
+
+    public function downloadPdf(Request $request)
+    {
+        $query = Stock::query(); // Start query
+
+        $filtersApplied = false;
+
+        if ($request->has('category') && $request->category) {
+            $query->where('category', $request->category);
+            $filtersApplied = true;
+        }
+        if ($request->has('location_name') && $request->location_name) {
+            $query->where('location_name', 'LIKE', '%' . $request->location_name . '%');
+            $filtersApplied = true;
+        }
+        if ($request->has('form_date') && $request->has('to_date')) {
+            $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
+            $filtersApplied = true;
+        }
+
+        $stockData = $filtersApplied ? $query->get() : Stock::all();
+
+        // Generate PDF with retrieved data
+        $pdf = PDF::loadView('pdf.stock_report', compact('stockData'));
+
+        return $pdf->download('Stock_Report.pdf');
     }
 }

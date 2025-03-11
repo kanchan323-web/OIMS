@@ -39,6 +39,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/rig_users', [RigUserController::class, 'index'])->name('admin.rig_users.index');
     Route::get('/admin/rig_users/create', [RigUserController::class, 'create'])->name('admin.rig_users.create');
     Route::post('/admin/rig_users', [RigUserController::class, 'store'])->name('admin.rig_users.store');
+    Route::get('/admin/rig_users/{id}', [RigUserController::class, 'show'])->name('admin.rig_users.show');
     Route::get('/admin/rig_users/{id}/edit', [RigUserController::class, 'edit'])->name('admin.rig_users.edit');
     Route::post('/admin/rig_users/{id}', [RigUserController::class, 'update'])->name('admin.rig_users.update');
     Route::delete('/admin/rig_users/{id}', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
@@ -48,16 +49,16 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/edp/create', [EdpController::class, 'create'])->name('admin.edp.create');
     Route::post('/admin/edp', [EdpController::class, 'store'])->name('admin.edp.store');
     Route::get('/admin/edp/{id}/edit', [EdpController::class, 'edit'])->name('admin.edp.edit');
-    Route::post('/admin/edp/{id}', [EdpController::class, 'update'])->name('admin.edp.update');
-    Route::delete('/admin/edp/{id}', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
+    Route::post('/admin/edp/update', [EdpController::class, 'update'])->name('admin.edp.update');
+    Route::post('/admin/edp/delete', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
 
     //Category master
     Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category.index');
     Route::get('/admin/category/create', [CategoryController::class, 'create'])->name('admin.category.create');
     Route::post('/admin/category', [CategoryController::class, 'store'])->name('admin.category.store');
     Route::get('/admin/category/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
-    Route::post('/admin/category/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
-    Route::delete('/admin/category/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+    Route::post('/admin/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
+    Route::post('/admin/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
 });
 
 
@@ -84,13 +85,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
     Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');
     Route::get('/get_edp_details', [StockController::class, 'get_edp_details'])->name('get_edp_details');
-
+    Route::get('/sample-download', [StockController::class, 'downloadSample'])->name('stock.downloadSample');
     Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('stock_list_view');
     Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');
     Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');
     Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
     Route::get('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
-    Route::post('/stock_filter',[StockController::class, 'stock_filter'])->name('stock_filter');
+    Route::get('/stock_filter',[StockController::class, 'stock_filter'])->name('stock_filter');
+
+
 
     //Request stock
     Route::prefix('request-stock')->group(function () {
@@ -108,6 +111,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
 
 });
+
+//PDF Section
+Route::get('/stock-list/pdf', [StockController::class, 'downloadPdf'])->name('stock_list_pdf');
 
 //Reset Password (No Auth Required)
 Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
