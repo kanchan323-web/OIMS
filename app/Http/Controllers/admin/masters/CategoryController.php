@@ -60,6 +60,10 @@ class CategoryController extends Controller
 
     public function update(Request $request){
 
+            $request->validate([
+                'category_name' => 'required|string',
+            ]);
+
             Category::where('id',$request->category_id)->update(
                 [
                     'category_name' =>$request->category_name

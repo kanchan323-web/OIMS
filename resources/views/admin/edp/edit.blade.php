@@ -45,11 +45,34 @@
                                     @enderror
                                 </div>
 
+
+                       
+
+                                
                                 <div class="col-md-6 mb-3">
                                     <label for="category">Select Category</label>
                                     <select class="form-control" name="Category_Name" required >
-                                        <option disabled value="" {{ empty($editData->category) ? 'selected' : '' }}>
-                                            Select Category...</option>
+                                    
+                                    <option  value="" {{ empty($editData->category) ? 'selected' : '' }}>
+                                    Select Category...</option>
+                                   
+
+                                        <option value="Stores" >
+                                        Stores
+                                        </option>
+                                        <option value="Capital Item" >
+                                        Capital Item
+                                        </option>
+                                       
+                                    </select>
+                                </div>
+                                <!-- <div class="col-md-6 mb-3">
+                                    <label for="category">Select Category</label>
+                                    <select class="form-control" name="Category_Name" required >
+                                    
+                                    <option  value="" {{ empty($editData->category) ? 'selected' : '' }}>
+                                    Select Category...</option>
+                                   
 
                                         @foreach($category_list as $index => $list)
                                         <option value="{{ $list->category_name }}"
@@ -58,7 +81,7 @@
                                         </option>
                                         @endforeach
                                     </select>
-                                </div>
+                                </div> -->
 
 
                                 <div class="col-md-6 mb-3">
@@ -68,10 +91,28 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label for="category">Select Section</label>
+                                    <select class="form-control" name="section" required >
+                                    
+                                    <option  value="" {{ empty($editData->section) ? 'selected' : '' }}>
+                                    Select Section...</option>
+                                   
+
+                                        <option value="ENGG" >
+                                        ENGG
+                                        </option>
+                                        <option value="DRILL" >
+                                        DRILL
+                                        </option>
+                                       
+                                    </select>
+                                </div>
+
+                                <!-- <div class="col-md-6 mb-3">
                                     <label for="section">Section</label>
                                     <input type="text" class="form-control" value="{{ $editData->section }}"
                                         name="section" required>
-                                </div>
+                                </div> -->
 
                                 <div class="col-md-6 mb-3">
                                     <label for="measurement">Measurement</label>
