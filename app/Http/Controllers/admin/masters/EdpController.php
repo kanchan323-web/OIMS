@@ -55,7 +55,7 @@ class EdpController extends Controller
 
     public function update(Request $request){
         $validate = $request->validate([
-            'EDP_Code' => 'required|digits:8|numeric',
+            'EDP_Code' => 'required|digits:9|numeric',
             'section'  => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
