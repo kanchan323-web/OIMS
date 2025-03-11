@@ -29,14 +29,14 @@ class EdpController extends Controller
         $moduleName = "Create EDP";
 
         $validate = $request->validate([
-            'EDP_Code' => 'required|digits:8|numeric',
+            'edp_code' => 'required|digits:9|numeric',
             'section'  => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
         ]);
 
         $edp = new Edp;
-        $edp->edp_code = $request->EDP_Code;
+        $edp->edp_code = $request->edp_code;
         $edp->category = $request->Category_Name;
         $edp->description = $request->description;
         $edp->section = $request->section;
@@ -48,14 +48,14 @@ class EdpController extends Controller
 
     public function edit($id){
         $moduleName = "Edit EDP";
-        $category_list = Category::get();
-        $editData = Edp::where('id', $id)->get()->first();
+        $category_list = Category::all();
+        $editData = Edp::findOrFail($id);
         return view('admin.edp.edit',compact('category_list','editData','moduleName'));
     }
 
     public function update(Request $request){
         $validate = $request->validate([
-            'EDP_Code' => 'required|digits:9|numeric',
+            'edp_code' => 'required|digits:9|numeric',
             'section'  => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
@@ -63,7 +63,7 @@ class EdpController extends Controller
 
         Edp::where('id',$request->edp_id)->update(
             [
-                'edp_code' =>$request->EDP_Code,
+                'edp_code' =>  $request->edp_code,
                 'category' =>$request->Category_Name,
                 'description' =>$request->description,
                 'section' =>$request->section,

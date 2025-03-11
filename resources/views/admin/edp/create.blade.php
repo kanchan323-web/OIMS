@@ -35,10 +35,10 @@
                             @csrf
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="EDP_Code">EDP Code</label>
-                                    <input type="text" class="form-control @error('EDP_Code') is-invalid @enderror"
-                                        name="EDP_Code" value="{{ old('EDP_Code') }}" required>
-                                    @error('EDP_Code')
+                                    <label for="edp_code">EDP Code</label>
+                                    <input type="number" class="form-control @error('edp_code') is-invalid @enderror"
+                                        name="edp_code" value="{{ old('edp_code') }}" required>
+                                    @error('edp_code')
                                     <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
