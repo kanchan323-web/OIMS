@@ -16,7 +16,9 @@ use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class StockController extends Controller
 {
@@ -25,8 +27,8 @@ class StockController extends Controller
     {
         $moduleName = "Add Stock";
         $rigId =  Auth::user()->rig_id;
-        $LocationName = RigUser::where('id',$rigId)->first();
-        return view('user.stock.add_stock', compact('moduleName','LocationName'));
+        $LocationName = RigUser::where('id', $rigId)->first();
+        return view('user.stock.add_stock', compact('moduleName', 'LocationName'));
     }
 
 
@@ -50,20 +52,27 @@ class StockController extends Controller
     public function stock_filter(Request $request)
     {
         $moduleName = "Stock";
-        $data = Stock::when($request->category, function ($query, $category) {
-            return $query->where('category', $category);
-        })
-            ->when($request->location_name, function ($query, $location_name) {
-                return $query->where('location_name', 'like', "%{$location_name}%");
-            })
-            ->when($request->form_date, function ($query) use ($request) {
-                return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-            })
-            ->when($request->to_date, function ($query) use ($request) {
-                return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-            })->get();
 
+        // If it's an AJAX request, apply filtering
+        if ($request->ajax()) {
+            $data = Stock::when($request->category, function ($query, $category) {
+                return $query->where('category', $category);
+            })
+                ->when($request->location_name, function ($query, $location_name) {
+                    return $query->where('location_name', 'like', "%{$location_name}%");
+                })
+                ->when($request->form_date, function ($query) use ($request) {
+                    return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                })
+                ->when($request->to_date, function ($query) use ($request) {
+                    return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                })->get();
 
+            return response()->json(['data' => $data]);
+        }
+
+        // Load all stock data initially
+        $data = Stock::all();
         return view('user.stock.list_stock', compact('data', 'moduleName'));
     }
 
@@ -219,8 +228,8 @@ class StockController extends Controller
 
     public function stock_list_view(Request $request)
     {
+        Log::info('AJAX request received.', ['data' => $request->all()]);
         $id = $request->data;
-
         $viewdata =   Stock::where('id', $id)->get()->first();
 
         return response()->json(
@@ -263,5 +272,33 @@ class StockController extends Controller
         $deleteId = $request->delete_id;
         $UData = Stock::where('id', $deleteId)->delete();
         return redirect()->route('stock_list');
+    }
+
+
+    public function downloadPdf(Request $request)
+    {
+        $query = Stock::query(); // Start query
+
+        $filtersApplied = false;
+    
+        if ($request->has('category') && $request->category) {
+            $query->where('category', $request->category);
+            $filtersApplied = true;
+        }
+        if ($request->has('location_name') && $request->location_name) {
+            $query->where('location_name', 'LIKE', '%' . $request->location_name . '%');
+            $filtersApplied = true;
+        }
+        if ($request->has('form_date') && $request->has('to_date')) {
+            $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
+            $filtersApplied = true;
+        }
+
+        $stockData = $filtersApplied ? $query->get() : Stock::all();
+    
+        // Generate PDF with retrieved data
+        $pdf = PDF::loadView('pdf.stock_report', compact('stockData'));
+    
+        return $pdf->download('Stock_Report.pdf');
     }
 }
