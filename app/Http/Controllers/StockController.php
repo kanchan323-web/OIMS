@@ -8,6 +8,7 @@ use App\Rules\ReCaptcha;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
+use App\Models\Edp;
 use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
@@ -274,13 +275,24 @@ class StockController extends Controller
         return redirect()->route('stock_list');
     }
 
+    public function get_edp_details(Request $request)
+    {
+        $id = $request->data;
+        $viewdata =   Edp::where('id', $id)->get()->first();
+        return response()->json(
+            [
+                'viewdata' => $viewdata
+            ]
+        );
+    }
+
 
     public function downloadPdf(Request $request)
     {
         $query = Stock::query(); // Start query
 
         $filtersApplied = false;
-    
+
         if ($request->has('category') && $request->category) {
             $query->where('category', $request->category);
             $filtersApplied = true;
@@ -295,10 +307,10 @@ class StockController extends Controller
         }
 
         $stockData = $filtersApplied ? $query->get() : Stock::all();
-    
+
         // Generate PDF with retrieved data
         $pdf = PDF::loadView('pdf.stock_report', compact('stockData'));
-    
+
         return $pdf->download('Stock_Report.pdf');
     }
 }
