@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    @if ($errors->any())
+                    <!-- @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
                             @foreach ($errors->all() as $error)
@@ -14,7 +14,7 @@
                             @endforeach
                         </ul>
                     </div>
-                    @endif
+                    @endif -->
 
                     @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -35,12 +35,12 @@
                             @csrf
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="EDP_Code">EDP Code</label>
-                                    <input type="text" class="form-control @error('EDP_Code') is-invalid @enderror"
-                                        name="EDP_Code" value="{{$editData->edp_code}}" required>
-                                    <input type="hidden" class="form-control @error('EDP_Code') is-invalid @enderror"
+                                    <label for="edp_code">EDP Code</label>
+                                    <input type="number" class="form-control @error('edp_code') is-invalid @enderror"
+                                        name="edp_code" value="{{$editData->edp_code}}" required>
+                                    <input type="hidden" class="form-control @error('edp_code') is-invalid @enderror"
                                         name="edp_id" value="{{$editData->id}}" required>
-                                    @error('EDP_Code')
+                                    @error('edp_code')
                                     <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
