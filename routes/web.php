@@ -90,7 +90,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');
     Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
     Route::get('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
-    Route::post('/stock_filter',[StockController::class, 'stock_filter'])->name('stock_filter');
+    Route::get('/stock_filter',[StockController::class, 'stock_filter'])->name('stock_filter');
+    
+
 
     //Request stock
     Route::prefix('request-stock')->group(function () {
@@ -108,6 +110,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
 
 });
+
+//PDF Section
+Route::get('/stock-list/pdf', [StockController::class, 'downloadPdf'])->name('stock_list_pdf');
 
 //Reset Password (No Auth Required)
 Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');
