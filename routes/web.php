@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('all_stock_list');
     Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
     Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');
+    Route::get('/get_edp_details', [StockController::class, 'get_edp_details'])->name('get_edp_details');
 
     Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('stock_list_view');
     Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');

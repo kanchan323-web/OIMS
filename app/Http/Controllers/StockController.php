@@ -8,6 +8,7 @@ use App\Rules\ReCaptcha;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
+use App\Models\Edp;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
@@ -24,7 +25,7 @@ class StockController extends Controller
         $moduleName = "Add Stock";
         return view('user.stock.add_stock', compact('moduleName'));
     }
-   
+
 
     public function stock_list(Request $request)
     {
@@ -234,5 +235,16 @@ class StockController extends Controller
         $deleteId = $request->delete_id;
         $UData = Stock::where('id', $deleteId)->delete();
         return redirect()->route('stock_list');
+    }
+
+    public function get_edp_details(Request $request)
+    {
+        $id = $request->data;
+        $viewdata =   Edp::where('id', $id)->get()->first();
+        return response()->json(
+            [
+                'viewdata' => $viewdata
+            ]
+        );
     }
 }
