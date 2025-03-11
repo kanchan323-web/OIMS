@@ -1,127 +1,123 @@
 @extends('layouts.frontend.layout')
 @section('page-content')
 
-
-    <div class="content-page">
-     <div class="container-fluid add-form-list">
+<div class="content-page">
+    <div class="container-fluid add-form-list">
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Edit Stock </h4>
+                            <h4 class="card-title">Edit Stock</h4>
                         </div>
                     </div>
                     <div class="card-body">
-                        <form class="needs-validation" novalidate method="POST" action="{{ route('update_stock') }}" id="addStockForm">
+                        <form class="needs-validation" novalidate method="POST" action="{{ route('update_stock') }}" id="editStockForm">
                             @csrf
+                            <input type="hidden" name="id" value="{{ $editData->id }}">
                             
-                         
                             <div class="form-row">
-
-                            <div class="col-md-6 mb-3">
-                                <label for="">Location Id</label>
-                                <input type="text" class="form-control" name="location_id" value="{{$editData->location_id}}" placeholder=" Location Id" id="" required>
-                                <input type="hidden" class="form-control" name="id" value="{{$editData->id}}" placeholder=" Location Id" id="" >
-                                <div class="invalid-feedback">
-                                    Enter location id
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Location Name</label>
-                                <input type="text" class="form-control" placeholder="Location Name"  value="{{$editData->location_name}}" name="location_name" id="" required>
-                                <div class="invalid-feedback">
-                                    Enter Location Name
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">EDP Code</label>
-                                <input type="text" class="form-control" name="edp_code" value="{{$editData->edp_code}}" placeholder=" EDP Code" id="" required>
-                                <div class="invalid-feedback">
-                                    Enter EDP Code
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="category">Category</label>
-                                <select class="form-control" id="category" name="category" required>
-                                    <option disabled value="" {{ empty($editData->category) ? 'selected' : '' }}>Select Category...</option>
-                                    <option value="Spares" {{ $editData->category == 'Spares' ? 'selected' : '' }}>Spares</option>
-                                    <option value="Stores" {{ $editData->category == 'Stores' ? 'selected' : '' }}>Stores</option>
-                                    <option value="Capital items" {{ $editData->category == 'Capital items' ? 'selected' : '' }}>Capital items</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Please select a category
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="">Description </label>
-                                <textarea class="form-control" id=""  name="description" placeholder="Enter Description" required>{{$editData->description}}</textarea>
-                                <div class="invalid-feedback">
-                                    Enter Description
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="section">Section</label>
-                                <select class="form-control" name="section" id="section" required>
-                                    <option disabled value="" {{ empty($editData->section) ? 'selected' : '' }}>Select Section...</option>
-                                    <option value="Section1" {{ $editData->section == 'Section1' ? 'selected' : '' }}>Section1</option>
-                                    <option value="Section2" {{ $editData->section == 'Section2' ? 'selected' : '' }}>Section2</option>
-                                    <option value="Section3" {{ $editData->section == 'Section3' ? 'selected' : '' }}>Section3</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Please select a Section
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="">Available Quantity</label>
-                                <input type="number"  value="{{$editData->qty}}"  class="form-control" placeholder=" Available Quantity" name="qty" id="" required>
-                                <div class="invalid-feedback">
-                                    Enter Available Quantity
-                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="">Location Id</label>
+                                    <input type="text" class="form-control" name="location_id" value="{{ $editData->location_id }}" readonly required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="">Unit of Measurement </label>
-                                <input type="text" value="{{$editData->measurement}}" class="form-control" name="measurement" placeholder="Unit of Measurement" id="" required>
-                                <div class="invalid-feedback">
-                                    Enter Unit of Measurement
+                                    <label for="">Location Name</label>
+                                    <input type="text" class="form-control" name="location_name" value="{{ $editData->location_name }}" readonly required>
                                 </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                <label for="">New Spareable </label>
-                                <input type="number" value="{{$editData->new_spareable}}" class="form-control" placeholder=" New Spareable" name="new_spareable" id="" required>
-                                <div class="invalid-feedback">
-                                    Enter New Spareable 
-                                </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Used Spareable </label>
-                                <input type="number" class="form-control" value="{{$editData->used_spareable}}"  placeholder=" Used Spareable" name="used_spareable" id="" required>
-                                <div class="invalid-feedback">
-                                    Enter Used Spareable
-                                </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                <label for="">Remarks / Notes  </label>
-                                <textarea class="form-control" name="remarks" placeholder="Remarks / Notes" required>{{ $editData->remarks }}</textarea>
 
-                                <div class="invalid-feedback">
-                                    Enter Remarks / Notes
+                                <div class="col-md-6 mb-3">
+                                    <label for="">EDP Code</label>
+                                    <select class="form-control @error('edp_code') is-invalid @enderror" name="edp_code" id="edp_code_id" required>
+                                        <option selected disabled value="">Select EDP Code...</option>
+                                        @foreach($edpCodes as $edp)
+                                            <option value="{{ $edp->id }}" {{ $editData->edp_code == $edp->id ? 'selected' : '' }}>
+                                                {{ $edp->edp_code }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('edp_code')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 mb-3 edp_detail">
+                                    <label for="">Category</label>
+                                    <input type="text" class="form-control" name="category" id="category_id" value="{{ $editData->category }}" readonly required>
+                                </div>
+
+                                <div class="col-md-6 mb-3 edp_detail">
+                                    <label for="">Description</label>
+                                    <textarea class="form-control" name="description" id="description" readonly required>{{ $editData->description }}</textarea>
+                                </div>
+
+                                <div class="col-md-6 mb-3 edp_detail">
+                                    <label for="">Section</label>
+                                    <input type="text" class="form-control" name="section" id="section" value="{{ $editData->section }}" readonly required>
+                                </div>
+
+                                <div class="col-md-6 mb-3 edp_detail">
+                                    <label for="">Unit of Measurement</label>
+                                    <input type="text" class="form-control" name="measurement" id="measurement" value="{{ $editData->measurement }}" readonly required>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="">Available Quantity</label>
+                                    <input type="number" class="form-control" name="qty" value="{{ $editData->qty }}" required>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="">New Spareable</label>
+                                    <input type="number" class="form-control" name="new_spareable" value="{{ $editData->new_spareable }}" required>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="">Used Spareable</label>
+                                    <input type="number" class="form-control" name="used_spareable" value="{{ $editData->used_spareable }}" required>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="">Remarks / Notes</label>
+                                    <textarea class="form-control" name="remarks" required>{{ $editData->remarks }}</textarea>
                                 </div>
                             </div>
-                            </div>
-                        
-                            <button class="btn btn-primary" type="submit">Submit form</button>
-                            <button type="reset" class="btn btn-danger">Reset</button>
+
+                            <button class="btn btn-primary" type="submit">Update Stock</button>
                             <a href="{{ route('stock_list') }}" class="btn btn-light">Go Back</a>
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-  </div>
+</div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+ $(document).ready(function() {
+    $('.edp_detail').css('display', '{{ $editData->edp_code ? "block" : "none" }}');
 
+    $('#edp_code_id').change(function() {
+        var id = $(this).val();
+        console.log(id);
+
+        $.ajaxSetup({headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')}});
+        $.ajax({
+            type: "GET",
+            url: "{{ route('get_edp_details') }}",
+            data: { data: id },
+            success: function(response){
+                $('.edp_detail').css('display', 'block');
+                $("#category_id").val(response.viewdata['category']);
+                $("#measurement").val(response.viewdata['measurement']);
+                $("#section").val(response.viewdata['section']);
+                $("#description").val(response.viewdata['description']);
+            }
+        });
+    });
+});
+</script>
+
+@endsection

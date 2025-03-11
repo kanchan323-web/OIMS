@@ -28,7 +28,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="">Location Id</label>
                                     <input type="text" class="form-control" name="location_id"
-                                        placeholder=" Location Id" id="" value="{{$LocationName->id}}" required readonly>
+                                        placeholder=" Location Id" id="" value="{{$LocationName->location_id}}" required readonly>
                                     @error('location_id')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -48,11 +48,11 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="">EDP Code</label>
-                                    <select class="form-control @error('category') is-invalid @enderror" name="edp_code" id="edp_code_id" required>
+                                    <select class="form-control @error('edp_code') is-invalid @enderror" name="edp_code" id="edp_code_id" required>
                                         <option selected disabled value="">Select EDP Code...</option>
-                                        <option value=1>Spares</option>
-                                        <option value=2>Stores</option>
-                                        <option value=3>Capital items</option>
+                                        @foreach($edpCodes as $edp)
+                                            <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
+                                        @endforeach
                                     </select>
 
                                     @error('edp_code')
