@@ -49,16 +49,16 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::get('/admin/edp/create', [EdpController::class, 'create'])->name('admin.edp.create');
     Route::post('/admin/edp', [EdpController::class, 'store'])->name('admin.edp.store');
     Route::get('/admin/edp/{id}/edit', [EdpController::class, 'edit'])->name('admin.edp.edit');
-    Route::post('/admin/edp/{id}', [EdpController::class, 'update'])->name('admin.edp.update');
-    Route::delete('/admin/edp/{id}', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
+    Route::post('/admin/edp/update', [EdpController::class, 'update'])->name('admin.edp.update');
+    Route::post('/admin/edp/delete', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
 
     //Category master
     Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category.index');
     Route::get('/admin/category/create', [CategoryController::class, 'create'])->name('admin.category.create');
     Route::post('/admin/category', [CategoryController::class, 'store'])->name('admin.category.store');
     Route::get('/admin/category/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
-    Route::post('/admin/category/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
-    Route::delete('/admin/category/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+    Route::post('/admin/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
+    Route::post('/admin/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
 });
 
 

@@ -1,16 +1,20 @@
+
+
 @extends('layouts.frontend.admin_layout')
 @section('page-content')
+
 
 <div class="content-page">
     <div class="container-fluid add-form-list">
         <div class="row">
             <div class="col-sm-12">
-                
+               
                 @if(session('error'))
                 <div class="alert alert-danger">
                     {{ session('error') }}
                 </div>
                 @endif
+
 
                 @if(session('success'))
                 <div class="alert alert-success">
@@ -18,10 +22,11 @@
                 </div>
                 @endif
 
+
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Add Rig</h4>
+                            <h4 class="card-title">Add Category</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -43,5 +48,6 @@
         </div>
     </div>
 </div>
+
 
 @endsection
