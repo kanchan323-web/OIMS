@@ -113,55 +113,76 @@
         </div>
     </div>
 
-    <!-- Stock Details Modal -->
-    <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">View Stock</h5>
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <form action="{{route('Delete_stock')}}"  method="post">
+            @csrf
+        <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Are you sure?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="card-body">
-                        <!-- <form class="needs-validation" novalidate method="POST" action="" id="addStockForm"> -->
+                    <p>You are about to delete <span class=""></span> and all of its contents.
+                    </br>
+                    <span style="font-weight:bold">This operation is permanent and cannot be undone.</span>
+                    </p>
+                            <input type="hidden" name="delete_id"  id="delete_id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class=" btn btn-primary " data-dismiss="modal">Cancle</button>
+                    <button type="submit" class=" btn btn-secondary " >Delete</button>
+                </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-                        <div class="form-row">
-                            <div class="col-md-6 mb-3">
-                                <label for="">Location Id</label>
-                                <input type="text" class="form-control" name="location_id" placeholder=" Location Id"
-                                    id="location_id" readonly>
-                                <div class="invalid-feedback">
-                                    Enter location id
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Location Name</label>
-                                <input type="text" class="form-control" placeholder=" Location Name" name="location_name"
-                                    id="location_name" readonly>
-                                <div class="invalid-feedback">
-                                    Enter Location Name
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">EDP Code</label>
-                                <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code"
-                                    id="edp_code" readonly>
-                                <div class="invalid-feedback">
-                                    Enter EDP Code
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="category">Category</label>
-                                <input type="text" class="form-control" name="category" placeholder=" Category "
-                                    id="category" readonly>
-                                <input type="hidden" name="category" id="hidden_category">
-                                <div class="invalid-feedback">
-                                    Please select a category
-                                </div>
-                            </div>
+<div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+  <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">View Stock</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <div class="card-body">
+            <!-- <form class="needs-validation" novalidate method="POST" action="" id="addStockForm"> -->
+                
+                <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label for="">Location Id</label>
+                    <input type="text" class="form-control" name="location_id" placeholder=" Location Id" id="location_id" readonly>
+                    <div class="invalid-feedback">
+                        Enter location id
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="">Location Name</label>
+                    <input type="text" class="form-control" placeholder=" Location Name" name="location_name" id="location_name" readonly>
+                    <div class="invalid-feedback">
+                        Enter Location Name
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="">EDP Code</label>
+                    <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code" id="edp_code" readonly>
+                    <div class="invalid-feedback">
+                        Enter EDP Code
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                        <label for="category">Category</label>
+                        <input type="text" class="form-control" name="category" placeholder=" Category " id="category" readonly>
+                        <input type="hidden" name="category" id="hidden_category">
+                        <div class="invalid-feedback">
+                            Please select a category
+                        </div>
+                </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="">Description </label>
