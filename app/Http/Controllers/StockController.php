@@ -56,32 +56,39 @@ class StockController extends Controller
         $moduleName = "Stock";
 
         if ($request->ajax()) {
-            $data = Stock::when($request->category, function ($query, $category) {
-                return $query->where('category', $category);
-            })
+            $data = Stock::leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->select('stocks.*', 'edps.edp_code as edp_code_from_edps') // Fetch EDP Code from edps
+                ->when($request->category, function ($query, $category) {
+                    return $query->where('stocks.category', $category);
+                })
                 ->when($request->location_name, function ($query, $location_name) {
-                    return $query->where('location_name', 'like', "%{$location_name}%");
+                    return $query->where('stocks.location_name', 'like', "%{$location_name}%");
                 })
                 ->when($request->form_date, function ($query) use ($request) {
-                    return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
                 })
                 ->when($request->to_date, function ($query) use ($request) {
-                    return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-                })->get();
+                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                })
+                ->get();
 
             return response()->json(['data' => $data]);
         }
 
-        $data = Stock::all();
+        $data = Stock::leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code as edp_code_from_edps')
+            ->get();
+
         return view('user.stock.list_stock', compact('data', 'moduleName'));
     }
+
 
     public function stockSubmit(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|exists:edps,id', 
+            'edp_code' => 'required|exists:edps,id',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -256,11 +263,11 @@ class StockController extends Controller
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
-    
+
         $update_data = $request->validate([
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|exists:edps,id', 
+            'edp_code' => 'required|exists:edps,id',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -270,23 +277,23 @@ class StockController extends Controller
             'used_spareable' => 'required|numeric',
             'remarks' => 'required'
         ]);
-    
+
         $existingStock = Stock::where('edp_code', $request->edp_code)
-                              ->where('id', '!=', $dataid) 
-                              ->exists();
-    
+            ->where('id', '!=', $dataid)
+            ->exists();
+
         if ($existingStock) {
             return redirect()->back()
                 ->withErrors(['edp_code' => 'This EDP Code is already in use by another stock entry.'])
                 ->withInput();
         }
-    
+
         Stock::where('id', $dataid)->update($update_data);
-    
+
         Session::flash('success', 'Stock updated successfully!');
         return redirect()->route('stock_list');
     }
-    
+
 
     public function DeleteStock(Request $request)
     {
