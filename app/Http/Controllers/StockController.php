@@ -26,10 +26,11 @@ class StockController extends Controller
 
     public function add_stock()
     {
+        $edpCodes = Edp::all();
         $moduleName = "Add Stock";
         $rigId =  Auth::user()->rig_id;
         $LocationName = RigUser::where('id', $rigId)->first();
-        return view('user.stock.add_stock', compact('moduleName', 'LocationName'));
+        return view('user.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes'));
     }
 
 
@@ -54,7 +55,6 @@ class StockController extends Controller
     {
         $moduleName = "Stock";
 
-        // If it's an AJAX request, apply filtering
         if ($request->ajax()) {
             $data = Stock::when($request->category, function ($query, $category) {
                 return $query->where('category', $category);
@@ -72,18 +72,16 @@ class StockController extends Controller
             return response()->json(['data' => $data]);
         }
 
-        // Load all stock data initially
         $data = Stock::all();
         return view('user.stock.list_stock', compact('data', 'moduleName'));
     }
 
     public function stockSubmit(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required',
+            'edp_code' => 'required|exists:edps,id', 
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -100,6 +98,12 @@ class StockController extends Controller
                 ->withInput();
         }
 
+        $existingStock = Stock::where('edp_code', $request->edp_code)->exists();
+        if ($existingStock) {
+            return redirect()->back()
+                ->withErrors(['edp_code' => 'This EDP Code is already in use.'])
+                ->withInput();
+        }
 
         $stock = new Stock;
         $stock->location_id = $request->location_id;
@@ -120,6 +124,7 @@ class StockController extends Controller
 
         return redirect()->route('stock_list');
     }
+
 
     // public function stock_list(){
     //     return view('user.stock.list_stock');
@@ -243,30 +248,45 @@ class StockController extends Controller
     {
 
         $editData = Stock::where('id', $id)->get()->first();
+        $edpCodes = Edp::all();
         $moduleName = "Edit Stock";
-        // dd($editData);
-        return view('user.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName]);
+        return view('user.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName, 'edpCodes' => $edpCodes]);
     }
 
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
+    
         $update_data = $request->validate([
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required',
+            'edp_code' => 'required|exists:edps,id', 
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
-            'qty' => 'required',
+            'qty' => 'required|numeric',
             'measurement' => 'required',
-            'new_spareable' => 'required',
-            'used_spareable' => 'required',
+            'new_spareable' => 'required|numeric',
+            'used_spareable' => 'required|numeric',
             'remarks' => 'required'
         ]);
-        $UData = Stock::where('id', $dataid)->update($update_data);
+    
+        $existingStock = Stock::where('edp_code', $request->edp_code)
+                              ->where('id', '!=', $dataid) 
+                              ->exists();
+    
+        if ($existingStock) {
+            return redirect()->back()
+                ->withErrors(['edp_code' => 'This EDP Code is already in use by another stock entry.'])
+                ->withInput();
+        }
+    
+        Stock::where('id', $dataid)->update($update_data);
+    
+        Session::flash('success', 'Stock updated successfully!');
         return redirect()->route('stock_list');
     }
+    
 
     public function DeleteStock(Request $request)
     {
