@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    @if ($errors->any())
+                    <!-- @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
                             @foreach ($errors->all() as $error)
@@ -14,7 +14,7 @@
                             @endforeach
                         </ul>
                     </div>
-                    @endif
+                    @endif -->
 
                     @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -46,14 +46,35 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="category">Select Category</label>
                                     <select class="form-control" name="Category_Name" required >
-                                        @foreach($category_list as $index => $list)
-                                        <option value="{{$list->category_name}}">({{ $loop->iteration }})
-                                            {{ $list->category_name }}</option>
+                                    
+                                    <option  value="" {{ empty($editData->category) ? 'selected' : '' }}>
+                                    Select Category...</option>
+                                   
 
-                                        @endforeach
-
+                                        <option value="Stores" >
+                                        Stores
+                                        </option>
+                                        <option value="Capital Item" >
+                                        Capital Item
+                                        </option>
+                                       
                                     </select>
-                                </div>
+                                </div>  
+
+                                <!-- <div class="col-md-6 mb-3">
+                                    <label for="category">Select Category</label>
+                                    <select class="form-control" name="Category_Name" required>
+                                        <option disabled value="" {{ empty($editData->category) ? 'selected' : '' }}>
+                                            Select Category...</option>
+
+                                        @foreach($category_list as $index => $list)
+                                        <option value="{{ $list->category_name }}"
+                                            {{ isset($editData->category) && $editData->category == $list->category_name ? 'selected' : '' }}>
+                                            ({{ $loop->iteration }}) {{ $list->category_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div> -->
 
                                 <div class="col-md-6 mb-3">
                                     <label for="description">Description</label>
@@ -61,9 +82,27 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label for="category">Select Section</label>
+                                    <select class="form-control" name="section" required >
+                                    
+                                    <option  value="" {{ empty($editData->section) ? 'selected' : '' }}>
+                                    Select Section...</option>
+                                   
+
+                                        <option value="ENGG" >
+                                        ENGG
+                                        </option>
+                                        <option value="DRILL" >
+                                        DRILL
+                                        </option>
+                                       
+                                    </select>
+                                </div>
+
+                                <!-- <div class="col-md-6 mb-3">
                                     <label for="section">Section</label>
                                     <input type="text" class="form-control" name="section" required>
-                                </div>
+                                </div> -->
 
                                 <div class="col-md-6 mb-3">
                                     <label for="measurement">Measurement</label>
