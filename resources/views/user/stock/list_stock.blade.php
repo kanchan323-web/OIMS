@@ -12,20 +12,20 @@
                 <div class="alert alert-danger">{{ Session::get('error') }}</div>
                 @endif
 
-                <div class="row justify-content-between">
-                    <div class="col-sm-6 col-md-9">
-                        <div id="user_list_datatable_info" class="dataTables_filter">
-                            <form id="filterForm" class="mr-3 position-relative">
-                                <div class="row">
-                                    <div class="col-md-2 mb-2">
-                                        <label for="category">Category</label>
-                                        <select class="form-control" name="category" id="category">
-                                            <option disabled selected>Select Category...</option>
-                                            <option value="Spares">Spares</option>
-                                            <option value="Stores">Stores</option>
-                                            <option value="Capital items">Capital items</option>
-                                        </select>
-                                    </div>
+                    <div class="row justify-content-between">
+                        <div class="col-sm-6 col-md-9">
+                            <div id="user_list_datatable_info" class="dataTables_filter">
+                                <form id="filterForm" class="mr-3 position-relative">
+                                    <div class="row">
+                                        <div class="col-md-2 mb-2">
+                                            <label for="edp_code">EDP Code</label>
+                                            <select class="form-control" name="edp_code" id="edp_code">
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($stockData as $stock)
+                                                    <option value="{{ $stock->edp_code }}">{{ $stock->edp_code }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
                                     <div class="col-md-2 mb-2">
                                         <label for="location_name">Location Name</label>
@@ -90,7 +90,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $stockdata->location_name }}</td>
-                                <td>{{ $stockdata->edp_code_from_edps }}</td>
+                                <td>{{ $stockdata->edp_code }}</td>
                                 <td>{{ $stockdata->section }}</td>
                                 <td>{{ $stockdata->description }}</td>
                                 <td>{{ $stockdata->qty }}</td>
