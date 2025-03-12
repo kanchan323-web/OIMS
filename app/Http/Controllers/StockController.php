@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
 use App\Models\Edp;
+use App\Models\User;
 use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +37,18 @@ class StockController extends Controller
 
     public function stock_list(Request $request)
     {
+        
+        
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+                    ->where('rig_id',$rig_id)
+                    ->pluck('id')
+                    ->toArray();
+               
+            
+          
+       
+
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
         })
@@ -46,13 +59,10 @@ class StockController extends Controller
                 return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
             })
             ->get();
-
         $moduleName = "Stock";
-
-        dd($data[0]);
-        return view('user.stock.list_stock', compact('data', 'moduleName'));
+        return view('user.stock.list_stock', compact('data', 'moduleName','datarig'));
     }
-    
+
 
     public function stock_filter(Request $request)
     {
@@ -75,7 +85,13 @@ class StockController extends Controller
                 })
                 ->get();
 
-            return response()->json(['data' => $data]);
+                $rig_id = Auth::user()->rig_id;
+                $datarig = User::where('user_type', '!=', 'admin')
+                            ->where('rig_id',$rig_id)
+                            ->pluck('id')
+                            ->toArray();
+
+            return response()->json(['data' => $data, 'datarig'=>$datarig]);
         }
 
         $data = Stock::leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
