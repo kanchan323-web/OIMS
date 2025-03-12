@@ -21,9 +21,9 @@ Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 
 Route::middleware(['admin.auth'])->group(function () {
+
     Route::prefix('/admin')->group(function () {
             Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
-
             //Dashboard
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
@@ -60,7 +60,8 @@ Route::middleware(['admin.auth'])->group(function () {
             Route::get('/category/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
             Route::post('/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
             Route::post('/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
-});
+    });
+
 });
 
 

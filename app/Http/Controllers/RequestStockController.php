@@ -43,10 +43,12 @@ class RequestStockController extends Controller
         $moduleName = "Add Stock";
         return view('request_stock.add_request_stock', compact('moduleName'));
     }
+
+
     public function RequestStockAddPost(Request $request){
 
        $request->validate([
-            'user_name' => 'required',
+            'user_name' => 'required|string',
             'user_id' => 'required',
             'section' => 'required',
             'stock_item' => 'required',
