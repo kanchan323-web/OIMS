@@ -18,8 +18,8 @@
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="">User Name</label>
-                                    <input type="text" class="form-control" name="user_name" placeholder="User Name"
-                                        id="" required>
+                                    <input type="text" class="form-control" name="user_name" value="{{Auth::user()->user_name}}" placeholder="User Name"
+                                        id="" required readonly>
                                     <div class="invalid-feedback">
                                         Enter User name
                                     </div>
@@ -39,9 +39,9 @@
                                     <label for="">Section</label>
                                     <select class="form-control" name="section" id="" required>
                                         <option selected disabled value="">Select Section...</option>
-                                        <option value="Section1">Section1</option>
-                                        <option value="Section2">Section2</option>
-                                        <option value="Section3">Section3</option>
+                                        <option value="ENGG">ENGG</option>
+                                        <option value="DRILL">DRILL</option>
+
                                     </select>
                                     <div class="invalid-feedback">
                                         Please select a Section

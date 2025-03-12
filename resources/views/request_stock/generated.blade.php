@@ -110,7 +110,7 @@
                         </thead>
                         <tbody class="ligth-body">
                             @foreach($data as $index => $stockdata)
-                            @if(!in_array($stockdata->user_id, $datarig))
+                            @if(in_array($stockdata->user_id, $datarig))
                             <tr>
 
                                 <td>
