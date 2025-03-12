@@ -48,8 +48,11 @@ class StockController extends Controller
             ->get();
 
         $moduleName = "Stock";
+
+        dd($data[0]);
         return view('user.stock.list_stock', compact('data', 'moduleName'));
     }
+    
 
     public function stock_filter(Request $request)
     {
