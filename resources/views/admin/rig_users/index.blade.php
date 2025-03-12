@@ -3,6 +3,26 @@
 
 <div class="content-page">
     <div class="container-fluid">
+
+        {{-- Success & Error Messages --}}
+        @if (Session::get('success'))
+        <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+            <strong>Success:</strong> {{ Session::get('success') }}
+            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
+
+        @if (Session::get('error'))
+        <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> {{ Session::get('error') }}
+            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
