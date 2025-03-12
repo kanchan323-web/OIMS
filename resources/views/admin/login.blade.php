@@ -20,13 +20,18 @@
                             <div class="row">
                                 <div class="col-12">
                                     @if (Session::get('success'))
-                                        <div class="alert alert-success">{{ Session::get('success') }}</div>
+                                        <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+                                            <strong>Success:</strong> {{ Session::get('success') }}
+                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> --}}
+                                        </div>
                                     @endif
 
                                     @if (Session::get('error'))
-                                        <div class="alert alert-danger">{{ Session::get('error') }}</div>
+                                        <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+                                            <strong>Error:</strong> {{ Session::get('error') }}
+                                            {{-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> --}}
+                                        </div>
                                     @endif
-
                                     <div class="mb-5">
                                         <h4 class="text-center">OIMS Admin Login</h4>
                                     </div>
@@ -39,7 +44,8 @@
                                         <div class="form-floating mb-3">
                                             <input type="text"
                                                 class="form-control @error('login') is-invalid @enderror " name="login"
-                                                value="{{ old('login') }}" placeholder="Enter Email or Username" id="login">
+                                                value="{{ old('login') }}" placeholder="Enter Email or Username"
+                                                id="login">
                                             @error('login')
                                                 <p class="invalid-feedback">{{ $message }}</p>
                                             @enderror
@@ -71,7 +77,7 @@
                                                 🔄
                                             </button>
                                         </div>
-                                        @error('captcha') 
+                                        @error('captcha')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -81,7 +87,8 @@
                                             <button class="btn bsb-btn-xl btn-primary py-3" type="submit">Log in
                                                 now</button>
                                         </div>
-                                        <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot Password</a>
+                                        <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot
+                                            Password</a>
                                     </div>
                                 </div>
                             </form>
@@ -99,6 +106,13 @@
     function refreshCaptcha() {
         document.querySelector('img[alt="CAPTCHA"]').src = "{{ captcha_src() }}" + "?" + Math.random();
     }
+
+    $(document).ready(function () {
+        // Automatically fade out alerts after 3 seconds
+        setTimeout(function () {
+            $(".alert").fadeOut("slow");
+        }, 3000);
+    });
 </script>
 
 </html>

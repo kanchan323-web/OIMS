@@ -18,10 +18,23 @@
                             <div class="row">
                                 <div class="col-12">
                                     @if (Session::get('success'))
-                                        <div class="alert alert-success">{{ Session::get('success') }}</div>
+                                        <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+                                            <strong>Success:</strong> {{ Session::get('success') }}
+                                            <button type="button" class="close close-dark" data-dismiss="alert"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
                                     @endif
+
                                     @if (Session::get('error'))
-                                        <div class="alert alert-danger">{{ Session::get('error') }}</div>
+                                        <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+                                            <strong>Error:</strong> {{ Session::get('error') }}
+                                            <button type="button" class="close close-dark" data-dismiss="alert"
+                                                aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
                                     @endif
                                     <div class="mb-4">
                                         <h4 class="text-center">Forgot Password</h4>
@@ -33,11 +46,12 @@
                                 <div class="row gy-3 overflow-hidden">
                                     <div class="col-12">
                                         <div class="form-floating mb-3">
-                                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                                id="email" name="email" value="{{ old('email') }}" 
-                                                placeholder="Enter your email" required>
-                                            @error('email') 
-                                                <p class="invalid-feedback">{{ $message }}</p> 
+                                            <input type="email"
+                                                class="form-control @error('email') is-invalid @enderror" id="email"
+                                                name="email" value="{{ old('email') }}" placeholder="Enter your email"
+                                                required>
+                                            @error('email')
+                                                <p class="invalid-feedback">{{ $message }}</p>
                                             @enderror
                                             <label for="email">Email</label>
                                         </div>
@@ -57,8 +71,16 @@
             </div>
         </div>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" 
-        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">^
+
+                $(document).ready(function () {
+                    // Automatically fade out alerts after 3 seconds
+                    setTimeout(function () {
+                        $(".alert").fadeOut("slow");
+                    }, 3000);
+                });
+        </script>
 </body>
+
 </html>
