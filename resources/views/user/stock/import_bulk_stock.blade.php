@@ -29,6 +29,7 @@
                                         <input type="file" name="file" id="file"
                                             class="file-input @error('file') is-invalid @enderror" required>
                                         <label for="file" class="file-label">📁 Choose File</label>
+                                        <span class="file-name ext-primary small" style="color:#a943d6">No file chosen</span>
                                     </div>
                                   
                                     @error('file')
@@ -54,4 +55,16 @@
     </div>
 </div>
 
+<script>
+        $(document).ready(function () {
+            $('#file').on('change', function () {
+                let fileName = $(this).val().split('\\').pop(); 
+                if (fileName) {
+                    $('.file-name').text(fileName);
+                } else {
+                    $('.file-name').text("No file chosen");
+                }
+            });
+        });
+    </script>
 @endsection
