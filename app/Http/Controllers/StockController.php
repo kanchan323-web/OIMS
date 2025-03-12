@@ -38,14 +38,14 @@ class StockController extends Controller
     {
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
-                    ->where('rig_id',$rig_id)
-                    ->pluck('id')
-                    ->toArray();
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
         $stockData = Stock::select('edp_code')->distinct()->get();
         $data = Stock::all();
         $moduleName = "Stock";
-        return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData','datarig'));
+        return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
 
@@ -69,13 +69,13 @@ class StockController extends Controller
                 })
                 ->get();
 
-                $rig_id = Auth::user()->rig_id;
-                $datarig = User::where('user_type', '!=', 'admin')
-                            ->where('rig_id',$rig_id)
-                            ->pluck('id')
-                            ->toArray();
+            $rig_id = Auth::user()->rig_id;
+            $datarig = User::where('user_type', '!=', 'admin')
+                ->where('rig_id', $rig_id)
+                ->pluck('id')
+                ->toArray();
 
-            return response()->json(['data' => $data, 'datarig'=>$datarig, 'stockData' => $stockData]);
+            return response()->json(['data' => $data, 'datarig' => $datarig, 'stockData' => $stockData]);
         }
 
 
@@ -202,20 +202,23 @@ class StockController extends Controller
                     }
                 }
 
-                Stock::create([
-                    'location_id'   => $row[0],
-                    'location_name' => $row[1],
-                    'edp_code'      => $row[2],
-                    'description'   => $row[3],
-                    'section'       => $row[4],
-                    'category'      => $row[5],
-                    'qty'           => (int) $row[6],
-                    'new_spareable' => (int) $row[7],
-                    'used_spareable' => (int) $row[8],
-                    'measurement'   => $row[9],
-                    'remarks'       => $row[10] ?? 'nill',
-                    'user_id'       => Auth::id(),
-                ]);
+                // Update or Insert the data
+                Stock::updateOrCreate(
+                    ['edp_code' => $row[2]], 
+                    [
+                        'location_id'   => $row[0],
+                        'location_name' => $row[1],
+                        'description'   => $row[3],
+                        'section'       => $row[4],
+                        'category'      => $row[5],
+                        'qty'           => (int) $row[6],
+                        'new_spareable' => (int) $row[7],
+                        'used_spareable' => (int) $row[8],
+                        'measurement'   => $row[9],
+                        'remarks'       => $row[10] ?? 'nill',
+                        'user_id'       => Auth::id(),
+                    ]
+                );
             }
 
             Storage::delete($filePath);
@@ -235,6 +238,7 @@ class StockController extends Controller
 
 
 
+
     public function stock_list_view(Request $request)
     {
         Log::info('AJAX request received.', ['data' => $request->all()]);
@@ -247,6 +251,8 @@ class StockController extends Controller
             ]
         );
     }
+
+    
     public function EditStock(Request $request, $id)
     {
         $editData = Stock::where('id', $id)->get()->first();
