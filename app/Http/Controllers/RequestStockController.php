@@ -37,7 +37,6 @@ class RequestStockController extends Controller
                     ->pluck('id')
                     ->toArray();
           
-    
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
         return view('request_stock.generated',compact('data', 'moduleName','datarig'));
@@ -111,7 +110,7 @@ class RequestStockController extends Controller
 
     public function RequestStockViewPost(Request $request){
        $id =  $request->data;
-       $data = RequestStock::where('req_id',$id)->get();
+       $data = RequestStock::where('id',$id)->get();
             return response()->json([
                 'data' =>$data
             ]);
