@@ -92,7 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
     Route::get('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
     Route::get('/stock_filter',[StockController::class, 'stock_filter'])->name('stock_filter');
-
+    Route::get('/check-edp-stock', [StockController::class, 'checkEdpStock'])->name('check_edp_stock');
 
 
     //Request stock

@@ -18,12 +18,12 @@
                                 <form id="filterForm" class="mr-3 position-relative">
                                     <div class="row">
                                         <div class="col-md-2 mb-2">
-                                            <label for="category">Category</label>
-                                            <select class="form-control" name="category" id="category">
-                                                <option disabled selected>Select Category...</option>
-                                                <option value="Spares">Spares</option>
-                                                <option value="Stores">Stores</option>
-                                                <option value="Capital items">Capital items</option>
+                                            <label for="edp_code">EDP Code</label>
+                                            <select class="form-control" name="edp_code" id="edp_code">
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($stockData as $stock)
+                                                    <option value="{{ $stock->edp_code }}">{{ $stock->edp_code }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
 
@@ -90,7 +90,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $stockdata->location_name }}</td>
-                                            <td>{{ $stockdata->edp_code_from_edps }}</td>
+                                            <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
                                             <td>{{ $stockdata->qty }}</td>
