@@ -120,6 +120,8 @@
                                 <td>{{$stockdata->description}}</td>
                                 <td>{{$stockdata->qty}}</td>
                                 <td>
+
+                              
                                     <div class="d-flex align-items-center list-action">
                                         <a class="badge badge-info mr-2" data-toggle="modal"
                                             onclick="viewstockdata({{$stockdata->id}})"
