@@ -67,6 +67,8 @@ Route::middleware(['admin.auth'])->group(function () {
 //Authentication
 Route::get('/user/login', [LoginController::class, 'index'])->name('user.login');
 Route::post('/user/authenticate', [LoginController::class, 'authenticate'])->name('user.authenticate');
+
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/logout', [LoginController::class, 'logout'])->name('user.logout');
 
@@ -80,7 +82,6 @@ Route::middleware(['auth'])->group(function () {
     //Stocks
     Route::any('/add_stock', [StockController::class, 'add_stock'])->name('add_stock');
     Route::post('/stockSubmit', [StockController::class, 'stockSubmit'])->name('stockSubmit');
-    Route::any('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
     Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('all_stock_list');
     Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
     Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');

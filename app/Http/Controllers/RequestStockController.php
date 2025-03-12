@@ -34,6 +34,7 @@ class RequestStockController extends Controller
             return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
         })->get();
         
+        $moduleName = "Request Stocks filter";
         return view('request_stock.list_request_stock',compact('data', 'moduleName'));
 
     }

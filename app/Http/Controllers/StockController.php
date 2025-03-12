@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
 use App\Models\Edp;
+use App\Models\User;
 use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
@@ -35,13 +36,25 @@ class StockController extends Controller
 
     public function stock_list(Request $request)
     {
+        
+        
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+                    ->where('rig_id',$rig_id)
+                    ->pluck('id')
+                    ->toArray();
+               
+            
+          
+       
+
 
         $stockData = Stock::select('edp_code')->distinct()->get();
         $data = Stock::all();
-
         $moduleName = "Stock";
-        return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData'));
+        return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData','datarig'));
     }
+
 
     public function stock_filter(Request $request)
     {
@@ -63,7 +76,13 @@ class StockController extends Controller
                 })
                 ->get();
 
-            return response()->json(['data' => $data, 'stockData' => $stockData]);
+                $rig_id = Auth::user()->rig_id;
+                $datarig = User::where('user_type', '!=', 'admin')
+                            ->where('rig_id',$rig_id)
+                            ->pluck('id')
+                            ->toArray();
+
+            return response()->json(['data' => $data, 'datarig'=>$datarig, 'stockData' => $stockData]);
         }
 
 
