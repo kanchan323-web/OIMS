@@ -19,7 +19,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location Id</label>
                                         <input type="text" class="form-control" name="location_id" placeholder="Location Id"
-                                            value="{{ old('location_id', $LocationName->location_id) }}" id="location_ids" required>
+                                        value="{{ old('location_id', $LocationName?->location_id) }}" id="location_ids" required>
                                         @error('location_id')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -28,7 +28,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location Name</label>
                                         <input type="text" class="form-control" placeholder="Location Name"
-                                            name="location_name" id="location_name" value="{{ old('location_name', $LocationName->name) }}"
+                                            name="location_name" id="location_name" value="{{ old('location_name', $LocationName?->name) }}"
                                             required>
                                         @error('location_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
