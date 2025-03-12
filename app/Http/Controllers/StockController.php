@@ -90,7 +90,7 @@ class StockController extends Controller
         $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|integer|min:9',
+            'edp_code' => 'required|integer|digits:9|unique:stocks,edp_code',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -267,7 +267,7 @@ class StockController extends Controller
         $update_data = $request->validate([
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|integer|min:9',
+            'edp_code' => 'required|integer|digits:9',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
