@@ -110,7 +110,7 @@
                         </thead>
                         <tbody class="ligth-body">
                             @foreach($data as $index => $stockdata)
-                            @if(!in_array($stockdata->user_id, $datarig))
+                            @if(in_array($stockdata->user_id, $datarig))
                             <tr>
 
                                 <td>
@@ -145,7 +145,7 @@
                                         <!-- Edit Button (Only for Your Members) -->
                                         
                                         <a class="badge badge-info mr-2" data-toggle="modal"
-                                            onclick="RequestStockData({{$stockdata->req_id}})"
+                                            onclick="RequestStockData({{$stockdata->id}})"
                                             data-target=".bd-example-modal-xl" data-placement="top" title=""
                                             data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
                                         
