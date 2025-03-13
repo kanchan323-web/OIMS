@@ -16,6 +16,17 @@
                                 id="addStockForm">
                                 @csrf
                                 <div class="form-row">
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">EDP Code</label>
+                                        <input type="text" class="form-control @error('edp_code') is-invalid @enderror"
+                                            name="edp_code" id="edp_code_id" placeholder="Enter EDP Code" value="{{ old('edp_code') }}"
+                                            required>
+                                        @error('edp_code')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location Id</label>
                                         <input type="text" class="form-control" name="location_id" placeholder="Location Id"
@@ -31,16 +42,6 @@
                                             name="location_name" id="location_name" value="{{ old('location_name', $LocationName?->name) }}"
                                             required readonly>
                                         @error('location_name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">EDP Code</label>
-                                        <input type="text" class="form-control @error('edp_code') is-invalid @enderror"
-                                            name="edp_code" id="edp_code_id" placeholder="Enter EDP Code" value="{{ old('edp_code') }}"
-                                            required>
-                                        @error('edp_code')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -153,13 +154,13 @@
     </div>
 
         <script>
-            $(document).ready(function() {
+           $(document).ready(function() {
             $('#edp_code_id').on('input', function() {
                 var edpCode = $(this).val().trim();
 
                 console.log("Input detected: " + edpCode);
 
-                if (edpCode.length === 9) {
+                if (edpCode.length === 9) { // Ensure full EDP Code is entered
                     console.log("Triggering AJAX for EDP Code: " + edpCode);
 
                     $.ajaxSetup({
@@ -175,16 +176,24 @@
 
                             if (response.exists) {
                                 $("#addStockForm").attr("action", "{{ route('update_stock') }}");
+                                // $("#location_ids").val(response.data?.location_id || '');
+                                // $("#location_name").val(response.data?.location_name || '');
+                                // If stock exists, make these fields readonly
+                                $("#category_id").val(response.data?.category || '').prop('disabled', true);
+                                $("#description").val(response.data?.description || '').prop('readonly', true);
+                                $("#measurement").val(response.data?.measurement || '').prop('readonly', true);
+                                $("#section_id").val(response.data?.section || '').prop('disabled', true);
                             } else {
                                 $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
+                                
+                                // If adding new stock, enable the fields
+                                $("#category_id").val('').prop('disabled', false);
+                                $("#description").val('').prop('readonly', false);
+                                $("#measurement").val('').prop('readonly', false);
+                                $("#section_id").val('').prop('disabled', false);
                             }
 
-                           // $("#location_ids").val(response.data?.location_id || '');
-                         //   $("#location_name").val(response.data?.location_name || '');
-                            $("#category_id").val(response.data?.category || '');
-                            $("#description").val(response.data?.description || '');
-                            $("#measurement").val(response.data?.measurement || '');
-                            $("#section_id").val(response.data?.section || '');
+                            // Populate other fields whether editing or adding
                             $("#qty").val(response.data?.qty || '');
                             $("#new_spareable").val(response.data?.new_spareable || '');
                             $("#used_spareable").val(response.data?.used_spareable || '');
