@@ -7,19 +7,44 @@ use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
 use App\Models\Stock;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
 
 class RequestStockController extends Controller
 {
    
 
     public function RequestStockList(Request $request){
+
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+                    ->where('rig_id',$rig_id)
+                    ->pluck('id')
+                    ->toArray();
+          
     
         $data = RequestStock::get();
-        $moduleName = "Request Stocks";
-        return view('request_stock.list_request_stock',compact('data', 'moduleName'));
+        $moduleName = "Request Stocks List";
+        return view('request_stock.list_request_stock',compact('data', 'moduleName','datarig'));
+    }
+
+    public function GeneratedRequest(Request $request){
+
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+                    ->where('rig_id',$rig_id)
+                    ->pluck('id')
+                    ->toArray();
+          
+        $data = RequestStock::get();
+        $moduleName = "Request Stocks List";
+        return view('request_stock.generated',compact('data', 'moduleName','datarig'));
     }
 
     public function request_stock_filter(Request $request){
+
+        
 
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
@@ -34,6 +59,7 @@ class RequestStockController extends Controller
             return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
         })->get();
         
+        $moduleName = "Request Stocks filter";
         return view('request_stock.list_request_stock',compact('data', 'moduleName'));
 
     }
@@ -42,22 +68,25 @@ class RequestStockController extends Controller
         $moduleName = "Add Stock";
         return view('request_stock.add_request_stock', compact('moduleName'));
     }
+
+
     public function RequestStockAddPost(Request $request){
+       
 
        $request->validate([
-            'user_name' => 'required',
+            'user_name' => 'required|string',
             'user_id' => 'required',
             'section' => 'required',
             'stock_item' => 'required',
-            'stock_code' => 'required',
-            'request_quantity' => 'required',
-            'qty' => 'required',
+            'stock_code' => 'required|numeric',
+            'request_quantity' => 'required|numeric',
+            'qty' => 'required|numeric',
             'measurement' => 'required',
-            'new_spareable' => 'required',
-            'used_spareable' => 'required',
+            'new_spareable' => 'required|numeric',
+            'used_spareable' => 'required|numeric',
             'remarks' => 'required',
             'supplier_location_name' => 'required',
-        ]);
+        ]); 
 
         $requeststock = new RequestStock;
         $requeststock->user_name = $request->user_name;
@@ -71,6 +100,7 @@ class RequestStockController extends Controller
         $requeststock->new_spareable = $request->new_spareable;
         $requeststock->used_spareable = $request->used_spareable;
         $requeststock->remarks = $request->remarks;
+        $requeststock->supplier_location_name = $request->supplier_location_name;
         $requeststock->save();
 
         // $data = RequestStock::insert($insert_request_data);
@@ -80,7 +110,7 @@ class RequestStockController extends Controller
 
     public function RequestStockViewPost(Request $request){
        $id =  $request->data;
-       $data = RequestStock::where('req_id',$id)->get();
+       $data = RequestStock::where('id',$id)->get();
             return response()->json([
                 'data' =>$data
             ]);

@@ -9,37 +9,43 @@
 
             <div class="col-lg-12">
                 @if (Session::get('success'))
-                    <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
-                        <strong>Success:</strong> {{ Session::get('success') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+                    <strong>Success:</strong> {{ Session::get('success') }}
+                    <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 @endif
 
                 @if (Session::get('error'))
-                    <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
-                        <strong>Error:</strong> {{ Session::get('error') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong> {{ Session::get('error') }}
+                    <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 @endif
 
                 <div class="row justify-content-between">
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
 
-                            <form action="{{ route('stock_list') }}" method="get" class="mr-3 position-relative">
+                            <form action="{{ route('request_stock_filter') }}" method="post"
+                                class="mr-3 position-relative">
+                                @csrf
                                 <div class="row">
                                     <div class="col-md-2 mb-2">
                                         <label for="category">Category</label>
                                         <select class="form-control" name="category">
                                             <option disabled {{ request('category') ? '' : 'selected' }}>Select
                                                 Category...</option>
-                                            <option value="Spares" {{ request('category') == 'Spares' ? 'selected' : '' }}>Spares</option>
-                                            <option value="Stores" {{ request('category') == 'Stores' ? 'selected' : '' }}>Stores</option>
-                                            <option value="Capital items" {{ request('category') == 'Capital items' ? 'selected' : '' }}>Capital items</option>
+                                            <option value="Spares"
+                                                {{ request('category') == 'Spares' ? 'selected' : '' }}>Spares</option>
+                                            <option value="Stores"
+                                                {{ request('category') == 'Stores' ? 'selected' : '' }}>Stores</option>
+                                            <option value="Capital items"
+                                                {{ request('category') == 'Capital items' ? 'selected' : '' }}>Capital
+                                                items</option>
                                         </select>
                                     </div>
 
@@ -63,22 +69,20 @@
 
                                     <div class="col-md-4 mb-2 d-flex align-items-end">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                        <a href="{{ route('stock_list') }}" class="btn btn-secondary">Reset</a>
+                                        <a href="{{ route('request_stock_list') }}" class="btn btn-secondary">Reset</a>
                                     </div>
                                 </div>
                             </form>
-
-
                         </div>
                     </div>
 
 
                     <div class="col-sm-6 col-md-3">
                         <div class="user-list-files d-flex">
-                            <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
+                            <a href="{{ route('request_stock_add') }}" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Add Stock</a>
-                            <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
-                                    class="las la-plus mr-3"></i>Bulk Stocks </a>
+                            <a href="#" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -105,43 +109,50 @@
                             </tr>
                         </thead>
                         <tbody class="ligth-body">
-                            @foreach($data as $stockdata)
-                                <tr>
+                            @foreach($data as $index => $stockdata)
+                            @if(in_array($stockdata->user_id, $datarig))
+                            <tr>
 
-                                    <td>
-                                        <div class="checkbox d-inline-block">
-                                            <input type="checkbox" class="checkbox-input" id="checkbox2">
-                                            <label for="checkbox2" class="mb-0"></label>
+                                <td>
+                                    <div class="checkbox d-inline-block">
+                                        <input type="checkbox" class="checkbox-input" id="checkbox2">
+                                        <label for="checkbox2" class="mb-0"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            {{ $loop->iteration }}
                                         </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div>
-                                                {{$stockdata->req_id}}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{$stockdata->supplier_location_name}}</td>
-                                    <td>{{$stockdata->stock_code}}</td>
-                                    <td>{{$stockdata->section}}</td>
-                                    <td>{{$stockdata->remarks}}</td>
-                                    <td>{{$stockdata->qty}}</td>
-                                    <td>
-                                        <div class="d-flex align-items-center list-action">
-                                            <a class="badge badge-info mr-2" data-toggle="modal"
-                                                onclick="RequestStockData({{$stockdata->req_id}})"
-                                                data-target=".bd-example-modal-xl" data-placement="top" title=""
-                                                data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
-                                            <a class="badge badge-success mr-2" data-toggle="modal"
-                                                onclick="viewstockdata({{$stockdata->id}})"
-                                                data-target=".bd-example-modal-xl" data-placement="top" title=""
-                                                data-original-title="View" href="#"><i
-                                                    class="ri-arrow-right-circle-line"></i></a>
+                                    </div>
+                                </td>
+                                <td>{{$stockdata->supplier_location_name}}</td>
+                                <td>{{$stockdata->stock_code}}</td>
+                                <td>{{$stockdata->section}}</td>
+                                <td>{{$stockdata->remarks}}</td>
+                                <td>{{$stockdata->qty}}</td>
+                                <td>
 
-                                        </div>
-                                    </td>
-                                </tr>
 
+                                    <div class="d-flex align-items-center list-action">
+                                        <!-- View Button (Always Visible) -->
+                                        <a class="badge badge-success mr-2" data-toggle="modal"
+                                            onclick="viewstockdata({{$stockdata->id}})"
+                                            data-target=".bd-example-modal-xl" data-placement="top" title=""
+                                            data-original-title="View" href="#"><i
+                                                class="ri-arrow-right-circle-line"></i></a>
+
+                                        <!-- Edit Button (Only for Your Members) -->
+                                        
+                                        <a class="badge badge-info mr-2" data-toggle="modal"
+                                            onclick="RequestStockData({{$stockdata->req_id}})"
+                                            data-target=".bd-example-modal-xl" data-placement="top" title=""
+                                            data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
+                                        
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -326,50 +337,73 @@
 </div>
 
 <script>
-    function RequestStockData(id) {
-        var id = id;
-        // console.log(id);
-        // return false;
+function RequestStockData(id) {
+    var id = id;
+    // console.log(id);
+    // return false;
 
-        $.ajaxSetup({ headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') } });
-        $.ajax({
-            type: "GET",
-            url: "{{route('request_stock_view.get')}}",
-            data: { data: id },
-            success: function (response) {
-
-                $("#location_id").val(response.data[0].user_name);
-                $("#requester_Id").val(response.data[0].req_id);
-                $("#Suppler_Location_Name").val(response.data[0].supplier_location_name);
-                $("#Suppler_Location_Id").val(response.data[0].user_name);
-                $("#EDP_Code").val(response.data[0].user_name);
-                $("#category").val(response.data[0].user_name);
-                $("#section").val(response.data[0].user_name);
-                $("#description").val(response.data[0].user_name);
-                $("#req_qty").val(response.data[0].request_quantity);
-                $("#measurement").val(response.data[0].measurement);
-                $("#new_spearable").val(response.data[0].new_spareable);
-                $("#used_spareable").val(response.data[0].used_spareable);
-                $("#remarks").val(response.data[0].remarks);
-                $("#status").val(response.data[0].user_name);
-                $("#createdAt").val(response.data[0].user_name);
-
-
-
-            }
-        });
-    }
-
-    function deleteStockdata(id) {
-
-        $("#delete_id").val(id);
-
-    }
-
-    $(document).ready(function () {
-        // Automatically fade out alerts after 3 seconds
-        setTimeout(function () {
-            $(".alert").fadeOut("slow");
-        }, 3000);
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        }
     });
+    $.ajax({
+        type: "GET",
+        url: "{{route('request_stock_view.get')}}",
+        data: {
+            data: id
+        },
+        success: function(response) {
+
+            $("#location_id").val(response.data[0].user_name);
+            $("#requester_Id").val(response.data[0].req_id);
+            $("#Suppler_Location_Name").val(response.data[0].supplier_location_name);
+            $("#Suppler_Location_Id").val(response.data[0].user_name);
+            $("#EDP_Code").val(response.data[0].user_name);
+            $("#category").val(response.data[0].user_name);
+            $("#section").val(response.data[0].user_name);
+            $("#description").val(response.data[0].user_name);
+            $("#req_qty").val(response.data[0].request_quantity);
+            $("#measurement").val(response.data[0].measurement);
+            $("#new_spearable").val(response.data[0].new_spareable);
+            $("#used_spareable").val(response.data[0].used_spareable);
+            $("#remarks").val(response.data[0].remarks);
+            $("#status").val(response.data[0].user_name);
+            $("#createdAt").val(response.data[0].user_name);
+
+
+
+        }
+    });
+}
+
+function deleteStockdata(id) {
+
+    $("#delete_id").val(id);
+
+}
 </script>
+<script>
+$(document).ready(function() {
+    $("#selectAll").on("change", function() {
+        $(".row-checkbox").prop("checked", $(this).prop("checked"));
+    });
+
+    $(".row-checkbox").on("change", function() {
+        if ($(".row-checkbox:checked").length === $(".row-checkbox").length) {
+            $("#selectAll").prop("checked", true);
+        } else {
+            $("#selectAll").prop("checked", false);
+        }
+    });
+});
+
+$(document).ready(function() {
+    // Automatically fade out alerts after 3 seconds
+    setTimeout(function() {
+        $(".alert").fadeOut("slow");
+    }, 3000);
+});
+</script>
+
+@endsection

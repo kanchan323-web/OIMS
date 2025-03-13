@@ -21,44 +21,47 @@ Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 
 Route::middleware(['admin.auth'])->group(function () {
-    Route::get('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
-    //Dashboard
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::prefix('/admin')->group(function () {
+            Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+            //Dashboard
+            Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    //User Registration
-    Route::get('/admin/index', [UserController::class, 'index'])->name('admin.index');
-    Route::get('/admin/create', [UserController::class, 'create'])->name('admin.create');
-    Route::post('/admin/store', [UserController::class, 'store'])->name('admin.store');
-    Route::get('/admin/show/{id}', [UserController::class, 'show'])->name('admin.show');
-    Route::get('/admin/edit/{id}', [UserController::class, 'edit'])->name('admin.edit');
-    Route::put('/admin/update/{id}', [UserController::class, 'update'])->name('admin.update');
-    Route::delete('/admin/destroy/{id}', [UserController::class, 'destroy'])->name('admin.destroy');
+            //User Registration
+            Route::get('/index', [UserController::class, 'index'])->name('admin.index');
+            Route::get('/create', [UserController::class, 'create'])->name('admin.create');
+            Route::post('/store', [UserController::class, 'store'])->name('admin.store');
+            Route::get('/show/{id}', [UserController::class, 'show'])->name('admin.show');
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('admin.edit');
+            Route::put('/update/{id}', [UserController::class, 'update'])->name('admin.update');
+            Route::delete('/destroy/{id}', [UserController::class, 'destroy'])->name('admin.destroy');
 
-    //rig user master
-    Route::get('/admin/rig_users', [RigUserController::class, 'index'])->name('admin.rig_users.index');
-    Route::get('/admin/rig_users/create', [RigUserController::class, 'create'])->name('admin.rig_users.create');
-    Route::post('/admin/rig_users', [RigUserController::class, 'store'])->name('admin.rig_users.store');
-    Route::get('/admin/rig_users/{id}', [RigUserController::class, 'show'])->name('admin.rig_users.show');
-    Route::get('/admin/rig_users/{id}/edit', [RigUserController::class, 'edit'])->name('admin.rig_users.edit');
-    Route::post('/admin/rig_users/{id}', [RigUserController::class, 'update'])->name('admin.rig_users.update');
-    Route::delete('/admin/rig_users/{id}', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
+            //rig user master
+            Route::get('/rig_users', [RigUserController::class, 'index'])->name('admin.rig_users.index');
+            Route::get('/rig_users/create', [RigUserController::class, 'create'])->name('admin.rig_users.create');
+            Route::post('/rig_users', [RigUserController::class, 'store'])->name('admin.rig_users.store');
+            Route::get('/rig_users/{id}', [RigUserController::class, 'show'])->name('admin.rig_users.show');
+            Route::get('/rig_users/{id}/edit', [RigUserController::class, 'edit'])->name('admin.rig_users.edit');
+            Route::post('/rig_users/{id}', [RigUserController::class, 'update'])->name('admin.rig_users.update');
+            Route::delete('/rig_users/{id}', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
 
-    //EDP master
-    Route::get('/admin/edp', [EdpController::class, 'index'])->name('admin.edp.index');
-    Route::get('/admin/edp/create', [EdpController::class, 'create'])->name('admin.edp.create');
-    Route::post('/admin/edp', [EdpController::class, 'store'])->name('admin.edp.store');
-    Route::get('/admin/edp/{id}/edit', [EdpController::class, 'edit'])->name('admin.edp.edit');
-    Route::post('/admin/edp/update', [EdpController::class, 'update'])->name('admin.edp.update');
-    Route::post('/admin/edp/delete', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
+            //EDP master
+            Route::get('/edp', [EdpController::class, 'index'])->name('admin.edp.index');
+            Route::get('/edp/create', [EdpController::class, 'create'])->name('admin.edp.create');
+            Route::post('/edp', [EdpController::class, 'store'])->name('admin.edp.store');
+            Route::get('/edp/{id}/edit', [EdpController::class, 'edit'])->name('admin.edp.edit');
+            Route::post('/edp/update', [EdpController::class, 'update'])->name('admin.edp.update');
+            Route::post('/edp/delete', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
 
-    //Category master
-    Route::get('/admin/category', [CategoryController::class, 'index'])->name('admin.category.index');
-    Route::get('/admin/category/create', [CategoryController::class, 'create'])->name('admin.category.create');
-    Route::post('/admin/category', [CategoryController::class, 'store'])->name('admin.category.store');
-    Route::get('/admin/category/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
-    Route::post('/admin/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
-    Route::post('/admin/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+            //Category master
+            Route::get('/category', [CategoryController::class, 'index'])->name('admin.category.index');
+            Route::get('/category/create', [CategoryController::class, 'create'])->name('admin.category.create');
+            Route::post('/category', [CategoryController::class, 'store'])->name('admin.category.store');
+            Route::get('/category/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
+            Route::post('/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
+            Route::post('/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+    });
+
 });
 
 
@@ -67,20 +70,22 @@ Route::middleware(['admin.auth'])->group(function () {
 //Authentication
 Route::get('/user/login', [LoginController::class, 'index'])->name('user.login');
 Route::post('/user/authenticate', [LoginController::class, 'authenticate'])->name('user.authenticate');
+
+
 Route::middleware(['auth'])->group(function () {
-    Route::get('/user/logout', [LoginController::class, 'logout'])->name('user.logout');
 
-    //Registration of users
-    Route::get('/user/register', [LoginController::class, 'register'])->name('user.register');
-    Route::post('/user/registration', [LoginController::class, 'registerSubmit'])->name('user.registerSubmit');
-
-    //Dashboard
-    Route::get('/user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
+    Route::prefix('/user')->group(function () {
+            Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
+            //Registration of users
+            Route::get('/register', [LoginController::class, 'register'])->name('user.register');
+            Route::post('/registration', [LoginController::class, 'registerSubmit'])->name('user.registerSubmit');
+            //Dashboard
+            Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
+    });
 
     //Stocks
     Route::any('/add_stock', [StockController::class, 'add_stock'])->name('add_stock');
     Route::post('/stockSubmit', [StockController::class, 'stockSubmit'])->name('stockSubmit');
-    Route::any('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
     Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('all_stock_list');
     Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
     Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');
@@ -92,12 +97,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
     Route::get('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
     Route::get('/stock_filter',[StockController::class, 'stock_filter'])->name('stock_filter');
-
+    Route::get('/check-edp-stock', [StockController::class, 'checkEdpStock'])->name('check_edp_stock');
 
 
     //Request stock
     Route::prefix('request-stock')->group(function () {
         Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
+        Route::get('/generated', [RequestStockController::class, 'GeneratedRequest'])->name('request_generated_list');
         Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
         Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
         Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');

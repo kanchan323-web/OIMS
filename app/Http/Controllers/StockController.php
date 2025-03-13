@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
 use App\Models\Edp;
+use App\Models\User;
 use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
@@ -26,62 +27,70 @@ class StockController extends Controller
 
     public function add_stock()
     {
-        $edpCodes = Edp::all();
         $moduleName = "Add Stock";
         $rigId =  Auth::user()->rig_id;
         $LocationName = RigUser::where('id', $rigId)->first();
-        return view('user.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes'));
+        return view('user.stock.add_stock', compact('moduleName', 'LocationName'));
     }
 
 
     public function stock_list(Request $request)
     {
-        $data = Stock::when($request->category, function ($query, $category) {
-            return $query->where('category', $category);
-        })
-            ->when($request->location_name, function ($query, $location_name) {
-                return $query->where('location_name', 'like', "%{$location_name}%");
-            })
-            ->when($request->form_date && $request->to_date, function ($query) use ($request) {
-                return $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
-            })
-            ->get();
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
+        $stockData = Stock::select('edp_code')->distinct()->get();
+        $data = Stock::all();
         $moduleName = "Stock";
-        return view('user.stock.list_stock', compact('data', 'moduleName'));
+        return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
+
 
     public function stock_filter(Request $request)
     {
         $moduleName = "Stock";
 
         if ($request->ajax()) {
-            $data = Stock::when($request->category, function ($query, $category) {
-                return $query->where('category', $category);
+            $stockData = Stock::select('edp_code')->distinct()->get();
+            $data = Stock::when($request->edp_code, function ($query, $edp_code) {
+                return $query->where('stocks.edp_code', $edp_code);
             })
                 ->when($request->location_name, function ($query, $location_name) {
-                    return $query->where('location_name', 'like', "%{$location_name}%");
+                    return $query->where('stocks.location_name', 'like', "%{$location_name}%");
                 })
                 ->when($request->form_date, function ($query) use ($request) {
-                    return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
                 })
                 ->when($request->to_date, function ($query) use ($request) {
-                    return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-                })->get();
+                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                })
+                ->get();
 
-            return response()->json(['data' => $data]);
+            $rig_id = Auth::user()->rig_id;
+            $datarig = User::where('user_type', '!=', 'admin')
+                ->where('rig_id', $rig_id)
+                ->pluck('id')
+                ->toArray();
+
+            return response()->json(['data' => $data, 'datarig' => $datarig, 'stockData' => $stockData]);
         }
 
+
         $data = Stock::all();
-        return view('user.stock.list_stock', compact('data', 'moduleName'));
+        $stockData = Stock::select('edp_code')->distinct()->get();
+        return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData'));
     }
+
 
     public function stockSubmit(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|exists:edps,id', 
+            'edp_code' => 'required|integer|digits:9|unique:stocks,edp_code',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -98,12 +107,6 @@ class StockController extends Controller
                 ->withInput();
         }
 
-        $existingStock = Stock::where('edp_code', $request->edp_code)->exists();
-        if ($existingStock) {
-            return redirect()->back()
-                ->withErrors(['edp_code' => 'This EDP Code is already in use.'])
-                ->withInput();
-        }
 
         $stock = new Stock;
         $stock->location_id = $request->location_id;
@@ -199,20 +202,23 @@ class StockController extends Controller
                     }
                 }
 
-                Stock::create([
-                    'location_id'   => $row[0],
-                    'location_name' => $row[1],
-                    'edp_code'      => $row[2],
-                    'description'   => $row[3],
-                    'section'       => $row[4],
-                    'category'      => $row[5],
-                    'qty'           => (int) $row[6],
-                    'new_spareable' => (int) $row[7],
-                    'used_spareable' => (int) $row[8],
-                    'measurement'   => $row[9],
-                    'remarks'       => $row[10] ?? 'nill',
-                    'user_id'       => Auth::id(),
-                ]);
+                // Update or Insert the data
+                Stock::updateOrCreate(
+                    ['edp_code' => $row[2]], 
+                    [
+                        'location_id'   => $row[0],
+                        'location_name' => $row[1],
+                        'description'   => $row[3],
+                        'section'       => $row[4],
+                        'category'      => $row[5],
+                        'qty'           => (int) $row[6],
+                        'new_spareable' => (int) $row[7],
+                        'used_spareable' => (int) $row[8],
+                        'measurement'   => $row[9],
+                        'remarks'       => $row[10] ?? 'nill',
+                        'user_id'       => Auth::id(),
+                    ]
+                );
             }
 
             Storage::delete($filePath);
@@ -232,6 +238,7 @@ class StockController extends Controller
 
 
 
+
     public function stock_list_view(Request $request)
     {
         Log::info('AJAX request received.', ['data' => $request->all()]);
@@ -244,23 +251,23 @@ class StockController extends Controller
             ]
         );
     }
+
+    
     public function EditStock(Request $request, $id)
     {
-
         $editData = Stock::where('id', $id)->get()->first();
-        $edpCodes = Edp::all();
         $moduleName = "Edit Stock";
-        return view('user.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName, 'edpCodes' => $edpCodes]);
+        return view('user.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName]);
     }
 
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
-    
+
         $update_data = $request->validate([
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|exists:edps,id', 
+            'edp_code' => 'required|integer|digits:9',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -270,23 +277,13 @@ class StockController extends Controller
             'used_spareable' => 'required|numeric',
             'remarks' => 'required'
         ]);
-    
-        $existingStock = Stock::where('edp_code', $request->edp_code)
-                              ->where('id', '!=', $dataid) 
-                              ->exists();
-    
-        if ($existingStock) {
-            return redirect()->back()
-                ->withErrors(['edp_code' => 'This EDP Code is already in use by another stock entry.'])
-                ->withInput();
-        }
-    
+
         Stock::where('id', $dataid)->update($update_data);
-    
+
         Session::flash('success', 'Stock updated successfully!');
         return redirect()->route('stock_list');
     }
-    
+
 
     public function DeleteStock(Request $request)
     {
@@ -309,7 +306,7 @@ class StockController extends Controller
 
     public function downloadPdf(Request $request)
     {
-        $query = Stock::query(); // Start query
+        $query = Stock::query();
 
         $filtersApplied = false;
 
@@ -332,5 +329,31 @@ class StockController extends Controller
         $pdf = PDF::loadView('pdf.stock_report', compact('stockData'));
 
         return $pdf->download('Stock_Report.pdf');
+    }
+
+
+    public function checkEdpStock(Request $request)
+    {
+        $stock = Stock::where('edp_code', $request->edp_code)->first();
+
+        if ($stock) {
+            return response()->json([
+                'exists' => true,
+                'data' => [
+                    'location_id' => $stock->location_id,
+                    'location_name' => $stock->location_name,
+                    'category' => $stock->category,
+                    'measurement' => $stock->measurement,
+                    'section' => $stock->section,
+                    'description' => $stock->description,
+                    'qty' => $stock->qty,
+                    'new_spareable' => $stock->new_spareable,
+                    'used_spareable' => $stock->used_spareable,
+                    'remarks' => $stock->remarks
+                ]
+            ]);
+        } else {
+            return response()->json(['exists' => false]);
+        }
     }
 }

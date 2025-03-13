@@ -19,48 +19,37 @@
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="">Location Id</label>
-                                    <input type="text" class="form-control" name="location_id" value="{{ $editData->location_id }}" readonly required>
+                                    <input type="text" class="form-control" name="location_id" value="{{ $editData->location_id }}" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="">Location Name</label>
-                                    <input type="text" class="form-control" name="location_name" value="{{ $editData->location_name }}" readonly required>
+                                    <input type="text" class="form-control" name="location_name" value="{{ $editData->location_name }}" required>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label for="">EDP Code</label>
-                                    <select class="form-control @error('edp_code') is-invalid @enderror" name="edp_code" id="edp_code_id" required>
-                                        <option selected disabled value="">Select EDP Code...</option>
-                                        @foreach($edpCodes as $edp)
-                                            <option value="{{ $edp->id }}" {{ $editData->edp_code == $edp->id ? 'selected' : '' }}>
-                                                {{ $edp->edp_code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('edp_code')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
+                                    <input type="text" class="form-control" name="edp_code_display" value="{{ $editData->edp_code }}" readonly>
+                                    <input type="hidden" name="edp_code" value="{{ $editData->edp_code }}">
                                 </div>
 
-                                <div class="col-md-6 mb-3 edp_detail">
+                                <div class="col-md-6 mb-3">
                                     <label for="">Category</label>
-                                    <input type="text" class="form-control" name="category" id="category_id" value="{{ $editData->category }}" readonly required>
+                                    <input type="text" class="form-control" name="category" value="{{ $editData->category }}" required>
                                 </div>
 
-                                <div class="col-md-6 mb-3 edp_detail">
+                                <div class="col-md-6 mb-3">
                                     <label for="">Description</label>
-                                    <textarea class="form-control" name="description" id="description" readonly required>{{ $editData->description }}</textarea>
+                                    <textarea class="form-control" name="description" required>{{ $editData->description }}</textarea>
                                 </div>
 
-                                <div class="col-md-6 mb-3 edp_detail">
+                                <div class="col-md-6 mb-3">
                                     <label for="">Section</label>
-                                    <input type="text" class="form-control" name="section" id="section" value="{{ $editData->section }}" readonly required>
+                                    <input type="text" class="form-control" name="section" value="{{ $editData->section }}" required>
                                 </div>
 
-                                <div class="col-md-6 mb-3 edp_detail">
+                                <div class="col-md-6 mb-3">
                                     <label for="">Unit of Measurement</label>
-                                    <input type="text" class="form-control" name="measurement" id="measurement" value="{{ $editData->measurement }}" readonly required>
+                                    <input type="text" class="form-control" name="measurement" value="{{ $editData->measurement }}" required>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -93,31 +82,5 @@
         </div>
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script>
- $(document).ready(function() {
-    $('.edp_detail').css('display', '{{ $editData->edp_code ? "block" : "none" }}');
-
-    $('#edp_code_id').change(function() {
-        var id = $(this).val();
-        console.log(id);
-
-        $.ajaxSetup({headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')}});
-        $.ajax({
-            type: "GET",
-            url: "{{ route('get_edp_details') }}",
-            data: { data: id },
-            success: function(response){
-                $('.edp_detail').css('display', 'block');
-                $("#category_id").val(response.viewdata['category']);
-                $("#measurement").val(response.viewdata['measurement']);
-                $("#section").val(response.viewdata['section']);
-                $("#description").val(response.viewdata['description']);
-            }
-        });
-    });
-});
-</script>
 
 @endsection

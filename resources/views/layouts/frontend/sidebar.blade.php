@@ -94,12 +94,14 @@
                                 </a>
                             </li>
                             <li class="">
-                                <a href="{{route('request_stock_add')}}">
-                                    <i class="las la-minus"></i><span>Incomming Request</span>
+                                <a href="{{route('request_generated_list')}}">
+                                    <i class="las la-minus"></i><span>Generating Request</span>
                                 </a>
                             </li>
+                       
                         </ul>
                     </li>
+                 
                     <li class="">
                         <a href="../backend/page-report.html" class="">
                             <svg class="svg-icon" id="p-dash7" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
