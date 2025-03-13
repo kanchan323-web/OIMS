@@ -57,7 +57,7 @@
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('stock_list') }}" class="btn btn-secondary ml-2">Reset</a>
+                                            <a href="{{ route('admin.stock_list') }}" class="btn btn-secondary ml-2">Reset</a>
                                             <a href="{{ route('stock_list_pdf') }}"
                                                 class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
                                                 id="downloadPdf" target="_blank">
@@ -72,9 +72,9 @@
 
                         <div class="col-sm-6 col-md-3">
                             <div class="user-list-files d-flex">
-                                <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
+                                <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Add Stock</a>
-                                <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
+                                <a href="{{ route('admin.import_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Bulk Stocks </a>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                                                     <!-- Edit Button (Only for Your Members) -->
                                                     @if(in_array($stockdata->user_id, $datarig))
                                                         <a class="badge bg-success mr-2"
-                                                            href="{{ url('/edit_stock/' . $stockdata->id) }}">
+                                                            href="{{ url('/admin/edit_stock/' . $stockdata->id) }}">
                                                             <i class="ri-pencil-line mr-0"></i>
                                                         </a>
                                                     @endif
@@ -144,7 +144,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <form action="{{route('Delete_stock')}}" method="post">
+                <form action="{{route('admin.Delete_stock')}}" method="post">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Are you sure?</h5>
@@ -306,7 +306,7 @@
             });
             $.ajax({
                 type: "GET",
-                url: "{{route('stock_list_view')}}",
+                url: "{{route('admin.stock_list_view')}}",
                 data: {
                     data: id
                 },
@@ -344,7 +344,7 @@
             $("#filterButton").click(function () {
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('stock_filter') }}",
+                    url: "{{ route('admin.stock_filter') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
                         let tableBody = $("#stockTable");
@@ -414,7 +414,7 @@
             $("#downloadPdf").click(function (e) {
                 e.preventDefault();
 
-                let baseUrl = "{{ route('stock_list_pdf') }}";
+                let baseUrl = "{{ route('admin.stock_list_pdf') }}";
                 let formData = $("#filterForm").serializeArray();
 
                 let filteredParams = formData
