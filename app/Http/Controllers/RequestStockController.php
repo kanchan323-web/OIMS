@@ -115,4 +115,18 @@ class RequestStockController extends Controller
                 'data' =>$data
             ]);
     }
+
+    public function StockList(Request $request)
+    {
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
+
+        $stockData = Stock::select('edp_code')->distinct()->get();
+        $data = Stock::all();
+        $moduleName = "Stock";
+        return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
+    }
 }

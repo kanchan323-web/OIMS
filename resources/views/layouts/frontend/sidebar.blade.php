@@ -84,6 +84,11 @@
                         </a>
                         <ul id="category" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                             <li class="">
+                                <a href="{{route('stock_list.request')}}">
+                                    <i class="las la-minus"></i><span>Stock List</span>
+                                </a>
+                            </li>
+                            <li class="">
                                 <a href="{{route('request_stock_list')}}">
                                     <i class="las la-minus"></i><span>All Stock Request List</span>
                                 </a>
