@@ -8,7 +8,7 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Add Stock</h4>
+                                <h4 class="card-title">Add or Edit Stock</h4>
                             </div>
                         </div>
                         <div class="card-body">
@@ -26,7 +26,7 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location Id</label>
                                         <input type="text" class="form-control" name="location_id" placeholder="Location Id"
@@ -185,7 +185,7 @@
                                 $("#section_id").val(response.data?.section || '').prop('disabled', true);
                             } else {
                                 $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
-                                
+
                                 // If adding new stock, enable the fields
                                 $("#category_id").val('').prop('disabled', false);
                                 $("#description").val('').prop('readonly', false);
