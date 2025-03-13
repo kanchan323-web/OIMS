@@ -39,9 +39,9 @@
                                         </div>
 
                                         <div class="col-md-2 mb-2">
-                                            <label for="Description">Description</label>
-                                            <input type="text" class="form-control" placeholder="Description"
-                                                name="Description" id="Description">
+                                            <label for="location_name">Location Name</label>
+                                            <input type="text" class="form-control" placeholder="Location Name"
+                                                name="location_name" id="location_name">
                                         </div>
 
                                         <div class="col-md-2 mb-2">
@@ -114,14 +114,14 @@
                                                         href="#">
                                                         <i class="ri-eye-line mr-0"></i>
                                                     </a>
+                                                    <a class="badge badge-success mr-2" data-toggle="modal"
+                                                        onclick="makeRequest({{ $stockdata->id }})"
+                                                        data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
+                                                        href="#">
+                                                        <i
+                                                    class="ri-arrow-right-circle-line"></i>
+                                                    </a>
 
-                                                    <!-- Edit Button (Only for Your Members) -->
-                                                    @if(in_array($stockdata->user_id, $datarig))
-                                                        <a class="badge bg-success mr-2"
-                                                            href="{{ url('/edit_stock/' . $stockdata->id) }}">
-                                                            <i class="ri-pencil-line mr-0"></i>
-                                                        </a>
-                                                    @endif
                                                 </div>
 
                                             </td>
@@ -174,6 +174,130 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">View Stock</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <!-- <form class="needs-validation" novalidate method="POST" action="" id="addStockForm"> -->
+
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="">Location Id</label>
+                                <input type="text" class="form-control" name="location_id" placeholder=" Location Id"
+                                    id="location_id" readonly>
+                                <div class="invalid-feedback">
+                                    Enter location id
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Location Name</label>
+                                <input type="text" class="form-control" placeholder=" Location Name" name="location_name"
+                                    id="location_name" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Location Name
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">EDP Code</label>
+                                <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code"
+                                    id="edp_code" readonly>
+                                <div class="invalid-feedback">
+                                    Enter EDP Code
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category">Category</label>
+                                <input type="text" class="form-control" name="category" placeholder=" Category "
+                                    id="category" readonly>
+                                <input type="hidden" name="category" id="hidden_category">
+                                <div class="invalid-feedback">
+                                    Please select a category
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="">Description </label>
+                                <textarea class="form-control" id="description" name="description"
+                                    placeholder="Enter Description" readonly></textarea>
+                                <div class="invalid-feedback">
+                                    Enter Description
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="section">Section</label>
+                                <input type="text" class="form-control" name="section" placeholder=" Section " id="section"
+                                    readonly>
+                                <input type="hidden" name="section" id="hidden_section">
+                                <div class="invalid-feedback">
+                                    Please select a Section
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-md-6 mb-3">
+                                <label for="">Available Quantity</label>
+                                <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
+                                    id="qty" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Available Quantity
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Unit of Measurement </label>
+                                <input type="text" class="form-control" name="measurement" placeholder="Unit of Measurement"
+                                    id="measurement" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Unit of Measurement
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">New Spareable </label>
+                                <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable"
+                                    id="new_spareable" readonly>
+                                <div class="invalid-feedback">
+                                    Enter New Spareable
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Used Spareable </label>
+                                <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
+                                    id="used_spareable" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Used Spareable
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Remarks / Notes </label>
+                                <textarea class="form-control" id="remarks" name="remarks" placeholder=" Remarks / Notes"
+                                    readonly></textarea>
+                                <div class="invalid-feedback">
+                                    Enter Remarks / Notes
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <button class="btn btn-primary" type="submit">Submit form</button>
+                                                                      <button type="reset" class="btn btn-danger">Reset</button>
+                                                                      <a href="" class="btn btn-light">Go Back</a> -->
+                        <!-- </form> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bd-makerequest-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Stock Request</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -433,6 +557,52 @@
                 $(".alert").fadeOut("slow");
             }, 3000);
         });
+    </script>
+    <!-- make request function  -->
+    <script>
+function makeRequest(id){
+
+    var id = id;
+            // console.log(id);
+            // return false;
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "{{route('stock_list_view')}}",
+                data: {
+                    data: id
+                },
+                success: function (response) {
+                    // console.log(response.viewdata['category']);
+                    $("#location_id").val(response.viewdata['location_id']);
+                    $("#location_name").val(response.viewdata['location_name']);
+                    $("#edp_code").val(response.viewdata['edp_code']);
+
+
+                    var sectionValue = response.viewdata['section'];
+                    $("#section").val(sectionValue);
+                    $("#hidden_section").val(sectionValue);
+
+                    var categoryValue = response.viewdata['category'];
+                    $("#category").val(categoryValue);
+                    $("#hidden_category").val(categoryValue);
+
+
+                    $("#qty").val(response.viewdata['qty']);
+                    $("#measurement").val(response.viewdata['measurement']);
+                    $("#new_spareable").val(response.viewdata['new_spareable']);
+                    $("#used_spareable").val(response.viewdata['used_spareable']);
+                    $("#remarks").val(response.viewdata['remarks']);
+                    $("#description").val(response.viewdata['description']);
+                }
+            });
+    
+}
     </script>
 
 
