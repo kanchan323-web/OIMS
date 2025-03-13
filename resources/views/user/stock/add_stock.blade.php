@@ -19,7 +19,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location Id</label>
                                         <input type="text" class="form-control" name="location_id" placeholder="Location Id"
-                                        value="{{ old('location_id', $LocationName?->location_id) }}" id="location_ids" required>
+                                        value="{{ old('location_id', $LocationName?->location_id) }}" id="location_ids" required readonly>
                                         @error('location_id')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -29,7 +29,7 @@
                                         <label for="">Location Name</label>
                                         <input type="text" class="form-control" placeholder="Location Name"
                                             name="location_name" id="location_name" value="{{ old('location_name', $LocationName?->name) }}"
-                                            required>
+                                            required readonly>
                                         @error('location_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -47,9 +47,9 @@
 
                                     <div class="col-md-6 mb-3 edp_detail">
                                         <label for="">Category</label>
-                                        <input type="text" class="form-control" name="category" id="category_id" required>
-                                    <!--  <select class="form-control @error('category') is-invalid @enderror" name="category"
-                                            required>
+                                      <!--   <input type="text" class="form-control" name="category" id="category_id" required>  -->
+                                     <select class="form-control @error('category') is-invalid @enderror" name="category"
+                                            required id="category_id">
                                             <option selected disabled value="">Select Category...</option>
                                             <option value="Spares" {{ old('category') == 'Spares' ? 'selected' : '' }}>
                                                 Spares</option>
@@ -59,7 +59,7 @@
                                                 {{ old('category') == 'Capital items' ? 'selected' : '' }}>Capital items
                                             </option>
                                         </select>
-                                    -->
+
                                         @error('category')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -78,7 +78,16 @@
 
                                     <div class="col-md-6 mb-3 edp_detail">
                                         <label for="">Section</label>
-                                        <input type="text" class="form-control" name="section" id="section" required>
+                                       <!-- <input type="text" class="form-control" name="section" id="section" required> -->
+                                        <select class="form-control @error('section') is-invalid @enderror" name="section" id="section_id" required>
+                                            <option selected disabled value="">Select Section...</option>
+                                            <option value="ENGG" {{ old('section') == 'ENGG' ? 'selected' : '' }}>
+                                                ENGG</option>
+                                            <option value="DRILL" {{ old('section') == 'DRILL' ? 'selected' : '' }}>
+                                                DRILL</option>
+                                          <!--  <option value="Section3" {{ old('section') == 'Section3' ? 'selected' : '' }}>
+                                                Section3</option> -->
+                                        </select>
                                         @error('section')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -147,35 +156,35 @@
             $(document).ready(function() {
             $('#edp_code_id').on('input', function() {
                 var edpCode = $(this).val().trim();
-        
-                console.log("Input detected: " + edpCode); 
-        
+
+                console.log("Input detected: " + edpCode);
+
                 if (edpCode.length === 9) {
                     console.log("Triggering AJAX for EDP Code: " + edpCode);
-        
+
                     $.ajaxSetup({
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
                     });
-        
+
                     $.ajax({
                         type: "GET",
                         url: "{{ route('check_edp_stock') }}",
                         data: { edp_code: edpCode },
                         success: function(response) {
                             console.log("AJAX Response: ", response);
-        
+
                             if (response.exists) {
                                 $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                             } else {
                                 $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
                             }
 
-                            $("#location_ids").val(response.data?.location_id || '');
-                            $("#location_name").val(response.data?.location_name || '');
+                           // $("#location_ids").val(response.data?.location_id || '');
+                         //   $("#location_name").val(response.data?.location_name || '');
                             $("#category_id").val(response.data?.category || '');
                             $("#description").val(response.data?.description || '');
                             $("#measurement").val(response.data?.measurement || '');
-                            $("#section").val(response.data?.section || '');
+                            $("#section_id").val(response.data?.section || '');
                             $("#qty").val(response.data?.qty || '');
                             $("#new_spareable").val(response.data?.new_spareable || '');
                             $("#used_spareable").val(response.data?.used_spareable || '');
@@ -188,7 +197,7 @@
                 }
             });
         });
-        
+
         </script>
 
 
