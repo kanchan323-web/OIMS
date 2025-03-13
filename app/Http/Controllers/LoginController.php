@@ -89,9 +89,9 @@ class LoginController extends Controller
         $moduleName = "Map User List";
         $rig_id = Auth::user()->rig_id;
         $data = User::where('user_type', '!=', 'admin')
-                    ->where('rig_id',$rig_id)
-                    ->get();
-        return view('user.map_user_list', compact('data','moduleName'));
+            ->where('rig_id', $rig_id)
+            ->get();
+        return view('user.map_user_list', compact('data', 'moduleName'));
     }
 
 
@@ -103,25 +103,25 @@ class LoginController extends Controller
 
 
     public function mapuserdataget(Request $request)
-        {
-            $moduleName = "Map User Stock";
-            $id = $request->id;
-            if (!$id) {
-                return redirect()->back()->with('error', 'User ID is required');
-            }
-            $tally = User::join('stocks', 'users.id', '=', 'stocks.user_id')
-                ->select('users.*', 'stocks.*')
-                ->where('users.id', $id)
-                ->get();
-
-            $data = User::where('id', $id)->get();
-
-            if ($tally->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found for the given user ID');
-            }
-
-            return view('user.map_user_add_stock_view', compact('data', 'tally','moduleName'));
+    {
+        $moduleName = "Map User Stock";
+        $id = $request->id;
+        if (!$id) {
+            return redirect()->back()->with('error', 'User ID is required');
         }
+        $tally = User::join('stocks', 'users.id', '=', 'stocks.user_id')
+            ->select('users.*', 'stocks.*')
+            ->where('users.id', $id)
+            ->get();
+
+        $data = User::where('id', $id)->get();
+
+        if ($tally->isEmpty()) {
+            return redirect()->back()->with('error', 'No Data Found for the Selected User');
+        }
+
+        return view('user.map_user_add_stock_view', compact('data', 'tally', 'moduleName'));
+    }
 
 
 

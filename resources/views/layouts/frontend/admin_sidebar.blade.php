@@ -195,12 +195,12 @@
                     </a>
                     <ul id="stock" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class="">
-                            <a href="{{ route('stock_list') }}">
+                            <a href="{{ route('admin.stock_list') }}">
                                 <i class="las la-minus"></i><span>Stock List</span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="{{ route('add_stock') }}">
+                            <a href="{{ route('admin.add_stock') }}">
                                 <i class="las la-minus"></i><span>Add Stock</span>
                             </a>
                         </li>
