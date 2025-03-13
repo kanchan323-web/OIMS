@@ -12,7 +12,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form class="needs-validation" novalidate method="POST" id="addStockForm" action="{{ route('stockSubmit') }}"
+                            <form class="needs-validation" novalidate method="POST" id="addStockForm" action="{{ route('admin.stockSubmit') }}"
                                 id="addStockForm">
                                 @csrf
                                 <div class="form-row">
