@@ -143,8 +143,8 @@
                                 </div>
 
                                 <button class="btn btn-primary" type="submit">Submit Form</button>
-                                <a href="{{ route('add_stock') }}" class="btn btn-secondary">Reset</a>
-                                <a href="{{ url()->previous() ?: route('stock_list') }}" class="btn btn-light">Go Back</a>
+                                <a href="{{ route('admin.add_stock') }}" class="btn btn-secondary">Reset</a>
+                                <a href="{{ url()->previous() ?: route('adminstock_list') }}" class="btn btn-light">Go Back</a>
                             </form>
                         </div>
                     </div>
@@ -169,13 +169,13 @@
 
                     $.ajax({
                         type: "GET",
-                        url: "{{ route('check_edp_stock') }}",
+                        url: "{{ route('admin.check_edp_stock') }}",
                         data: { edp_code: edpCode },
                         success: function(response) {
                             console.log("AJAX Response: ", response);
 
                             if (response.exists) {
-                                $("#addStockForm").attr("action", "{{ route('update_stock') }}");
+                                $("#addStockForm").attr("action", "{{ route('admin.update_stock') }}");
                                 // $("#location_ids").val(response.data?.location_id || '');
                                 // $("#location_name").val(response.data?.location_name || '');
                                 // If stock exists, make these fields readonly
@@ -184,7 +184,7 @@
                                 $("#measurement").val(response.data?.measurement || '').prop('readonly', true);
                                 $("#section_id").val(response.data?.section || '').prop('disabled', true);
                             } else {
-                                $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
+                                $("#addStockForm").attr("action", "{{ route('admin.stockSubmit') }}");
                                 
                                 // If adding new stock, enable the fields
                                 $("#category_id").val('').prop('disabled', false);

@@ -12,7 +12,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form class="needs-validation" novalidate method="POST" action="{{ route('update_stock') }}" id="editStockForm">
+                        <form class="needs-validation" novalidate method="POST" action="{{ route('admin.update_stock') }}" id="editStockForm">
                             @csrf
                             <input type="hidden" name="id" value="{{ $editData->id }}">
                             
@@ -74,7 +74,7 @@
                             </div>
 
                             <button class="btn btn-primary" type="submit">Update Stock</button>
-                            <a href="{{ route('stock_list') }}" class="btn btn-light">Go Back</a>
+                            <a href="{{ route('admin.stock_list') }}" class="btn btn-light">Go Back</a>
                         </form>
                     </div>
                 </div>
