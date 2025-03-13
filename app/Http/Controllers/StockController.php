@@ -52,22 +52,24 @@ class StockController extends Controller
     public function stock_filter(Request $request)
     {
         $moduleName = "Stock";
-
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
-            $data = Stock::when($request->edp_code, function ($query, $edp_code) {
-                return $query->where('stocks.edp_code', $edp_code);
-            })
-                ->when($request->location_name, function ($query, $location_name) {
-                    return $query->where('stocks.location_name', 'like', "%{$location_name}%");
+
+            $data = Stock::query()
+                ->when($request->edp_code, function ($query, $edp_code) {
+                    return $query->where('stocks.edp_code', $edp_code);
+                })
+                ->when($request->Description, function ($query, $description) {
+                    return $query->where('stocks.description', 'LIKE', "%{$description}%");
                 })
                 ->when($request->form_date, function ($query) use ($request) {
                     return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
                 })
                 ->when($request->to_date, function ($query) use ($request) {
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-                })
-                ->get();
+                });
+
+            $data = $data->get();
 
             $rig_id = Auth::user()->rig_id;
             $datarig = User::where('user_type', '!=', 'admin')
@@ -78,11 +80,11 @@ class StockController extends Controller
             return response()->json(['data' => $data, 'datarig' => $datarig, 'stockData' => $stockData]);
         }
 
-
         $data = Stock::all();
         $stockData = Stock::select('edp_code')->distinct()->get();
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData'));
     }
+
 
 
     public function stockSubmit(Request $request)
@@ -204,7 +206,7 @@ class StockController extends Controller
 
                 // Update or Insert the data
                 Stock::updateOrCreate(
-                    ['edp_code' => $row[2]], 
+                    ['edp_code' => $row[2]],
                     [
                         'location_id'   => $row[0],
                         'location_name' => $row[1],
@@ -252,7 +254,7 @@ class StockController extends Controller
         );
     }
 
-    
+
     public function EditStock(Request $request, $id)
     {
         $editData = Stock::where('id', $id)->get()->first();

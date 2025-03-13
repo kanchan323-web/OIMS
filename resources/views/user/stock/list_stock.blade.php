@@ -39,9 +39,9 @@
                                         </div>
 
                                         <div class="col-md-2 mb-2">
-                                            <label for="location_name">Location Name</label>
-                                            <input type="text" class="form-control" placeholder="Location Name"
-                                                name="location_name" id="location_name">
+                                            <label for="Description">Description</label>
+                                            <input type="text" class="form-control" placeholder="Description"
+                                                name="Description" id="Description">
                                         </div>
 
                                         <div class="col-md-2 mb-2">
