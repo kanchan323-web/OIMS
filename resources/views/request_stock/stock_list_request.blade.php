@@ -57,12 +57,12 @@
                                     <div class="col-md-4 mb-2 d-flex align-items-end">
                                         <button type="button" class="btn btn-primary mr-2"
                                             id="filterButton">Search</button>
-                                        <a href="{{ route('stock_list') }}" class="btn btn-secondary ml-2">Reset</a>
-                                        <a href="{{ route('stock_list_pdf') }}"
+                                        <a href="{{ route('stock_list.request') }}" class="btn btn-secondary ml-2">Reset</a>
+                                        <!-- <a href="{{ route('stock_list_pdf') }}"
                                             class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
                                             id="downloadPdf" target="_blank">
                                             <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                        </a>
+                                        </a> -->
 
                                     </div>
                                 </div>
@@ -289,7 +289,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="reset" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
             </div>
         </div>
@@ -439,7 +439,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="reset" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
             </div>
         </div>
@@ -556,9 +556,13 @@ $(document).ready(function() {
                         let editButton = '';
                         if (response.datarig.includes(stockdata.user_id)) {
                             editButton = `
-                                    <a class="badge bg-success mr-2" href="/OIMS/edit_stock/${stockdata.id}">
-                                        <i class="ri-pencil-line mr-0"></i>
-                                    </a>`;
+                                    <a class="badge badge-success mr-2" data-toggle="modal"
+                                            onclick="makeRequest(${stockdata.id})"
+                                            data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
+                                            href="#">
+                                            <i class="ri-arrow-right-circle-line"></i>
+                                        </a>
+                                    `;
                         }
                         tableBody.append(`
                                 <tr>

@@ -93,12 +93,12 @@
                     <table class="data-tables table mb-0 tbl-server-info">
                         <thead class="bg-white text-uppercase">
                             <tr class="ligth ligth-data">
-                                <th>
+                                <!-- <th>
                                     <div class="checkbox d-inline-block">
                                         <input type="checkbox" class="checkbox-input" id="checkbox1">
                                         <label for="checkbox1" class="mb-0"></label>
                                     </div>
-                                </th>
+                                </th> -->
                                 <th>Sr.No</th>
                                 <th>Location Name</th>
                                 <th>EDP</th>
@@ -113,18 +113,16 @@
                             @if(!in_array($stockdata->user_id, $datarig))
                             <tr>
 
-                                <td>
+                                <!-- <td>
                                     <div class="checkbox d-inline-block">
                                         <input type="checkbox" class="checkbox-input" id="checkbox2">
                                         <label for="checkbox2" class="mb-0"></label>
                                     </div>
-                                </td>
+                                </td> -->
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <div>
-                                            {{ $loop->iteration }}
-                                        </div>
-                                    </div>
+                                   
+                                            {{ $index  +1 }}
+                                      
                                 </td>
                                 <td>{{$stockdata->supplier_location_name}}</td>
                                 <td>{{$stockdata->stock_code}}</td>
