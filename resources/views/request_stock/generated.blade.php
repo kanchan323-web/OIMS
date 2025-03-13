@@ -138,8 +138,12 @@
                                         
 
                                         <!-- Edit Button (Only for Your Members) -->
-                                        
                                         <a class="badge badge-info mr-2" data-toggle="modal"
+                                            onclick=""
+                                            data-target="" data-placement="top" title=""
+                                            data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
+                                        
+                                        <!-- <a class="badge badge-info mr-2" data-toggle="modal"
                                             onclick="RequestStockData({{$stockdata->req_id}})"
                                             data-target=".bd-example-modal-xl" data-placement="top" title=""
                                             data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
@@ -147,6 +151,11 @@
                                             <a class="badge badge-success mr-2" data-toggle="modal"
                                             onclick="viewstockdata({{$stockdata->id}})"
                                             data-target=".bd-example-modal-xl" data-placement="top" title=""
+                                            data-original-title="View" href="#"><i
+                                                class="ri-arrow-right-circle-line"></i></a> -->
+                                                <a class="badge badge-success mr-2" data-toggle="modal"
+                                            onclick=""
+                                            data-target="" data-placement="top" title=""
                                             data-original-title="View" href="#"><i
                                                 class="ri-arrow-right-circle-line"></i></a>
                                         

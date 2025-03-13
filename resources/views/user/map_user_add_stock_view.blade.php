@@ -20,6 +20,7 @@
 
             <div class="col-lg-12">
                 <div class="table-responsive rounded mb-3">
+                    <h4>Stock Add By {{$data->user_name}} </h4>
                 <table class="data-tables table mb-0 tbl-server-info">
                     <thead class="bg-white text-uppercase">
                         <tr class="ligth ligth-data">

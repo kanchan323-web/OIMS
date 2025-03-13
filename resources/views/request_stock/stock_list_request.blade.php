@@ -332,7 +332,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="section">Section</label>
                                 <input type="text" class="form-control" name="section" placeholder="Section "
-                                    id="Rsection" >
+                                    id="Rsection"  readonly>
                                 <!-- <input type="hidden" name="section" id="hidden_section"> -->
                                 <div class="invalid-feedback">
                                     Please select a Section
