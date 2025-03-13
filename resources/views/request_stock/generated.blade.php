@@ -93,12 +93,12 @@
                     <table class="data-tables table mb-0 tbl-server-info">
                         <thead class="bg-white text-uppercase">
                             <tr class="ligth ligth-data">
-                                <th>
+                                <!-- <th>
                                     <div class="checkbox d-inline-block">
                                         <input type="checkbox" class="checkbox-input" id="checkbox1">
                                         <label for="checkbox1" class="mb-0"></label>
                                     </div>
-                                </th>
+                                </th> -->
                                 <th>Sr.No</th>
                                 <th>Location Name</th>
                                 <th>EDP</th>
@@ -112,18 +112,17 @@
                             @foreach($data as $index => $stockdata)
                             @if(in_array($stockdata->user_id, $datarig))
                             <tr>
-
+<!-- 
                                 <td>
                                     <div class="checkbox d-inline-block">
                                         <input type="checkbox" class="checkbox-input" id="checkbox2">
                                         <label for="checkbox2" class="mb-0"></label>
                                     </div>
-                                </td>
+                                </td> -->
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <div>
-                                            {{ $loop->iteration }}
-                                        </div>
+                                    <div class="d-flex align-items-center text-center">
+                                            <!-- {{ $loop->iteration }} -->
+                                              {{$index + 1}}
                                     </div>
                                 </td>
                                 <td>{{$stockdata->supplier_location_name}}</td>
@@ -136,11 +135,7 @@
 
                                     <div class="d-flex align-items-center list-action">
                                         <!-- View Button (Always Visible) -->
-                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                            onclick="viewstockdata({{$stockdata->id}})"
-                                            data-target=".bd-example-modal-xl" data-placement="top" title=""
-                                            data-original-title="View" href="#"><i
-                                                class="ri-arrow-right-circle-line"></i></a>
+                                        
 
                                         <!-- Edit Button (Only for Your Members) -->
                                         
@@ -148,6 +143,12 @@
                                             onclick="RequestStockData({{$stockdata->req_id}})"
                                             data-target=".bd-example-modal-xl" data-placement="top" title=""
                                             data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
+
+                                            <a class="badge badge-success mr-2" data-toggle="modal"
+                                            onclick="viewstockdata({{$stockdata->id}})"
+                                            data-target=".bd-example-modal-xl" data-placement="top" title=""
+                                            data-original-title="View" href="#"><i
+                                                class="ri-arrow-right-circle-line"></i></a>
                                         
                                     </div>
                                 </td>
