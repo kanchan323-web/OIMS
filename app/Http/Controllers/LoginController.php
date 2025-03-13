@@ -114,10 +114,11 @@ class LoginController extends Controller
             ->where('users.id', $id)
             ->get();
 
-        $data = User::where('id', $id)->get();
+        $data = User::where('id', $id)->first();
+        
 
         if ($tally->isEmpty()) {
-            return redirect()->back()->with('error', 'No Data Found for the Selected User');
+            return redirect()->back()->with('error','No Data Found for the Selected User');
         }
 
         return view('user.map_user_add_stock_view', compact('data', 'tally', 'moduleName'));
