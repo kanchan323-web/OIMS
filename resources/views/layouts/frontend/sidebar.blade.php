@@ -11,7 +11,7 @@
     <div class="data-scrollbar" data-scroll="1">
         <nav class="iq-sidebar-menu">
              <ul id="iq-sidebar-toggle" class="iq-menu">
-                    <li class="active">
+                    <li class="{{ Route::is('user.dashboard') ? 'active' : '' }}">
                         <a href="{{ route('user.dashboard') }}" class="svg-icon">
                             <svg class="svg-icon" id="p-dash0" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -25,7 +25,7 @@
                             <span class="ml-4">Dashboards</span>
                         </a>
                     </li>
-                    <li class="">
+                    <li class="{{ Route::is('map_all_user_list') ? 'active' : '' }}">
                         <a href="{{ route('map_all_user_list') }}" class="svg-icon">
                             <svg class="svg-icon" id="p-dash99" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -88,16 +88,19 @@
                                     <i class="las la-minus"></i><span>Stock List</span>
                                 </a>
                             </li>
+
                             <li class="">
                                 <a href="{{route('request_stock_list')}}">
                                     <i class="las la-minus"></i><span>All Stock Request List</span>
                                 </a>
                             </li>
-                            <li class="">
+
+
+                            <!-- <li class="">
                                 <a href="{{route('request_stock_add')}}">
                                     <i class="las la-minus"></i><span>Add Request</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="">
                                 <a href="{{route('request_generated_list')}}">
                                     <i class="las la-minus"></i><span>Generating Request</span>

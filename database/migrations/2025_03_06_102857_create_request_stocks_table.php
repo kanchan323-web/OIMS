@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('qty');
             $table->string('measurement');
             $table->string('new_spareable');
+            $table->string('used_spareable')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->text('reason_for_rejection')->nullable();
             $table->text('query')->nullable();

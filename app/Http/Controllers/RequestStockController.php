@@ -73,6 +73,8 @@ class RequestStockController extends Controller
     public function RequestStockAddPost(Request $request){
        
 
+
+
        $request->validate([
             'user_name' => 'required|string',
             'user_id' => 'required',

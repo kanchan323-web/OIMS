@@ -136,8 +136,8 @@
                                                 onclick="viewstockdata({{$stockdata->id}})"
                                                 data-target=".bd-example-modal-xl" data-placement="top" title=""
                                                 data-original-title="View" href="#"><i
-                                                    class="ri-arrow-right-circle-line"></i></a>
-
+                                                    class="ri-arrow-right-circle-line"></i>
+                                                </a>
                                         </div>
                                     </td>
                                 </tr>
