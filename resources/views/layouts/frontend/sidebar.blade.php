@@ -85,17 +85,16 @@
                         <ul id="category" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                             <li class="">
                                 <a href="{{route('stock_list.request')}}">
-                                    <i class="las la-minus"></i><span>Stock List</span>
+                                    <i class="las la-minus"></i><span>All Stock Request List</span>
                                 </a>
                             </li>
 
                             <li class="">
                                 <a href="{{route('request_stock_list')}}">
-                                    <i class="las la-minus"></i><span>All Stock Request List</span>
+                                    <i class="las la-minus"></i><span>Incomming Request</span>
                                 </a>
                             </li>
-
-
+                          
                             <!-- <li class="">
                                 <a href="{{route('request_stock_add')}}">
                                     <i class="las la-minus"></i><span>Add Request</span>
@@ -103,7 +102,7 @@
                             </li> -->
                             <li class="">
                                 <a href="{{route('request_generated_list')}}">
-                                    <i class="las la-minus"></i><span>Generating Request</span>
+                                    <i class="las la-minus"></i><span>My Request</span>
                                 </a>
                             </li>
                        
