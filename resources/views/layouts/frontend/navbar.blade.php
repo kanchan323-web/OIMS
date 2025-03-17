@@ -209,7 +209,7 @@
                                                 <h5 class="mb-1">{{ Auth::user()->email }}</h5>
                                             @endif
                                             <div class="d-flex align-items-center justify-content-center mt-3">
-                                                <a href="../app/user-profile.html" class="btn border mr-2">Profile</a>
+                                                <a href="{{route('user.profile')}}" class="btn border mr-2">Profile</a>
                                                 <a href="{{ route('user.logout') }}" class="btn border">Sign
                                                     Out</a>
                                             </div>

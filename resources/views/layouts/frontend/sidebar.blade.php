@@ -4,7 +4,7 @@
             <img src="{{ asset('resources/images/logo.png') }}" class="img-fluid rounded-normal light-logo" alt="logo">
             <h5 class="logo-title light-logo ml-3">OIMS</h5>
         </a>
-        <div class="iq-menu-bt-sidebar ml-0">
+        <div class="iq-menu-bt-sidebar ml-4">
             <i class="las la-bars wrapper-menu"></i>
         </div>
     </div>
@@ -36,7 +36,7 @@
                             <span class="ml-4">Map User</span>
                         </a>
                     </li>
-                    <li class=" ">
+                    <li class="{{ Route::is('stock_list') || Route::is('add_stock') ? 'active' : '' }}">
                         <a href="#product" class="collapsed" data-toggle="collapse" aria-expanded="false">
                             <svg class="svg-icon" id="p-dash2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -66,7 +66,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class=" ">
+                    <li class="{{ Route::is('stock_list.request') || Route::is('request_stock_list')|| Route::is('request_generated_list') ? 'active' : '' }} ">
                         <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
                             <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

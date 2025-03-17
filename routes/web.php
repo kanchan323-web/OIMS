@@ -23,6 +23,7 @@ Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate']
 Route::middleware(['admin.auth'])->group(function () {
 
     Route::prefix('/admin')->group(function () {
+        Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
         Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
@@ -92,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/user')->group(function () {
         Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
+        Route::get('/profile', [LoginController::class, 'profile'])->name('user.profile');
         //Registration of users
         Route::get('/register', [LoginController::class, 'register'])->name('user.register');
         Route::post('/registration', [LoginController::class, 'registerSubmit'])->name('user.registerSubmit');
