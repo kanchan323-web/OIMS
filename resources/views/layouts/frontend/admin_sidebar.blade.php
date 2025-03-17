@@ -4,7 +4,7 @@
             <img src="{{ asset('resources/images/logo.png') }}" class="img-fluid rounded-normal light-logo" alt="logo">
             <h5 class="logo-title light-logo ml-3">OIMS</h5>
         </a>
-        <div class="iq-menu-bt-sidebar ml-0">
+        <div class="iq-menu-bt-sidebar ml-4">
             <i class="las la-bars wrapper-menu"></i>
         </div>
     </div>
@@ -26,7 +26,7 @@
                     </a>
                 </li>
 
-                <li class="">
+                <li class="{{ Route::is('admin.rig_users.index') || Route::is('admin.rig_users.create') ? 'active' : '' }}">
                     <a href="#rig" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash8" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -43,7 +43,7 @@
                         </svg>
                     </a>
                     <ul id="rig" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="{{ Route::is('admin.rig_users.index') ? 'active' : '' }} ">
+                        <li class=" ">
                             <a href="{{route('admin.rig_users.index')}}">
                                 <i class="las la-minus"></i><span>All Rig</span>
                             </a>
@@ -57,7 +57,7 @@
                 </li>
 
 
-                <li class=" ">
+                <li class=" {{ Route::is('admin.index') || Route::is('admin.create') ? 'active' : '' }}">
                     <a href="#users" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash8" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -88,7 +88,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class=" ">
+                <li class=" {{ Route::is('admin.edp.create') || Route::is('admin.edp.index') ? 'active' : '' }} ">
                     <a href="#masterpage" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash9" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -140,7 +140,7 @@
                             </ul>
                         </li>
 
-                        <li class=" ">
+                        <li class=" {{ Route::is('admin.category.create') || Route::is('admin.category.index') ? 'active' : '' }} ">
                             <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
                                 <svg class="svg-icon" id="p-dash12" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -176,7 +176,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class=" ">
+                <li class="{{ Route::is('admin.stock_list') || Route::is('admin.add_stock') ? 'active' : '' }}  ">
                     <a href="#stock" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -206,7 +206,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class=" ">
+                <li class=" {{ Route::is('request_stock_list') || Route::is('request_stock_add')|| Route::is('request_stock_add') ? 'active' : '' }}">
                     <a href="#request" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

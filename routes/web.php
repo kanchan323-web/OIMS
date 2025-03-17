@@ -24,6 +24,7 @@ Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate']
 Route::middleware(['admin.auth'])->group(function () {
 
     Route::prefix('/admin')->group(function () {
+        Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
         Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
@@ -93,6 +94,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/user')->group(function () {
         Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
+        Route::get('/profile', [LoginController::class, 'profile'])->name('user.profile');
         //Registration of users
         Route::get('/register', [LoginController::class, 'register'])->name('user.register');
         Route::post('/registration', [LoginController::class, 'registerSubmit'])->name('user.registerSubmit');
@@ -117,16 +119,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/check-edp-stock', [StockController::class, 'checkEdpStock'])->name('check_edp_stock');
 
 
-        //Request stock
-        Route::prefix('request-stock')->group(function () {
-            Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
-            Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
-            Route::get('/generated', [RequestStockController::class, 'GeneratedRequest'])->name('request_generated_list');
-            Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
-            Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
-            Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
-            Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
-        });
+    //Request stock
+    Route::prefix('request-stock')->group(function () {
+        Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
+        Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
+        Route::get('/generated', [RequestStockController::class, 'GeneratedRequest'])->name('request_generated_list');
+        Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
+        Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
+        Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
+        Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
+        Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
+    });
 
         //User mapping
         Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');

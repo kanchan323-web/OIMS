@@ -7,7 +7,7 @@ return [
     //     'timeout' => 30,
     // ],
     'default'   => [
-        'length'    => 6,
+        'length'    => 4,
         'width'     => 120,
         'height'    => 40,
         'quality'   => 180,
