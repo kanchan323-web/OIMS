@@ -116,7 +116,7 @@
                                         </a>
 
                                         <a class="badge badge-success mr-2" data-toggle="modal"
-                                            onclick="addRequest({{ $stockdata->id }} , {{ $stockdata->rig_id }})"
+                                            onclick="addRequest({{ $stockdata->id }})"
                                             data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
                                             href="#">
                                             <i class="ri-arrow-right-circle-line"></i>
@@ -302,7 +302,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Request for Stock</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add Request for Stock </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -321,11 +321,11 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">EDP Code</label>
-                                <input type="text" class="form-control" name="req_edp_code" id="Rstock_code" readonly>
+                                <input type="text" class="form-control" name="req_edp_code" id="Redp_code" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="category">Category</label>
-                                <input type="text" class="form-control" name="category" id="category" readonly>
+                                <input type="text" class="form-control" name="category" id="Rcategory" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="section">Section</label>
@@ -333,46 +333,34 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Unit of Measurement </label>
-                                <input type="text" class="form-control" name="measurement" id="" value="" readonly>
+                                <input type="text" class="form-control" name="measurement" id="Rmeasurement" value="" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Description</label>
-                                <textarea class="form-control" id="" name="remarks" readonly></textarea>
+                                <textarea class="form-control" id="Rdescription" name="remarks" readonly></textarea>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Available Quantity</label>
-                                <input type="text" class="form-control" name="qty" id="Rqty" readonly>
+                                <input type="text" class="form-control" name="avl_qty" id="Available_qty" readonly>
                             </div>
 
-                   <!--         <div class="col-md-6 mb-3">
-                                <label for="">New Spareable </label>
-                                <input type="text" class="form-control" placeholder=" New Spareable"
-                                    name="new_spareable" id="Rnew_spareable" readonly>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Used Spareable </label>
-                                <input type="text" class="form-control" placeholder=" Used Spareable"
-                                    name="used_spareable" id="Rused_spareable" readonly>
-                            </div>
-                        -->
                             <div class="col-md-6 mb-3">
                                 <label for="">Supplier Location Name</label>
                                 <input type="text" class="form-control" name="supplier_location_name"
-                                    placeholder=" Supplier Location Name" id="" required>
+                                    placeholder=" Supplier Location Name" id="Rsupplier_location_name" required readonly>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Requested Quantity</label>
                                 <input type="number" class="form-control" name="request_quantity"
-                                    placeholder="Requested Quantity" id="" required>
-                                <div class="invalid-feedback">
-                                    Requested Quantity
-                                </div>
+                                    placeholder="Requested Quantity" id="RequestQTY" required>
+
+                                    <small id="qtyError" class="text-danger" style="display: none;"></small>
                                 @error("request_quantity")
                                 <small class="text-danger">{{$message}}</small>
                                 @enderror
                             </div>
                         </div>
-                        <button class="btn btn-primary" type="submit">Submit form</button>
+                        <button class="btn btn-primary" type="submit">Submit Request</button>
                         <a href="{{route('stock_list.request')}}" class="btn btn-light">Go Back</a>
                     </form>
                 </div>
@@ -403,30 +391,41 @@ function addRequest(id) {
             data: id
         },
         success: function(response) {
-            console.log(response.viewdata['category']);
+            // console.log(response.viewdata['category']);  
             $("#Rlocation_id").val(response.viewdata['location_id']);
             $("#Rlocation_name").val(response.viewdata['location_name']);
-            $("#Rstock_item").val(response.viewdata['edp_code']);
-            console.log("This is vipul "+$("#Rstock_item").val());
+            $("#Redp_code").val(response.viewdata['edp_code']);
             $("#Rstock_code").val(response.viewdata['id']);
-
-
             var sectionValue = response.viewdata['section'];
             $("#Rsection").val(sectionValue);
             $("#Rhidden_section").val(sectionValue);
-
             var categoryValue = response.viewdata['category'];
             $("#Rcategory").val(categoryValue);
             $("#Rhidden_category").val(categoryValue);
 
+            $("#Available_qty").val(response.viewdata['qty']);
+           
 
-            $("#Rqty").val(response.viewdata['qty']);
+
+            $("#RequestQTY").on("input", function () {
+                    let availableQty = parseFloat($("#Available_qty").val()) || 0; 
+                    let requestQty = parseFloat($(this).val()) || 0; 
+
+                    if (requestQty > availableQty) {
+                        $("#RequestQTY").addClass("is-invalid"); 
+                        $("#qtyError").text("Requested quantity cannot be greater than available quantity!").show();
+                    } else {
+                        $("#RequestQTY").removeClass("is-invalid"); 
+                        $("#qtyError").hide();
+                    }
+                });
+
             $("#Rmeasurement").val(response.viewdata['measurement']);
             $("#Rnew_spareable").val(response.viewdata['new_spareable']);
             $("#Rused_spareable").val(response.viewdata['used_spareable']);
-
             $("#Rremarks").val(response.viewdata['remarks']);
             $("#Rdescription").val(response.viewdata['description']);
+            $("#Rsupplier_location_name").val(response.viewdata['location_id']);
         }
     });
 }
@@ -576,11 +575,7 @@ $(document).ready(function() {
 });
 </script>
 
-<script>
 
-    $("")
-
-</script>
 
 
 

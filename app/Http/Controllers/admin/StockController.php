@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
 use App\Models\Edp;
 use App\Models\User;
+use App\Models\rig_users;
 use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
@@ -245,11 +246,13 @@ class StockController extends Controller
     {
         Log::info('AJAX request received.', ['data' => $request->all()]);
         $id = $request->data;
-        $viewdata =   Stock::where('id', $id)->get()->first();
-
+        $viewdata = Stock::find($id);
+        $rig_id = User::where('id', $viewdata->user_id)->value('rig_id');
+        $rigdata = rig_users::where('id', $rig_id)->first();
         return response()->json(
             [
-                'viewdata' => $viewdata
+                'viewdata' => $viewdata,
+                'rigdata' => $rigdata,
             ]
         );
     }
