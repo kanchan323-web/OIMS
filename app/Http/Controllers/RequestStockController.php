@@ -13,7 +13,7 @@ use App\Models\User;
 
 class RequestStockController extends Controller
 {
-   
+
 
     public function RequestStockList(Request $request){
 
@@ -22,8 +22,8 @@ class RequestStockController extends Controller
                     ->where('rig_id',$rig_id)
                     ->pluck('id')
                     ->toArray();
-          
-    
+
+
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
         return view('request_stock.list_request_stock',compact('data', 'moduleName','datarig'));
@@ -36,7 +36,7 @@ class RequestStockController extends Controller
                     ->where('rig_id',$rig_id)
                     ->pluck('id')
                     ->toArray();
-          
+
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
         return view('request_stock.generated',compact('data', 'moduleName','datarig'));
@@ -44,7 +44,7 @@ class RequestStockController extends Controller
 
     public function request_stock_filter(Request $request){
 
-        
+
 
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
@@ -58,7 +58,7 @@ class RequestStockController extends Controller
         ->when($request->to_date, function ($query) use ($request) {
             return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
         })->get();
-        
+
         $moduleName = "Request Stocks filter";
         return view('request_stock.list_request_stock',compact('data', 'moduleName'));
 
@@ -71,7 +71,7 @@ class RequestStockController extends Controller
 
 
     public function RequestStockAddPost(Request $request){
-       
+
 
 
 
@@ -88,7 +88,7 @@ class RequestStockController extends Controller
             'used_spareable' => 'required|numeric',
             'remarks' => 'required',
             'supplier_location_name' => 'required',
-        ]); 
+        ]);
 
         $requeststock = new RequestStock;
         $requeststock->user_name = $request->user_name;
@@ -107,7 +107,7 @@ class RequestStockController extends Controller
 
         // $data = RequestStock::insert($insert_request_data);
         return redirect()->route('request_stock_list');
-        
+
     }
 
     public function RequestStockViewPost(Request $request){
@@ -127,8 +127,12 @@ class RequestStockController extends Controller
             ->toArray();
 
         $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::all();
-        $moduleName = "Stock";
+        $data = Stock::where('rig_id', '!=', $rig_id)->get();
+        $moduleName = "Request Stock List";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
+    }
+
+    public function get_stockrequest_data(Request $request){
+        return hello;
     }
 }
