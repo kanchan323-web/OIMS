@@ -20,6 +20,10 @@ class LoginController extends Controller
         return view('user.login');
     }
 
+    public function profile(Request $request){
+            return view('user.user_profile');
+    }
+
     public function authenticate(Request $request)
     {
         $validatedData = $request->validate([
