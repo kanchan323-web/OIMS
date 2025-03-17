@@ -29,8 +29,9 @@ class StockController extends Controller
     {
         $moduleName = "Add Stock";
         $rigId =  Auth::user()->rig_id;
+        $edpCodes = Edp::all();
         $LocationName = RigUser::where('id', $rigId)->first();
-        return view('user.stock.add_stock', compact('moduleName', 'LocationName'));
+        return view('user.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes'));
     }
 
 
@@ -131,10 +132,6 @@ class StockController extends Controller
     }
 
 
-    // public function stock_list(){
-    //     return view('user.stock.list_stock');
-    // }
-
 
     public function downloadSample()
     {
@@ -164,13 +161,9 @@ class StockController extends Controller
     
             $expectedHeaders = [
                 'EDP',
-                'Material Description',
-                'Section',
-                'Category',
                 'Qty Total',
                 'New Spareable',
                 'Used Spareable',
-                'UoM',
             ];
     
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
@@ -182,9 +175,8 @@ class StockController extends Controller
             }
     
             $user = Auth::user();
-            
-            $rigUser = RigUser::find($user->rig_id); 
-
+            $rigUser = RigUser::find($user->rig_id);
+    
             if (!$rigUser) {
                 session()->flash('error', 'Rig details not found for the logged-in user.');
                 return redirect()->back();
@@ -195,35 +187,41 @@ class StockController extends Controller
                 if (array_filter($row, fn($value) => !is_null($value) && trim($value) !== '') === []) {
                     continue;
                 }
-    
-                // Validate EDP code
+                
                 if (!isset($row[0]) || !preg_match('/^\d{9}$/', $row[0])) {
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
+
+                $edp = Edp::where('edp_code', $row[0])->first();
+                if (!$edp) {
+                    $errors[] = "Row " . ($index + 2) . ": EDP code {$row[0]} not found in the Edp table.";
+                    continue;
+                }
     
                 // Validate required fields
-                $requiredFields = range(0, 7); // Updated indexes
+                $requiredFields = range(0, 3); // Updated indexes
                 foreach ($requiredFields as $fieldIndex) {
                     if (!isset($row[$fieldIndex]) || trim($row[$fieldIndex]) === '') {
                         $errors[] = "Row " . ($index + 2) . ": Missing required field '" . $expectedHeaders[$fieldIndex] . "'.";
                         continue 2;
                     }
                 }
-                
+    
+                // Save stock data with edp_id instead of edp_code
                 Stock::updateOrCreate(
-                    ['edp_code' => $row[0]],
+                    ['edp_code' => $edp->id], // Store `id` from `Edp` model
                     [
-                        'location_id'   => $rigUser->location_id,  
-                        'location_name' => $rigUser->name, 
-                        'description'   => $row[1],
-                        'section'       => $row[2],
-                        'category'      => $row[3],
-                        'qty'           => (int) $row[4],
-                        'new_spareable' => (int) $row[5],
-                        'used_spareable' => (int) $row[6],
-                        'measurement'   => $row[7],
-                        'remarks'       => $row[8] ?? 'nill',
+                        'location_id'   => $rigUser->location_id,
+                        'location_name' => $rigUser->name,
+                        'description'   => $edp->description,
+                        'section'       => $edp->section,
+                        'category'      => $edp->category,
+                        'qty'           => (int) $row[1],
+                        'new_spareable' => (int) $row[2],
+                        'used_spareable' => (int) $row[3],
+                        'measurement'   => $edp->measurement,
+                        'remarks'       => 'nill',
                         'user_id'       => $user->id,
                     ]
                 );
@@ -242,8 +240,7 @@ class StockController extends Controller
             session()->flash('error', 'Error importing file: ' . $e->getMessage());
             return redirect()->back();
         }
-    }
-  
+    }  
 
 
 
@@ -302,13 +299,25 @@ class StockController extends Controller
 
     public function get_edp_details(Request $request)
     {
-        $id = $request->data;
-        $viewdata =   Edp::where('id', $id)->get()->first();
-        return response()->json(
-            [
-                'viewdata' => $viewdata
-            ]
-        );
+        $edpCode = $request->edp_code; 
+    
+        if (!$edpCode) {
+            return response()->json(['success' => false, 'error' => 'EDP Code is missing'], 400);
+        }
+    
+        $edp = Edp::where('edp_code', $edpCode)->first();
+    
+        if (!$edp) {
+            return response()->json(['success' => false, 'error' => 'EDP not found'], 404);
+        }
+    
+        $stock = Stock::where('edp_code', $edpCode)->first();
+    
+        return response()->json([
+            'success' => true,
+            'edp' => $edp,
+            'stock' => $stock 
+        ]);
     }
 
 
