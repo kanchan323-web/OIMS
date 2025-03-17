@@ -20,9 +20,18 @@
                                 </div>
                             @endif
 
-                            @if (Session::get('error'))
+                            @if (Session::has('error'))
                                 <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
-                                    <strong>Error:</strong> {{ Session::get('error') }}
+                                    <strong>Error:</strong>
+                                    @if (is_array(Session::get('error')))
+                                        <ul>
+                                            @foreach (Session::get('error') as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        {{ Session::get('error') }}
+                                    @endif
                                     <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -82,7 +91,7 @@
             // Automatically fade out alerts after 3 seconds
             setTimeout(function () {
                 $(".alert").fadeOut("slow");
-            }, 3000);
+            }, 7000);
         });
     </script>
 @endsection

@@ -8,6 +8,7 @@ use App\Http\Controllers\RequestStockController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\admin\AdminLoginController;
+use App\Http\Controllers\Admin\AdminStockController;
 use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\masters\EdpController;
@@ -64,20 +65,20 @@ Route::middleware(['admin.auth'])->group(function () {
 
 
         //Stocks
-        Route::any('/add_stock', [StockController::class, 'add_stock'])->name('admin.add_stock');
-        Route::post('/stockSubmit', [StockController::class, 'stockSubmit'])->name('admin.stockSubmit');
-        Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('admin.all_stock_list');
-        Route::get('/import', [StockController::class, 'showImportForm'])->name('admin.import_stock');;
-        Route::post('/import_bulk', [StockController::class, 'import'])->name('admin.stock.import');
-        Route::get('/get_edp_details', [StockController::class, 'get_edp_details'])->name('admin.get_edp_details');
-        Route::get('/sample-download', [StockController::class, 'downloadSample'])->name('stock.downloadSample');
-        Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('admin.stock_list_view');
-        Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('admin.edit_stock');
-        Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('admin.update_stock');
-        Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('admin.Delete_stock');
-        Route::get('/stock_list', [StockController::class, 'stock_list'])->name('admin.stock_list');
-        Route::get('/stock_filter', [StockController::class, 'stock_filter'])->name('admin.stock_filter');
-        Route::get('/check-edp-stock', [StockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
+        Route::any('/add_stock', [AdminStockController::class, 'add_stock'])->name('admin.add_stock');
+        Route::post('/stockSubmit', [AdminStockController::class, 'stockSubmit'])->name('admin.stockSubmit');
+        Route::any('/all_stock_list', [AdminStockController::class, 'all_stock_list'])->name('admin.all_stock_list');
+        Route::get('/import', [AdminStockController::class, 'showImportForm'])->name('admin.import_stock');;
+        Route::post('/import_bulk', [AdminStockController::class, 'import'])->name('admin.stock.import');
+        Route::get('/get_edp_details', [AdminStockController::class, 'get_edp_details'])->name('admin.get_edp_details');
+        Route::get('/sample-download', [AdminStockController::class, 'downloadSample'])->name('admin.stock.downloadSample');
+        Route::get('/get_data_forview', [AdminStockController::class, 'stock_list_view'])->name('admin.stock_list_view');
+        Route::get('/edit_stock/{id}', [AdminStockController::class, 'EditStock'])->name('admin.edit_stock');
+        Route::post('/update_stock', [AdminStockController::class, 'UpdateStock'])->name('admin.update_stock');
+        Route::post('/delete_stock', [AdminStockController::class, 'DeleteStock'])->name('admin.Delete_stock');
+        Route::get('/stock_list', [AdminStockController::class, 'stock_list'])->name('admin.stock_list');
+        Route::get('/stock_filter', [AdminStockController::class, 'stock_filter'])->name('admin.stock_filter');
+        Route::get('/check-edp-stock', [AdminStockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
     });
 });
 
@@ -99,23 +100,23 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/registration', [LoginController::class, 'registerSubmit'])->name('user.registerSubmit');
         //Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
-    });
 
-    //Stocks
-    Route::any('/add_stock', [StockController::class, 'add_stock'])->name('add_stock');
-    Route::post('/stockSubmit', [StockController::class, 'stockSubmit'])->name('stockSubmit');
-    Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('all_stock_list');
-    Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
-    Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');
-    Route::get('/get_edp_details', [StockController::class, 'get_edp_details'])->name('get_edp_details');
-    Route::get('/sample-download', [StockController::class, 'downloadSample'])->name('stock.downloadSample');
-    Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('stock_list_view');
-    Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');
-    Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');
-    Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
-    Route::get('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
-    Route::get('/stock_filter', [StockController::class, 'stock_filter'])->name('stock_filter');
-    Route::get('/check-edp-stock', [StockController::class, 'checkEdpStock'])->name('check_edp_stock');
+
+        //Stocks
+        Route::any('/add_stock', [StockController::class, 'add_stock'])->name('add_stock');
+        Route::post('/stockSubmit', [StockController::class, 'stockSubmit'])->name('stockSubmit');
+        Route::any('/all_stock_list', [StockController::class, 'all_stock_list'])->name('all_stock_list');
+        Route::get('/import', [StockController::class, 'showImportForm'])->name('import_stock');;
+        Route::post('/import_bulk', [StockController::class, 'import'])->name('stock.import');
+        Route::get('/get_edp_details', [StockController::class, 'get_edp_details'])->name('get_edp_details');
+        Route::get('/sample-download', [StockController::class, 'downloadSample'])->name('stock.downloadSample');
+        Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('stock_list_view');
+        Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('edit_stock');
+        Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('update_stock');
+        Route::post('/delete_stock', [StockController::class, 'DeleteStock'])->name('Delete_stock');
+        Route::get('/stock_list', [StockController::class, 'stock_list'])->name('stock_list');
+        Route::get('/stock_filter', [StockController::class, 'stock_filter'])->name('stock_filter');
+        Route::get('/check-edp-stock', [StockController::class, 'checkEdpStock'])->name('check_edp_stock');
 
 
     //Request stock
@@ -131,11 +132,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
     });
 
-    //User mapping
-    Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
-    Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');
-    Route::post('/mapusergetdata', [LoginController::class, 'mapuserdataget'])->name('map_all_user_data.post');
-    Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
+        //User mapping
+        Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
+        Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');
+        Route::post('/mapusergetdata', [LoginController::class, 'mapuserdataget'])->name('map_all_user_data.post');
+        Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
+    });
 });
 
 //PDF Section
