@@ -1,4 +1,4 @@
-@extends('layouts.frontend.layout')
+@extends('layouts.frontend.admin_layout')
 @section('page-content')
 
     <div class="content-page">
@@ -6,21 +6,21 @@
             <div class="row">
                 <div class="col-lg-12">
                     @if (Session::get('success'))
-                    <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
-                        <strong>Success:</strong> {{ Session::get('success') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                        <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+                            <strong>Success:</strong> {{ Session::get('success') }}
+                            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     @endif
-                    
+
                     @if (Session::get('error'))
-                    <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
-                        <strong>Error:</strong> {{ Session::get('error') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                        <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+                            <strong>Error:</strong> {{ Session::get('error') }}
+                            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     @endif
 
                     <div class="row justify-content-between">
@@ -57,7 +57,8 @@
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('admin.stock_list') }}" class="btn btn-secondary ml-2">Reset</a>
+                                            <a href="{{ route('admin.stock_list') }}"
+                                                class="btn btn-secondary ml-2">Reset</a>
                                             <a href="{{ route('stock_list_pdf') }}"
                                                 class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
                                                 id="downloadPdf" target="_blank">
@@ -74,7 +75,7 @@
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Add Stock</a>
-                                <a href="{{ route('admin.import_stock') }}" class="btn btn-primary add-list"><i
+                                <a href="{{ route('admin.stock.import') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Bulk Stocks </a>
                             </div>
                         </div>
@@ -115,13 +116,11 @@
                                                         <i class="ri-eye-line mr-0"></i>
                                                     </a>
 
-                                                    <!-- Edit Button (Only for Your Members) -->
-                                                    @if(in_array($stockdata->user_id, $datarig))
-                                                        <a class="badge bg-success mr-2"
-                                                            href="{{ url('/admin/edit_stock/' . $stockdata->id) }}">
-                                                            <i class="ri-pencil-line mr-0"></i>
-                                                        </a>
-                                                    @endif
+                                                    <!-- Edit Button -->
+                                                    <a class="badge bg-success mr-2"
+                                                        href="{{ url('/admin/edit_stock/' . $stockdata->id) }}">
+                                                        <i class="ri-pencil-line mr-0"></i>
+                                                    </a>
                                                 </div>
 
                                             </td>
@@ -280,8 +279,8 @@
                             </div>
                         </div>
                         <!-- <button class="btn btn-primary" type="submit">Submit form</button>
-                                                                      <button type="reset" class="btn btn-danger">Reset</button>
-                                                                      <a href="" class="btn btn-light">Go Back</a> -->
+                                                                              <button type="reset" class="btn btn-danger">Reset</button>
+                                                                              <a href="" class="btn btn-light">Go Back</a> -->
                         <!-- </form> -->
                     </div>
                 </div>
@@ -352,13 +351,12 @@
 
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
-                                let editButton = '';
-                                if (response.datarig.includes(stockdata.user_id)) {
-                                    editButton = `
-                                    <a class="badge bg-success mr-2" href="/OIMS/edit_stock/${stockdata.id}">
-                                        <i class="ri-pencil-line mr-0"></i>
-                                    </a>`;
-                                }
+                                // Edit button is now available for all records
+                                let editButton = `
+                                <a class="badge bg-success mr-2" href="/OIMS/admin/edit_stock/${stockdata.id}">
+                                    <i class="ri-pencil-line mr-0"></i>
+                                </a>`;
+
                                 tableBody.append(`
                                 <tr>
                                     <td>${index + 1}</td>
@@ -390,7 +388,6 @@
         });
 
 
-
         function deleteStockdata(id) {
 
             $("#delete_id").val(id);
@@ -414,7 +411,7 @@
             $("#downloadPdf").click(function (e) {
                 e.preventDefault();
 
-                let baseUrl = "{{ route('admin.stock_list_pdf') }}";
+                let baseUrl = "{{ route('stock_list_pdf') }}";
                 let formData = $("#filterForm").serializeArray();
 
                 let filteredParams = formData

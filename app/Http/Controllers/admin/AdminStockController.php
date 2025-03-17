@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\ReCaptcha;
@@ -23,23 +24,23 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class StockController extends Controller
+class AdminStockController extends Controller
 {
-
     public function add_stock()
     {
         $moduleName = "Add Stock";
         $rigId =  Auth::user()->rig_id;
+        $edpCodes = Edp::all();
         $LocationName = RigUser::where('id', $rigId)->first();
-        return view('admin.stock.add_stock', compact('moduleName', 'LocationName'));
+        return view('admin.stock.add_stock', compact('moduleName', 'LocationName','edpCodes'));
     }
 
 
     public function stock_list(Request $request)
     {
+        
         $rig_id = Auth::user()->rig_id;
-        $datarig = User::where('user_type', '!=', 'admin')
-            ->where('rig_id', $rig_id)
+        $datarig = User::where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
 
@@ -128,7 +129,7 @@ class StockController extends Controller
 
         Session::flash('success', 'Stock submitted successfully!');
 
-        return redirect()->route('stock_list');
+        return redirect()->route('admin.stock_list');
     }
 
 
@@ -155,89 +156,96 @@ class StockController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
-
+    
         try {
             $file = $request->file('file');
             $filePath = $file->storeAs('temp', $file->getClientOriginalName());
             $spreadsheet = IOFactory::load(storage_path('app/' . $filePath));
             $sheet = $spreadsheet->getActiveSheet();
             $rows = $sheet->toArray();
-
+    
             $expectedHeaders = [
-                'SLoc',
-                'Location',
                 'EDP',
-                'Material Description',
-                'Section',
-                'Category',
                 'Qty Total',
                 'New Spareable',
                 'Used Spareable',
-                'UoM',
             ];
-
+    
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
-
+    
             if ($actualHeaders !== $expectedHeaders) {
                 Storage::delete($filePath);
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
                 return redirect()->back();
             }
-
+    
+            $user = Auth::user();
+            $rigUser = RigUser::find($user->rig_id);
+    
+            if (!$rigUser) {
+                session()->flash('error', 'Rig details not found for the logged-in user.');
+                return redirect()->back();
+            }
+    
             $errors = [];
             foreach (array_slice($rows, 1) as $index => $row) {
                 if (array_filter($row, fn($value) => !is_null($value) && trim($value) !== '') === []) {
                     continue;
                 }
-
-                // Validate EDP code
-                if (!isset($row[2]) || !preg_match('/^\d{9}$/', $row[2])) {
+                
+                if (!isset($row[0]) || !preg_match('/^\d{9}$/', $row[0])) {
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
 
-                // Validate required fields (excluding optional fields)
-                $requiredFields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // Required field indexes
+                $edp = Edp::where('edp_code', $row[0])->first();
+                if (!$edp) {
+                    $errors[] = "Row " . ($index + 2) . ": EDP code {$row[0]} not found in the Edp table.";
+                    continue;
+                }
+    
+                // Validate required fields
+                $requiredFields = range(0, 3); // Updated indexes
                 foreach ($requiredFields as $fieldIndex) {
                     if (!isset($row[$fieldIndex]) || trim($row[$fieldIndex]) === '') {
                         $errors[] = "Row " . ($index + 2) . ": Missing required field '" . $expectedHeaders[$fieldIndex] . "'.";
-                        continue 2; // Skip this row
+                        continue 2;
                     }
                 }
-
-                // Update or Insert the data
+    
+                // Save stock data with edp_id instead of edp_code
                 Stock::updateOrCreate(
-                    ['edp_code' => $row[2]],
+                    ['edp_code' => $edp->id], // Store `id` from `Edp` model
                     [
-                        'location_id'   => $row[0],
-                        'location_name' => $row[1],
-                        'description'   => $row[3],
-                        'section'       => $row[4],
-                        'category'      => $row[5],
-                        'qty'           => (int) $row[6],
-                        'new_spareable' => (int) $row[7],
-                        'used_spareable' => (int) $row[8],
-                        'measurement'   => $row[9],
-                        'remarks'       => $row[10] ?? 'nill',
-                        'user_id'       => Auth::id(),
+                        'location_id'   => $rigUser->location_id,
+                        'location_name' => $rigUser->name,
+                        'description'   => $edp->description,
+                        'section'       => $edp->section,
+                        'category'      => $edp->category,
+                        'qty'           => (int) $row[1],
+                        'new_spareable' => (int) $row[2],
+                        'used_spareable' => (int) $row[3],
+                        'measurement'   => $edp->measurement,
+                        'remarks'       => 'nill',
+                        'user_id'       => $user->id,
                     ]
                 );
             }
-
+    
             Storage::delete($filePath);
-
+    
             if (!empty($errors)) {
-                session()->flash('error', implode('<br>', $errors));
+                session()->flash('error', $errors);
                 return redirect()->back();
             }
-
+    
             session()->flash('success', 'Excel file imported successfully!');
-            return redirect()->route('stock_list');
+            return redirect()->route('admin.stock_list');
         } catch (\Exception $e) {
             session()->flash('error', 'Error importing file: ' . $e->getMessage());
             return redirect()->back();
         }
-    }
+    }  
 
 
 
@@ -262,7 +270,7 @@ class StockController extends Controller
     {
         $editData = Stock::where('id', $id)->get()->first();
         $moduleName = "Edit Stock";
-        return view('user.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName]);
+        return view('admin.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName]);
     }
 
     public function UpdateStock(Request $request)
@@ -286,7 +294,7 @@ class StockController extends Controller
         Stock::where('id', $dataid)->update($update_data);
 
         Session::flash('success', 'Stock updated successfully!');
-        return redirect()->route('stock_list');
+        return redirect()->route('admin.stock_list');
     }
 
 
@@ -294,18 +302,33 @@ class StockController extends Controller
     {
         $deleteId = $request->delete_id;
         $UData = Stock::where('id', $deleteId)->delete();
-        return redirect()->route('stock_list');
+        return redirect()->route('admin.stock_list');
     }
 
     public function get_edp_details(Request $request)
     {
-        $id = $request->data;
-        $viewdata =   Edp::where('id', $id)->get()->first();
-        return response()->json(
-            [
-                'viewdata' => $viewdata
-            ]
-        );
+        if (!auth()->check()) {
+            return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
+        }
+        $edpCode = $request->edp_code; 
+    
+        if (!$edpCode) {
+            return response()->json(['success' => false, 'error' => 'EDP Code is missing'], 400);
+        }
+    
+        $edp = Edp::where('edp_code', $edpCode)->first();
+    
+        if (!$edp) {
+            return response()->json(['success' => false, 'error' => 'EDP not found'], 404);
+        }
+    
+        $stock = Stock::where('edp_code', $edpCode)->first();
+    
+        return response()->json([
+            'success' => true,
+            'edp' => $edp,
+            'stock' => $stock 
+        ]);
     }
 
 
