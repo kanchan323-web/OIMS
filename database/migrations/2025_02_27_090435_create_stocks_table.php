@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('used_spareable',50);
             $table->string('remarks',200);
             $table->integer('user_id')->nullable();
-          //  $table->integer('rig_id')->nullable();
+            $table->integer('rig_id')->nullable();
             $table->timestamps();
         });
     }

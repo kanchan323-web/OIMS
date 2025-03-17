@@ -116,8 +116,8 @@
                                         </a>
 
                                         <a class="badge badge-success mr-2" data-toggle="modal"
-                                            onclick="makeRequest({{ $stockdata->id }})"
-                                            data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
+                                            onclick="addRequest({{ $stockdata->id }} , {{ $stockdata->rig_id }})"
+                                            data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
                                             href="#">
                                             <i class="ri-arrow-right-circle-line"></i>
                                         </a>
@@ -295,12 +295,14 @@
         </div>
     </div>
 </div>
-<div class="modal fade bd-makerequest-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+
+<!-- add request modal -->
+<div class="modal fade bd-addRequest-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Create Request For Stock</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add Request for Stock</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -314,54 +316,49 @@
                                 <label for="">User Name</label>
                                 <input type="text" class="form-control" name="user_name"
                                     value="{{Auth::user()->user_name}}" placeholder="User Name" id="" required readonly>
-                                <div class="invalid-feedback">
-                                    Enter User name
-                                </div>
-                                @error("user_name")
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
-
+                                <input type="hidden" class="form-control" name="user_id" value="{{Auth::user()->id}}">
+                                <input type="hidden" class="form-control" name="rig_id" value="">
                             </div>
-
-                            <div class="">
-                                    <label for=""></label>
-                                    <input type="hidden" class="form-control" name="user_id" placeholder=""
-                                        value="{{Auth::user()->id}}" id="" required>
-                                </div>
-                                
+                            <div class="col-md-6 mb-3">
+                                <label for="">EDP Code</label>
+                                <input type="text" class="form-control" name="req_edp_code" id="Rstock_code" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category">Category</label>
+                                <input type="text" class="form-control" name="category" id="category" readonly>
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <label for="section">Section</label>
-                                <input type="text" class="form-control" name="section" placeholder="Section "
-                                    id="Rsection"  readonly>
-                                <!-- <input type="hidden" name="section" id="hidden_section"> -->
-                                <div class="invalid-feedback">
-                                    Please select a Section
-                                </div>
-                                @error("section")
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
+                                <input type="text" class="form-control" name="section" id="Rsection" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="">Stock Item</label>
-                                <input type="text" class="form-control" name="stock_item" placeholder=" EDP Code"
-                                    id="Rstock_item" readonly>
-                                <div class="invalid-feedback">
-                                    Stock Item
-                                </div>
-                                @error("stock_item")
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
+                                <label for="">Unit of Measurement </label>
+                                <input type="text" class="form-control" name="measurement" id="" value="" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="">Stock Code</label>
-                                <input type="text" class="form-control" name="stock_code" placeholder=" EDP Code"
-                                    id="Rstock_code" readonly>
-                                <div class="invalid-feedback">
-                                    Stock Item
-                                </div>
-                                @error("stock_code")
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
+                                <label for="">Description</label>
+                                <textarea class="form-control" id="" name="remarks" readonly></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Available Quantity</label>
+                                <input type="text" class="form-control" name="qty" id="Rqty" readonly>
+                            </div>
+
+                   <!--         <div class="col-md-6 mb-3">
+                                <label for="">New Spareable </label>
+                                <input type="text" class="form-control" placeholder=" New Spareable"
+                                    name="new_spareable" id="Rnew_spareable" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Used Spareable </label>
+                                <input type="text" class="form-control" placeholder=" Used Spareable"
+                                    name="used_spareable" id="Rused_spareable" readonly>
+                            </div>
+                        -->
+                            <div class="col-md-6 mb-3">
+                                <label for="">Supplier Location Name</label>
+                                <input type="text" class="form-control" name="supplier_location_name"
+                                    placeholder=" Supplier Location Name" id="" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Requested Quantity</label>
@@ -374,68 +371,10 @@
                                 <small class="text-danger">{{$message}}</small>
                                 @enderror
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Available Quantity</label>
-                                <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
-                                    id="Rqty" readonly>
-                                <div class="invalid-feedback">
-                                    Enter Available Quantity
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Unit of Measurement </label>
-                                <input type="text" class="form-control" name="measurement"
-                                    placeholder="Unit of Measurement" id="" value="" required>
-                                <div class="invalid-feedback">
-                                    Enter Unit of Measurement
-                                </div>
-                                @error("measurement")
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">New Spareable </label>
-                                <input type="text" class="form-control" placeholder=" New Spareable"
-                                    name="new_spareable" id="Rnew_spareable" readonly>
-                                <div class="invalid-feedback">
-                                    Enter New Spareable
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Used Spareable </label>
-                                <input type="text" class="form-control" placeholder=" Used Spareable"
-                                    name="used_spareable" id="Rused_spareable" readonly>
-                                <div class="invalid-feedback">
-                                    Enter Used Spareable
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Remarks / Notes </label>
-                                <textarea class="form-control" id="" name="remarks" placeholder=" Remarks / Notes"
-                                    required></textarea>
-                                <div class="invalid-feedback">
-                                    Enter Remarks / Notes
-                                </div>
-                                @error("remarks")
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Supplier Location Name</label>
-                                <input type="text" class="form-control" name="supplier_location_name"
-                                    placeholder=" Supplier Location Name" id="" required>
-                                <div class="invalid-feedback">
-                                    Enter Supplier Location Name
-                                </div>
-                                @error("supplier_location_name")
-                                <small class="text-danger">{{$message}}</small>
-                                @enderror
-                            </div>
-
                         </div>
                         <button class="btn btn-primary" type="submit">Submit form</button>
                         <a href="{{route('stock_list.request')}}" class="btn btn-light">Go Back</a>
-                        <!-- </form> -->
+                    </form>
                 </div>
             </div>
             <div class="modal-footer">
@@ -450,51 +389,48 @@
 
 
 <script>
-    function makeRequest(id) {
-
-var id = id;
-
-
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-$.ajax({
-    type: "GET",
-    url: "{{route('stock_list_view')}}",
-    data: {
-        data: id
-    },
-    success: function(response) {
-        console.log(response.viewdata['category']);
-        $("#Rlocation_id").val(response.viewdata['location_id']);
-        $("#Rlocation_name").val(response.viewdata['location_name']);
-        $("#Rstock_item").val(response.viewdata['edp_code']);
-        console.log("This is vipul "+$("#Rstock_item").val());
-        $("#Rstock_code").val(response.viewdata['id']);
+function addRequest(id) {
+    var id = id;
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $.ajax({
+        type: "GET",
+        url: "{{route('stock_list_view')}}",
+        data: {
+            data: id
+        },
+        success: function(response) {
+            console.log(response.viewdata['category']);
+            $("#Rlocation_id").val(response.viewdata['location_id']);
+            $("#Rlocation_name").val(response.viewdata['location_name']);
+            $("#Rstock_item").val(response.viewdata['edp_code']);
+            console.log("This is vipul "+$("#Rstock_item").val());
+            $("#Rstock_code").val(response.viewdata['id']);
 
 
-        var sectionValue = response.viewdata['section'];
-        $("#Rsection").val(sectionValue);
-        $("#Rhidden_section").val(sectionValue);
+            var sectionValue = response.viewdata['section'];
+            $("#Rsection").val(sectionValue);
+            $("#Rhidden_section").val(sectionValue);
 
-        var categoryValue = response.viewdata['category'];
-        $("#Rcategory").val(categoryValue);
-        $("#Rhidden_category").val(categoryValue);
+            var categoryValue = response.viewdata['category'];
+            $("#Rcategory").val(categoryValue);
+            $("#Rhidden_category").val(categoryValue);
 
 
-        $("#Rqty").val(response.viewdata['qty']);
-        $("#Rmeasurement").val(response.viewdata['measurement']);
-        $("#Rnew_spareable").val(response.viewdata['new_spareable']);
-        $("#Rused_spareable").val(response.viewdata['used_spareable']);
-        
-        $("#Rremarks").val(response.viewdata['remarks']);
-        $("#Rdescription").val(response.viewdata['description']);
-    }
-});
+            $("#Rqty").val(response.viewdata['qty']);
+            $("#Rmeasurement").val(response.viewdata['measurement']);
+            $("#Rnew_spareable").val(response.viewdata['new_spareable']);
+            $("#Rused_spareable").val(response.viewdata['used_spareable']);
 
+            $("#Rremarks").val(response.viewdata['remarks']);
+            $("#Rdescription").val(response.viewdata['description']);
+        }
+    });
 }
+
 function viewstockdata(id) {
     var id = id;
     // console.log(id);
@@ -572,7 +508,7 @@ $(document).ready(function() {
                                         <a class="badge badge-info mr-2" data-toggle="modal"
                                             onclick="viewstockdata(${stockdata.id})" data-target=".bd-example-modal-xl"
                                             data-placement="top" title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
-                                        ${editButton} 
+                                        ${editButton}
                                     </td>
                                 </tr>
                             `);
