@@ -59,7 +59,10 @@ class AdminLoginController extends Controller
     {
         return view('admin.login');
     }
-
+    
+    public function profile(Request $request){
+        return view('user.user_profile');
+    }
     /*    public function register(){
         return view('register');
     }
