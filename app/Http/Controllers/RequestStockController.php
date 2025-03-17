@@ -9,6 +9,8 @@ use App\Models\Stock;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Requester;
+
 
 
 class RequestStockController extends Controller
@@ -134,5 +136,26 @@ class RequestStockController extends Controller
 
     public function get_stockrequest_data(Request $request){
         return hello;
+    }
+
+    public function IncomingRequestStockList(Request $request){
+
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+                    ->where('rig_id',$rig_id)
+                    ->pluck('id')
+                    ->toArray();
+
+       // $data = RequestStock::get();
+        $data = Requester::select('rig_users.name', 'rig_users.location_id','requesters.*')
+        ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+        ->where('supplier_rig_id', $rig_id)
+        ->orderBy('requesters.created_at', 'desc')->get();
+
+        //print_r($data);
+        //die;
+
+        $moduleName = "Incoming Request List";
+        return view('request_stock.list_request_stock',compact('data', 'moduleName','datarig'));
     }
 }
