@@ -57,7 +57,8 @@
                                     <div class="col-md-4 mb-2 d-flex align-items-end">
                                         <button type="button" class="btn btn-primary mr-2"
                                             id="filterButton">Search</button>
-                                        <a href="{{ route('stock_list.request') }}" class="btn btn-secondary ml-2">Reset</a>
+                                        <a href="{{ route('stock_list.request') }}"
+                                            class="btn btn-secondary ml-2">Reset</a>
                                         <!-- <a href="{{ route('stock_list_pdf') }}"
                                             class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
                                             id="downloadPdf" target="_blank">
@@ -309,53 +310,92 @@
             </div>
             <div class="modal-body">
                 <div class="card-body">
-                    <form class="needs-validation" novalidate method="POST" action="{{route('request_stock_add.post')}}" id="addStockForm">
+                    <form class="needs-validation" novalidate method="POST" action="{{route('request_stock_add.post')}}"
+                        id="addStockForm">
                         @csrf
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
                                 <label for="">User Name</label>
                                 <input type="text" class="form-control" name="user_name"
                                     value="{{Auth::user()->user_name}}" placeholder="User Name" id="" required readonly>
-                                <input type="hidden" class="form-control" name="user_id" value="{{Auth::user()->id}}">
-                                <input type="hidden" class="form-control" name="rig_id" value="">
+                                @error("user_name")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
+                                <input type="hidden" class="form-control" name="requester_id"
+                                    value="{{Auth::user()->id}}">
+                                @error("requester_id")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
+                                <input type="hidden" class="form-control" name="requester_rig_id"
+                                    value="{{Auth::user()->rig_id}}">
+                                @error("requester_rig_id")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">EDP Code</label>
-                                <input type="text" class="form-control" name="req_edp_code" id="Redp_code" readonly>
+                                <input type="text" class="form-control" name="stock_id" id="Redp_code" readonly>
+                                @error("stock_id")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="category">Category</label>
                                 <input type="text" class="form-control" name="category" id="Rcategory" readonly>
+                                @error("category")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="section">Section</label>
                                 <input type="text" class="form-control" name="section" id="Rsection" readonly>
+                                @error("section")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Unit of Measurement </label>
-                                <input type="text" class="form-control" name="measurement" id="Rmeasurement" value="" readonly>
+                                <input type="text" class="form-control" name="measurement" id="Rmeasurement" value=""
+                                    readonly>
+                                @error("measurement")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Description</label>
-                                <textarea class="form-control" id="Rdescription" name="remarks" readonly></textarea>
+                                <textarea class="form-control" id="Rdescription" name="description" readonly></textarea>
+                                @error("description")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Available Quantity</label>
-                                <input type="text" class="form-control" name="avl_qty" id="Available_qty" readonly>
+                                <input type="text" class="form-control" name="available_qty" id="Available_qty"
+                                    readonly>
+                                @error("available_qty")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="">Supplier Location Name</label>
-                                <input type="text" class="form-control" name="supplier_location_name"
-                                    placeholder=" Supplier Location Name" id="Rsupplier_location_name" required readonly>
+                                <input type="text" class="form-control" placeholder=" Supplier Location Name"
+                                    id="Rsupplier_location_name" name="supplier_rig_id" required readonly>
+                                <input type="hidden" class="form-control" placeholder=" Supplier Location Name"
+                                    id="Rsupplier_location_id" name="supplier_location_id" required readonly>
+                                @error("supplier_rig_id")
+                                <small class="text-danger">{{$message}}</small>
+                                @enderror
+                                <input type="hidden" class="form-control" name="supplier_id" placeholder=" "
+                                    id="Rsupplier_id" required readonly>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Requested Quantity</label>
-                                <input type="number" class="form-control" name="request_quantity"
+                                <input type="number" class="form-control" name="requested_qty"
                                     placeholder="Requested Quantity" id="RequestQTY" required>
 
-                                    <small id="qtyError" class="text-danger" style="display: none;"></small>
-                                @error("request_quantity")
+                                <small id="qtyError" class="text-danger" style="display: none;"></small>
+                                @error("requested_qty")
                                 <small class="text-danger">{{$message}}</small>
                                 @enderror
                             </div>
@@ -404,28 +444,33 @@ function addRequest(id) {
             $("#Rhidden_category").val(categoryValue);
 
             $("#Available_qty").val(response.viewdata['qty']);
-           
 
 
-            $("#RequestQTY").on("input", function () {
-                    let availableQty = parseFloat($("#Available_qty").val()) || 0; 
-                    let requestQty = parseFloat($(this).val()) || 0; 
 
-                    if (requestQty > availableQty) {
-                        $("#RequestQTY").addClass("is-invalid"); 
-                        $("#qtyError").text("Requested quantity cannot be greater than available quantity!").show();
-                    } else {
-                        $("#RequestQTY").removeClass("is-invalid"); 
-                        $("#qtyError").hide();
-                    }
-                });
+            $("#RequestQTY").on("input", function() {
+                let availableQty = parseFloat($("#Available_qty").val()) || 0;
+                let requestQty = parseFloat($(this).val()) || 0;
 
+                if (requestQty > availableQty) {
+                    $("#RequestQTY").addClass("is-invalid");
+                    $("#qtyError").text(
+                        "Requested quantity cannot be greater than available quantity!").show();
+                } else {
+                    $("#RequestQTY").removeClass("is-invalid");
+                    $("#qtyError").hide();
+                }
+            });
+            console.log(response.viewdata);
             $("#Rmeasurement").val(response.viewdata['measurement']);
             $("#Rnew_spareable").val(response.viewdata['new_spareable']);
             $("#Rused_spareable").val(response.viewdata['used_spareable']);
             $("#Rremarks").val(response.viewdata['remarks']);
             $("#Rdescription").val(response.viewdata['description']);
-            $("#Rsupplier_location_name").val(response.viewdata['location_id']);
+            $("#Rsupplier_location_name").val(response.viewdata['location_name']);
+            $("#Rsupplier_location_id").val(response.viewdata['id']);
+            $("#Rsupplier_id").val(response.viewdata['user_id']);
+
+            console.log(response.viewdata['location_id']);
         }
     });
 }

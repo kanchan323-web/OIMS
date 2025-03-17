@@ -70,7 +70,7 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/import', [StockController::class, 'showImportForm'])->name('admin.import_stock');;
         Route::post('/import_bulk', [StockController::class, 'import'])->name('admin.stock.import');
         Route::get('/get_edp_details', [StockController::class, 'get_edp_details'])->name('admin.get_edp_details');
-        // Route::get('/sample-download', [StockController::class, 'downloadSample'])->name('stock.downloadSample');
+        Route::get('/sample-download', [StockController::class, 'downloadSample'])->name('stock.downloadSample');
         Route::get('/get_data_forview', [StockController::class, 'stock_list_view'])->name('admin.stock_list_view');
         Route::get('/edit_stock/{id}', [StockController::class, 'EditStock'])->name('admin.edit_stock');
         Route::post('/update_stock', [StockController::class, 'UpdateStock'])->name('admin.update_stock');
