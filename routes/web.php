@@ -127,6 +127,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
         Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
         Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
+        Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
     });
 
     //User mapping
