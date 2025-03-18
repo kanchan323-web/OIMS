@@ -1,4 +1,4 @@
-@extends('layouts.frontend.admiin_layout')
+@extends('layouts.frontend.admin_layout')
 @section('page-content')
 
 

@@ -71,14 +71,14 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-6 col-md-3">
+                    <!-- <div class="col-sm-6 col-md-3">
                         <div class="user-list-files d-flex">
                             <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Add Stock</a>
                             <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Bulk Stocks </a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -426,7 +426,7 @@ function addRequest(id) {
     });
     $.ajax({
         type: "GET",
-        url: "{{route('incoming_request_list')}}",
+        url: "{{route('stock_list_view')}}",
         data: {
             data: id
         },
@@ -487,7 +487,7 @@ function viewstockdata(id) {
     });
     $.ajax({
         type: "GET",
-        url: "{{route('incoming_request_list')}}",
+        url: "{{route('stock_list_view')}}",
         data: {
             data: id
         },

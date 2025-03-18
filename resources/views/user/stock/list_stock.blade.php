@@ -118,7 +118,7 @@
                                                     <!-- Edit Button (Only for Your Members) -->
                                                     @if(in_array($stockdata->user_id, $datarig))
                                                         <a class="badge bg-success mr-2"
-                                                            href="{{ url('/edit_stock/' . $stockdata->id) }}">
+                                                            href="{{ url('/user/edit_stock/' . $stockdata->id) }}">
                                                             <i class="ri-pencil-line mr-0"></i>
                                                         </a>
                                                     @endif
@@ -355,7 +355,7 @@
                                 let editButton = '';
                                 if (response.datarig.includes(stockdata.user_id)) {
                                     editButton = `
-                                    <a class="badge bg-success mr-2" href="/OIMS/edit_stock/${stockdata.id}">
+                                    <a class="badge bg-success mr-2" href="/OIMS/user/edit_stock/${stockdata.id}">
                                         <i class="ri-pencil-line mr-0"></i>
                                     </a>`;
                                 }

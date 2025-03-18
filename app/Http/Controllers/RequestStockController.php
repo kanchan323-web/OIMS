@@ -125,19 +125,14 @@ class RequestStockController extends Controller
 
         $stockData = Stock::select('edp_code')->distinct()->get();
         $data = Stock::all();
-        // $data = Stock::where('user_id', '!=', Auth::user()->id)
-        // ->pluck('id')
-        // ->toArray();
-        // $data = Stock::where('user_id', '!=', Auth::user()->id)->get();
 
-        // dd($data);
         $moduleName = "Stock";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
-    public function get_stockrequest_data(Request $request){
-        return hello;
-    }
+    // public function get_stockrequest_data(Request $request){
+    //     return hello;
+    // }
 
     public function IncomingRequestStockList(Request $request){
 
@@ -159,4 +154,7 @@ class RequestStockController extends Controller
         $moduleName = "Incoming Request List";
         return view('request_stock.list_request_stock',compact('data', 'moduleName','datarig'));
     }
+
+
+    
 }

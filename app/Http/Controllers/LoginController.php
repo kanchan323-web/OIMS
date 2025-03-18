@@ -11,6 +11,7 @@ use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Hash;
+use App\Models\RigUser;
 
 
 class LoginController extends Controller
@@ -21,7 +22,13 @@ class LoginController extends Controller
     }
 
     public function profile(Request $request){
-            return view('user.user_profile');
+        $moduleName = "User Profile";
+        $rig_id = Auth::user()->rig_id;
+      $RigUser =  RigUser::where('id',$rig_id)->first();
+      
+
+        
+            return view('user.user_profile',compact('moduleName','RigUser'));
     }
 
     public function authenticate(Request $request)
