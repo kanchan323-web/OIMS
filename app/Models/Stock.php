@@ -22,5 +22,6 @@ class Stock extends Model
         'used_spareable',
         'remarks',
         'user_id',
+        'rig_id',
     ];
 }
