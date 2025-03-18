@@ -58,7 +58,8 @@
 
                                             <option value="" {{ empty($editData->category) ? 'selected' : '' }}>
                                                 Select Category...</option>
-
+                                                <option value="Spares" >
+                                                 Spares</option>
 
                                             <option value="Stores">
                                                 Stores
