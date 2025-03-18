@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RigUserSeeder::class
         ]);
+        $this->call([
+            MasterStatusSeeder::class
+        ]);
 
         // \App\Models\User::factory(10)->create();
 
