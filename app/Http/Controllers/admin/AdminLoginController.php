@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\RigUser;
 
 class AdminLoginController extends Controller
 {
@@ -61,7 +62,14 @@ class AdminLoginController extends Controller
     }
     
     public function profile(Request $request){
-        return view('user.user_profile');
+
+        $moduleName = "Admin Profile";
+        $rig_id = Auth::user()->rig_id;
+      $RigUser =  RigUser::where('id',$rig_id)->first();
+
+            return view('admin.admin_profile',compact('moduleName','RigUser'));
+
+        
     }
     /*    public function register(){
         return view('register');
