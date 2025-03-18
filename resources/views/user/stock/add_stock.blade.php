@@ -15,6 +15,8 @@
                             <form class="needs-validation" novalidate method="POST" id="addStockForm"
                                 action="{{ route('stockSubmit') }}">
                                 @csrf
+                                <input type="hidden" name="id" id="id">
+
                                 <div class="form-row">
 
                                     <div class="col-md-6 mb-3">
@@ -22,9 +24,12 @@
                                         <select class="form-control select2" name="edp_code" id="edp_code_id" required>
                                             <option value="" disabled selected>Select EDP Code</option>
                                             @foreach ($edpCodes as $edp)
-                                                <option value="{{ $edp->edp_code }}">{{ $edp->edp_code }}</option>
+                                                <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
                                             @endforeach
                                         </select>
+                                        @error('edp_code')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
@@ -32,6 +37,9 @@
                                         <input type="text" class="form-control" name="location_id" placeholder="Location Id"
                                             value="{{ old('location_id', $LocationName?->location_id) }}" id="location_ids"
                                             required readonly>
+                                        @error('location_id')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
@@ -39,9 +47,11 @@
                                         <input type="text" class="form-control" placeholder="Location Name"
                                             name="location_name" id="location_name"
                                             value="{{ old('location_name', $LocationName?->name) }}" required readonly>
+                                        @error('location_name')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <!-- Fields hidden initially -->
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="category_id">Category</label>
                                         <select class="form-control" name="category" id="category_id" required>
@@ -51,11 +61,18 @@
                                             <option value="Capital items">Capital items</option>
                                         </select>
                                         <input type="hidden" name="category" id="category_hidden">
+                                        @error('category')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="description">Description</label>
-                                        <textarea class="form-control" name="description" id="description" required readonly></textarea>
+                                        <textarea class="form-control" name="description" id="description" required
+                                            readonly></textarea>
+                                        @error('description')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
@@ -66,31 +83,52 @@
                                             <option value="DRILL">DRILL</option>
                                         </select>
                                         <input type="hidden" name="section" id="section_hidden">
+                                        @error('section')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="measurement">Unit of Measurement</label>
-                                        <input type="text" class="form-control" name="measurement" id="measurement" required readonly>
+                                        <input type="text" class="form-control" name="measurement" id="measurement" required
+                                            readonly>
+                                        @error('measurement')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="qty">Available Quantity</label>
                                         <input type="number" class="form-control" name="qty" id="qty" required>
+                                        @error('qty')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="new_spareable">New Spareable</label>
-                                        <input type="number" class="form-control" name="new_spareable" id="new_spareable" required>
+                                        <input type="number" class="form-control" name="new_spareable" id="new_spareable"
+                                            required>
+                                        @error('new_spareable')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="used_spareable">Used Spareable</label>
-                                        <input type="number" class="form-control" name="used_spareable" id="used_spareable" required>
+                                        <input type="number" class="form-control" name="used_spareable" id="used_spareable"
+                                            required>
+                                        @error('used_spareable')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="remarks">Remarks / Notes</label>
                                         <textarea class="form-control" name="remarks" id="remarks" required></textarea>
+                                        @error('remarks')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
 
@@ -141,13 +179,16 @@
                                 $("#section_hidden").val(response.edp.section);
 
                                 if (response.stock) {
+                                    console.log(response.stock);
                                     $("#addStockForm").attr("action", "{{ route('update_stock') }}");
+                                    $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);
                                     $("#new_spareable").val(response.stock.new_spareable);
                                     $("#used_spareable").val(response.stock.used_spareable);
                                     $("#remarks").val(response.stock.remarks);
                                 } else {
                                     $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
+                                    $("#id").val('');
                                     $("#qty").val('');
                                     $("#new_spareable").val('');
                                     $("#used_spareable").val('');
@@ -170,5 +211,7 @@
             toggleFields(false);
         });
     </script>
+
+
 
 @endsection
