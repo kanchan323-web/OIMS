@@ -130,10 +130,10 @@ class RequestStockController extends Controller
         ];
 
         if ($supplierData) {
-            // $supplierEmail = $supplierData->email;
-            $supplierEmail ="silvertouchvipul@gmail.com";
-            // Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
-            Mail::to($supplierEmail)->send(new requestor_stock_mail($mailDataRequester));
+            $supplierEmail = $supplierData->email;
+            // $supplierEmail ="silvertouchvipul@gmail.com";
+            Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
+            // Mail::to($supplierEmail)->send(new requestor_stock_mail($mailDataRequester));
             Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
         } else {
             dd('Supplier not found');
