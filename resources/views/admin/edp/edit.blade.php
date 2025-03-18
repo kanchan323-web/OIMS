@@ -5,6 +5,24 @@
     <div class="container-fluid add-form-list">
         <div class="row">
             <div class="col-sm-12">
+                @if (Session::get('success'))
+                    <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+                        <strong>Success:</strong> {{ Session::get('success') }}
+                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @endif
+                    
+                    @if (Session::get('error'))
+                    <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+                        <strong>Error:</strong> {{ Session::get('error') }}
+                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @endif
+
                 <div class="card">
                     <!-- @if ($errors->any())
                     <div class="alert alert-danger">
@@ -16,15 +34,7 @@
                     </div>
                     @endif -->
 
-                    @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    @endif
-
+                    
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
                             <h4 class="card-title">Edit EDP</h4>
@@ -131,5 +141,13 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        // Automatically fade out alerts after 3 seconds
+        setTimeout(function () {
+            $(".alert").fadeOut("slow");
+        }, 3000);
+    });
+</script>
 
 @endsection

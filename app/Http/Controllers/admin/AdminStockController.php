@@ -32,13 +32,13 @@ class AdminStockController extends Controller
         $rigId =  Auth::user()->rig_id;
         $edpCodes = Edp::all();
         $LocationName = RigUser::where('id', $rigId)->first();
-        return view('admin.stock.add_stock', compact('moduleName', 'LocationName','edpCodes'));
+        return view('admin.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes'));
     }
 
 
     public function stock_list(Request $request)
     {
-        
+
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('rig_id', $rig_id)
             ->pluck('id')
@@ -140,7 +140,7 @@ class AdminStockController extends Controller
 
     public function downloadSample()
     {
-        $filePath = public_path('sample-files/sample_stock.xlsx');
+        $filePath = public_path('sample-files/sample_stock_admin.xlsx');
         return Response::download($filePath, 'Sample_Stock_File.xlsx');
     }
 
@@ -156,98 +156,113 @@ class AdminStockController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
-    
+
         try {
             $file = $request->file('file');
             $filePath = $file->storeAs('temp', $file->getClientOriginalName());
             $spreadsheet = IOFactory::load(storage_path('app/' . $filePath));
             $sheet = $spreadsheet->getActiveSheet();
             $rows = $sheet->toArray();
-    
+
+            // Expected headers
             $expectedHeaders = [
+                'Location ID',
+                'Location Name',
                 'EDP',
                 'Qty Total',
                 'New Spareable',
                 'Used Spareable',
             ];
-    
+
+            // Ensure the uploaded file matches the expected headers
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
-    
             if ($actualHeaders !== $expectedHeaders) {
                 Storage::delete($filePath);
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
                 return redirect()->back();
             }
-    
+
             $user = Auth::user();
-            $rigUser = RigUser::find($user->rig_id);
-    
-            if (!$rigUser) {
-                session()->flash('error', 'Rig details not found for the logged-in user.');
-                return redirect()->back();
-            }
-    
             $errors = [];
+
             foreach (array_slice($rows, 1) as $index => $row) {
+                // Skip empty rows
                 if (array_filter($row, fn($value) => !is_null($value) && trim($value) !== '') === []) {
                     continue;
                 }
-                
-                if (!isset($row[0]) || !preg_match('/^\d{9}$/', $row[0])) {
+
+                // Validate EDP code (Column Index 2)
+                if (!isset($row[2]) || !preg_match('/^\d{9}$/', $row[2])) {
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
 
-                $edp = Edp::where('edp_code', $row[0])->first();
+                $edp = Edp::where('edp_code', $row[2])->first();
                 if (!$edp) {
-                    $errors[] = "Row " . ($index + 2) . ": EDP code {$row[0]} not found in the Edp table.";
+                    $errors[] = "Row " . ($index + 2) . ": EDP code {$row[2]} not found in the Edp table.";
                     continue;
                 }
-    
+
                 // Validate required fields
-                $requiredFields = range(0, 3); // Updated indexes
+                $requiredFields = range(0, 5);
                 foreach ($requiredFields as $fieldIndex) {
                     if (!isset($row[$fieldIndex]) || trim($row[$fieldIndex]) === '') {
                         $errors[] = "Row " . ($index + 2) . ": Missing required field '" . $expectedHeaders[$fieldIndex] . "'.";
                         continue 2;
                     }
                 }
-    
-                // Save stock data with edp_id instead of edp_code
-                Stock::updateOrCreate(
-                    ['edp_code' => $edp->id], // Store `id` from `Edp` model
-                    [
-                        'location_id'   => $rigUser->location_id,
-                        'location_name' => $rigUser->name,
+
+                $locationId = $row[0];
+                $locationName = $row[1];
+
+                // Check if stock for the same EDP code already exists
+                $existingStock = Stock::where('edp_code', $edp->id)
+                    ->first();
+
+                if ($existingStock) {
+                    // Update existing stock
+                    $existingStock->update([
+                        'location_id'   => $locationId,
+                        'location_name' => $locationName,
+                        'qty'           => (int) $row[3],
+                        'new_spareable' => (int) $row[4],
+                        'used_spareable' => (int) $row[5],
+                        'user_id'       => $user->id,
+                    ]);
+                } else {
+                    // Insert new stock entry
+                    Stock::create([
+                        'edp_code'      => $edp->id,
+                        'rig_id'        => $user->rig_id,
+                        'location_id'   => $locationId,
+                        'location_name' => $locationName,
                         'description'   => $edp->description,
                         'section'       => $edp->section,
                         'category'      => $edp->category,
-                        'qty'           => (int) $row[1],
-                        'new_spareable' => (int) $row[2],
-                        'used_spareable' => (int) $row[3],
+                        'qty'           => (int) $row[3],
+                        'new_spareable' => (int) $row[4],
+                        'used_spareable' => (int) $row[5],
                         'measurement'   => $edp->measurement,
                         'remarks'       => 'nill',
                         'user_id'       => $user->id,
-                    ]
-                );
+                    ]);
+                }
             }
-    
+
             Storage::delete($filePath);
-    
+
             if (!empty($errors)) {
                 session()->flash('error', $errors);
                 return redirect()->back();
             }
-    
+
             session()->flash('success', 'Excel file imported successfully!');
             return redirect()->route('admin.stock_list');
         } catch (\Exception $e) {
             session()->flash('error', 'Error importing file: ' . $e->getMessage());
             return redirect()->back();
         }
-    }  
-
-
+    }
 
 
     public function stock_list_view(Request $request)
@@ -256,7 +271,7 @@ class AdminStockController extends Controller
         $id = $request->data;
         $viewdata = Stock::find($id);
         $rig_id = User::where('id', $viewdata->user_id)->value('rig_id');
-        $rigdata = rig_users::where('id', $rig_id)->first();
+        $rigdata = RigUser::where('id', $rig_id)->first();
         return response()->json(
             [
                 'viewdata' => $viewdata,
@@ -310,24 +325,24 @@ class AdminStockController extends Controller
         if (!auth()->check()) {
             return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
         }
-        $edpCode = $request->edp_code; 
-    
+        $edpCode = $request->edp_code;
+
         if (!$edpCode) {
             return response()->json(['success' => false, 'error' => 'EDP Code is missing'], 400);
         }
-    
+
         $edp = Edp::where('edp_code', $edpCode)->first();
-    
+
         if (!$edp) {
             return response()->json(['success' => false, 'error' => 'EDP not found'], 404);
         }
-    
+
         $stock = Stock::where('edp_code', $edpCode)->first();
-    
+
         return response()->json([
             'success' => true,
             'edp' => $edp,
-            'stock' => $stock 
+            'stock' => $stock
         ]);
     }
 

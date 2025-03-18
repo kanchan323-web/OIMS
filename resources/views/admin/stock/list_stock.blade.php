@@ -75,7 +75,7 @@
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Add Stock</a>
-                                <a href="{{ route('admin.stock.import') }}" class="btn btn-primary add-list"><i
+                                <a href="{{ route('admin.import_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Bulk Stocks </a>
                             </div>
                         </div>
