@@ -154,4 +154,7 @@ class RequestStockController extends Controller
         $moduleName = "Incoming Request List";
         return view('request_stock.list_request_stock',compact('data', 'moduleName','datarig'));
     }
+
+
+    
 }
