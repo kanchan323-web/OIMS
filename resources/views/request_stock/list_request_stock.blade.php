@@ -282,40 +282,70 @@
                         </div>
 
                     </div>
-                    <button class="btn btn-danger" type="submit">Decline Request</button>
-                    <button class="btn btn-success" type="submit">Recieved Request</button>
-                    <button class="btn btn-primary" type="submit">Raise Query</button>
-            <!--     <button type="reset" class="btn btn-danger">Reset</button>
-                <a href="" class="btn btn-light">Go Back</a> -->
-                    <!-- </form> -->
-
-
-       <!--             <ul class="nav nav-pills mb-3 nav-fill" id="pills-tab-1" role="tablist">
-                        <li class="nav-item btn-danger">
-                           <a class="nav-link active" id="pills-home-tab-fill" data-toggle="pill" href="#pills-home-fill" role="tab" aria-controls="pills-home" aria-selected="true">Home</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" id="pills-profile-tab-fill" data-toggle="pill" href="#pills-profile-fill" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" id="pills-contact-tab-fill" data-toggle="pill" href="#pills-contact-fill" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</a>
-                        </li>
-                     </ul>
-
-
-                     <div class="tab-content" id="pills-tabContent-1">
-                        <div class="tab-pane fade active show" id="pills-home-fill" role="tabpanel" aria-labelledby="pills-home-tab-fill">
-                           <p>first</p>
+                    <div class="d-flex justify-content-center mt-4">
+                        <button class="btn btn-danger mx-2" type="button" data-toggle="modal" data-target="#declineReasonModal">
+                            Decline Request
+                        </button>
+                        <button class="btn btn-success mx-2" type="submit">Received Request</button>
+                        <button class="btn btn-primary mx-2" type="button" data-toggle="modal" data-target="#raiseQueryModal">
+                            Raise Query
+                        </button>
+                    </div>
+                    
+                    <!-- Decline Request Modal -->
+                    <div class="modal fade" id="declineReasonModal" tabindex="-1" role="dialog" aria-labelledby="declineReasonLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="declineReasonLabel">Enter Decline Reason</h5>
+                                    <button type="button" class="close sub-modal-close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="declineForm">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="decline_reason">Reason for Declining</label>
+                                            <textarea class="form-control" id="decline_reason" name="decline_reason" rows="3" required></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-center mt-3">
+                                            <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                            <button type="submit" class="btn btn-danger mx-2">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="tab-pane fade" id="pills-profile-fill" role="tabpanel" aria-labelledby="pills-profile-tab-fill">
-                           <p>Second</p>
-                        </div>
-                        <div class="tab-pane fade" id="pills-contact-fill" role="tabpanel" aria-labelledby="pills-contact-tab-fill">
-                            <p>third</p>
-                        </div>
-                     </div>
-            -->
+                    </div>
 
+                    
+                    <!-- Raise Query Modal -->
+                    <div class="modal fade" id="raiseQueryModal" tabindex="-1" role="dialog" aria-labelledby="raiseQueryLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="raiseQueryLabel">Enter Query</h5>
+                                    <button type="button" class="close sub-modal-close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="raiseQueryForm">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="query">Query</label>
+                                            <textarea class="form-control" id="query" name="query" rows="3" required></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-center mt-3">
+                                            <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                            <button type="submit" class="btn btn-primary mx-2">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -388,6 +418,31 @@ $(document).ready(function() {
     setTimeout(function() {
         $(".alert").fadeOut("slow");
     }, 3000);
+});
+
+
+$(document).ready(function () {
+    // Open Decline Modal without closing Main Modal
+    $('[data-target="#declineReasonModal"]').on("click", function () {
+        $("#declineReasonModal").modal("show");
+    });
+
+    // Open Raise Query Modal without closing Main Modal
+    $('[data-target="#raiseQueryModal"]').on("click", function () {
+        $("#raiseQueryModal").modal("show");
+    });
+
+    // Close only the sub-modal (Decline or Raise Query), keep Main Modal open
+    $(".sub-modal-close").on("click", function () {
+        $(this).closest(".modal").modal("hide");
+    });
+
+    // Prevent clicking outside sub-modal from closing the main modal
+    $(".modal").on("hidden.bs.modal", function (e) {
+        if ($(".modal:visible").length) {
+            $("body").addClass("modal-open"); // Keep main modal background active
+        }
+    });
 });
 </script>
 
