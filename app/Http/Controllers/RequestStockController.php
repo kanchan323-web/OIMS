@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Requester;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 use App\Mail\requestor_stock_mail;
 use App\Mail\supplier_stock_mail;
 
