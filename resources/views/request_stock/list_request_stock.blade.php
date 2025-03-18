@@ -95,6 +95,7 @@
                                         <label for="checkbox1" class="mb-0"></label>
                                     </div>
                                 </th> -->
+
                                 <th>Sr.No</th>
                                 <th>Location Name</th>
                                <!-- <th>EDP</th> -->
@@ -115,19 +116,12 @@
                                 <td>{{$stockdata->created_at}}</td>
                                 <td>
                                      <!-- Edit Button (Only for Your Members) -->
-                                    <a class="badge badge-info mr-2" data-toggle="modal"
+                                        <a class="badge badge-success mr-2" data-toggle="modal"
                                             onclick="RequestStockData({{$stockdata->id}})"
                                             data-target=".bd-example-modal-xl" data-placement="top" title=""
-                                            data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i>
-                                    </a>
-                              <!--      <div class="d-flex align-items-center list-action">
-                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                            onclick="viewstockdata({{$stockdata->id}})"
-                                            data-target=".bd-example-modal-xl" data-placement="top" title=""
-                                            data-original-title="View" href="#"><i
+                                            data-original-title="Supplier Request" href="#"><i
                                                 class="ri-arrow-right-circle-line"></i>
                                         </a>
-                                    </div> -->
                                 </td>
                             </tr>
                             @endif
@@ -148,7 +142,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"> View Request</h5>
+                <h5 class="modal-title" id="exampleModalLabel"> Requester Request</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -160,150 +154,169 @@
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="">Requester Name</label>
-                            <input type="text" class="form-control" name="" placeholder=" " id="location_id" readonly>
+                            <input type="text" class="form-control" name="" placeholder="Requester Name" id="location_id" readonly>
                             <div class="invalid-feedback">
                                 Enter Requester Name
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="">Requester Id</label>
-                            <input type="text" class="form-control" placeholder=" Location Name" name=""
+                            <label for="">Requester Rig Name</label>
+                            <input type="text" class="form-control" placeholder="Requester Rig Name" name=""
                                 id="requester_Id" readonly>
                             <div class="invalid-feedback">
-                                Enter Requester Id
+                                Enter Requester Rig Name
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="">Suppler Location Name</label>
-                            <input type="text" class="form-control" name="" placeholder=" EDP Code"
-                                id="Suppler_Location_Name" readonly>
-                            <div class="invalid-feedback">
-                                Suppler Location Name
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="">Suppler Location ID</label>
-                            <input type="text" class="form-control" name="" placeholder="" id="Suppler_Location_Id"
+                            <label for="">Supplier Name</label>
+                            <input type="text" class="form-control" name="" placeholder="Supplier Name" id="Supplier_Location_Id"
                                 readonly>
                             <div class="invalid-feedback">
-                                Suppler Location Name
+                                Supplier Name
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="">Supplier Rig Name</label>
+                            <input type="text" class="form-control" name="" placeholder="Supplier Rig Name"
+                                id="Supplier_Location_Name" readonly>
+                            <div class="invalid-feedback">
+                                Supplier Rig Name
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="">EDP Code</label>
-                            <input type="text" class="form-control" name="" placeholder="" id="EDP_Code" readonly>
+                            <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code" readonly>
                             <div class="invalid-feedback">
-                                Suppler Location Name
+                                Enter EDP Code
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="category">Category</label>
-                            <select class="form-control" id="category" name="category" disabled>
-                                <option selected disabled value="">Select Category...</option>
-                                <option value="Spares">Spares</option>
-                                <option value="Stores">Stores</option>
-                                <option value="Capital items">Capital items</option>
-                            </select>
-                            <input type="hidden" name="category" id="hidden_category">
+                            <input type="text" class="form-control" placeholder="Category" id="category" name="category" readonly>
                             <div class="invalid-feedback">
-                                Please select a category
+                                Enter Category Name
                             </div>
                         </div>
-
-
-
                         <div class="col-md-6 mb-3">
                             <label for="section">Section</label>
-                            <select class="form-control" name="section" id="section" disabled>
-                                <option selected disabled value="">Select Section...</option>
-                                <option value="Section1">Section1</option>
-                                <option value="Section2">Section2</option>
-                                <option value="Section3">Section3</option>
-                            </select>
-                            <input type="hidden" name="section" id="hidden_section">
+                            <input type="text" class="form-control" placeholder="Section" name="section" id="section" readonly>
                             <div class="invalid-feedback">
-                                Please select a Section
+                                Enter Section Name
                             </div>
                         </div>
-
-
-                        <div class="col-md-6 mb-3">
-                            <label for="">Description </label>
-                            <textarea class="form-control" id="description" name="description"
-                                placeholder="Enter Description" readonly></textarea>
-                            <div class="invalid-feedback">
-                                Enter Description
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6 mb-3">
-                            <label for="">Request Quantity</label>
-                            <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
-                                id="req_qty" readonly>
-                            <div class="invalid-feedback">
-                                Enter Request Quantity
-                            </div>
-                        </div>
-
                         <div class="col-md-6 mb-3">
                             <label for="">Unit of Measurement </label>
-                            <input type="text" class="form-control" name="measurement" placeholder="" id="measurement"
+                            <input type="text" class="form-control" name="measurement" placeholder="Unit of Measurement" id="measurement"
                                 readonly>
                             <div class="invalid-feedback">
                                 Enter Unit of Measurement
                             </div>
                         </div>
-
+                        <div class="col-md-6 mb-3">
+                            <label for="">Description </label>
+                            <textarea class="form-control" id="description" name="description"
+                                placeholder="Description" readonly></textarea>
+                            <div class="invalid-feedback">
+                                Enter Description
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="">Status </label>
+                            <input type="text" class="form-control" name="status" id="status">
+                            <div class="invalid-feedback">
+                                Enter Status
+                            </div>
+                     <!--       <select class="form-control" name="status">
+                                <option disabled {{ request('status') ? '' : 'selected' }}>Select
+                                    Status...</option>
+                                <option value="Pendding"
+                                    {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
+                                </option>
+                                <option value="Pendding"
+                                    {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
+                                </option>
+                                <option value="Pendding"
+                                    {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
+                                </option>
+                            </select> -->
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="">Supplier Total Quantity</label>
+                            <input type="text" class="form-control" placeholder="Supplier Total Quantity" name="qty"
+                                id="req_qty" readonly>
+                            <div class="invalid-feedback">
+                                Supplier Total Quantity
+                            </div>
+                        </div>
                         <div class="col-md-6 mb-3">
                             <label for="">New Spearable </label>
-                            <input type="text" class="form-control" placeholder="" name="new_spareable"
+                            <input type="text" class="form-control" placeholder="New Spearable " name="new_spareable"
                                 id="new_spearable" readonly>
                             <div class="invalid-feedback">
                                 Enter New Spareable
                             </div>
                         </div>
-
+                        <div class="col-md-6 mb-3">
+                            <label for="">Requester Requested Quantity</label>
+                            <input type="text" class="form-control" placeholder="Requested Quantity" name="qty"
+                                id="req_qty" readonly>
+                            <div class="invalid-feedback">
+                                Enter Requested Quantity
+                            </div>
+                        </div>
                         <div class="col-md-6 mb-3">
                             <label for="">Used Spareable </label>
-                            <input type="text" class="form-control" placeholder=" " name="used_spareable"
+                            <input type="text" class="form-control" placeholder="Used Spareable" name="used_spareable"
                                 id="used_spareable" readonly>
                             <div class="invalid-feedback">
                                 Enter Used Spareable
                             </div>
                         </div>
-
                         <div class="col-md-6 mb-3">
-                            <label for="">Remarks / Notes </label>
-                            <textarea class="form-control" id="remarks" name="remarks" placeholder=" Remarks / Notes"
-                                readonly></textarea>
-                            <div class="invalid-feedback">
-                                Enter Remarks / Notes
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label for="">Status </label>
-                            <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
-                                id="status" readonly>
-                            <div class="invalid-feedback">
-                                Enter Used Spareable
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="">Created At </label>
-                            <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
+                            <label for="">Request Date</label>
+                            <input type="date" class="form-control" placeholder="Request Date" name="used_spareable"
                                 id="createdAt" readonly>
                             <div class="invalid-feedback">
-                                Enter Used Spareable
+                                Enter Request Date
                             </div>
                         </div>
 
                     </div>
-                    <!-- <button class="btn btn-primary" type="submit">Submit form</button>
-                <button type="reset" class="btn btn-danger">Reset</button>
+                    <button class="btn btn-danger" type="submit">Decline Request</button>
+                    <button class="btn btn-success" type="submit">Recieved Request</button>
+                    <button class="btn btn-primary" type="submit">Raise Query</button>
+            <!--     <button type="reset" class="btn btn-danger">Reset</button>
                 <a href="" class="btn btn-light">Go Back</a> -->
                     <!-- </form> -->
+
+
+       <!--             <ul class="nav nav-pills mb-3 nav-fill" id="pills-tab-1" role="tablist">
+                        <li class="nav-item btn-danger">
+                           <a class="nav-link active" id="pills-home-tab-fill" data-toggle="pill" href="#pills-home-fill" role="tab" aria-controls="pills-home" aria-selected="true">Home</a>
+                        </li>
+                        <li class="nav-item">
+                           <a class="nav-link" id="pills-profile-tab-fill" data-toggle="pill" href="#pills-profile-fill" role="tab" aria-controls="pills-profile" aria-selected="false">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                           <a class="nav-link" id="pills-contact-tab-fill" data-toggle="pill" href="#pills-contact-fill" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</a>
+                        </li>
+                     </ul>
+
+
+                     <div class="tab-content" id="pills-tabContent-1">
+                        <div class="tab-pane fade active show" id="pills-home-fill" role="tabpanel" aria-labelledby="pills-home-tab-fill">
+                           <p>first</p>
+                        </div>
+                        <div class="tab-pane fade" id="pills-profile-fill" role="tabpanel" aria-labelledby="pills-profile-tab-fill">
+                           <p>Second</p>
+                        </div>
+                        <div class="tab-pane fade" id="pills-contact-fill" role="tabpanel" aria-labelledby="pills-contact-tab-fill">
+                            <p>third</p>
+                        </div>
+                     </div>
+            -->
+
+
                 </div>
             </div>
             <div class="modal-footer">
@@ -318,8 +331,6 @@
 function RequestStockData(id) {
     var id = id;
     // console.log(id);
-    // return false;
-
     $.ajaxSetup({
         headers: {
             'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -332,11 +343,10 @@ function RequestStockData(id) {
             data: id
         },
         success: function(response) {
-
             $("#location_id").val(response.data[0].user_name);
             $("#requester_Id").val(response.data[0].req_id);
-            $("#Suppler_Location_Name").val(response.data[0].supplier_location_name);
-            $("#Suppler_Location_Id").val(response.data[0].user_name);
+            $("#Supplier_Location_Name").val(response.data[0].supplier_location_name);
+            $("#Supplier_Location_Id").val(response.data[0].user_name);
             $("#EDP_Code").val(response.data[0].user_name);
             $("#category").val(response.data[0].user_name);
             $("#section").val(response.data[0].user_name);
@@ -348,9 +358,6 @@ function RequestStockData(id) {
             $("#remarks").val(response.data[0].remarks);
             $("#status").val(response.data[0].user_name);
             $("#createdAt").val(response.data[0].user_name);
-
-
-
         }
     });
 }
