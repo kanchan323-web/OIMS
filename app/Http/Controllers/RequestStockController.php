@@ -10,6 +10,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Requester;
+use Mail;
+use App\Mail\requestor_stock_mail;
+use App\Mail\supplier_stock_mail;
+
 
 use Illuminate\Support\Facades\Session;
 
@@ -75,6 +79,7 @@ class RequestStockController extends Controller
 
     public function RequestStockAddPost(Request $request){
 
+        
 
         $request->validate([
             'available_qty' => 'required|numeric',
@@ -96,7 +101,47 @@ class RequestStockController extends Controller
             'supplier_rig_id' => $request->supplier_location_id,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ]);   
+
+        $supplierData = User::where('id', $request->supplier_id)->first();
+
+        $mailDataSupplier = [
+            'title' => 'Stock Request from ONGC',
+            'supplier_name' => $supplierData->user_name,
+            'requester_name' => Auth::user()->user_name,
+            'available_qty' => $request->available_qty,
+            'requested_qty' => $request->requested_qty,
+            'stock_id' => $request->stock_id,
+            'requester_rig_id' => $request->requester_rig_id,
+            'supplier_rig_id' => $request->supplier_rig_id,
+            'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
+        ];
+
+        $mailDataRequester = [
+            'title' => 'Stock Request Confirmation - ONGC',
+            'supplier_name' => $supplierData->user_name,
+            'requester_name' => Auth::user()->user_name,
+            'available_qty' => $request->available_qty,
+            'requested_qty' => $request->requested_qty,
+            'stock_id' => $request->stock_id,
+            'requester_rig_id' => $request->requester_rig_id,
+            'supplier_rig_id' => $request->supplier_rig_id,
+            'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
+        ];
+
+        if ($supplierData) {
+            // $supplierEmail = $supplierData->email;
+            $supplierEmail ="silvertouchvipul@gmail.com";
+            // Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
+            Mail::to($supplierEmail)->send(new requestor_stock_mail($mailDataRequester));
+            Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
+        } else {
+            dd('Supplier not found');
+            Session::flash('errors', 'Supplier not found');
+                return redirect()->route('stock_list.request');
+        }
+
+        // dd("Email is sent successfully.".$supplierEmail);
 
         if($SendRequest){
                 Session::flash('success', 'Request of Stock Sent successfully!');
@@ -124,15 +169,13 @@ class RequestStockController extends Controller
             ->toArray();
 
         $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::all();
+        $data = Stock::where('user_id','!=',$rig_id)->get();
 
         $moduleName = "Stock";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
-    // public function get_stockrequest_data(Request $request){
-    //     return hello;
-    // }
+ 
 
     public function IncomingRequestStockList(Request $request){
 
