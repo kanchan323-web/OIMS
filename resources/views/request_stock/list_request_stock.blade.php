@@ -95,7 +95,7 @@
                                         <label for="checkbox1" class="mb-0"></label>
                                     </div>
                                 </th> -->
-                                {{$data}}
+
                                 <th>Sr.No</th>
                                 <th>Location Name</th>
                                <!-- <th>EDP</th> -->
