@@ -112,6 +112,7 @@ class AdminStockController extends Controller
         }
 
 
+        $user = Auth::user();
         $stock = new Stock;
         $stock->location_id = $request->location_id;
         $stock->location_name = $request->location_name;
@@ -124,9 +125,9 @@ class AdminStockController extends Controller
         $stock->new_spareable = $request->new_spareable;
         $stock->used_spareable = $request->used_spareable;
         $stock->remarks = $request->remarks;
-        $stock->user_id = Auth::id();
+        $stock->user_id = $user->id;
+        $stock->rig_id = $user->rig_id;
         $stock->save();
-
         Session::flash('success', 'Stock submitted successfully!');
 
         return redirect()->route('admin.stock_list');
@@ -284,18 +285,20 @@ class AdminStockController extends Controller
     public function EditStock(Request $request, $id)
     {
         $editData = Stock::where('id', $id)->get()->first();
+        $edpCodes = Edp::where('id', $editData->edp_code)->first();
         $moduleName = "Edit Stock";
-        return view('admin.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName]);
+        return view('admin.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName, 'edpCodes' => $edpCodes]);
     }
 
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
+        $user = Auth::user(); 
 
         $update_data = $request->validate([
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|integer|digits:9',
+            'edp_code' => 'required|integer',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -306,10 +309,17 @@ class AdminStockController extends Controller
             'remarks' => 'required'
         ]);
 
-        Stock::where('id', $dataid)->update($update_data);
+        // Add rig_id from authenticated user
+        $update_data['rig_id'] = $user->rig_id;
 
-        Session::flash('success', 'Stock updated successfully!');
-        return redirect()->route('admin.stock_list');
+        $stock = Stock::find($dataid);
+        if (!$stock) {
+            return redirect()->route('admin.stock_list')->with('error', 'Stock not found.');
+        }
+
+        $stock->update($update_data);
+
+        return redirect()->route('admin.stock_list')->with('success', 'Stock updated successfully!');
     }
 
 
@@ -331,7 +341,7 @@ class AdminStockController extends Controller
             return response()->json(['success' => false, 'error' => 'EDP Code is missing'], 400);
         }
 
-        $edp = Edp::where('edp_code', $edpCode)->first();
+        $edp = Edp::where('id', $edpCode)->first();
 
         if (!$edp) {
             return response()->json(['success' => false, 'error' => 'EDP not found'], 404);
