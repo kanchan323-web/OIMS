@@ -35,17 +35,13 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-2 mb-2">
-                                        <label for="category">Category</label>
+                                        <label for="category">EDP Code</label>
                                         <select class="form-control" name="category">
                                             <option disabled {{ request('category') ? '' : 'selected' }}>Select
-                                                Category...</option>
+                                                EDP...</option>
                                             <option value="Spares"
-                                                {{ request('category') == 'Spares' ? 'selected' : '' }}>Spares</option>
-                                            <option value="Stores"
-                                                {{ request('category') == 'Stores' ? 'selected' : '' }}>Stores</option>
-                                            <option value="Capital items"
-                                                {{ request('category') == 'Capital items' ? 'selected' : '' }}>Capital
-                                                items</option>
+                                                {{ request('category') == 'Spares' ? 'selected' : '' }}>Spares
+                                            </option>
                                         </select>
                                     </div>
 
@@ -77,14 +73,14 @@
                     </div>
 
 
-                    <div class="col-sm-6 col-md-3">
+           <!--         <div class="col-sm-6 col-md-3">
                         <div class="user-list-files d-flex">
                             <a href="{{ route('request_stock_add') }}" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Add Stock</a>
                             <a href="#" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks
                             </a>
                         </div>
-                    </div>
+                    </div>  -->
                 </div>
             </div>
 
@@ -101,53 +97,37 @@
                                 </th> -->
                                 <th>Sr.No</th>
                                 <th>Location Name</th>
-                                <th>EDP</th>
-                                <th>Section</th>
-                                <th>Description</th>
-                                <th>Quantity</th>
+                               <!-- <th>EDP</th> -->
+                                <th>Status</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody class="ligth-body">
+
                             @foreach($data as $index => $stockdata)
                             @if(!in_array($stockdata->user_id, $datarig))
                             <tr>
-
-                                <!-- <td>
-                                    <div class="checkbox d-inline-block">
-                                        <input type="checkbox" class="checkbox-input" id="checkbox2">
-                                        <label for="checkbox2" class="mb-0"></label>
-                                    </div>
-                                </td> -->
+                                <td>{{ $index  +1 }}</td>
+                                <td>{{$stockdata->name}}({{$stockdata->location_id}})</td>
+                              <!--  <td>{{$stockdata->stock_code}}</td> -->
+                                <td>{{$stockdata->status}}</td>
+                                <td>{{$stockdata->created_at}}</td>
                                 <td>
-                                   
-                                            {{ $index  +1 }}
-                                      
-                                </td>
-                                <td>{{$stockdata->supplier_location_name}}</td>
-                                <td>{{$stockdata->stock_code}}</td>
-                                <td>{{$stockdata->section}}</td>
-                                <td>{{$stockdata->remarks}}</td>
-                                <td>{{$stockdata->qty}}</td>
-                                <td>
-
-    <!-- Edit Button (Only for Your Members) -->
-                                        
-    <a class="badge badge-info mr-2" data-toggle="modal"
+                                     <!-- Edit Button (Only for Your Members) -->
+                                    <a class="badge badge-info mr-2" data-toggle="modal"
                                             onclick="RequestStockData({{$stockdata->id}})"
                                             data-target=".bd-example-modal-xl" data-placement="top" title=""
-                                            data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
-                                    <div class="d-flex align-items-center list-action">
-                                        <!-- View Button (Always Visible) -->
+                                            data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i>
+                                    </a>
+                              <!--      <div class="d-flex align-items-center list-action">
                                         <a class="badge badge-success mr-2" data-toggle="modal"
                                             onclick="viewstockdata({{$stockdata->id}})"
                                             data-target=".bd-example-modal-xl" data-placement="top" title=""
                                             data-original-title="View" href="#"><i
-                                                class="ri-arrow-right-circle-line"></i></a>
-
-                                    
-                                        
-                                    </div>
+                                                class="ri-arrow-right-circle-line"></i>
+                                        </a>
+                                    </div> -->
                                 </td>
                             </tr>
                             @endif
