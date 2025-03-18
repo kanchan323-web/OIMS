@@ -426,7 +426,7 @@ function addRequest(id) {
     });
     $.ajax({
         type: "GET",
-        url: "{{route('stock_list_view')}}",
+        url: "{{route('incoming_request_list')}}",
         data: {
             data: id
         },
@@ -487,7 +487,7 @@ function viewstockdata(id) {
     });
     $.ajax({
         type: "GET",
-        url: "{{route('stock_list_view')}}",
+        url: "{{route('incoming_request_list')}}",
         data: {
             data: id
         },
