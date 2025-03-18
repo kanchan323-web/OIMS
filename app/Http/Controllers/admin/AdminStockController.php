@@ -94,7 +94,7 @@ class AdminStockController extends Controller
         $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|integer|digits:9|unique:stocks,edp_code',
+            'edp_code' => 'required|integer|exists:edps,id|unique:stocks,edp_code',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
