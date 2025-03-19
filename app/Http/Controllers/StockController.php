@@ -43,6 +43,7 @@ class StockController extends Controller
             ->pluck('id')
             ->toArray();
 
+        // $stockData = Stock::select('edp_code')->distinct()->get();
         $stockData = DB::table('stocks')
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')
         ->select('stocks.*', 'edps.edp_code AS EDP_Code')  
@@ -63,13 +64,7 @@ class StockController extends Controller
     {
         $moduleName = "Stock";
         if ($request->ajax()) {
-            // $stockData = Stock::select('edp_code')->distinct()->get();
-            $stockData = DB::table('stocks')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code')  
-            ->distinct()
-            ->get();
-      
+            $stockData = Stock::select('edp_code')->distinct()->get();
 
             $data = Stock::query()
                 ->when($request->edp_code, function ($query, $edp_code) {
@@ -85,8 +80,12 @@ class StockController extends Controller
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
 
-            $data = $data->get();
+     
+            $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code') 
+            ->get();
 
+            
             $rig_id = Auth::user()->rig_id;
             $datarig = User::where('user_type', '!=', 'admin')
                 ->where('rig_id', $rig_id)

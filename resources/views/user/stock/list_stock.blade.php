@@ -353,7 +353,8 @@
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
                                 let editButton = '';
-                                console.log(stockdata);
+                                console.log("Stock data:", stockdata); 
+
                                 if (response.datarig.includes(stockdata.user_id)) {
                                     editButton = `
                                     <a class="badge bg-success mr-2" href="/OIMS/user/edit_stock/${stockdata.id}">
@@ -364,7 +365,7 @@
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${stockdata.location_name}</td>
-                                    <td>${stockdata.edp_code}</td>
+                                    <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
                                     <td>${stockdata.qty}</td>
