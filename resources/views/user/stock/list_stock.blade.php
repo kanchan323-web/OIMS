@@ -13,7 +13,7 @@
                         </button>
                     </div>
                     @endif
-                    
+
                     @if (Session::get('error'))
                     <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
                         <strong>Error:</strong> {{ Session::get('error') }}
@@ -73,7 +73,7 @@
                         <div class="col-sm-6 col-md-3">
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Add Stock</a>
+                                        class="las la-plus mr-3"></i>Add or Edit Stock</a>
                                 <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Bulk Stocks </a>
                             </div>
@@ -100,7 +100,7 @@
                                     @foreach($data as $index => $stockdata)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $stockdata->location_name }}</td>
+                                            <td>{{ $stockdata->name }}</td>
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
@@ -115,7 +115,7 @@
                                                         <i class="ri-eye-line mr-0"></i>
                                                     </a>
 
-                                                    <!-- Edit Button (Only for Your Members) -->
+                                                   <!--  Edit Button (Only for Your Members) -->
                                                     @if(in_array($stockdata->user_id, $datarig))
                                                         <a class="badge bg-success mr-2"
                                                             href="{{ url('/user/edit_stock/' . $stockdata->id) }}">
@@ -210,7 +210,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="category">Category</label>
                                 <input type="text" class="form-control" name="category" placeholder=" Category "
-                                    id="category" readonly>
+                                    id="category_id" readonly>
                                 <input type="hidden" name="category" id="hidden_category">
                                 <div class="invalid-feedback">
                                     Please select a category
@@ -234,10 +234,6 @@
                                     Please select a Section
                                 </div>
                             </div>
-
-
-
-
                             <div class="col-md-6 mb-3">
                                 <label for="">Available Quantity</label>
                                 <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
@@ -255,7 +251,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="">New Spareable </label>
+                                <label for="">New </label>
                                 <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable"
                                     id="new_spareable" readonly>
                                 <div class="invalid-feedback">
@@ -263,11 +259,11 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="">Used Spareable </label>
-                                <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
+                                <label for="">Used  </label>
+                                <input type="text" class="form-control" placeholder=" Used " name="used_spareable"
                                     id="used_spareable" readonly>
                                 <div class="invalid-feedback">
-                                    Enter Used Spareable
+                                    Enter Used
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -311,18 +307,16 @@
                     data: id
                 },
                 success: function (response) {
-                    // console.log(response.viewdata['category']);
+                    console.log(response.viewdata);
                     $("#location_id").val(response.viewdata['location_id']);
-                    $("#location_name").val(response.viewdata['location_name']);
+                    $("#location_name").val(response.viewdata['name']);
                     $("#edp_code").val(response.viewdata['edp_code']);
-
-
                     var sectionValue = response.viewdata['section'];
-                    $("#section").val(sectionValue);
+                    $("#section").val(response.viewdata['section']);
                     $("#hidden_section").val(sectionValue);
 
                     var categoryValue = response.viewdata['category'];
-                    $("#category").val(categoryValue);
+                    $("#category_id").val(response.viewdata['category']);
                     $("#hidden_category").val(categoryValue);
 
 
@@ -353,7 +347,7 @@
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
                                 let editButton = '';
-                                console.log("Stock data:", stockdata); 
+                                console.log("Stock data:", stockdata);
 
                                 if (response.datarig.includes(stockdata.user_id)) {
                                     editButton = `
@@ -364,7 +358,7 @@
                                 tableBody.append(`
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${stockdata.location_name}</td>
+                                    <td>${stockdata.name}</td>
                                     <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
@@ -373,7 +367,7 @@
                                         <a class="badge badge-info mr-2" data-toggle="modal"
                                             onclick="viewstockdata(${stockdata.id})" data-target=".bd-example-modal-xl"
                                             data-placement="top" title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
-                                        ${editButton} 
+                                        ${editButton}
                                     </td>
                                 </tr>
                             `);
