@@ -45,7 +45,13 @@ class AdminStockController extends Controller
             ->toArray();
 
         $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::all();
+        
+
+        $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.*')
+            ->get();
+
+       
         $moduleName = "Stock";
         return view('admin.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
