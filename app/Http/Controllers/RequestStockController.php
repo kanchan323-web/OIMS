@@ -95,17 +95,26 @@ class RequestStockController extends Controller
             'supplier_rig_id' => 'required',
         ]);
 
-      $SendRequest =   DB::table('requesters')->insert([
-            'available_qty' => $request->available_qty,
-            'requested_qty' => $request->requested_qty,
-            'stock_id' => $request->stock_id,
-            'requester_id' => $request->requester_id,
-            'requester_rig_id' => $request->requester_rig_id,
-            'supplier_id' => $request->supplier_id,
-            'supplier_rig_id' => $request->supplier_location_id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        
+
+           
+            $lastRequest = DB::table('requesters')->latest('id')->first(); 
+            $nextId = $lastRequest ? $lastRequest->id + 1 : 1; 
+            $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
+
+        
+            $SendRequest = DB::table('requesters')->insert([
+                'available_qty' => $request->available_qty,
+                'requested_qty' => $request->requested_qty,
+                'stock_id' => $request->stock_id,
+                'requester_id' => $request->requester_id,
+                'requester_rig_id' => $request->requester_rig_id,
+                'supplier_id' => $request->supplier_id,
+                'supplier_rig_id' => $request->supplier_location_id,
+                'RID' => $RID, 
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
         $supplierData = User::where('id', $request->supplier_id)->first();
 
