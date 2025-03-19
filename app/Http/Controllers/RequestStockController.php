@@ -79,7 +79,7 @@ class RequestStockController extends Controller
 
     public function RequestStockAddPost(Request $request){
 
-        
+
 
         $request->validate([
             'available_qty' => 'required|numeric',
@@ -101,7 +101,7 @@ class RequestStockController extends Controller
             'supplier_rig_id' => $request->supplier_location_id,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);   
+        ]);
 
         $supplierData = User::where('id', $request->supplier_id)->first();
 
@@ -169,13 +169,13 @@ class RequestStockController extends Controller
             ->toArray();
 
         $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::where('user_id','!=',$rig_id)->get();
+        $data = Stock::where('rig_id','!=',$rig_id)->get();
 
         $moduleName = "Stock";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
- 
+
 
     public function IncomingRequestStockList(Request $request){
 
@@ -199,5 +199,5 @@ class RequestStockController extends Controller
     }
 
 
-    
+
 }

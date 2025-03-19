@@ -46,13 +46,14 @@ class StockController extends Controller
         // $stockData = Stock::select('edp_code')->distinct()->get();
         $stockData = DB::table('stocks')
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-        ->select('stocks.*', 'edps.edp_code AS EDP_Code')  
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
         ->distinct()
         ->get();
 
         $data = DB::table('stocks')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.*')
+            ->where('rig_id',$rig_id)
             ->get();
 
         $moduleName = "Stock";
@@ -80,12 +81,12 @@ class StockController extends Controller
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
 
-     
+
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code') 
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
             ->get();
 
-            
+
             $rig_id = Auth::user()->rig_id;
             $datarig = User::where('user_type', '!=', 'admin')
                 ->where('rig_id', $rig_id)
@@ -298,7 +299,7 @@ class StockController extends Controller
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
-        $user = Auth::user(); 
+        $user = Auth::user();
 
         $update_data = $request->validate([
             'location_id' => 'required',
