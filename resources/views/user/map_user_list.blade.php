@@ -30,9 +30,6 @@
 
         </div>
         </div>
-
-
-
       </div>
       </div>
 
@@ -148,7 +145,7 @@
     $(document).ready(function () {
     $(".user-row").click(function () {
       let userId = $(this).data("id");
-      let form = $('<form action="{{ url('/mapusergetdata') }}" method="POST"></form>');
+      let form = $('<form action="{{ route('map_all_user_data.post') }}" method="POST"></form>');
       form.append('@csrf');
       form.append('<input type="hidden" name="id" value="' + userId + '">');
       $('body').append(form);
@@ -157,7 +154,7 @@
     });
 
     $(document).ready(function () {
-    // Automatically fade out alerts after 3 seconds
+ 
     setTimeout(function () {
       $(".alert").fadeOut("slow");
     }, 3000);

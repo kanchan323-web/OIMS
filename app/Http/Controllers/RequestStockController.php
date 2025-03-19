@@ -94,15 +94,11 @@ class RequestStockController extends Controller
             'supplier_id' => 'required',
             'supplier_rig_id' => 'required',
         ]);
-
-        
-
            
             $lastRequest = DB::table('requesters')->latest('id')->first(); 
             $nextId = $lastRequest ? $lastRequest->id + 1 : 1; 
             $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
 
-        
             $SendRequest = DB::table('requesters')->insert([
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
@@ -146,7 +142,6 @@ class RequestStockController extends Controller
             $supplierEmail = $supplierData->email;
             // $supplierEmail ="silvertouchvipul@gmail.com";
             Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
-            // Mail::to($supplierEmail)->send(new requestor_stock_mail($mailDataRequester));
             Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
         } else {
             dd('Supplier not found');
