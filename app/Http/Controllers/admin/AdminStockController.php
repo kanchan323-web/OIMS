@@ -44,7 +44,12 @@ class AdminStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-        $stockData = Stock::select('edp_code')->distinct()->get();
+        // $stockData = Stock::select('edp_code')->distinct()->get();
+        $stockData = DB::table('stocks')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code')  
+        ->distinct()
+        ->get();
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.*')
@@ -76,7 +81,10 @@ class AdminStockController extends Controller
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
 
-            $data = $data->get();
+            
+                $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->select('stocks.*', 'edps.edp_code AS EDP_Code') 
+                ->get();
 
             $rig_id = Auth::user()->rig_id;
             $datarig = User::where('user_type', '!=', 'admin')
