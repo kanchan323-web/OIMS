@@ -106,7 +106,7 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="new_spareable">New Spareable</label>
+                                        <label for="new_spareable">New </label>
                                         <input type="number" class="form-control" name="new_spareable" id="new_spareable"
                                             required>
                                         @error('new_spareable')
@@ -115,7 +115,7 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="used_spareable">Used Spareable</label>
+                                        <label for="used_spareable">Used </label>
                                         <input type="number" class="form-control" name="used_spareable" id="used_spareable"
                                             required>
                                         @error('used_spareable')
