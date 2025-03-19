@@ -17,7 +17,7 @@ class MasterStatusSeeder extends Seeder
         $masterStatus = collect(
             [
                 [
-                    'status_name' => 'Pendding',
+                    'status_name' => 'Pending',
                 ],
                 [
                     'status_name' => 'Query',
