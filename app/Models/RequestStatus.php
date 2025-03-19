@@ -11,4 +11,15 @@ class RequestStatus extends Model
 
     protected $table = 'request_status';
 
+    protected $fillable = [
+        'request_id',  
+        'status_id',
+        'decline_msg',
+        'query_msg',
+        'supplier_new_spareable', 
+        'supplier_used_spareable', 
+        'user_id',
+        'rig_id'
+    ];
+
 }

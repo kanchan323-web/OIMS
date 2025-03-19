@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RequestStatus;
 use Illuminate\Http\Request;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
@@ -22,64 +23,68 @@ class RequestStockController extends Controller
 {
 
 
-    public function RequestStockList(Request $request){
+    public function RequestStockList(Request $request)
+    {
 
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
-                    ->where('rig_id',$rig_id)
-                    ->pluck('id')
-                    ->toArray();
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
 
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
-        return view('request_stock.list_request_stock',compact('data', 'moduleName','datarig'));
+        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
 
-    public function GeneratedRequest(Request $request){
+    public function GeneratedRequest(Request $request)
+    {
 
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
-                    ->where('rig_id',$rig_id)
-                    ->pluck('id')
-                    ->toArray();
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
-        return view('request_stock.generated',compact('data', 'moduleName','datarig'));
+        return view('request_stock.generated', compact('data', 'moduleName', 'datarig'));
     }
 
-    public function request_stock_filter(Request $request){
+    public function request_stock_filter(Request $request)
+    {
 
 
 
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
         })
-        ->when($request->location_name, function ($query, $location_name) {
-            return $query->where('location_name', 'like', "%{$location_name}%");
-        })
-        ->when($request->form_date, function ($query) use ($request) {
-            return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-        })
-        ->when($request->to_date, function ($query) use ($request) {
-            return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-        })->get();
+            ->when($request->location_name, function ($query, $location_name) {
+                return $query->where('location_name', 'like', "%{$location_name}%");
+            })
+            ->when($request->form_date, function ($query) use ($request) {
+                return $query->whereDate('created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+            })
+            ->when($request->to_date, function ($query) use ($request) {
+                return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+            })->get();
 
         $moduleName = "Request Stocks filter";
-        return view('request_stock.list_request_stock',compact('data', 'moduleName'));
-
+        return view('request_stock.list_request_stock', compact('data', 'moduleName'));
     }
 
-    public function RequestStockAdd(Request $request){
+    public function RequestStockAdd(Request $request)
+    {
         $moduleName = "Add Stock";
         return view('request_stock.add_request_stock', compact('moduleName'));
     }
 
 
-    public function RequestStockAddPost(Request $request){
+    public function RequestStockAddPost(Request $request)
+    {
 
-        
+
 
         $request->validate([
             'available_qty' => 'required|numeric',
@@ -91,7 +96,7 @@ class RequestStockController extends Controller
             'supplier_rig_id' => 'required',
         ]);
 
-      $SendRequest =   DB::table('requesters')->insert([
+        $SendRequest =   DB::table('requesters')->insert([
             'available_qty' => $request->available_qty,
             'requested_qty' => $request->requested_qty,
             'stock_id' => $request->stock_id,
@@ -101,7 +106,7 @@ class RequestStockController extends Controller
             'supplier_rig_id' => $request->supplier_location_id,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);   
+        ]);
 
         $supplierData = User::where('id', $request->supplier_id)->first();
 
@@ -138,25 +143,55 @@ class RequestStockController extends Controller
         } else {
             dd('Supplier not found');
             Session::flash('errors', 'Supplier not found');
-                return redirect()->route('stock_list.request');
+            return redirect()->route('stock_list.request');
         }
 
         // dd("Email is sent successfully.".$supplierEmail);
 
-        if($SendRequest){
-                Session::flash('success', 'Request of Stock Sent successfully!');
-                return redirect()->route('stock_list.request');
+        if ($SendRequest) {
+            Session::flash('success', 'Request of Stock Sent successfully!');
+            return redirect()->route('stock_list.request');
+        }
+    }
+
+    public function RequestStockViewPost(Request $request)
+    {
+        $requestStock = Requester::leftJoin('users as request', 'request.id', '=', 'requesters.requester_id')
+            ->leftJoin('users as suppliers', 'suppliers.id', '=', 'requesters.supplier_id')
+            ->leftJoin('rig_users as request_rig', 'request.rig_id', '=', 'request_rig.id')
+            ->leftJoin('stocks', 'stocks.id', '=', 'requesters.stock_id')
+            ->leftJoin('rig_users as supply_rig', 'suppliers.rig_id', '=', 'supply_rig.id')
+            ->leftJoin('edps', 'edps.id', '=', 'stocks.edp_code')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->where('requesters.id', $request->data)
+            ->select(
+                'requesters.*',
+                'request.id as requester_id',
+                'request.user_name as requester_name',
+                'suppliers.id as supplier_id',
+                'suppliers.user_name as supplier_name',
+                'request_rig.name as requesters_rig',
+                'supply_rig.name as suppliers_rig',
+                'stocks.edp_code as stock_edp_code',
+                'stocks.category',
+                'stocks.section',
+                'stocks.description',
+                'stocks.measurement',
+                'stocks.new_spareable',
+                'stocks.used_spareable',
+                'edps.edp_code as edp_code',
+                'mst_status.status_name',
+                DB::raw("DATE_FORMAT(requesters.created_at, '%d-%m-%Y') as formatted_created_at")
+            )
+            ->first();
+
+        if (!$requestStock) {
+            return response()->json(['success' => false, 'message' => 'Request not found']);
         }
 
+        return response()->json(['success' => true, 'data' => $requestStock]);
     }
 
-    public function RequestStockViewPost(Request $request){
-       $id =  $request->data;
-       $data = RequestStock::where('id',$id)->get();
-            return response()->json([
-                'data' =>$data
-            ]);
-    }
 
 
 
@@ -169,35 +204,146 @@ class RequestStockController extends Controller
             ->toArray();
 
         $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::where('user_id','!=',$rig_id)->get();
+        $data = Stock::where('user_id', '!=', $rig_id)->get();
 
         $moduleName = "Stock";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
- 
 
-    public function IncomingRequestStockList(Request $request){
+
+    public function IncomingRequestStockList(Request $request)
+    {
 
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
-                    ->where('rig_id',$rig_id)
-                    ->pluck('id')
-                    ->toArray();
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
-       // $data = RequestStock::get();
-        $data = Requester::select('rig_users.name', 'rig_users.location_id','requesters.*')
-        ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-        ->where('supplier_rig_id', $rig_id)
-        ->orderBy('requesters.created_at', 'desc')->get();
+        // $data = RequestStock::get();
+        $data = Requester::select('rig_users.name', 'rig_users.location_id', 'requesters.*')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->where('supplier_rig_id', $rig_id)
+            ->orderBy('requesters.created_at', 'desc')->get();
 
         //print_r($data);
         //die;
 
         $moduleName = "Incoming Request List";
-        return view('request_stock.list_request_stock',compact('data', 'moduleName','datarig'));
+        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
 
 
-    
+
+    public function accept(Request $request)
+    {
+        $requester = Requester::find($request->request_id);
+        if (!$requester) {
+            return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+        }
+
+        // Update requester's status
+        $requester->update(['status_id' => 2]);
+
+        // Insert into request_status table
+        RequestStatus::create([
+            'request_id' => $request->request_id,
+            'status_id' => 2,
+            'decline_msg' => null,
+            'query_msg' => null,
+            'supplier_new_spareable' => $request->supplier_new_spareable,
+            'supplier_used_spareable' => $request->supplier_used_spareable,
+            'user_id' => Auth::id(),
+            'rig_id' => Auth::user()->rig_id,
+        ]);
+
+        session()->flash('success', 'Request accepted successfully.');
+
+        return response()->json(['success' => true, 'message' => 'Request accepted successfully.']);
+    }
+
+    public function decline(Request $request)
+    {
+        $requester = Requester::find($request->request_id);
+        if (!$requester) {
+            return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+        }
+
+        // Update requester's status
+        $requester->update(['status_id' => 3]);
+
+        // Insert into request_status table
+        RequestStatus::create([
+            'request_id' => $request->request_id,
+            'status_id' => 3,
+            'decline_msg' => $request->decline_msg,
+            'query_msg' => null,
+            'supplier_new_spareable' => null,
+            'supplier_used_spareable' => null,
+            'user_id' => Auth::id(),
+            'rig_id' => Auth::user()->rig_id,
+        ]);
+
+        session()->flash('success', 'Request declined successfully.');
+
+        return response()->json(['success' => true, 'message' => 'Request declined successfully.']);
+    }
+
+    public function query(Request $request)
+    {
+        $requester = Requester::find($request->request_id);
+        if (!$requester) {
+            return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+        }
+
+        // Update requester's status
+        $requester->update(['status_id' => 4]);
+
+        // Insert into request_status table
+        RequestStatus::create([
+            'request_id' => $request->request_id,
+            'status_id' => 4,
+            'decline_msg' => null,
+            'query_msg' => $request->query_msg,
+            'supplier_new_spareable' => null,
+            'supplier_used_spareable' => null,
+            'user_id' => Auth::id(),
+            'rig_id' => Auth::user()->rig_id,
+        ]);
+
+        session()->flash('success', 'Query raised successfully.');
+
+        return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
+    }
+
+    public function getRequestStock($id)
+    {
+        $requestStock = RequestStock::find($id);
+
+        if (!$requestStock) {
+            return response()->json(['error' => 'Request not found'], 404);
+        }
+
+        return response()->json($requestStock);
+    }
+
+
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'request_id' => 'required|exists:requesters,id',
+            'status' => 'required|integer'
+        ]);
+
+        $requestData = Requester::find($request->request_id);
+        if ($requestData) {
+            $requestData->status = $request->status;
+            $requestData->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 400);
+    }
 }
