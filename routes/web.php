@@ -119,18 +119,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/check-edp-stock', [StockController::class, 'checkEdpStock'])->name('check_edp_stock');
 
 
-    //Request stock
-    Route::prefix('request-stock')->group(function () {
-        Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
-        Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
-        Route::get('/generated', [RequestStockController::class, 'GeneratedRequest'])->name('request_generated_list');
-        Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
-        Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
-        Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
-        Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
-        Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
-        Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
-    });
+        //Request stock
+        Route::prefix('request-stock')->group(function () {
+            Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
+            Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
+            Route::get('/generated', [RequestStockController::class, 'GeneratedRequest'])->name('request_generated_list');
+            Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
+            Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
+            Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
+            Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
+            Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
+            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
+            Route::post('/request-status/accept', [RequestStockController::class, 'accept'])->name('request.accept');
+            Route::post('/request-status/decline', [RequestStockController::class, 'decline'])->name('request.decline');
+            Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('request.query');
+            Route::get('/request-status/get-request-stock/{id}', [RequestStockController::class, 'getRequestStock']);
+            Route::post('/request-status/update-request-status', [RequestStockController::class, 'updateStatus'])->name('request.updateStatus');
+        });
 
         //User mapping
         Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');

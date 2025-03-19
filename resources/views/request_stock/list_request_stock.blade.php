@@ -115,13 +115,13 @@
                                 <td>{{$stockdata->status}}</td>
                                 <td>{{$stockdata->created_at}}</td>
                                 <td>
-                                     <!-- Edit Button (Only for Your Members) -->
-                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                            onclick="RequestStockData({{$stockdata->id}})"
-                                            data-target=".bd-example-modal-xl" data-placement="top" title=""
-                                            data-original-title="Supplier Request" href="#"><i
-                                                class="ri-arrow-right-circle-line"></i>
-                                        </a>
+                                    <!-- Edit Button (Only for Your Members) -->
+                                    <a class="badge badge-success mr-2" data-toggle="modal"
+                                        onclick="RequestStockData({{ json_encode($stockdata->id) }})"
+                                        data-target=".bd-example-modal-xl" data-placement="top" 
+                                        title="Supplier Request" href="#">
+                                        <i class="ri-arrow-right-circle-line"></i>
+                                    </a>
                                 </td>
                             </tr>
                             @endif
@@ -150,7 +150,8 @@
             <div class="modal-body">
                 <div class="card-body">
                     <!-- <form class="needs-validation" novalidate method="POST" action="" id="addStockForm"> -->
-
+                    <form id="mainModalForm">
+                    <input type="hidden" id="request_id" name="request_id">
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="">Requester Name</label>
@@ -242,8 +243,8 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="">Supplier Total Quantity</label>
-                            <input type="text" class="form-control" placeholder="Supplier Total Quantity" name="qty"
-                                id="req_qty" readonly>
+                            <input type="text" class="form-control" placeholder="Supplier Total Quantity" name="total_qty"
+                                id="total_qty" readonly>
                             <div class="invalid-feedback">
                                 Supplier Total Quantity
                             </div>
@@ -258,7 +259,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="">Requester Requested Quantity</label>
-                            <input type="text" class="form-control" placeholder="Requested Quantity" name="qty"
+                            <input type="text" class="form-control" placeholder="Requested Quantity" name="req_qty"
                                 id="req_qty" readonly>
                             <div class="invalid-feedback">
                                 Enter Requested Quantity
@@ -273,9 +274,9 @@
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="">Request Date</label>
-                            <input type="date" class="form-control" placeholder="Request Date" name="used_spareable"
-                                id="createdAt" readonly>
+                            <label for="request_date">Request Date</label>
+                            <input type="text" class="form-control" placeholder="Request Date" name="request_date"
+                                id="request_date" readonly>
                             <div class="invalid-feedback">
                                 Enter Request Date
                             </div>
@@ -286,11 +287,63 @@
                         <button class="btn btn-danger mx-2" type="button" data-toggle="modal" data-target="#declineReasonModal">
                             Decline Request
                         </button>
-                        <button class="btn btn-success mx-2" type="submit">Received Request</button>
+                        <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
+                            Received Request
+                        </button>
                         <button class="btn btn-primary mx-2" type="button" data-toggle="modal" data-target="#raiseQueryModal">
                             Raise Query
                         </button>
                     </div>
+
+                    <!-- Received Request Modal -->
+                    <div class="modal fade" id="receivedRequestModal" tabindex="-1" role="dialog" aria-labelledby="receivedRequestLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="receivedRequestLabel">Received Request Details</h5>
+                                    <button type="button" class="close sub-modal-close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Supplier Total Quantity</th>
+                                                <th>Requester Requested Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td id="modal_total_qty"></td>
+                                                <td id="modal_req_qty"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <form id="receivedRequestForm">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="modal_new_spareable">New Spareable</label>
+                                            <input type="number" class="form-control" id="modal_new_spareable" name="modal_new_spareable" min="0" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="modal_used_spareable">Used Spareable</label>
+                                            <input type="number" class="form-control" id="modal_used_spareable" name="modal_used_spareable" min="0" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <span id="error_message" class="text-danger"></span>
+                                        </div>
+                                        <div class="d-flex justify-content-center mt-3">
+                                            <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                            <button type="submit" class="btn btn-success mx-2">Confirm</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     
                     <!-- Decline Request Modal -->
                     <div class="modal fade" id="declineReasonModal" tabindex="-1" role="dialog" aria-labelledby="declineReasonLabel" aria-hidden="true">
@@ -359,46 +412,78 @@
 
 <script>
 function RequestStockData(id) {
-    var id = id;
-    // console.log(id);
     $.ajaxSetup({
         headers: {
             'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
         }
     });
+
     $.ajax({
         type: "GET",
-        url: "{{route('request_stock_view.get')}}",
-        data: {
-            data: id
-        },
+        url: "{{ route('request_stock_view.get') }}", 
+        data: { data: id },
         success: function(response) {
-            $("#location_id").val(response.data[0].user_name);
-            $("#requester_Id").val(response.data[0].req_id);
-            $("#Supplier_Location_Name").val(response.data[0].supplier_location_name);
-            $("#Supplier_Location_Id").val(response.data[0].user_name);
-            $("#EDP_Code").val(response.data[0].user_name);
-            $("#category").val(response.data[0].user_name);
-            $("#section").val(response.data[0].user_name);
-            $("#description").val(response.data[0].user_name);
-            $("#req_qty").val(response.data[0].request_quantity);
-            $("#measurement").val(response.data[0].measurement);
-            $("#new_spearable").val(response.data[0].new_spareable);
-            $("#used_spareable").val(response.data[0].used_spareable);
-            $("#remarks").val(response.data[0].remarks);
-            $("#status").val(response.data[0].user_name);
-            $("#createdAt").val(response.data[0].user_name);
+            console.log("Full Response:", response);
+
+            if (!response || !response.data) {
+                console.error("No valid data received.");
+                return;
+            }
+
+            console.log("Type of response.data:", typeof response.data);
+
+            var stockData = Array.isArray(response.data) ? response.data : [response.data];
+           
+            if (stockData.length > 0 && stockData[0] !== null) {
+                var stock = stockData[0];
+                console.log("Stock Data:", stock);
+
+                if (typeof stock === "object") {
+                    $("#request_id").val(stock.id ?? '');
+                    $("#location_id").val(stock.requester_name ?? '');
+                    $("#Supplier_Location_Id").val(stock.supplier_name ?? '');
+                    $("#requester_Id").val(stock.requesters_rig ?? '');
+                    $("#Supplier_Location_Name").val(stock.suppliers_rig ?? '');
+                    $("#EDP_Code").val(stock.edp_code ?? '');
+                    $("#category").val(stock.category ?? '');
+                    $("#section").val(stock.section ?? '');
+                    $("#description").val(stock.description ?? '');
+                    $("#total_qty").val(stock.available_qty ?? '');
+                    $("#req_qty").val(stock.requested_qty ?? '');
+                    $("#measurement").val(stock.measurement ?? '');
+                    $("#new_spearable").val(stock.new_spareable ?? '');
+                    $("#used_spareable").val(stock.used_spareable ?? '');
+                    $("#remarks").val(stock.remarks ?? '');
+                    $("#status").val(stock.status_name ?? '');
+                    $("#request_date").val(stock.formatted_created_at ?? '');
+
+                    if (stock.status == 4) {
+                        $(".btn-danger, .btn-primary").hide(); 
+                    } else {
+                        $(".btn-danger, .btn-primary").show(); 
+                    }
+                } else {
+                    console.error("Stock data is not a valid object:", stock);
+                }
+            } else {
+                console.error("No stock data available.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching stock data:", error);
         }
     });
 }
+
+
 
 function deleteStockdata(id) {
 
     $("#delete_id").val(id);
 
 }
-</script>
-<script>
+
+
 $(document).ready(function() {
     $("#selectAll").on("change", function() {
         $(".row-checkbox").prop("checked", $(this).prop("checked"));
@@ -414,7 +499,6 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-    // Automatically fade out alerts after 3 seconds
     setTimeout(function() {
         $(".alert").fadeOut("slow");
     }, 3000);
@@ -440,10 +524,191 @@ $(document).ready(function () {
     // Prevent clicking outside sub-modal from closing the main modal
     $(".modal").on("hidden.bs.modal", function (e) {
         if ($(".modal:visible").length) {
-            $("body").addClass("modal-open"); // Keep main modal background active
+            $("body").addClass("modal-open"); 
         }
     });
 });
+
+
+$(document).ready(function () {
+    console.log("Script Loaded!"); 
+
+    $(document).on("submit", "#receivedRequestForm", function (e) {
+        e.preventDefault(); 
+        console.log("Submit Event Triggered!"); 
+
+        let requestId = $("#request_id").val();
+        let newSpareable = $("#modal_new_spareable").val();
+        let usedSpareable = $("#modal_used_spareable").val();
+        let csrfToken = $('meta[name="csrf-token"]').attr("content"); // Fetch CSRF token from meta tag
+        let requestUrl = $("#receivedRequestForm").data("url"); // Fetch route from data attribute
+
+        if (!requestId) {
+            console.log("Request ID is missing!"); 
+            return;
+        }
+
+        $.ajax({
+            url: requestUrl,
+            type: "POST",
+            data: {
+                _token: csrfToken,
+                request_id: requestId,
+                supplier_new_spareable: newSpareable,
+                supplier_used_spareable: usedSpareable
+            },
+            success: function (response) {
+                console.log("AJAX Success:", response); 
+                if (response.success) {
+                    window.location.href = $("#incomingRequestUrl").val(); // Redirect to the list page
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX Error:", xhr.responseText);
+            }
+        });
+    });
+
+
+
+    // Decline Request
+    $(document).on("submit", "#declineForm", function (e) {
+        e.preventDefault();
+        console.log("Decline Event Triggered!");
+
+        let requestId = $("#request_id").val();
+        let declineMsg = $("#decline_reason").val();
+
+        $.ajax({
+            url: "{{ route('request.decline') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                request_id: requestId,
+                decline_msg: declineMsg
+            },
+            success: function (response) {
+                console.log("AJAX Success:", response);
+                if (response.success) {
+                    window.location.href = "{{ route('incoming_request_list') }}";
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX Error:", xhr.responseText);
+            }
+        });
+    });
+
+    // Raise Query
+    $(document).on("submit", "#raiseQueryForm", function (e) {
+        e.preventDefault();
+        console.log("Query Event Triggered!");
+
+        let requestId = $("#request_id").val();
+        let queryMsg = $("#query").val();
+
+        $.ajax({
+            url: "{{ route('request.query') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                request_id: requestId,
+                query_msg: queryMsg
+            },
+            success: function (response) {
+                console.log("AJAX Success:", response);
+                if (response.success) {
+                    window.location.href = "{{ route('incoming_request_list') }}";
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX Error:", xhr.responseText);
+            }
+        });
+    });
+});
+
+
+$(document).ready(function () {
+    $("#openReceivedRequestModal").click(function (e) {
+        e.preventDefault(); 
+        let requestId = $("#request_id").val(); 
+        let requestStatus = $("#request_status").val(); 
+        if (!requestId) {
+            Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: "Request ID is missing!",
+                confirmButtonColor: "#d33"
+            });
+            return;
+        }
+
+        if (requestStatus == "4") {
+            $("#modal_total_qty").text($("#total_qty").val());  
+            $("#modal_req_qty").text($("#req_qty").val()); 
+            $("#receivedRequestModal").modal("show");
+            return; 
+        }
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You are about to accept this request.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#90EE90",  // Light Green
+            cancelButtonColor: "#FFA500",   // Orange
+            confirmButtonText: "Yes, Accept it!",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send AJAX request if confirmed
+                $.ajax({
+                    url: "{{ route('request.updateStatus') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        request_id: requestId,
+                        status: 4
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Populate Received Request Modal with data
+                            $("#modal_total_qty").text($("#total_qty").val());  // Supplier Total Quantity
+                            $("#modal_req_qty").text($("#req_qty").val());  // Requester Requested Quantity
+                            
+                            // Now show the modal **only after success**
+                            $("#receivedRequestModal").modal("show");
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Failed!",
+                                text: "Failed to update status!",
+                                confirmButtonColor: "#d33"
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error(xhr.responseText);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "Error updating status. Please try again.",
+                            confirmButtonColor: "#d33"
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+
+
+
+
+
+
+
 </script>
 
 @endsection
