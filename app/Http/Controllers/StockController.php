@@ -43,8 +43,17 @@ class StockController extends Controller
             ->pluck('id')
             ->toArray();
 
-        $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::all();
+        $stockData = DB::table('stocks')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code')  
+        ->distinct()
+        ->get();
+
+        $data = DB::table('stocks')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.*')
+            ->get();
+
         $moduleName = "Stock";
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
@@ -54,7 +63,13 @@ class StockController extends Controller
     {
         $moduleName = "Stock";
         if ($request->ajax()) {
-            $stockData = Stock::select('edp_code')->distinct()->get();
+            // $stockData = Stock::select('edp_code')->distinct()->get();
+            $stockData = DB::table('stocks')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code')  
+            ->distinct()
+            ->get();
+      
 
             $data = Stock::query()
                 ->when($request->edp_code, function ($query, $edp_code) {

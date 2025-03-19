@@ -33,7 +33,7 @@
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($stockData as $stock)
-                                                    <option value="{{ $stock->edp_code }}">{{ $stock->edp_code }}</option>
+                                                    <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -353,6 +353,7 @@
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
                                 let editButton = '';
+                                console.log(stockdata);
                                 if (response.datarig.includes(stockdata.user_id)) {
                                     editButton = `
                                     <a class="badge bg-success mr-2" href="/OIMS/user/edit_stock/${stockdata.id}">
