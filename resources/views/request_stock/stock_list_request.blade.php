@@ -28,15 +28,15 @@
                         <div id="user_list_datatable_info" class="dataTables_filter">
                             <form id="filterForm" class="mr-3 position-relative">
                                 <div class="row">
-                                    <div class="col-md-2 mb-2">
-                                        <label for="edp_code">EDP Code</label>
-                                        <select class="form-control" name="edp_code" id="edp_code">
-                                            <option disabled selected>Select EDP Code...</option>
-                                            @foreach ($stockData as $stock)
-                                            <option value="{{ $stock->edp_code }}">{{ $stock->edp_code }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                <div class="col-md-2 mb-2">
+                                            <label for="edp_code">EDP Code</label>
+                                            <select class="form-control" name="edp_code" id="edp_code">
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($stockData as $stock)
+                                                    <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
                                     <div class="col-md-2 mb-2">
                                         <label for="Description">Description</label>
@@ -548,7 +548,7 @@ $(document).ready(function() {
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${stockdata.location_name}</td>
-                                    <td>${stockdata.edp_code}</td>
+                                    <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
                                     <td>${stockdata.qty}</td>

@@ -168,7 +168,7 @@
                         url: "{{ route('get_edp_details') }}",
                         data: { edp_code: edpCode },
                         success: function (response) {
-                            console.log("EDP & Stock Data:", response);
+                           // console.log("EDP & Stock Data:", response);
 
                             if (response.success) {
                                 $("#category_id").val(response.edp.category).prop('disabled', true);
@@ -179,7 +179,7 @@
                                 $("#section_hidden").val(response.edp.section);
 
                                 if (response.stock) {
-                                    console.log(response.stock);
+                                    //console.log(response.stock);
                                     $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                                     $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);

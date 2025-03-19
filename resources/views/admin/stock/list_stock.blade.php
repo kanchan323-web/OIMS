@@ -33,7 +33,7 @@
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($stockData as $stock)
-                                                    <option value="{{ $stock->edp_code }}">{{ $stock->edp_code }}</option>
+                                                    <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -361,7 +361,7 @@
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${stockdata.location_name}</td>
-                                    <td>${stockdata.edp_code}</td>
+                                    <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
                                     <td>${stockdata.qty}</td>

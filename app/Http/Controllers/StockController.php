@@ -43,9 +43,23 @@ class StockController extends Controller
             ->pluck('id')
             ->toArray();
 
-        $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::all();
-        $moduleName = "Stock";
+
+        $stockData = DB::table('stocks')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+        ->where('rig_id',$rig_id)
+        ->distinct()
+        ->get();
+
+        $data = DB::table('stocks')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->select('stocks.*', 'edps.edp_code','rig_users.name')
+            ->where('rig_id',$rig_id)
+            ->orderBy('stocks.id', 'desc')
+            ->get();
+
+        $moduleName = "Stock List";
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
@@ -53,6 +67,7 @@ class StockController extends Controller
     public function stock_filter(Request $request)
     {
         $moduleName = "Stock";
+        $rig_id = Auth::user()->rig_id;
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
 
@@ -70,9 +85,13 @@ class StockController extends Controller
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
 
-            $data = $data->get();
 
-            $rig_id = Auth::user()->rig_id;
+            $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
+            ->where('rig_id', $rig_id)
+            ->get();
+
             $datarig = User::where('user_type', '!=', 'admin')
                 ->where('rig_id', $rig_id)
                 ->pluck('id')
@@ -93,7 +112,8 @@ class StockController extends Controller
         $validator = Validator::make($request->all(), [
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|integer|exists:edps,id|unique:stocks,edp_code',
+            //'edp_code' => 'required|integer|exists:edps,id|unique:stocks,edp_code',
+            'edp_code' => 'required',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
@@ -263,7 +283,12 @@ class StockController extends Controller
     {
         Log::info('AJAX request received.', ['data' => $request->all()]);
         $id = $request->data;
-        $viewdata =   Stock::where('id', $id)->get()->first();
+        $viewdata =   Stock::select('stocks.*','rig_users.name','rig_users.location_id','edps.*')
+             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+             ->where('stocks.id',$id)
+             ->get()->first();
+
 
         return response()->json(
             [
@@ -284,11 +309,11 @@ class StockController extends Controller
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
-        $user = Auth::user(); 
+        $user = Auth::user();
 
         $update_data = $request->validate([
-            'location_id' => 'required',
-            'location_name' => 'required',
+           // 'location_id' => 'required',
+           // 'location_name' => 'required',
             'edp_code' => 'required|integer',
             'category' => 'required',
             'description' => 'required',
@@ -335,7 +360,11 @@ class StockController extends Controller
             return response()->json(['success' => false, 'error' => 'EDP not found'], 404);
         }
 
-        $stock = Stock::where('edp_code', $edpCode)->first();
+
+        $rig_id = Auth::user()->rig_id;
+
+        $stock = Stock::where('edp_code', $edpCode)
+                 ->where('rig_id', $rig_id)->first();
 
         return response()->json([
             'success' => true,
