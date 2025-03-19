@@ -66,6 +66,10 @@ class RequestStockController extends Controller
             return $query->whereDate('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
         })->get();
 
+        $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+        ->get();
+
         $moduleName = "Request Stocks filter";
         return view('request_stock.list_request_stock',compact('data', 'moduleName'));
 
@@ -91,17 +95,26 @@ class RequestStockController extends Controller
             'supplier_rig_id' => 'required',
         ]);
 
-      $SendRequest =   DB::table('requesters')->insert([
-            'available_qty' => $request->available_qty,
-            'requested_qty' => $request->requested_qty,
-            'stock_id' => $request->stock_id,
-            'requester_id' => $request->requester_id,
-            'requester_rig_id' => $request->requester_rig_id,
-            'supplier_id' => $request->supplier_id,
-            'supplier_rig_id' => $request->supplier_location_id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        
+
+           
+            $lastRequest = DB::table('requesters')->latest('id')->first(); 
+            $nextId = $lastRequest ? $lastRequest->id + 1 : 1; 
+            $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
+
+        
+            $SendRequest = DB::table('requesters')->insert([
+                'available_qty' => $request->available_qty,
+                'requested_qty' => $request->requested_qty,
+                'stock_id' => $request->stock_id,
+                'requester_id' => $request->requester_id,
+                'requester_rig_id' => $request->requester_rig_id,
+                'supplier_id' => $request->supplier_id,
+                'supplier_rig_id' => $request->supplier_location_id,
+                'RID' => $RID, 
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
         $supplierData = User::where('id', $request->supplier_id)->first();
 
@@ -168,10 +181,20 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-        $stockData = Stock::select('edp_code')->distinct()->get();
-        $data = Stock::where('rig_id','!=',$rig_id)->get();
+        // $stockData = Stock::select('edp_code')->distinct()->get();
+        $stockData = DB::table('stocks')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+        ->distinct()
+        ->get();
+       
+        $data = DB::table('stocks')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->select('stocks.*', 'edps.*')
+        ->where('rig_id','!=',$rig_id)
+        ->get();
 
-        $moduleName = "Stock";
+        $moduleName = "Request Stock List";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 

@@ -43,7 +43,7 @@ class StockController extends Controller
             ->pluck('id')
             ->toArray();
 
-        // $stockData = Stock::select('edp_code')->distinct()->get();
+
         $stockData = DB::table('stocks')
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')
         ->select('stocks.*', 'edps.edp_code AS EDP_Code')
@@ -59,7 +59,7 @@ class StockController extends Controller
             ->orderBy('stocks.id', 'desc')
             ->get();
 
-        $moduleName = "Stock";
+        $moduleName = "Stock List";
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
