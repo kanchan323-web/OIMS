@@ -105,28 +105,45 @@
                             </tr>
                         </thead>
                         <tbody class="ligth-body">
-
                             @foreach($data as $index => $stockdata)
-                            @if(!in_array($stockdata->user_id, $datarig))
-                            <tr>
-                                <td>{{ $index  +1 }}</td>
-                                <td>{{$stockdata->name}}({{$stockdata->location_id}})</td>
-                              <!--  <td>{{$stockdata->stock_code}}</td> -->
-                                <td>{{$stockdata->status}}</td>
-                                <td>{{$stockdata->created_at}}</td>
-                                <td>
-                                    <!-- Edit Button (Only for Your Members) -->
-                                    <a class="badge badge-success mr-2" data-toggle="modal"
-                                        onclick="RequestStockData({{ json_encode($stockdata->id) }})"
-                                        data-target=".bd-example-modal-xl" data-placement="top" 
-                                        title="Supplier Request" href="#">
-                                        <i class="ri-arrow-right-circle-line"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            @endif
+                                @if(!in_array($stockdata->user_id, $datarig))
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $stockdata->name }} ({{ $stockdata->location_id }})</td>
+                        
+                                        <!-- Status with Dynamic Color -->
+                                        @php
+                                            $statusColors = [
+                                                'Pending' => 'badge-warning',       
+                                                'Approve' => 'badge-success',       
+                                                'Decline' => 'badge-danger',        
+                                                'Query' => 'badge-info',          
+                                                'Received' => 'badge-primary',      
+                                                'MIT' => 'badge-purple'               
+                                            ];
+
+                                            $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
+                                        @endphp
+
+                                        <td>
+                                            <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
+                                        </td>
+                        
+                                        <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
+                        
+                                        <td>
+                                            <a class="badge badge-success mr-2" data-toggle="modal"
+                                                onclick="RequestStockData({{ json_encode($stockdata->id) }})"
+                                                data-target=".bd-example-modal-xl" data-placement="top"
+                                                title="Supplier Request" href="#">
+                                                <i class="ri-arrow-right-circle-line"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforeach
                         </tbody>
+                        
                     </table>
                 </div>
             </div>
