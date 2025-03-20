@@ -97,7 +97,43 @@
                             </tr>
                         </thead>
                         <tbody class="ligth-body" id="stockTable">
-                           
+                            @if (isset($Requesters_Data) && $Requesters_Data != null)
+                            @foreach($Requesters_Data as $index => $stockdata)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $stockdata->name }}</td>
+                                <td>{{ $stockdata->requester_id }}</td>
+                                <td>{{ $stockdata->name }}</td>
+                                <td>{{ $stockdata->requested_qty }}</td>
+                                <td>{{ $stockdata->created_at }}</td>
+                          
+                                <td>
+                                    <div class="d-flex align-items-center list-action">
+                                        <!-- View Button (Always Visible) -->
+                                        <a class="badge badge-info mr-2" data-toggle="modal"
+                                            onclick="viewstockdata({{ $stockdata->id }})"
+                                            data-target=".bd-example-modal-xl" data-placement="top" title="View"
+                                            href="#">
+                                            <i class="ri-eye-line mr-0"></i>
+                                        </a>
+
+                                        <a class="badge badge-success mr-2" data-toggle="modal"
+                                            onclick="addRequest({{ $stockdata->id }})"
+                                            data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
+                                            href="#">
+                                            <i class="ri-arrow-right-circle-line"></i>
+                                        </a>
+
+                                        <!-- Edit Button (Only for Your Members) -->
+
+                                    </div>
+
+                                </td>
+                            </tr>
+                            @endforeach
+                            @else
+                            <td>No data exists</td>
+                            @endif
                         </tbody>
                     </table>
                 </div>
