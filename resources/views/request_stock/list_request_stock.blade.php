@@ -297,6 +297,7 @@
 
                     <!-- Received Request Modal -->
                     <div class="modal fade" id="receivedRequestModal" tabindex="-1" role="dialog" aria-labelledby="receivedRequestLabel" aria-hidden="true">
+                        <form id="receivedRequestForm">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -321,8 +322,9 @@
                                         </tbody>
                                     </table>
 
-                                    <form id="receivedRequestForm">
+                                    
                                         @csrf
+                                        <input type="text" id="Request_id" name="Request_id" value="">
                                         <div class="form-group">
                                             <label for="modal_new_spareable">New Spareable</label>
                                             <input type="number" class="form-control" id="modal_new_spareable" name="modal_new_spareable" min="0" value="0">
@@ -338,10 +340,11 @@
                                             <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
                                             <button type="submit" class="btn btn-success mx-2">Confirm</button>
                                         </div>
-                                    </form>
+                                  
                                 </div>
                             </div>
                         </div>
+                    </form>
                     </div>
 
                     
@@ -532,7 +535,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     console.log("Script Loaded!"); 
-
+    
     $(document).on("submit", "#receivedRequestForm", function (e) {
         e.preventDefault(); 
         console.log("Submit Event Triggered!"); 
@@ -540,8 +543,7 @@ $(document).ready(function () {
         let requestId = $("#request_id").val();
         let newSpareable = $("#modal_new_spareable").val();
         let usedSpareable = $("#modal_used_spareable").val();
-        let csrfToken = $('meta[name="csrf-token"]').attr("content"); // Fetch CSRF token from meta tag
-        let requestUrl = $("#receivedRequestForm").data("url"); // Fetch route from data attribute
+        
 
         if (!requestId) {
             console.log("Request ID is missing!"); 
@@ -549,10 +551,10 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: requestUrl,
+            url: "{{ route('request.accept') }}",
             type: "POST",
             data: {
-                _token: csrfToken,
+                _token: "{{ csrf_token() }}",
                 request_id: requestId,
                 supplier_new_spareable: newSpareable,
                 supplier_used_spareable: usedSpareable
@@ -702,10 +704,6 @@ $(document).ready(function () {
         });
     });
 });
-
-
-
-
 
 
 
