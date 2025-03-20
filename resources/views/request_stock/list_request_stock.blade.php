@@ -323,7 +323,6 @@
 
                                     <form id="receivedRequestForm">
                                         @csrf
-                                        <input type="text" id="Request_id" name="Request_id" value="">
                                         <div class="form-group">
                                             <label for="modal_new_spareable">New Spareable</label>
                                             <input type="number" class="form-control" id="modal_new_spareable" name="modal_new_spareable" min="0" value="0">
@@ -337,7 +336,7 @@
                                         </div>
                                         <div class="d-flex justify-content-center mt-3">
                                             <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
-                                            <button type="submit" class="btn btn-success mx-2">Confirm</button>
+                                            <button type="button" class="btn btn-success mx-2" id="confirmReceivedRequest">Confirm</button>
                                         </div>
                                     </form>
                                 </div>
@@ -401,11 +400,31 @@
                         </div>
                     </div>
 
+                    <!-- Confirmation Modal -->
+                    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to accept this request?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-success" id="confirmAccept">Yes, Accept it!</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
             </div>
         </div>
     </div>
@@ -424,20 +443,15 @@ function RequestStockData(id) {
         url: "{{ route('request_stock_view.get') }}", 
         data: { data: id },
         success: function(response) {
-            console.log("Full Response:", response);
-
             if (!response || !response.data) {
                 console.error("No valid data received.");
                 return;
             }
 
-            console.log("Type of response.data:", typeof response.data);
-
             var stockData = Array.isArray(response.data) ? response.data : [response.data];
            
             if (stockData.length > 0 && stockData[0] !== null) {
                 var stock = stockData[0];
-                console.log("Stock Data:", stock);
 
                 if (typeof stock === "object") {
                     $("#request_id").val(stock.id ?? '');
@@ -460,8 +474,12 @@ function RequestStockData(id) {
 
                     if (stock.status == 4) {
                         $(".btn-danger, .btn-primary").hide(); 
+                    } else if (stock.status == 6) {
+                        $(".btn-danger, .btn-primary").hide(); 
+                        $(".btn-success, .btn-primary").hide(); 
                     } else {
                         $(".btn-danger, .btn-primary").show(); 
+                        $(".btn-success, .btn-primary").show();
                     }
                 } else {
                     console.error("Stock data is not a valid object:", stock);
@@ -533,18 +551,37 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     console.log("Script Loaded!"); 
-    
-    $(document).on("submit", "#receivedRequestForm", function (e) {
-        e.preventDefault(); 
-        console.log("Submit Event Triggered!"); 
 
-        let requestId = $("#request_id").val();
+    function validateSpareableInputs() {
+        let requestedQty = parseInt($("#modal_req_qty").text().trim()) || 0;
+        let newSpareable = parseInt($("#modal_new_spareable").val()) || 0;
+        let usedSpareable = parseInt($("#modal_used_spareable").val()) || 0;
+        let totalSpareable = newSpareable + usedSpareable;
+
+        if (totalSpareable > requestedQty) {
+            $("#error_message").text("Total spareable quantity cannot exceed Requested Quantity.");
+            return false;
+        } else {
+            $("#error_message").text(""); 
+            return true;
+        }
+    }
+
+    $("#modal_new_spareable, #modal_used_spareable").on("input", function () {
+        validateSpareableInputs();
+    });
+    
+    $(document).on("click", "#confirmReceivedRequest", function (e) {
+        e.preventDefault();
+        console.log("Submit Event Triggered!");
+
+        let requestId = $("#mainModalForm").find("#request_id").val();
         let newSpareable = $("#modal_new_spareable").val();
         let usedSpareable = $("#modal_used_spareable").val();
+        let supplierTotalQty = $("#modal_total_qty").text().trim(); 
         
-
         if (!requestId) {
-            console.log("Request ID is missing!"); 
+            console.log("Request ID is missing!");
             return;
         }
 
@@ -554,27 +591,28 @@ $(document).ready(function () {
             data: {
                 _token: "{{ csrf_token() }}",
                 request_id: requestId,
+                supplier_total_qty: supplierTotalQty, 
                 supplier_new_spareable: newSpareable,
                 supplier_used_spareable: usedSpareable
             },
             success: function (response) {
-                console.log("AJAX Success:", response); 
                 if (response.success) {
-                    window.location.href = $("#incomingRequestUrl").val(); // Redirect to the list page
+                    window.location.href = "{{ route('incoming_request_list') }}"; 
                 }
             },
             error: function (xhr) {
-                console.error("AJAX Error:", xhr.responseText);
+                console.error("❌ AJAX Error:", xhr.responseText);
             }
         });
     });
+});
 
 
 
+$(document).ready(function () {
     // Decline Request
     $(document).on("submit", "#declineForm", function (e) {
         e.preventDefault();
-        console.log("Decline Event Triggered!");
 
         let requestId = $("#request_id").val();
         let declineMsg = $("#decline_reason").val();
@@ -616,7 +654,6 @@ $(document).ready(function () {
                 query_msg: queryMsg
             },
             success: function (response) {
-                console.log("AJAX Success:", response);
                 if (response.success) {
                     window.location.href = "{{ route('incoming_request_list') }}";
                 }
@@ -631,9 +668,10 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     $("#openReceivedRequestModal").click(function (e) {
-        e.preventDefault(); 
-        let requestId = $("#request_id").val(); 
-        let requestStatus = $("#request_status").val(); 
+        e.preventDefault();
+        let requestId = $("#request_id").val();
+        let requestStatus = $("#request_status").val();
+
         if (!requestId) {
             Swal.fire({
                 icon: "error",
@@ -645,63 +683,58 @@ $(document).ready(function () {
         }
 
         if (requestStatus == "4") {
-            $("#modal_total_qty").text($("#total_qty").val());  
-            $("#modal_req_qty").text($("#req_qty").val()); 
+            $("#modal_total_qty").text($("#total_qty").val());
+            $("#modal_req_qty").text($("#req_qty").val());
             $("#receivedRequestModal").modal("show");
-            return; 
+            return;
         }
 
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You are about to accept this request.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#90EE90",  // Light Green
-            cancelButtonColor: "#FFA500",   // Orange
-            confirmButtonText: "Yes, Accept it!",
-            cancelButtonText: "Cancel"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Send AJAX request if confirmed
-                $.ajax({
-                    url: "{{ route('request.updateStatus') }}",
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        request_id: requestId,
-                        status: 4
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            // Populate Received Request Modal with data
-                            $("#modal_total_qty").text($("#total_qty").val());  // Supplier Total Quantity
-                            $("#modal_req_qty").text($("#req_qty").val());  // Requester Requested Quantity
-                            
-                            // Now show the modal **only after success**
-                            $("#receivedRequestModal").modal("show");
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Failed!",
-                                text: "Failed to update status!",
-                                confirmButtonColor: "#d33"
-                            });
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error(xhr.responseText);
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error!",
-                            text: "Error updating status. Please try again.",
-                            confirmButtonColor: "#d33"
-                        });
-                    }
+        $("#confirmationModal").modal("show");
+    });
+
+
+    $("#confirmAccept").click(function () {
+        let requestId = $("#request_id").val();
+
+        $.ajax({
+            url: "{{ route('request.updateStatus') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                request_id: requestId,
+                status: 4
+            },
+            success: function (response) {
+                if (response.success) {
+                    $("#modal_total_qty").text($("#total_qty").val());  
+                    $("#modal_req_qty").text($("#req_qty").val()); 
+
+                    $("#confirmationModal").modal("hide");
+
+                    $("#receivedRequestModal").modal("show");
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Failed!",
+                        text: "Failed to update status!",
+                        confirmButtonColor: "#d33"
+                    });
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: "Error updating status. Please try again.",
+                    confirmButtonColor: "#d33"
                 });
             }
         });
     });
 });
+
+
 
 
 

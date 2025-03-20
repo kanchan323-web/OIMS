@@ -16,6 +16,7 @@ class RequestStatus extends Model
         'status_id',
         'decline_msg',
         'query_msg',
+        'supplier_qty',
         'supplier_new_spareable', 
         'supplier_used_spareable', 
         'user_id',
