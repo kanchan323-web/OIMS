@@ -123,7 +123,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('request-stock')->group(function () {
             Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
             Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
-            Route::get('/generated', [RequestStockController::class, 'GeneratedRequest'])->name('request_generated_list');
+            Route::get('/supplier_request', [RequestStockController::class, 'SupplierRequest'])->name('supplier_request.get');
             Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
             Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
             Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
