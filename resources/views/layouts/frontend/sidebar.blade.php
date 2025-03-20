@@ -101,7 +101,7 @@
                                 </a>
                             </li> -->
                             <li class="">
-                                <a href="{{route('request_generated_list')}}">
+                                <a href="{{route('supplier_request.get')}}">
                                     <i class="las la-minus"></i><span>Supplier's Request</span>
                                 </a>
                             </li>

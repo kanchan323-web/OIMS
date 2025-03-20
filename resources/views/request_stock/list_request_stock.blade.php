@@ -478,6 +478,9 @@ function RequestStockData(id) {
                     } else if (stock.status == 6) {
                         $(".btn-danger, .btn-primary").hide(); 
                         $(".btn-success, .btn-primary").hide(); 
+                    } else if (stock.status == 3) {
+                        $(".btn-danger, .btn-primary").hide(); 
+                        $(".btn-success, .btn-primary").hide(); 
                     } else {
                         $(".btn-danger, .btn-primary").show(); 
                         $(".btn-success, .btn-primary").show();

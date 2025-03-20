@@ -33,7 +33,7 @@
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($stockData as $stock)
-                                                    <option value="{{ $stock->id }}">{{ $stock->edp_code }}</option>
+                                                    <option value="{{ $stock->id }}">{{ $stock->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -434,7 +434,7 @@ function addRequest(id) {
             data: id
         },
         success: function(response) {
-            console.log("edp_id check:"+response.for_request_viewdata['edp_code']);
+            console.log("stock id check:"+response.for_request_viewdata['id']);
             console.log("edp_code check:"+response.viewdata['edp_code']);
 
             $("#Rlocation_id").val(response.for_request_viewdata['location_id']);
@@ -448,7 +448,6 @@ function addRequest(id) {
             var categoryValue = response.for_request_viewdata['category'];
             $("#Rcategory").val(categoryValue);
             $("#Rhidden_category").val(categoryValue);
-
             $("#Available_qty").val(response.for_request_viewdata['qty']);
 
 
@@ -534,7 +533,6 @@ $(document).ready(function() {
             url: "{{ route('stock_filter') }}",
             data: $("#filterForm").serialize(),
             success: function(response) {
-                console.log(response.data);
                 let tableBody = $("#stockTable");
                 tableBody.empty();
 
