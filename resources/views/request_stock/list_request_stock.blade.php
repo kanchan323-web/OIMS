@@ -295,54 +295,7 @@
                         </button>
                     </div>
 
-                    <!-- Received Request Modal -->
-                    <div class="modal fade" id="receivedRequestModal" tabindex="-1" role="dialog" aria-labelledby="receivedRequestLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="receivedRequestLabel">Received Request Details</h5>
-                                    <button type="button" class="close sub-modal-close" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Supplier Total Quantity</th>
-                                                <th>Requester Requested Quantity</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td id="modal_total_qty"></td>
-                                                <td id="modal_req_qty"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    <form id="receivedRequestForm">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="modal_new_spareable">New Spareable</label>
-                                            <input type="number" class="form-control" id="modal_new_spareable" name="modal_new_spareable" min="0" value="0">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="modal_used_spareable">Used Spareable</label>
-                                            <input type="number" class="form-control" id="modal_used_spareable" name="modal_used_spareable" min="0" value="0">
-                                        </div>
-                                        <div class="form-group">
-                                            <span id="error_message" class="text-danger"></span>
-                                        </div>
-                                        <div class="d-flex justify-content-center mt-3">
-                                            <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
-                                            <button type="submit" class="btn btn-success mx-2">Confirm</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+           
 
                     
                     <!-- Decline Request Modal -->
@@ -409,6 +362,54 @@
         </div>
     </div>
 </div>
+         <!-- Received Request Modal -->
+         <div class="modal fade" id="receivedRequestModal" tabindex="-1" role="dialog" aria-labelledby="receivedRequestLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="receivedRequestLabel">Received Request Details</h5>
+                                    <button type="button" class="close sub-modal-close" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Supplier Total Quantity</th>
+                                                <th>Requester Requested Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td id="modal_total_qty"></td>
+                                                <td id="modal_req_qty"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <form id="receivedRequestForm">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="modal_new_spareable">New Spareable</label>
+                                            <input type="number" class="form-control" id="modal_new_spareable" name="modal_new_spareable" min="0" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="modal_used_spareable">Used Spareable</label>
+                                            <input type="number" class="form-control" id="modal_used_spareable" name="modal_used_spareable" min="0" value="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <span id="error_message" class="text-danger"></span>
+                                        </div>
+                                        <div class="d-flex justify-content-center mt-3">
+                                            <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                            <button type="submit" class="btn btn-success mx-2">Confirm</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
 <script>
 function RequestStockData(id) {
@@ -531,7 +532,7 @@ $(document).ready(function () {
 
 
 $(document).ready(function () {
-    console.log("Script Loaded!"); 
+  
 
     $(document).on("submit", "#receivedRequestForm", function (e) {
         e.preventDefault(); 

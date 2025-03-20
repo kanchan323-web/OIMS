@@ -49,13 +49,11 @@ class RequestStockController extends Controller
 
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
-        return view('request_stock.generated', compact('data', 'moduleName', 'datarig'));
+        return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig'));
     }
 
     public function request_stock_filter(Request $request)
     {
-
-
 
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
@@ -99,12 +97,13 @@ class RequestStockController extends Controller
             'supplier_id' => 'required',
             'supplier_rig_id' => 'required',
         ]);
+        try {
 
-        $lastRequest = DB::table('requesters')->latest('id')->first();
+        $lastRequest = Requester::latest('id')->first();
         $nextId = $lastRequest ? $lastRequest->id + 1 : 1;
         $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
 
-        $SendRequest = DB::table('requesters')->insert([
+        $SendRequest = Requester::insert([
             'available_qty' => $request->available_qty,
             'requested_qty' => $request->requested_qty,
             'stock_id' => $request->stock_id,
@@ -116,6 +115,7 @@ class RequestStockController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
 
         $supplierData = User::where('id', $request->supplier_id)->first();
 
@@ -143,23 +143,33 @@ class RequestStockController extends Controller
             'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
         ];
 
-        if ($supplierData) {
-            $supplierEmail = $supplierData->email;
-            // $supplierEmail ="silvertouchvipul@gmail.com";
-            Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
-            Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
-        } else {
-            dd('Supplier not found');
-            Session::flash('errors', 'Supplier not found');
-            return redirect()->route('stock_list.request');
+       
+
+        try {
+            if ($supplierData) {
+                $supplierEmail = $supplierData->email;
+        
+                Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
+                Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
+            } else {
+                Session::flash('error', 'Supplier not found');
+                return redirect()->route('stock_list.request');
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('stock_list.request')
+                ->withErrors(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
         }
 
-        // dd("Email is sent successfully.".$supplierEmail);
+
 
         if ($SendRequest) {
             Session::flash('success', 'Request of Stock Sent successfully!');
             return redirect()->route('stock_list.request');
         }
+
+    } catch (\Exception $e) {
+        return redirect()->route('stock_list.request')->withErrors('An error occurred: ' . $e->getMessage());
+    }
     }
 
     public function RequestStockViewPost(Request $request)

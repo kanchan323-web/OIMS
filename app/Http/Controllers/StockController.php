@@ -289,10 +289,17 @@ class StockController extends Controller
              ->where('stocks.id',$id)
              ->get()->first();
 
+        $viewdatarequest =   Stock::select('stocks.*','rig_users.name','rig_users.location_id','edps.id AS EDPID')
+             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+             ->where('stocks.id',$id)
+             ->get()->first();
+
 
         return response()->json(
             [
-                'viewdata' => $viewdata
+                'viewdata' => $viewdata,
+                'for_request_viewdata' => $viewdatarequest,
             ]
         );
     }
