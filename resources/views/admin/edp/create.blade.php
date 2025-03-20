@@ -45,7 +45,7 @@
                                 <div class="form-row">
                                     <div class="col-md-6 mb-3">
                                         <label for="edp_code">EDP Code</label>
-                                        <input type="number" class="form-control @error('edp_code') is-invalid @enderror"
+                                        <input type="text" class="form-control @error('edp_code') is-invalid @enderror"
                                             name="edp_code" value="{{ old('edp_code') }}" required>
                                         @error('edp_code')
                                             <div class="text-danger">{{ $message }}</div>
@@ -54,7 +54,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="category">Select Category</label>
-                                        <select class="form-control" name="Category_Name" required>
+                                        <select class="form-control" name="Category_Name" required> 
 
                                             <option value="" {{ empty($editData->category) ? 'selected' : '' }}>
                                                 Select Category...</option>
