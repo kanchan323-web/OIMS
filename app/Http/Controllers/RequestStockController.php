@@ -261,16 +261,18 @@ class RequestStockController extends Controller
         if (!$requester) {
             return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
         }
-
         // Update requester's status
-        $requester->update(['status_id' => 2]);
+        $requester->update(['status' => 6]);
+
+        $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
 
         // Insert into request_status table
         RequestStatus::create([
             'request_id' => $request->request_id,
-            'status_id' => 2,
+            'status_id' => 6,
             'decline_msg' => null,
             'query_msg' => null,
+            'supplier_qty'=> $supplier_total_qty,
             'supplier_new_spareable' => $request->supplier_new_spareable,
             'supplier_used_spareable' => $request->supplier_used_spareable,
             'user_id' => Auth::id(),
@@ -290,7 +292,7 @@ class RequestStockController extends Controller
         }
 
         // Update requester's status
-        $requester->update(['status_id' => 3]);
+        $requester->update(['status' => 3]);
 
         // Insert into request_status table
         RequestStatus::create([
@@ -298,6 +300,7 @@ class RequestStockController extends Controller
             'status_id' => 3,
             'decline_msg' => $request->decline_msg,
             'query_msg' => null,
+            'supplier_qty'=> null,
             'supplier_new_spareable' => null,
             'supplier_used_spareable' => null,
             'user_id' => Auth::id(),
@@ -317,14 +320,14 @@ class RequestStockController extends Controller
         }
 
         // Update requester's status
-        $requester->update(['status_id' => 4]);
-
+        $requester->update(['status' => 4]);
         // Insert into request_status table
         RequestStatus::create([
             'request_id' => $request->request_id,
             'status_id' => 4,
             'decline_msg' => null,
             'query_msg' => $request->query_msg,
+            'supplier_qty'=> null,
             'supplier_new_spareable' => null,
             'supplier_used_spareable' => null,
             'user_id' => Auth::id(),
