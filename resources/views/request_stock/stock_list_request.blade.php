@@ -22,18 +22,18 @@
                     </button>
                 </div>
                 @endif
-
                 <div class="row justify-content-between">
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
                             <form id="filterForm" class="mr-3 position-relative">
                                 <div class="row">
                                 <div class="col-md-2 mb-2">
+
                                             <label for="edp_code">EDP Code</label>
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($stockData as $stock)
-                                                    <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
+                                                    <option value="{{ $stock->id }}">{{ $stock->edp_code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -101,7 +101,7 @@
                             @foreach($data as $index => $stockdata)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $stockdata->location_name }}</td>
+                                <td>{{ $stockdata->name }}</td>
                                 <td>{{ $stockdata->edp_code }}</td>
                                 <td>{{ $stockdata->section }}</td>
                                 <td>{{ $stockdata->description }}</td>
@@ -206,7 +206,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="">EDP Code</label>
                             <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code"
-                                id="edp_code" readonly>
+                                id="edp_code_id" readonly>
                             <div class="invalid-feedback">
                                 Enter EDP Code
                             </div>
@@ -214,7 +214,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="category">Category</label>
                             <input type="text" class="form-control" name="category" placeholder=" Category "
-                                id="category" readonly>
+                                id="category_id" readonly>
                             <input type="hidden" name="category" id="hidden_category">
                             <div class="invalid-feedback">
                                 Please select a category
@@ -223,7 +223,7 @@
 
                         <div class="col-md-6 mb-3">
                             <label for="">Description </label>
-                            <textarea class="form-control" id="description" name="description"
+                            <textarea class="form-control" id="description_id" name="description"
                                 placeholder="Enter Description" readonly></textarea>
                             <div class="invalid-feedback">
                                 Enter Description
@@ -498,10 +498,10 @@ function viewstockdata(id) {
             data: id
         },
         success: function(response) {
-            // console.log(response.viewdata['category']);
+             console.log(response.viewdata);
             $("#location_id").val(response.viewdata['location_id']);
             $("#location_name").val(response.viewdata['location_name']);
-            $("#edp_code").val(response.viewdata['edp_code']);
+            $("#edp_code_id").val(response.viewdata['edp_code']);
 
 
             var sectionValue = response.viewdata['section'];
@@ -509,7 +509,7 @@ function viewstockdata(id) {
             $("#hidden_section").val(sectionValue);
 
             var categoryValue = response.viewdata['category'];
-            $("#category").val(categoryValue);
+            $("#category_id").val(categoryValue);
             $("#hidden_category").val(categoryValue);
 
 
@@ -518,7 +518,7 @@ function viewstockdata(id) {
             $("#new_spareable").val(response.viewdata['new_spareable']);
             $("#used_spareable").val(response.viewdata['used_spareable']);
             $("#remarks").val(response.viewdata['remarks']);
-            $("#description").val(response.viewdata['description']);
+            $("#description_id").val(response.viewdata['description']);
         }
     });
 }
@@ -534,6 +534,7 @@ $(document).ready(function() {
             url: "{{ route('stock_filter') }}",
             data: $("#filterForm").serialize(),
             success: function(response) {
+                console.log(response.data);
                 let tableBody = $("#stockTable");
                 tableBody.empty();
 

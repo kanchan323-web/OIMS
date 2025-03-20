@@ -32,7 +32,6 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
@@ -222,17 +221,28 @@ class RequestStockController extends Controller
             ->toArray();
 
         // $stockData = Stock::select('edp_code')->distinct()->get();
-        $stockData = DB::table('stocks')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-            ->distinct()
-            ->get();
+     //  $stockData = DB::table('stocks')
+           // ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        //    ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+         //   ->distinct()
+         //   ->get();
 
-        $data = DB::table('stocks')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.*')
-            ->where('rig_id', '!=', $rig_id)
-            ->get();
+         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+         ->select('edps.*')
+         ->where('rig_id', '!=', $rig_id)
+         ->where('req_status', 'inactive')
+         ->get();
+
+
+            $data = Stock::select('stocks.*','rig_users.name','edps.edp_code','edps.category','edps.description','edps.section')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+                ->where('rig_id', '!=', $rig_id)
+                ->where('req_status', 'inactive')
+                ->orderBy('stocks.id', 'desc')
+                ->get();
+
+
 
         $moduleName = "Request Stock List";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
@@ -271,16 +281,18 @@ class RequestStockController extends Controller
         if (!$requester) {
             return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
         }
-
         // Update requester's status
-        $requester->update(['status_id' => 2]);
+        $requester->update(['status' => 6]);
+
+        $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
 
         // Insert into request_status table
         RequestStatus::create([
             'request_id' => $request->request_id,
-            'status_id' => 2,
+            'status_id' => 6,
             'decline_msg' => null,
             'query_msg' => null,
+            'supplier_qty'=> $supplier_total_qty,
             'supplier_new_spareable' => $request->supplier_new_spareable,
             'supplier_used_spareable' => $request->supplier_used_spareable,
             'user_id' => Auth::id(),
@@ -300,7 +312,7 @@ class RequestStockController extends Controller
         }
 
         // Update requester's status
-        $requester->update(['status_id' => 3]);
+        $requester->update(['status' => 3]);
 
         // Insert into request_status table
         RequestStatus::create([
@@ -308,6 +320,7 @@ class RequestStockController extends Controller
             'status_id' => 3,
             'decline_msg' => $request->decline_msg,
             'query_msg' => null,
+            'supplier_qty'=> null,
             'supplier_new_spareable' => null,
             'supplier_used_spareable' => null,
             'user_id' => Auth::id(),
@@ -327,14 +340,14 @@ class RequestStockController extends Controller
         }
 
         // Update requester's status
-        $requester->update(['status_id' => 4]);
-
+        $requester->update(['status' => 4]);
         // Insert into request_status table
         RequestStatus::create([
             'request_id' => $request->request_id,
             'status_id' => 4,
             'decline_msg' => null,
             'query_msg' => $request->query_msg,
+            'supplier_qty'=> null,
             'supplier_new_spareable' => null,
             'supplier_used_spareable' => null,
             'user_id' => Auth::id(),
