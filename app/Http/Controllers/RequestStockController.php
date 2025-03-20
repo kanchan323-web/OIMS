@@ -32,7 +32,6 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
@@ -212,17 +211,28 @@ class RequestStockController extends Controller
             ->toArray();
 
         // $stockData = Stock::select('edp_code')->distinct()->get();
-        $stockData = DB::table('stocks')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-            ->distinct()
-            ->get();
+     //  $stockData = DB::table('stocks')
+           // ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        //    ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+         //   ->distinct()
+         //   ->get();
 
-        $data = DB::table('stocks')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.*')
-            ->where('rig_id', '!=', $rig_id)
-            ->get();
+         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+         ->select('edps.*')
+         ->where('rig_id', '!=', $rig_id)
+         ->where('req_status', 'inactive')
+         ->get();
+
+
+            $data = Stock::select('stocks.*','rig_users.name','edps.edp_code','edps.category','edps.description','edps.section')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+                ->where('rig_id', '!=', $rig_id)
+                ->where('req_status', 'inactive')
+                ->orderBy('stocks.id', 'desc')
+                ->get();
+
+
 
         $moduleName = "Request Stock List";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
