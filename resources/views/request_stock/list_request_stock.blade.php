@@ -297,7 +297,6 @@
 
                     <!-- Received Request Modal -->
                     <div class="modal fade" id="receivedRequestModal" tabindex="-1" role="dialog" aria-labelledby="receivedRequestLabel" aria-hidden="true">
-                        <form id="receivedRequestForm">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -322,7 +321,7 @@
                                         </tbody>
                                     </table>
 
-                                    
+                                    <form id="receivedRequestForm">
                                         @csrf
                                         <input type="text" id="Request_id" name="Request_id" value="">
                                         <div class="form-group">
@@ -340,11 +339,10 @@
                                             <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
                                             <button type="submit" class="btn btn-success mx-2">Confirm</button>
                                         </div>
-                                  
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    </form>
                     </div>
 
                     
