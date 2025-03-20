@@ -210,6 +210,48 @@
             // Ensure fields remain hidden initially
             toggleFields(false);
         });
+
+        $(document).ready(function () {
+        function validateStock() {
+            let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
+            let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
+            let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
+            let totalSpareable = newSpareable + usedSpareable;
+
+            $("#new-error, #used-error").remove();
+
+            if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
+                return true;
+            }
+
+            if (newSpareable > availableQty) {
+                $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
+                return false;
+            }
+
+          
+            if (totalSpareable > availableQty) {
+                if (newSpareable > usedSpareable) {
+                    $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                } else {
+                    $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+        $("#qty, #new_spareable, #used_spareable").on("input", function () {
+            validateStock();
+        });
+
+        $("#addStockForm").on("submit", function (e) {
+            if (!validateStock()) {
+                e.preventDefault();
+            }
+        });
+    });
     </script>
 
 

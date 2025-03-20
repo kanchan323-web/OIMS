@@ -311,7 +311,7 @@
             <div class="modal-body">
                 <div class="card-body">
                     <form class="needs-validation" novalidate method="POST" action="{{route('request_stock_add.post')}}"
-                        id="addStockForm">
+                        id="AddRequestStock">
                         @csrf
                         <div class="form-row">
                             <div class="col-md-6 mb-3">
@@ -400,7 +400,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <button class="btn btn-primary" type="submit">Submit Request</button>
+                        <button class="btn btn-primary" id="AddRequestStock" type="submit">Submit Request</button>
                         <a href="{{route('stock_list.request')}}" class="btn btn-light">Go Back</a>
                     </form>
                 </div>
@@ -417,6 +417,8 @@
 
 
 <script>
+
+
 function addRequest(id) {
     var id = id;
     $.ajaxSetup({

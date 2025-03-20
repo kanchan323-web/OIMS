@@ -29,7 +29,7 @@ class EdpController extends Controller
         $moduleName = "Create EDP";
 
         $validate = $request->validate([
-            'edp_code' => 'required|digits:9|numeric',
+            'edp_code' => 'required|string|size:9',
             'section'  => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
