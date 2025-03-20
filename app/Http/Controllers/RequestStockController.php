@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RequestAcceptedMail;
+use App\Mail\RequestDeclinedMail;
+use App\Mail\RequestQueryMail;
 use App\Models\RequestStatus;
 use Illuminate\Http\Request;
 use App\Models\RequestStock;
@@ -84,9 +87,10 @@ class RequestStockController extends Controller
         $moduleName = "Request Stock List";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
+    
     public function request_stock_filter(Request $request)
     {
-
+        $rig_id = Auth::user()->rig_id;
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
         })
@@ -135,77 +139,76 @@ class RequestStockController extends Controller
         ]);
         try {
 
-        $lastRequest = Requester::latest('id')->first();
-        $nextId = $lastRequest ? $lastRequest->id + 1 : 1;
-        $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
+            $lastRequest = Requester::latest('id')->first();
+            $nextId = $lastRequest ? $lastRequest->id + 1 : 1;
+            $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
 
-        $SendRequest = Requester::insert([
-            'available_qty' => $request->available_qty,
-            'requested_qty' => $request->requested_qty,
-            'stock_id' => $request->stock_id,
-            'requester_id' => $request->requester_id,
-            'requester_rig_id' => $request->requester_rig_id,
-            'supplier_id' => $request->supplier_id,
-            'supplier_rig_id' => $request->supplier_location_id,
-            'RID' => $RID,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            $SendRequest = Requester::insert([
+                'available_qty' => $request->available_qty,
+                'requested_qty' => $request->requested_qty,
+                'stock_id' => $request->stock_id,
+                'requester_id' => $request->requester_id,
+                'requester_rig_id' => $request->requester_rig_id,
+                'supplier_id' => $request->supplier_id,
+                'supplier_rig_id' => $request->supplier_location_id,
+                'RID' => $RID,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
 
-        $supplierData = User::where('id', $request->supplier_id)->first();
+            $supplierData = User::where('id', $request->supplier_id)->first();
 
-        $mailDataSupplier = [
-            'title' => 'Stock Request from ONGC',
-            'supplier_name' => $supplierData->user_name,
-            'requester_name' => Auth::user()->user_name,
-            'available_qty' => $request->available_qty,
-            'requested_qty' => $request->requested_qty,
-            'stock_id' => $request->stock_id,
-            'requester_rig_id' => $request->requester_rig_id,
-            'supplier_rig_id' => $request->supplier_rig_id,
-            'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
-        ];
+            $mailDataSupplier = [
+                'title' => 'Stock Request from ONGC',
+                'supplier_name' => $supplierData->user_name,
+                'requester_name' => Auth::user()->user_name,
+                'available_qty' => $request->available_qty,
+                'requested_qty' => $request->requested_qty,
+                'stock_id' => $request->stock_id,
+                'requester_rig_id' => $request->requester_rig_id,
+                'supplier_rig_id' => $request->supplier_rig_id,
+                'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
+            ];
 
-        $mailDataRequester = [
-            'title' => 'Stock Request Confirmation - ONGC',
-            'supplier_name' => $supplierData->user_name,
-            'requester_name' => Auth::user()->user_name,
-            'available_qty' => $request->available_qty,
-            'requested_qty' => $request->requested_qty,
-            'stock_id' => $request->stock_id,
-            'requester_rig_id' => $request->requester_rig_id,
-            'supplier_rig_id' => $request->supplier_rig_id,
-            'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
-        ];
+            $mailDataRequester = [
+                'title' => 'Stock Request Confirmation - ONGC',
+                'supplier_name' => $supplierData->user_name,
+                'requester_name' => Auth::user()->user_name,
+                'available_qty' => $request->available_qty,
+                'requested_qty' => $request->requested_qty,
+                'stock_id' => $request->stock_id,
+                'requester_rig_id' => $request->requester_rig_id,
+                'supplier_rig_id' => $request->supplier_rig_id,
+                'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
+            ];
 
-       
 
-        try {
-            if ($supplierData) {
-                $supplierEmail = $supplierData->email;
-        
-                Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
-                Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
-            } else {
-                Session::flash('error', 'Supplier not found');
+
+            try {
+                if ($supplierData) {
+                    $supplierEmail = $supplierData->email;
+
+                    Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
+                    Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
+                } else {
+                    Session::flash('error', 'Supplier not found');
+                    return redirect()->route('stock_list.request');
+                }
+            } catch (\Exception $e) {
+                return redirect()->route('stock_list.request')
+                    ->withErrors(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
+            }
+
+
+
+            if ($SendRequest) {
+                Session::flash('success', 'Request of Stock Sent successfully!');
                 return redirect()->route('stock_list.request');
             }
         } catch (\Exception $e) {
-            return redirect()->route('stock_list.request')
-                ->withErrors(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
+            return redirect()->route('stock_list.request')->withErrors('An error occurred: ' . $e->getMessage());
         }
-
-
-
-        if ($SendRequest) {
-            Session::flash('success', 'Request of Stock Sent successfully!');
-            return redirect()->route('stock_list.request');
-        }
-
-    } catch (\Exception $e) {
-        return redirect()->route('stock_list.request')->withErrors('An error occurred: ' . $e->getMessage());
-    }
     }
 
     public function RequestStockViewPost(Request $request)
@@ -280,87 +283,166 @@ class RequestStockController extends Controller
 
     public function accept(Request $request)
     {
-        $requester = Requester::find($request->request_id);
-        if (!$requester) {
-            return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+        try {
+            $requester = Requester::find($request->request_id);
+            if (!$requester) {
+                return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+            }
+
+            $requester->update(['status' => 6]);
+
+            $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
+
+            RequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 6,
+                'decline_msg' => null,
+                'query_msg' => null,
+                'supplier_qty' => $supplier_total_qty,
+                'supplier_new_spareable' => $request->supplier_new_spareable,
+                'supplier_used_spareable' => $request->supplier_used_spareable,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+            ]);
+
+            $requester_user = User::find($requester->requester_id);
+            $supplier_user = User::find($requester->supplier_id);
+
+            if (!$requester_user || !$supplier_user) {
+                return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+            }
+
+            $receiverEmail = $requester_user->email;
+
+            $mailData = [
+                'title' => 'Stock Request Accepted',
+                'request_id' => $request->request_id,
+                'stock_id' => $requester->RID,
+                'requester_name' => $requester_user->user_name,
+                'supplier_name' => $supplier_user->user_name,
+                'requested_qty' => $requester->requested_qty,
+                'supplier_qty' => $supplier_total_qty,
+                'supplier_new_spareable' => $request->supplier_new_spareable,
+                'supplier_used_spareable' => $request->supplier_used_spareable,
+                'requester_rig_id' => $requester->rig_id,
+                'supplier_rig_id' => Auth::user()->rig_id,
+                'created_at' => $requester->created_at->format('d-m-Y'),
+            ];
+
+            Mail::to($receiverEmail)->send(new RequestAcceptedMail($mailData));
+
+            session()->flash('success', 'Request accepted successfully.');
+
+            return response()->json(['success' => true, 'message' => 'Request accepted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
         }
-        // Update requester's status
-        $requester->update(['status' => 6]);
-
-        $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
-
-        // Insert into request_status table
-        RequestStatus::create([
-            'request_id' => $request->request_id,
-            'status_id' => 6,
-            'decline_msg' => null,
-            'query_msg' => null,
-            'supplier_qty'=> $supplier_total_qty,
-            'supplier_new_spareable' => $request->supplier_new_spareable,
-            'supplier_used_spareable' => $request->supplier_used_spareable,
-            'user_id' => Auth::id(),
-            'rig_id' => Auth::user()->rig_id,
-        ]);
-
-        session()->flash('success', 'Request accepted successfully.');
-
-        return response()->json(['success' => true, 'message' => 'Request accepted successfully.']);
     }
+
 
     public function decline(Request $request)
     {
-        $requester = Requester::find($request->request_id);
-        if (!$requester) {
-            return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+        try {
+            $requester = Requester::find($request->request_id);
+            if (!$requester) {
+                return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+            }
+
+            $requester->update(['status' => 3]);
+
+            RequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 3,
+                'decline_msg' => $request->decline_msg,
+                'query_msg' => null,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+            ]);
+
+            $requester_user = User::find($requester->requester_id);
+            $supplier_user = User::find($requester->supplier_id);
+
+            if (!$requester_user || !$supplier_user) {
+                return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+            }
+
+            $receiverEmail = $requester_user->email;
+
+            $mailData = [
+                'title' => 'Stock Request Declined',
+                'request_id' => $request->request_id,
+                'stock_id' => $requester->RID,
+                'requester_name' => $requester_user->user_name,
+                'supplier_name' => $supplier_user->user_name,
+                'requested_qty' => $requester->requested_qty,
+                'decline_msg' => $request->decline_msg,
+                'requester_rig_id' => $requester->rig_id,
+                'supplier_rig_id' => Auth::user()->rig_id,
+                'created_at' => $requester->created_at->format('d-m-Y'),
+            ];
+
+            Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
+
+            session()->flash('success', 'Request declined successfully.');
+
+            return response()->json(['success' => true, 'message' => 'Request declined successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
         }
-
-        // Update requester's status
-        $requester->update(['status' => 3]);
-
-        // Insert into request_status table
-        RequestStatus::create([
-            'request_id' => $request->request_id,
-            'status_id' => 3,
-            'decline_msg' => $request->decline_msg,
-            'query_msg' => null,
-            'supplier_qty'=> null,
-            'supplier_new_spareable' => null,
-            'supplier_used_spareable' => null,
-            'user_id' => Auth::id(),
-            'rig_id' => Auth::user()->rig_id,
-        ]);
-
-        session()->flash('success', 'Request declined successfully.');
-
-        return response()->json(['success' => true, 'message' => 'Request declined successfully.']);
     }
 
     public function query(Request $request)
     {
-        $requester = Requester::find($request->request_id);
-        if (!$requester) {
-            return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+        try {
+            $requester = Requester::find($request->request_id);
+            if (!$requester) {
+                return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+            }
+
+            $requester->update(['status' => 2]);
+
+            RequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 2,
+                'decline_msg' => null,
+                'query_msg' => $request->query_msg,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+            ]);
+
+            $requester_user = User::find($requester->requester_id);
+            $receiverEmail = $requester_user->email;
+            $supplier_user = User::find($requester->supplier_id);
+
+            $mailData = [
+                'title' => 'Stock Request Query Raised',
+                'request_id' => $request->request_id,
+                'stock_id' => $requester->RID,
+                'requester_name' => $requester_user->user_name,
+                'supplier_name' => $supplier_user->user_name,
+                'requested_qty' => $requester->requested_qty,
+                'query_msg' => $request->query_msg,
+                'requester_rig_id' => $requester->rig_id,
+                'supplier_rig_id' => Auth::user()->rig_id,
+                'created_at' => $requester->created_at->format('d-m-Y'),
+            ];
+
+            Mail::to($receiverEmail)->send(new RequestQueryMail($mailData));
+
+            session()->flash('success', 'Query raised successfully.');
+
+            return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error occurred while processing the query.'], 500);
         }
-
-        // Update requester's status
-        $requester->update(['status' => 4]);
-        // Insert into request_status table
-        RequestStatus::create([
-            'request_id' => $request->request_id,
-            'status_id' => 4,
-            'decline_msg' => null,
-            'query_msg' => $request->query_msg,
-            'supplier_qty'=> null,
-            'supplier_new_spareable' => null,
-            'supplier_used_spareable' => null,
-            'user_id' => Auth::id(),
-            'rig_id' => Auth::user()->rig_id,
-        ]);
-
-        session()->flash('success', 'Query raised successfully.');
-
-        return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
     }
+
 
     public function getRequestStock($id)
     {
