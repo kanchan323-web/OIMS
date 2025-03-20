@@ -50,7 +50,40 @@ class RequestStockController extends Controller
         $moduleName = "Request Stocks List";
         return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig'));
     }
+    public function StockList(Request $request)
+    {
+        $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
+                // $stockData = Stock::select('edp_code')->distinct()->get();
+            //   $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+            //        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+            //        ->distinct()
+            //        ->get();
+
+                $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+                ->where('rig_id', '!=', $rig_id)
+                ->where('req_status', 'inactive')
+                ->get();
+
+                // dd($stockData);
+
+
+            $data = Stock::select('stocks.*','rig_users.name','edps.edp_code','edps.category','edps.description','edps.section')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+                ->where('rig_id', '!=', $rig_id)
+                ->where('req_status', 'inactive')
+                ->orderBy('stocks.id', 'desc')
+                ->get();
+
+        $moduleName = "Request Stock List";
+        return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
+    }
     public function request_stock_filter(Request $request)
     {
 
@@ -69,7 +102,11 @@ class RequestStockController extends Controller
 
         $data = $data->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+            ->where('rig_id', '!=', $rig_id)
+            ->where('req_status', 'inactive')
             ->get();
+
+          
 
         $moduleName = "Request Stocks filter";
         return view('request_stock.list_request_stock', compact('data', 'moduleName'));
@@ -212,41 +249,7 @@ class RequestStockController extends Controller
 
 
 
-    public function StockList(Request $request)
-    {
-        $rig_id = Auth::user()->rig_id;
-        $datarig = User::where('user_type', '!=', 'admin')
-            ->where('rig_id', $rig_id)
-            ->pluck('id')
-            ->toArray();
-
-        // $stockData = Stock::select('edp_code')->distinct()->get();
-     //  $stockData = DB::table('stocks')
-           // ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-        //    ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-         //   ->distinct()
-         //   ->get();
-
-         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-         ->select('edps.*')
-         ->where('rig_id', '!=', $rig_id)
-         ->where('req_status', 'inactive')
-         ->get();
-
-
-            $data = Stock::select('stocks.*','rig_users.name','edps.edp_code','edps.category','edps.description','edps.section')
-                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-                ->where('rig_id', '!=', $rig_id)
-                ->where('req_status', 'inactive')
-                ->orderBy('stocks.id', 'desc')
-                ->get();
-
-
-
-        $moduleName = "Request Stock List";
-        return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
-    }
+ 
 
 
 
