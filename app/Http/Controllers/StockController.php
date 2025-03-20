@@ -50,6 +50,7 @@ class StockController extends Controller
         ->where('rig_id',$rig_id)
         ->distinct()
         ->get();
+        
 
         $data = DB::table('stocks')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
@@ -294,7 +295,6 @@ class StockController extends Controller
              ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
              ->where('stocks.id',$id)
              ->get()->first();
-
 
         return response()->json(
             [
