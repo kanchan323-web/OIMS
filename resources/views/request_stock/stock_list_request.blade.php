@@ -434,13 +434,13 @@ function addRequest(id) {
             data: id
         },
         success: function(response) {
-            console.log("stock id check:"+response.for_request_viewdata['id']);  
-            console.log("edp_code check:"+response.viewdata['edp_code']);  
+            console.log("stock id check:"+response.for_request_viewdata['id']);
+            console.log("edp_code check:"+response.viewdata['edp_code']);
 
             $("#Rlocation_id").val(response.for_request_viewdata['location_id']);
             $("#Rlocation_name").val(response.for_request_viewdata['location_name']);
             $("#Redp_code").val(response.viewdata['edp_code']);
-            $("#Redp_id").val(response.for_request_viewdata['edp_code']);
+            $("#Redp_id").val(id);
             $("#Rstock_code").val(response.for_request_viewdata['id']);
             var sectionValue = response.for_request_viewdata['section'];
             $("#Rsection").val(sectionValue);

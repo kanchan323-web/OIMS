@@ -64,7 +64,7 @@
         <p style="margin-left:15px">
             You, have successfully submitted a stock  request.
             <br>
-            <strong>Stock ID:</strong> {{ $mailDataRequester['stock_id'] }}
+            <strong>Stock EDP Code:</strong> {{ $mailDataRequester['stock_id'] }}
             Please find the details below.
         </p>
 
@@ -78,7 +78,7 @@
                 <td>{{ $mailDataRequester['supplier_name'] }}</td>
             </tr>
             <tr>
-                <th>Stock ID</th>
+                <th>Stock EDP Code</th>
                 <td>{{ $mailDataRequester['stock_id'] }}</td>
             </tr>
             <tr>
@@ -90,11 +90,11 @@
                 <td>{{ $mailDataRequester['requested_qty'] }}</td>
             </tr>
             <tr>
-                <th>Requester Rig ID</th>
+                <th>Requester Rig Name</th>
                 <td>{{ $mailDataRequester['requester_rig_id'] }}</td>
             </tr>
             <tr>
-                <th>Supplier Rig ID</th>
+                <th>Supplier Rig Name</th>
                 <td>{{ $mailDataRequester['supplier_rig_id'] }}</td>
             </tr>
             <tr>
@@ -107,7 +107,7 @@
 
         <div class="footer" style="text-align: left; margin-top: 20px;">
             <p>Thank you,</p>
-          
+
         </div>
 
         <div class="footer" style="color: gray; font-size: 12px; margin-top: 10px;">
