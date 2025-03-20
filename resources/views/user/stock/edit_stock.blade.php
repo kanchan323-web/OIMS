@@ -49,7 +49,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location ID</label>
-                                        <input type="text" class="form-control @error('location_id') is-invalid @enderror" 
+                                        <input type="text" class="form-control @error('location_id') is-invalid @enderror"
                                             name="location_id" value="{{ old('location_id', $editData->location_id) }}" required readonly>
                                         @error('location_id')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -58,22 +58,24 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location Name</label>
-                                        <input type="text" class="form-control @error('location_name') is-invalid @enderror" 
+                                        <input type="text" class="form-control @error('location_name') is-invalid @enderror"
                                             name="location_name" value="{{ old('location_name', $editData->location_name) }}" required readonly>
                                         @error('location_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                    </div>                                    
+                                    </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Category</label>
-                                        <select class="form-control @error('category') is-invalid @enderror" name="category"
+                                        <input type="text" class="form-control" name="category" id="category_id" required
+                                        readonly value="{{ old('category', $editData->category) }}">
+                                    <!--    <select class="form-control @error('category') is-invalid @enderror" name="category"
                                             id="category_id" readonly required>
                                             <option selected disabled value="">Select Category...</option>
                                             <option value="Spares" {{ old('category', $editData->category) == 'Spares' ? 'selected' : '' }}>Spares</option>
                                             <option value="Stores" {{ old('category', $editData->category) == 'Stores' ? 'selected' : '' }}>Stores</option>
                                             <option value="Capital items" {{ old('category', $editData->category) == 'Capital items' ? 'selected' : '' }}>Capital items</option>
-                                        </select>
+                                        </select> -->
                                         @error('category')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -93,12 +95,14 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Section</label>
-                                        <select class="form-control @error('section') is-invalid @enderror" name="section"
+                                        <input type="text" class="form-control" name="section" id="section_id" required
+                                        readonly value="{{ old('section', $editData->section) }}">
+                                      <!--  <select class="form-control @error('section') is-invalid @enderror" name="section"
                                             id="section_id" readonly required>
                                             <option selected disabled value="">Select Section...</option>
                                             <option value="ENGG" {{ old('section', $editData->section) == 'ENGG' ? 'selected' : '' }}>ENGG</option>
                                             <option value="DRILL" {{ old('section', $editData->section) == 'DRILL' ? 'selected' : '' }}>DRILL</option>
-                                        </select>
+                                        </select> -->
                                         @error('section')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

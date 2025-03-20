@@ -202,7 +202,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="">EDP Code</label>
                                 <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code"
-                                    id="edp_code" readonly>
+                                    id="edp_code_id" readonly>
                                 <div class="invalid-feedback">
                                     Enter EDP Code
                                 </div>
@@ -310,7 +310,7 @@
                     console.log(response.viewdata);
                     $("#location_id").val(response.viewdata['location_id']);
                     $("#location_name").val(response.viewdata['name']);
-                    $("#edp_code").val(response.viewdata['edp_code']);
+                    $("#edp_code_id").val(response.viewdata['edp_code']);
                     var sectionValue = response.viewdata['section'];
                     $("#section").val(response.viewdata['section']);
                     $("#hidden_section").val(sectionValue);

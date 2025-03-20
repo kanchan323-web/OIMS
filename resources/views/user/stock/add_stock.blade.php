@@ -54,12 +54,14 @@
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="category_id">Category</label>
-                                        <select class="form-control" name="category" id="category_id" required>
+                                        <input type="text" class="form-control" name="category" id="category_id" required
+                                        readonly>
+                                    <!--    <select class="form-control" name="category" id="category_id" required>
                                             <option selected disabled value="">Select Category...</option>
                                             <option value="Spares">Spares</option>
                                             <option value="Stores">Stores</option>
                                             <option value="Capital items">Capital items</option>
-                                        </select>
+                                        </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -77,11 +79,13 @@
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="section_id">Section</label>
-                                        <select class="form-control" name="section" id="section_id" required>
+                                        <input type="text" class="form-control" name="section" id="section_id" required
+                                        readonly>
+                                    <!--    <select class="form-control" name="section" id="section_id" required>
                                             <option selected disabled value="">Select Section...</option>
                                             <option value="ENGG">ENGG</option>
                                             <option value="DRILL">DRILL</option>
-                                        </select>
+                                        </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
