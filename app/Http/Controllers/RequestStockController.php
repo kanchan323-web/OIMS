@@ -139,7 +139,7 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-       
+
 
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
@@ -271,16 +271,16 @@ class RequestStockController extends Controller
                 if ($supplierData) {
                     $supplierEmail = $supplierData->email;
 
-                Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
-                Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
-            } else {
-                Session::flash('error', 'Supplier not found');
-                return redirect()->route('stock_list.get');
+                    Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
+                    Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
+                } else {
+                    Session::flash('error', 'Supplier not found');
+                    return redirect()->route('stock_list.get');
+                }
+            } catch (\Exception $e) {
+                return redirect()->route('stock_list.get')
+                    ->with(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            return redirect()->route('stock_list.get')
-                ->with(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
-        }
 
 
 
@@ -288,9 +288,9 @@ class RequestStockController extends Controller
                 Session::flash('success', 'Request of Stock Sent successfully!');
                 return redirect()->route('stock_list.get');
             }
-           } catch (\Exception $e) {
-             return redirect()->route('stock_list.get')->withErrors('An error occurred: ' . $e->getMessage());
-           }
+        } catch (\Exception $e) {
+            return redirect()->route('stock_list.get')->withErrors('An error occurred: ' . $e->getMessage());
+        }
     }
 
 
@@ -417,6 +417,9 @@ class RequestStockController extends Controller
     }
 }
 
+        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
+    }
+
 
 
     public function accept(Request $request)
@@ -487,11 +490,11 @@ class RequestStockController extends Controller
                 return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
             }
 
-            $requester->update(['status' => 3]);
+            $requester->update(['status' => 5]);
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
-                'status_id' => 3,
+                'status_id' => 5,
                 'decline_msg' => $request->decline_msg,
                 'query_msg' => null,
                 'supplier_qty' => null,
@@ -650,7 +653,8 @@ class RequestStockController extends Controller
             ->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
-        $edps = Edp::select('edp_code', 'id as edp_id')->distinct()->get();
+        $stocks = Stock::select('id')->where('rig_id', $rig_id)->distinct()->get();
+        $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
 
         return view('request_stock.supplier_request', compact('data', 'datarig', 'edps'));
     }
@@ -676,7 +680,6 @@ class RequestStockController extends Controller
             ->when($request->to_date, function ($query) use ($request) {
                 return $query->whereDate('requesters.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
             });
-
         $data = $query->get();
 
         $datarig = User::where('user_type', '!=', 'admin')
