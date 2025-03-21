@@ -138,6 +138,11 @@
                                                 title="Supplier Request" href="#">
                                                 <i class="ri-arrow-right-circle-line"></i>
                                             </a>
+                                            <a class="badge badge-info" onclick="ViewRequestStatus({{ $stockdata->id }})"
+                                                data-toggle="modal" data-placement="top"
+                                                title="View Request Status" href="#">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endif
@@ -448,7 +453,46 @@
     </div>
 </div>
 
+
+<!-- Request Status Modal -->
+<div class="modal fade" id="requestStatusModal" tabindex="-1" role="dialog" aria-labelledby="requestStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-white text-uppercase">
+                <h5 class="modal-title ligth ligth-data" id="requestStatusModalLabel">Request Status Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive rounded mb-3">
+                    <table class="data-tables table mb-0 tbl-server-info">
+                        <thead class="bg-white text-uppercase">
+                            <tr class="ligth ligth-data">
+                                <th>Status</th>
+                                <th>Message</th>
+                                <th>Supplier Qty</th>
+                                <th>New Spareable</th>
+                                <th>Used Spareable</th>
+                                <th>Requestor</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestStatusData" class="ligth-body">
+                            <!-- Data will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 <script>
+//to bring data into the main modal
 function RequestStockData(id) {
     $.ajaxSetup({
         headers: {
@@ -516,14 +560,14 @@ function RequestStockData(id) {
 }
 
 
-
+//For deleting
 function deleteStockdata(id) {
 
     $("#delete_id").val(id);
 
 }
 
-
+//for checkbox
 $(document).ready(function() {
     $("#selectAll").on("change", function() {
         $(".row-checkbox").prop("checked", $(this).prop("checked"));
@@ -538,6 +582,7 @@ $(document).ready(function() {
     });
 });
 
+//Message for success and error time limit
 $(document).ready(function() {
     setTimeout(function() {
         $(".alert").fadeOut("slow");
@@ -545,6 +590,7 @@ $(document).ready(function() {
 });
 
 
+//For multiple modal seamless transitions
 $(document).ready(function () {
     // Open Decline Modal without closing Main Modal
     $('[data-target="#declineReasonModal"]').on("click", function () {
@@ -570,6 +616,7 @@ $(document).ready(function () {
 });
 
 
+//For accept
 $(document).ready(function () {
     console.log("Script Loaded!"); 
 
@@ -629,7 +676,7 @@ $(document).ready(function () {
 });
 
 
-
+//for decline and query
 $(document).ready(function () {
     // Decline Request
     $(document).on("submit", "#declineForm", function (e) {
@@ -686,7 +733,7 @@ $(document).ready(function () {
     });
 });
 
-
+//for Accept modal popup and changing status to Approve
 $(document).ready(function () {
     $("#openReceivedRequestModal").click(function (e) {
         e.preventDefault();
@@ -757,6 +804,41 @@ $(document).ready(function () {
 
 
 
+function ViewRequestStatus(request_id) {
+    $.ajax({
+        url: "{{ route('get.request.status') }}",
+        type: "GET",
+        data: { request_id: request_id },
+        success: function(response) {
+            console.log(response);
+            let html = "";
+            if (response.length > 0) {
+                response.forEach(status => {
+                    html += `<tr>
+                        <td><span class="badge badge-${status.status_id == 2 ? 'success' : 
+                            (status.status_id == 3 ? 'danger' : 
+                            (status.status_id == 4 ? 'info' : 'secondary'))}">
+                            ${status.status_name}
+                        </span></td>
+                        <td>${status.decline_msg ? status.decline_msg : (status.query_msg ? status.query_msg : 'N/A')}</td>
+                        <td>${status.supplier_qty || 'N/A'}</td>
+                        <td>${status.supplier_new_spareable || 'N/A'}</td>
+                        <td>${status.supplier_used_spareable || 'N/A'}</td>
+                        <td>${status.requestor_name}</td>
+                        <td>${new Date(status.updated_at).toLocaleString()}</td>
+                    </tr>`;
+                });
+            } else {
+                html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
+            }
+            $("#requestStatusData").html(html);
+            $("#requestStatusModal").modal('show'); // Show modal after data is loaded
+        },
+        error: function() {
+            alert("Failed to fetch request status.");
+        }
+    });
+}
 
 
 </script>
