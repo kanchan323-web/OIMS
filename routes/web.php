@@ -121,8 +121,12 @@ Route::middleware(['auth'])->group(function () {
 
         //Request stock
         Route::prefix('request-stock')->group(function () {
-            Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
-            Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
+
+
+            Route::get('/request_stockList', [RequestStockController::class, 'RequestStockList'])->name('stock_list.get');
+            Route::get('/filter', [RequestStockController::class, 'RequestStockFilter'])->name('request_stock_filter.get');
+            // Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
+            // Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
             Route::get('/supplier_request', [RequestStockController::class, 'SupplierRequest'])->name('supplier_request.get');
             Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
             Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('request_stock_add.post');
@@ -136,7 +140,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/request-status/get-request-stock/{id}', [RequestStockController::class, 'getRequestStock']);
             Route::post('/request-status/update-request-status', [RequestStockController::class, 'updateStatus'])->name('request.updateStatus');
         });
-
+ 
         //User mapping
         Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
         Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');

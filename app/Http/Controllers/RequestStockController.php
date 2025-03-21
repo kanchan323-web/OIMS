@@ -26,20 +26,94 @@ use Illuminate\Support\Facades\Session;
 class RequestStockController extends Controller
 {
 
-
     public function RequestStockList(Request $request)
     {
-
         $rig_id = Auth::user()->rig_id;
-        $datarig = User::where('user_type', '!=', 'admin')
-            ->where('rig_id', $rig_id)
-            ->pluck('id')
-            ->toArray();
 
-        $data = RequestStock::get();
-        $moduleName = "Request Stocks List";
-        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
+
+        $EDP_Code_ID = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+            ->where('rig_id', '!=', $rig_id)
+            ->where('req_status', 'inactive')
+            ->get();
+
+        $Stock_Table_Data = Stock::select('stocks.*', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->where('rig_id', '!=', $rig_id)
+            ->where('req_status', 'inactive')
+            ->orderBy('stocks.id', 'desc')
+            ->get();
+
+
+        $moduleName = "Request Stock List";
+
+
+        return view('request_stock.stock_list_request', compact('Stock_Table_Data', 'moduleName', 'EDP_Code_ID'));
     }
+
+
+    public function RequestStockFilter(Request $request)
+    {
+
+
+         $rig_id = Auth::user()->rig_id;
+         
+        if ($request->ajax()) {
+            $stockData = Stock::select('edp_code')->distinct()->get();
+
+
+            $data = Stock::query()
+                ->when($request->edp_code, function ($query, $edp_code) {
+                    return $query->where('stocks.edp_code', $edp_code);
+                })
+                ->when($request->Description, function ($query, $description) {
+                    return $query->where('stocks.description', 'LIKE', "%{$description}%");
+                })
+                ->when($request->form_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                })
+                ->when($request->to_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                });
+
+
+
+
+            $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->where('rig_id', '!=', $rig_id)
+            ->where('req_status', 'inactive')
+            ->orderBy('stocks.id', 'desc')
+            ->get();
+
+
+            $datarig = User::where('user_type', '!=', 'admin')
+                ->where('rig_id', $rig_id)
+                ->pluck('id')
+                ->toArray();
+
+
+            return response()->json(['data' => $data, 'datarig' => $datarig, 'stockData' => $stockData]);
+
+
+    }
+}
+
+    // public function RequestStockList(Request $request)
+    // {
+
+    //     $rig_id = Auth::user()->rig_id;
+    //     $datarig = User::where('user_type', '!=', 'admin')
+    //         ->where('rig_id', $rig_id)
+    //         ->pluck('id')
+    //         ->toArray();
+
+    //     $data = RequestStock::get();
+    //     $moduleName = "Request Stocks List";
+    //     return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
+    // }
 
 
 
