@@ -143,11 +143,7 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-        // $stockData = Stock::select('edp_code')->distinct()->get();
-        //   $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-        //        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-        //        ->distinct()
-        //        ->get();
+       
 
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
@@ -283,21 +279,21 @@ class RequestStockController extends Controller
                 Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
             } else {
                 Session::flash('error', 'Supplier not found');
-                return redirect()->route('stock_list.request');
+                return redirect()->route('stock_list.get');
             }
         } catch (\Exception $e) {
-            return redirect()->route('stock_list.request')
-                ->withErrors(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
+            return redirect()->route('stock_list.get')
+                ->with(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
         }
 
 
 
             if ($SendRequest) {
                 Session::flash('success', 'Request of Stock Sent successfully!');
-                return redirect()->route('stock_list.request');
+                return redirect()->route('stock_list.get');
             }
            } catch (\Exception $e) {
-             return redirect()->route('stock_list.request')->withErrors('An error occurred: ' . $e->getMessage());
+             return redirect()->route('stock_list.get')->withErrors('An error occurred: ' . $e->getMessage());
            }
     }
 
