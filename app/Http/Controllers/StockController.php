@@ -44,16 +44,14 @@ class StockController extends Controller
             ->toArray();
 
 
-        $stockData = DB::table('stocks')
-        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
         ->select('stocks.*', 'edps.edp_code AS EDP_Code')
         ->where('rig_id',$rig_id)
         ->distinct()
         ->get();
 
 
-        $data = DB::table('stocks')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->select('stocks.*', 'edps.edp_code','rig_users.name')
             ->where('rig_id',$rig_id)
@@ -85,7 +83,6 @@ class StockController extends Controller
                 ->when($request->to_date, function ($query) use ($request) {
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
-
 
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')

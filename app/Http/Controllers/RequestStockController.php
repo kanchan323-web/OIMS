@@ -78,9 +78,6 @@ class RequestStockController extends Controller
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
 
-
-
-
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
                 ->select('stocks.*', 'edps.edp_code AS EDP_Code')
                 ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
