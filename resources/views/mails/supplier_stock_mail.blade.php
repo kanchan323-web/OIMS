@@ -66,7 +66,7 @@
         <p style="margin-left:15px">
             The requester, <strong>{{ $mailDataSupplier['requester_name'] }}</strong>, has submitted a request for stock.
             <br>
-            <strong>Stock ID:</strong> {{ $mailDataSupplier['stock_id'] }}
+            <strong>Stock EDP Code:</strong> {{ $mailDataSupplier['stock_id'] }}
             <br><br>
             Please find the details below.
         </p>
@@ -81,7 +81,7 @@
                 <td>{{ $mailDataSupplier['supplier_name'] }}</td>
             </tr>
             <tr>
-                <th>Stock ID</th>
+                <th>Stock EDP Code</th>
                 <td>{{ $mailDataSupplier['stock_id'] }}</td>
             </tr>
             <tr>
@@ -93,11 +93,11 @@
                 <td>{{ $mailDataSupplier['requested_qty'] }}</td>
             </tr>
             <tr>
-                <th>Requester Rig ID</th>
+                <th>Requester Rig Name</th>
                 <td>{{ $mailDataSupplier['requester_rig_id'] }}</td>
             </tr>
             <tr>
-                <th>Supplier Rig ID</th>
+                <th>Supplier Rig Name</th>
                 <td>{{ $mailDataSupplier['supplier_rig_id'] }}</td>
             </tr>
             <tr>
@@ -109,7 +109,7 @@
         <!-- <p>If you have any questions, please contact us.</p> -->
         <div class="footer" style="text-align: left; margin-top: 20px;">
             <p>Thank you,</p>
-          
+
         </div>
         <div class="footer" style="color: gray; font-size: 12px; margin-top: 10px;">
             <p>This is a system-generated email. Please do not reply.</p>

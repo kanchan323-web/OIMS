@@ -13,6 +13,7 @@ use App\Models\Stock;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\RigUser;
 use App\Models\Requester;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\requestor_stock_mail;
@@ -40,6 +41,9 @@ class RequestStockController extends Controller
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
 
+
+
+
     public function GeneratedRequest(Request $request)
     {
 
@@ -53,6 +57,10 @@ class RequestStockController extends Controller
         $moduleName = "Request Stocks List";
         return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig'));
     }
+
+
+
+
     public function StockList(Request $request)
     {
         $rig_id = Auth::user()->rig_id;
@@ -61,33 +69,36 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-                // $stockData = Stock::select('edp_code')->distinct()->get();
-            //   $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-            //        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-            //        ->distinct()
-            //        ->get();
+        // $stockData = Stock::select('edp_code')->distinct()->get();
+        //   $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+        //        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+        //        ->distinct()
+        //        ->get();
 
-                $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-                ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-                ->where('rig_id', '!=', $rig_id)
-                ->where('req_status', 'inactive')
-                ->get();
+        $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+            ->where('rig_id', '!=', $rig_id)
+            ->where('req_status', 'inactive')
+            ->get();
 
-                // dd($stockData);
+        // dd($stockData);
 
 
-            $data = Stock::select('stocks.*','rig_users.name','edps.edp_code','edps.category','edps.description','edps.section')
-                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-                ->where('rig_id', '!=', $rig_id)
-                ->where('req_status', 'inactive')
-                ->orderBy('stocks.id', 'desc')
-                ->get();
+        $data = Stock::select('stocks.*', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->where('rig_id', '!=', $rig_id)
+            ->where('req_status', 'inactive')
+            ->orderBy('stocks.id', 'desc')
+            ->get();
 
         $moduleName = "Request Stock List";
         return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
-    
+
+
+
+
     public function request_stock_filter(Request $request)
     {
         $rig_id = Auth::user()->rig_id;
@@ -110,11 +121,14 @@ class RequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-          
+
 
         $moduleName = "Request Stocks filter";
         return view('request_stock.list_request_stock', compact('data', 'moduleName'));
     }
+
+
+
 
     public function RequestStockAdd(Request $request)
     {
@@ -123,11 +137,9 @@ class RequestStockController extends Controller
     }
 
 
+
     public function RequestStockAddPost(Request $request)
     {
-
-
-
         $request->validate([
             'available_qty' => 'required|numeric',
             'requested_qty' => 'required|numeric',
@@ -137,8 +149,11 @@ class RequestStockController extends Controller
             'supplier_id' => 'required',
             'supplier_rig_id' => 'required',
         ]);
-        try {
 
+        $user = Auth::user();
+        $rigUser = RigUser::find($user->rig_id);
+
+        try {
             $lastRequest = Requester::latest('id')->first();
             $nextId = $lastRequest ? $lastRequest->id + 1 : 1;
             $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
@@ -156,6 +171,7 @@ class RequestStockController extends Controller
                 'updated_at' => now(),
             ]);
 
+       $updated_stock_status =  Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
 
             $supplierData = User::where('id', $request->supplier_id)->first();
 
@@ -165,8 +181,8 @@ class RequestStockController extends Controller
                 'requester_name' => Auth::user()->user_name,
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
-                'stock_id' => $request->stock_id,
-                'requester_rig_id' => $request->requester_rig_id,
+                'stock_id' => $request->edp_code,
+                'requester_rig_id' => $rigUser->name,
                 'supplier_rig_id' => $request->supplier_rig_id,
                 'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
             ];
@@ -177,28 +193,28 @@ class RequestStockController extends Controller
                 'requester_name' => Auth::user()->user_name,
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
-                'stock_id' => $request->stock_id,
-                'requester_rig_id' => $request->requester_rig_id,
+                'stock_id' => $request->edp_code,
+                'requester_rig_id' => $rigUser->name,
                 'supplier_rig_id' => $request->supplier_rig_id,
                 'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
             ];
 
 
 
-            try {
-                if ($supplierData) {
-                    $supplierEmail = $supplierData->email;
+        try {
+            if ($supplierData) {
+                $supplierEmail = $supplierData->email;
 
-                    Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
-                    Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
-                } else {
-                    Session::flash('error', 'Supplier not found');
-                    return redirect()->route('stock_list.request');
-                }
-            } catch (\Exception $e) {
-                return redirect()->route('stock_list.request')
-                    ->withErrors(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
+                Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
+                Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
+            } else {
+                Session::flash('error', 'Supplier not found');
+                return redirect()->route('stock_list.request');
             }
+        } catch (\Exception $e) {
+            return redirect()->route('stock_list.request')
+                ->withErrors(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
+        }
 
 
 
@@ -206,10 +222,13 @@ class RequestStockController extends Controller
                 Session::flash('success', 'Request of Stock Sent successfully!');
                 return redirect()->route('stock_list.request');
             }
-        } catch (\Exception $e) {
-            return redirect()->route('stock_list.request')->withErrors('An error occurred: ' . $e->getMessage());
-        }
+           } catch (\Exception $e) {
+             return redirect()->route('stock_list.request')->withErrors('An error occurred: ' . $e->getMessage());
+           }
     }
+
+
+
 
     public function RequestStockViewPost(Request $request)
     {
@@ -251,29 +270,25 @@ class RequestStockController extends Controller
 
 
 
-
- 
-
-
-
-
     public function IncomingRequestStockList(Request $request)
     {
-
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
             ->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
 
-        // $data = RequestStock::get();
-        $data = Requester::select('rig_users.name', 'rig_users.location_id', 'requesters.*')
+        $data = Requester::select(
+            'rig_users.name',
+            'rig_users.location_id',
+            'requesters.*',
+            'mst_status.status_name'
+        )
             ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('supplier_rig_id', $rig_id)
-            ->orderBy('requesters.created_at', 'desc')->get();
-
-        //print_r($data);
-        //die;
+            ->orderBy('requesters.created_at', 'desc')
+            ->get();
 
         $moduleName = "Incoming Request List";
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
@@ -340,6 +355,7 @@ class RequestStockController extends Controller
     }
 
 
+
     public function decline(Request $request)
     {
         try {
@@ -394,6 +410,8 @@ class RequestStockController extends Controller
         }
     }
 
+
+
     public function query(Request $request)
     {
         try {
@@ -444,6 +462,7 @@ class RequestStockController extends Controller
     }
 
 
+
     public function getRequestStock($id)
     {
         $requestStock = RequestStock::find($id);
@@ -454,6 +473,7 @@ class RequestStockController extends Controller
 
         return response()->json($requestStock);
     }
+
 
 
     public function updateStatus(Request $request)
