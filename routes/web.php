@@ -125,7 +125,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/request_stockList', [RequestStockController::class, 'RequestStockList'])->name('stock_list.get');
             Route::get('/filter', [RequestStockController::class, 'RequestStockFilter'])->name('request_stock_filter.get');
-            // Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
+            Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
             Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
             Route::get('/supplier_request', [RequestStockController::class, 'SupplierRequest'])->name('supplier_request.get');
             Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
