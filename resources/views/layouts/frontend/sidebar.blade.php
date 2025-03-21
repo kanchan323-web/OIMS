@@ -66,7 +66,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="{{ Route::is('stock_list.request') || Route::is('request_stock_list')|| Route::is('request_generated_list') ? 'active' : '' }} ">
+                    <li class="{{ Route::is('stock_list.get') || Route::is('request_stock_list')|| Route::is('request_generated_list') ? 'active' : '' }} ">
                         <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
                             <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -84,7 +84,7 @@
                         </a>
                         <ul id="category" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                             <li class="">
-                                <a href="{{route('stock_list.request')}}">
+                                <a href="{{route('stock_list.get')}}">
                                     <i class="las la-minus"></i><span>Request Stock List</span>
                                 </a>
                             </li>
