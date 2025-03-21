@@ -91,7 +91,7 @@
 
                             <li class="">
                                 <a href="{{route('incoming_request_list')}}">
-                                    <i class="las la-minus"></i><span>Requester's Request</span>
+                                    <i class="las la-minus"></i><span>Incoming Request</span>
                                 </a>
                             </li>
 
@@ -102,7 +102,7 @@
                             </li> -->
                             <li class="">
                                 <a href="{{route('supplier_request.get')}}">
-                                    <i class="las la-minus"></i><span>Supplier's Request</span>
+                                    <i class="las la-minus"></i><span>Raised Request</span>
                                 </a>
                             </li>
 
