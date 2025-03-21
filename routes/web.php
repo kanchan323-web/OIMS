@@ -133,7 +133,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
             Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
             Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
-            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
+            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');//
+            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get');//
             Route::post('/request-status/accept', [RequestStockController::class, 'accept'])->name('request.accept');
             Route::post('/request-status/decline', [RequestStockController::class, 'decline'])->name('request.decline');
             Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('request.query');
@@ -143,7 +144,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/raised-requests', [RequestStockController::class, 'RaisedRequestList'])->name('raised_requests.index');
             Route::get('/filtered-requests', [RequestStockController::class, 'filterRequestStock'])->name('raised_requests.filter');
         });
-
+       
         //User mapping
         Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
         Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');
