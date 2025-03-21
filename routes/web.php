@@ -139,6 +139,9 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('request.query');
             Route::get('/request-status/get-request-stock/{id}', [RequestStockController::class, 'getRequestStock']);
             Route::post('/request-status/update-request-status', [RequestStockController::class, 'updateStatus'])->name('request.updateStatus');
+            Route::get('/status-list', [RequestStockController::class, 'getRequestStatus'])->name('get.request.status');
+            Route::get('/raised-requests', [RequestStockController::class, 'RaisedRequestList'])->name('raised_requests.index');
+            Route::get('/filtered-requests', [RequestStockController::class, 'filterRequestStock'])->name('raised_requests.filter');
         });
 
         //User mapping

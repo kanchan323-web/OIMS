@@ -101,7 +101,7 @@
                                 </a>
                             </li> -->
                             <li class="">
-                                <a href="{{route('supplier_request.get')}}">
+                                <a href="{{route('raised_requests.index')}}">
                                     <i class="las la-minus"></i><span>Raised Request</span>
                                 </a>
                             </li>

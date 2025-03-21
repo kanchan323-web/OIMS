@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\RequestAcceptedMail;
 use App\Mail\RequestDeclinedMail;
 use App\Mail\RequestQueryMail;
+use App\Models\Edp;
 use App\Models\RequestStatus;
 use Illuminate\Http\Request;
 use App\Models\RequestStock;
@@ -57,8 +58,8 @@ class RequestStockController extends Controller
     {
 
 
-         $rig_id = Auth::user()->rig_id;
-         
+        $rig_id = Auth::user()->rig_id;
+
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
 
@@ -81,12 +82,12 @@ class RequestStockController extends Controller
 
 
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->where('rig_id', '!=', $rig_id)
-            ->where('req_status', 'inactive')
-            ->orderBy('stocks.id', 'desc')
-            ->get();
+                ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+                ->where('rig_id', '!=', $rig_id)
+                ->where('req_status', 'inactive')
+                ->orderBy('stocks.id', 'desc')
+                ->get();
 
 
             $datarig = User::where('user_type', '!=', 'admin')
@@ -96,10 +97,8 @@ class RequestStockController extends Controller
 
 
             return response()->json(['data' => $data, 'datarig' => $datarig, 'stockData' => $stockData]);
-
-
+        }
     }
-}
 
     // public function RequestStockList(Request $request)
     // {
@@ -241,7 +240,7 @@ class RequestStockController extends Controller
                 'updated_at' => now(),
             ]);
 
-       $updated_stock_status =  Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
+            $updated_stock_status =  Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
 
             $supplierData = User::where('id', $request->supplier_id)->first();
 
@@ -271,9 +270,9 @@ class RequestStockController extends Controller
 
 
 
-        try {
-            if ($supplierData) {
-                $supplierEmail = $supplierData->email;
+            try {
+                if ($supplierData) {
+                    $supplierEmail = $supplierData->email;
 
                 Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
                 Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
@@ -562,5 +561,75 @@ class RequestStockController extends Controller
         }
 
         return response()->json(['success' => false], 400);
+    }
+
+
+    public function getRequestStatus(Request $request)
+    {
+        $statuses = RequestStatus::leftJoin('users as requestor', 'requestor.id', '=', 'request_status.user_id')
+            ->leftJoin('mst_status as sm', 'sm.id', '=', 'request_status.status_id')
+            ->where('request_status.request_id', $request->request_id)
+            ->orderBy('request_status.updated_at', 'desc')
+            ->select([
+                'request_status.*',
+                'sm.status_name',
+                'requestor.user_name as requestor_name',
+            ])
+            ->get();
+
+        return response()->json($statuses);
+    }
+
+
+    public function RaisedRequestList(Request $request)
+    {
+        $userId = Auth::id();
+        $rig_id = Auth::user()->rig_id;
+
+        $data = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->where('requesters.supplier_id', $userId)
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name')
+            ->get();
+
+        $datarig = User::where('user_type', '!=', 'admin')
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
+        $edps = Edp::select('edp_code', 'id as edp_id')->distinct()->get();
+
+        return view('request_stock.supplier_request', compact('data', 'datarig', 'edps'));
+    }
+
+
+    public function filterRequestStock(Request $request)
+    {
+        $userId = Auth::id();
+
+        $query = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->where('requesters.supplier_id', $userId)
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name')
+            ->when($request->edp_id, function ($query, $edp_id) {
+                return $query->where('stocks.edp_code', $edp_id);
+            })
+            ->when($request->location_name, function ($query, $location_name) {
+                return $query->whereRaw('LOWER(stocks.location_name) LIKE LOWER(?)', ["%{$location_name}%"]);
+            })
+            ->when($request->form_date, function ($query) use ($request) {
+                return $query->whereDate('requesters.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+            })
+            ->when($request->to_date, function ($query) use ($request) {
+                return $query->whereDate('requesters.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+            });
+
+        $data = $query->get();
+
+        $datarig = User::where('user_type', '!=', 'admin')
+            ->where('rig_id', Auth::user()->rig_id)
+            ->pluck('id')
+            ->toArray();
+
+        return response()->json(['data' => $data, 'datarig' => $datarig]);
     }
 }

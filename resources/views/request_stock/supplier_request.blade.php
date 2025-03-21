@@ -1,213 +1,199 @@
 @extends('layouts.frontend.layout')
 @section('page-content')
 
-<div class="content-page">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                @if (Session::get('success'))
-                <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
-                    <strong>Success:</strong> {{ Session::get('success') }}
-                    <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                @endif
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    @if (Session::get('success'))
+                        <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+                            <strong>Success:</strong> {{ Session::get('success') }}
+                            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
 
-                @if (Session::get('error'))
-                <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
-                    <strong>Error:</strong> {{ Session::get('error') }}
-                    <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                @endif
-                <div class="row justify-content-between">
-                    <div class="col-sm-6 col-md-9">
-                        <div id="user_list_datatable_info" class="dataTables_filter">
-                            <form id="filterForm" class="mr-3 position-relative">
-                                <div class="row">
-                                <div class="col-md-2 mb-2">
+                    @if (Session::get('error'))
+                        <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+                            <strong>Error:</strong> {{ Session::get('error') }}
+                            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
 
-                                            <label for="edp_code">EDP Code</label>
-                                            <select class="form-control" name="edp_code" id="edp_code">
-                                                <option disabled selected>Select EDP Code...</option>
-
-                                                    <option value=""></option>
-
-                                            </select>
+                    <div class="row justify-content-between">
+                        <div class="col-md-9">
+                            <div id="user_list_datatable_info" class="dataTables_filter">
+                                <form action="{{ route('request_stock_filter') }}" method="post"
+                                    class="mr-3 position-relative">
+                                    <form id="filterForm" class="mr-3 position-relative">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-2 mb-2">
+                                                <label for="edp_code">EDP Code</label>
+                                                <select class="form-control filter-input" name="edp_code" id="edp_code">
+                                                    <option disabled selected>Select EDP Code...</option>
+                                                    @foreach ($edps as $edp)
+                                                        <option value="{{ $edp->edp_id }}">{{ $edp->edp_code }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>                                            
+                                    
+                                            <div class="col-md-2 mb-2">
+                                                <label for="location_name">Location Name</label>
+                                                <input type="text" class="form-control filter-input" placeholder="Location Name"
+                                                    name="location_name" id="location_name" value="{{ request('location_name') }}">
+                                            </div>
+                                    
+                                            <div class="col-md-2 mb-2">
+                                                <label for="form_date">From Date</label>
+                                                <input type="date" class="form-control filter-input" name="form_date" id="form_date"
+                                                    value="{{ request('form_date') }}">
+                                            </div>
+                                    
+                                            <div class="col-md-2 mb-2">
+                                                <label for="to_date">To Date</label>
+                                                <input type="date" class="form-control filter-input" name="to_date" id="to_date"
+                                                    value="{{ request('to_date') }}">
+                                            </div>
+                                    
+                                            <div class="col-md-4 mb-2 d-flex align-items-end">
+                                                <button type="button" id="filterButton" class="btn btn-primary mr-2">Search</button>
+                                                <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
+                                            </div>
                                         </div>
-
-                                    <div class="col-md-2 mb-2">
-                                        <label for="Description">Description</label>
-                                        <input type="text" class="form-control" placeholder="Description"
-                                            name="Description" id="Description">
-                                    </div>
-
-                                    <div class="col-md-2 mb-2">
-                                        <label for="form_date">From Date</label>
-                                        <input type="date" class="form-control" name="form_date" id="form_date">
-                                    </div>
-
-                                    <div class="col-md-2 mb-2">
-                                        <label for="to_date">To Date</label>
-                                        <input type="date" class="form-control" name="to_date" id="to_date">
-                                    </div>
-
-                                    <div class="col-md-4 mb-2 d-flex align-items-end">
-                                        <button type="button" class="btn btn-primary mr-2"
-                                            id="filterButton">Search</button>
-                                        <a href="{{ route('stock_list.get') }}"
-                                            class="btn btn-secondary ml-2">Reset</a>
-                                        <!-- <a href="{{ route('stock_list_pdf') }}"
-                                            class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
-                                            id="downloadPdf" target="_blank">
-                                            <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                        </a> -->
-
-                                    </div>
-                                </div>
-                            </form>
+                                    </form>                                    
+                                </form>
+                            </div>
                         </div>
+
                     </div>
-
-                    <!-- <div class="col-sm-6 col-md-3">
-                        <div class="user-list-files d-flex">
-                            <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
-                                    class="las la-plus mr-3"></i>Add Stock</a>
-                            <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
-                                    class="las la-plus mr-3"></i>Bulk Stocks </a>
-                        </div>
-                    </div> -->
                 </div>
-            </div>
 
-            <div class="col-lg-12">
-                <div class="table-responsive rounded mb-3">
-                    <table class="data-tables table mb-0 tbl-server-info">
-                        <thead class="bg-white text-uppercase">
-                            <tr class="ligth ligth-data">
-                                <th>Sr.No</th>
-                                <th>Location Name</th>
-                                <th>Requester ID</th>
-                                <th>EDP</th>
-                                <th>Quantity</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="ligth-body" id="stockTable">
-                            @if (isset($Requesters_Data) && $Requesters_Data != null)
-                            @foreach($Requesters_Data as $index => $stockdata)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $stockdata->name }}</td>
-                                <td>{{ $stockdata->requester_id }}</td>
-                                <td>{{ $stockdata->name }}</td>
-                                <td>{{ $stockdata->requested_qty }}</td>
-                                <td>{{ $stockdata->created_at }}</td>
-
-                                <td>
-                                    <div class="d-flex align-items-center list-action">
-                                        <!-- View Button (Always Visible) -->
-                                        <a class="badge badge-info mr-2" data-toggle="modal"
-                                            onclick="viewstockdata({{ $stockdata->id }})"
-                                            data-target=".bd-example-modal-xl" data-placement="top" title="View"
-                                            href="#">
-                                            <i class="ri-eye-line mr-0"></i>
-                                        </a>
-
-                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                            onclick="addRequest({{ $stockdata->id }})"
-                                            data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
-                                            href="#">
-                                            <i class="ri-arrow-right-circle-line"></i>
-                                        </a>
-
-                                        <!-- Edit Button (Only for Your Members) -->
-
-                                    </div>
-
-                                </td>
-                            </tr>
-                            @endforeach
-                            @else
-                            <td>No data exists</td>
-                            @endif
-                        </tbody>
-                    </table>
+                <div class="col-lg-12">
+                    <div class="table-responsive rounded mb-3">
+                        <table class="data-tables table mb-0 tbl-server-info">
+                            <thead class="bg-white text-uppercase">
+                                <tr class="ligth ligth-data">
+                                    <th>Sr.No</th>
+                                    <th>Location Name</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockTable" class="ligth-body">
+                                @foreach($data as $index => $stockdata)
+                                    @if(!in_array($stockdata->user_id, $datarig))
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $stockdata->location_name }} ({{ $stockdata->location_id }})</td>
+                                            @php
+                                                $statusColors = [
+                                                    'Pending' => 'badge-warning',
+                                                    'Approve' => 'badge-success',
+                                                    'Decline' => 'badge-danger',
+                                                    'Query' => 'badge-info',
+                                                    'Received' => 'badge-primary',
+                                                    'MIT' => 'badge-purple'
+                                                ];
+                                                $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
+                                            @endphp
+                                            <td><span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span></td>
+                                            <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
+                                            <td>
+                                                <a class="badge badge-success mr-2" data-toggle="modal"
+                                                    onclick="RequestStockData({{ json_encode($stockdata->id) }})"
+                                                    data-target=".bd-example-modal-xl" data-placement="top"
+                                                    title="Supplier Request" href="#">
+                                                    <i class="ri-arrow-right-circle-line"></i>
+                                                </a>
+                                                <a class="badge badge-info" onclick="ViewRequestStatus({{ $stockdata->id }})"
+                                                    data-toggle="modal" data-placement="top" title="View Request Status" href="#">
+                                                    <i class="ri-eye-line"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                            
+                        </table>
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
-</div>
 
-
-
-
-
-<script>
-    $(document).ready(function() {
-    // Filter Stock Data on Button Click
-    $("#filterButton").click(function() {
-        $.ajax({
-            type: "GET",
-            url: "{{ route('stock_filter') }}",
-            data: $("#filterForm").serialize(),
-            success: function(response) {
-                let tableBody = $("#stockTable");
-                tableBody.empty();
-
-                if (response.data && response.data.length > 0) {
-                    $.each(response.data, function(index, stockdata) {
-                        let editButton = '';
-                        if (response.datarig.includes(stockdata.user_id)) {
-                            editButton = `
-                                    <a class="badge badge-success mr-2" data-toggle="modal"
-                                            onclick="makeRequest(${stockdata.id})"
-                                            data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
-                                            href="#">
-                                            <i class="ri-arrow-right-circle-line"></i>
-                                        </a>
-                                    `;
+    <script>
+        $(document).ready(function () {
+            function fetchFilteredData() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('request_stock_filter') }}", // Ensure this route exists
+                    data: $("#filterForm").serialize(), // Serialize all form inputs
+                    success: function (response) {
+                        let tableBody = $("#stockTable");
+                        tableBody.empty();
+    
+                        if (response.data && response.data.length > 0) {
+                            $.each(response.data, function (index, stockdata) {
+                                let badgeClass = {
+                                    'Pending': 'badge-warning',
+                                    'Approve': 'badge-success',
+                                    'Decline': 'badge-danger',
+                                    'Query': 'badge-info',
+                                    'Received': 'badge-primary',
+                                    'MIT': 'badge-purple'
+                                }[stockdata.status_name] || 'badge-secondary';
+    
+                                tableBody.append(`
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${stockdata.location_name}</td>
+                                        <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                        <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
+                                        <td>
+                                            <a class="badge badge-info mr-2" data-toggle="modal"
+                                                onclick="ViewRequestStatus(${stockdata.id})" data-placement="top"
+                                                title="View Request Status" href="#">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            tableBody.append(`<tr><td colspan="5" class="text-center">No records found</td></tr>`);
                         }
-                        tableBody.append(`
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${stockdata.location_name}</td>
-                                    <td>${stockdata.EDP_Code}</td>
-                                    <td>${stockdata.section}</td>
-                                    <td>${stockdata.description}</td>
-                                    <td>${stockdata.qty}</td>
-                                    <td>
-                                        <a class="badge badge-info mr-2" data-toggle="modal"
-                                            onclick="viewstockdata(${stockdata.id})" data-target=".bd-example-modal-xl"
-                                            data-placement="top" title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
-                                        ${editButton}
-                                    </td>
-                                </tr>
-                            `);
-                    });
-                } else {
-                    tableBody.append(
-                        `<tr><td colspan="7" class="text-center">No records found</td></tr>`
-                    );
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching data:", error);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
             }
+    
+            // Submit button triggers the AJAX call
+            $("#filterButton").click(function (e) {
+                e.preventDefault(); // Prevent form submission
+                fetchFilteredData();
+            });
+    
+            // Reset button to clear filters and reload data
+            $("#resetButton").click(function () {
+                window.location.href = "{{ route('raised_requests.index') }}";
+            });
+    
+            // Auto-hide success/error messages
+            setTimeout(function () {
+                $(".alert").fadeOut("slow");
+            }, 3000);
         });
-    });
-});
-</script>
-
-
-
-
-
-
-
-
+    </script>
+    
+    
+    
 @endsection
