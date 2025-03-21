@@ -139,7 +139,7 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-       
+
 
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
@@ -271,16 +271,16 @@ class RequestStockController extends Controller
                 if ($supplierData) {
                     $supplierEmail = $supplierData->email;
 
-                Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
-                Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
-            } else {
-                Session::flash('error', 'Supplier not found');
-                return redirect()->route('stock_list.get');
+                    Mail::to(Auth::user()->email)->send(new requestor_stock_mail($mailDataRequester));
+                    Mail::to($supplierEmail)->send(new supplier_stock_mail($mailDataSupplier));
+                } else {
+                    Session::flash('error', 'Supplier not found');
+                    return redirect()->route('stock_list.get');
+                }
+            } catch (\Exception $e) {
+                return redirect()->route('stock_list.get')
+                    ->with(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            return redirect()->route('stock_list.get')
-                ->with(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
-        }
 
 
 
@@ -288,9 +288,9 @@ class RequestStockController extends Controller
                 Session::flash('success', 'Request of Stock Sent successfully!');
                 return redirect()->route('stock_list.get');
             }
-           } catch (\Exception $e) {
-             return redirect()->route('stock_list.get')->withErrors('An error occurred: ' . $e->getMessage());
-           }
+        } catch (\Exception $e) {
+            return redirect()->route('stock_list.get')->withErrors('An error occurred: ' . $e->getMessage());
+        }
     }
 
 
@@ -357,7 +357,7 @@ class RequestStockController extends Controller
             ->get();
 
         $moduleName = "Incoming Request List";
-        
+
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
 
@@ -431,11 +431,11 @@ class RequestStockController extends Controller
                 return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
             }
 
-            $requester->update(['status' => 3]);
+            $requester->update(['status' => 5]);
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
-                'status_id' => 3,
+                'status_id' => 5,
                 'decline_msg' => $request->decline_msg,
                 'query_msg' => null,
                 'supplier_qty' => null,
@@ -594,7 +594,8 @@ class RequestStockController extends Controller
             ->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
-        $edps = Edp::select('edp_code', 'id as edp_id')->distinct()->get();
+        $stocks = Stock::select('id')->where('rig_id', $rig_id)->distinct()->get();
+        $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
 
         return view('request_stock.supplier_request', compact('data', 'datarig', 'edps'));
     }
@@ -620,7 +621,6 @@ class RequestStockController extends Controller
             ->when($request->to_date, function ($query) use ($request) {
                 return $query->whereDate('requesters.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
             });
-
         $data = $query->get();
 
         $datarig = User::where('user_type', '!=', 'admin')
@@ -629,5 +629,53 @@ class RequestStockController extends Controller
             ->toArray();
 
         return response()->json(['data' => $data, 'datarig' => $datarig]);
+    }
+
+
+    public function updateStatusforRequest(Request $request)
+    {
+        $request->validate([
+            'request_id' => 'required|exists:requesters,id',
+            'status' => 'required|integer'
+        ]);
+
+        $requestData = Requester::find($request->request_id);
+        if (!$requestData) {
+            return response()->json(['success' => false, 'message' => 'Request not found!'], 404);
+        }
+
+        $requestData->status = $request->status;
+        $requestData->save();
+
+        $latestRequest = Requester::where('id', $request->request_id)->latest()->first();
+        if (!$latestRequest) {
+            return response()->json(['success' => false, 'message' => 'No request data found!'], 400);
+        }
+
+        $supplierNewSpareable = $latestRequest->supplier_new_spareable;
+        $supplierUsedSpareable = $latestRequest->supplier_used_spareable;
+        $requesterId = $latestRequest->requester_id;
+        $supplierId = $latestRequest->supplier_id;
+        $stockId = $latestRequest->stock_id;
+        dd($supplierId);
+        $supplierStock = Stock::where('id', $stockId)->where('user_id', $supplierId)->first();
+        if ($supplierStock) {
+            $supplierStock->new_spareable -= $supplierNewSpareable;
+            $supplierStock->used_spareable -= $supplierUsedSpareable;
+            $supplierStock->save();
+        } else {
+            return response()->json(['success' => false, 'message' => 'Supplier stock not found!'], 400);
+        }
+
+        $requesterStock = Stock::where('id', $stockId)->where('user_id', $requesterId)->first();
+        if ($requesterStock) {
+            $requesterStock->new_spareable += $supplierNewSpareable;
+            $requesterStock->used_spareable += $supplierUsedSpareable;
+            $requesterStock->save();
+        } else {
+            return response()->json(['success' => false, 'message' => 'Requester stock not found!'], 400);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Status updated and stock adjusted successfully!']);
     }
 }
