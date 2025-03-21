@@ -360,6 +360,7 @@ class RequestStockController extends Controller
             ->get();
 
         $moduleName = "Incoming Request List";
+        
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
 

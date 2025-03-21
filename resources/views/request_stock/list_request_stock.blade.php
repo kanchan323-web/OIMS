@@ -97,10 +97,11 @@
                                 </th> -->
 
                                 <th>Sr.No</th>
-                                <th>Location Name</th>
-                               <!-- <th>EDP</th> -->
+                                <th>EDP Code</th>
+                                <th>Request No.</th> 
+                                <th>Request ID</th>
+                                <th>Location</th>
                                 <th>Status</th>
-                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
