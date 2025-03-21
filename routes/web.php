@@ -125,7 +125,7 @@ Route::middleware(['auth'])->group(function () {
 
             Route::get('/request_stockList', [RequestStockController::class, 'RequestStockList'])->name('stock_list.get');
             Route::get('/filter', [RequestStockController::class, 'RequestStockFilter'])->name('request_stock_filter.get');
-            // Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
+            Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
             Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('request_stock_list');
             Route::get('/supplier_request', [RequestStockController::class, 'SupplierRequest'])->name('supplier_request.get');
             Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('request_stock_add');
@@ -143,7 +143,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/raised-requests', [RequestStockController::class, 'RaisedRequestList'])->name('raised_requests.index');
             Route::get('/filtered-requests', [RequestStockController::class, 'filterRequestStock'])->name('raised_requests.filter');
         });
- 
+
         //User mapping
         Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
         Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');

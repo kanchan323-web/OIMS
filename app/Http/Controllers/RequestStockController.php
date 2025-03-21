@@ -117,7 +117,7 @@ class RequestStockController extends Controller
 
 
 
-    public function GeneratedRequest(Request $request)
+    public function SupplierRequest(Request $request)
     {
 
         $rig_id = Auth::user()->rig_id;

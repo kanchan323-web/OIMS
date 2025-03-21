@@ -475,10 +475,8 @@
                     data: id
                 },
                 success: function (response) {
-                    console.log("stock id check:" + response.for_request_viewdata['id']);
-                    console.log("edp_code check:" + response.viewdata['edp_code']);
-
-
+                   // console.log("stock id check:" + response.for_request_viewdata['id']);
+                  //  console.log("edp_code check:" + response.viewdata['edp_code']);
                     $("#Rlocation_id").val(response.for_request_viewdata['location_id']);
                     $("#Rlocation_name").val(response.for_request_viewdata['location_name']);
                     $("#Redp_code").val(response.viewdata['edp_code']);
@@ -491,17 +489,9 @@
                     $("#Rcategory").val(categoryValue);
                     $("#Rhidden_category").val(categoryValue);
                     $("#Available_qty").val(response.for_request_viewdata['qty']);
-
-
-
-
-
-
                     $("#RequestQTY").on("input", function () {
                         let availableQty = parseFloat($("#Available_qty").val()) || 0;
                         let requestQty = parseFloat($(this).val()) || 0;
-
-
                         if (requestQty > availableQty) {
                             $("#RequestQTY").addClass("is-invalid");
                             $("#qtyError").text(
@@ -511,17 +501,15 @@
                             $("#qtyError").hide();
                         }
                     });
-                    console.log(response.viewdata);
+                  //  console.log(response.viewdata);
                     $("#Rmeasurement").val(response.viewdata['measurement']);
                     $("#Rnew_spareable").val(response.viewdata['new_spareable']);
                     $("#Rused_spareable").val(response.viewdata['used_spareable']);
                     $("#Rremarks").val(response.viewdata['remarks']);
                     $("#Rdescription").val(response.viewdata['description']);
                     $("#Rsupplier_location_name").val(response.viewdata['location_name']);
-                    $("#Rsupplier_location_id").val(response.viewdata['id']);
+                    $("#Rsupplier_location_id").val(response.viewdata['rig_id']);
                     $("#Rsupplier_id").val(response.viewdata['user_id']);
-
-
                     console.log(response.viewdata['location_id']);
                 }
             });

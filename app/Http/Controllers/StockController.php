@@ -50,7 +50,7 @@ class StockController extends Controller
         ->where('rig_id',$rig_id)
         ->distinct()
         ->get();
-        
+
 
         $data = DB::table('stocks')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
@@ -210,7 +210,8 @@ class StockController extends Controller
                 }
 
                 // Validate EDP code (Column Index 0)
-                if (!isset($row[0]) || !preg_match('/^\d{9}$/', $row[0])) {
+                if (!isset($row[0]) || !preg_match('/^[A-Za-z0-9]{9}$/', $row[0])) {
+                  //  preg_match('/^\d{9}$/');
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
@@ -231,7 +232,7 @@ class StockController extends Controller
                 }
 
                 // Check if stock already exists
-                $stock = Stock::where('edp_code', $edp->id)
+                $stock = Stock::where('edp_code', $edp->id)->where('rig_id',$rigUser->id)
                     ->first();
 
 
