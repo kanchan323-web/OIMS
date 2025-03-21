@@ -32,9 +32,9 @@
                                             <label for="edp_code">EDP Code</label>
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
-                                                
+
                                                     <option value=""></option>
-                                               
+
                                             </select>
                                         </div>
 
@@ -57,7 +57,7 @@
                                     <div class="col-md-4 mb-2 d-flex align-items-end">
                                         <button type="button" class="btn btn-primary mr-2"
                                             id="filterButton">Search</button>
-                                        <a href="{{ route('stock_list.request') }}"
+                                        <a href="{{ route('stock_list.get   ') }}"
                                             class="btn btn-secondary ml-2">Reset</a>
                                         <!-- <a href="{{ route('stock_list_pdf') }}"
                                             class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
@@ -106,7 +106,7 @@
                                 <td>{{ $stockdata->name }}</td>
                                 <td>{{ $stockdata->requested_qty }}</td>
                                 <td>{{ $stockdata->created_at }}</td>
-                          
+
                                 <td>
                                     <div class="d-flex align-items-center list-action">
                                         <!-- View Button (Always Visible) -->
