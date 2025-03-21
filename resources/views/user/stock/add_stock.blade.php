@@ -103,7 +103,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="qty">Available Quantity</label>
-                                        <input type="number" class="form-control" name="qty" id="qty" required>
+                                        <input type="number" class="form-control" name="qty" id="qty" required readonly>
                                         @error('qty')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -111,7 +111,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="new_spareable">New </label>
-                                        <input type="number" class="form-control" name="new_spareable" id="new_spareable"
+                                        <input type="text" class="form-control" name="new_spareable" id="new_spareable"
                                             required>
                                         @error('new_spareable')
                                             <div class="text-danger">{{ $message }}</div>
@@ -120,7 +120,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="used_spareable">Used </label>
-                                        <input type="number" class="form-control" name="used_spareable" id="used_spareable"
+                                        <input type="text" class="form-control" name="used_spareable" id="used_spareable"
                                             required>
                                         @error('used_spareable')
                                             <div class="text-danger">{{ $message }}</div>
@@ -216,24 +216,20 @@
         });
 
         $(document).ready(function () {
-        function validateStock() {
+    /*    function validateStock() {
             let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
             let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
             let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
             let totalSpareable = newSpareable + usedSpareable;
-
             $("#new-error, #used-error").remove();
 
             if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
                 return true;
             }
-
             if (newSpareable > availableQty) {
                 $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
                 return false;
             }
-
-          
             if (totalSpareable > availableQty) {
                 if (newSpareable > usedSpareable) {
                     $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
@@ -242,20 +238,31 @@
                 }
                 return false;
             }
-
             return true;
         }
-
         $("#qty, #new_spareable, #used_spareable").on("input", function () {
             validateStock();
         });
+        */
+           function calculateSum() {
+                var value1 = parseFloat($('#new_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var value2 = parseFloat($('#used_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var sum = value1 + value2; // Calculate the sum
+                $('#qty').val(sum); // Display the sum in the 'sum' input field
+            }
 
-        $("#addStockForm").on("submit", function (e) {
-            if (!validateStock()) {
+            // Attach the keyup event to both input fields
+            $('#new_spareable, #used_spareable').on('keyup', function() {
+                calculateSum(); // Call the calculateSum function when either input changes
+            });
+
+  /*      $("#addStockForm").on("submit", function (e) {
+            if (!calculateSum()) {
                 e.preventDefault();
             }
         });
-    });
+        */
+     });
     </script>
 
 
