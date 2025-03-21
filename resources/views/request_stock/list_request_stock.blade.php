@@ -29,48 +29,65 @@
                 <div class="row justify-content-between">
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
-
-                            <form action="{{ route('request_stock_filter') }}" method="post"
-                                class="mr-3 position-relative">
-                                @csrf
+                            <form id="filterForm" class="mr-3 position-relative">
                                 <div class="row">
                                     <div class="col-md-2 mb-2">
-                                        <label for="category">EDP Code</label>
-                                        <select class="form-control" name="category">
-                                            <option disabled {{ request('category') ? '' : 'selected' }}>Select
-                                                EDP...</option>
-                                            <option value="Spares"
-                                                {{ request('category') == 'Spares' ? 'selected' : '' }}>Spares
-                                            </option>
+                                        <label for="edp_code">EDP Code</label>
+                                        <select class="form-control" name="edp_code" id="edp_code">
+                                            <option disabled selected>Select EDP Code...</option>
+                                            @foreach ($EDP_Code_ID as $edp_code_id)
+                                                <option value="{{ $edp_code_id->edp_code }}">{{ $edp_code_id->edp_code }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 
+
                                     <div class="col-md-2 mb-2">
-                                        <label for="location_name">Location Name</label>
-                                        <input type="text" class="form-control" placeholder="Location Name"
-                                            name="location_name" value="{{ request('location_name') }}">
+                                        <label for="Description">Description</label>
+                                        <input type="text" class="form-control" placeholder="Description"
+                                            name="Description" id="Description">
                                     </div>
+
 
                                     <div class="col-md-2 mb-2">
                                         <label for="form_date">From Date</label>
-                                        <input type="date" class="form-control" name="form_date"
-                                            value="{{ request('form_date') }}">
+                                        <input type="date" class="form-control" name="form_date" id="form_date">
                                     </div>
+
 
                                     <div class="col-md-2 mb-2">
                                         <label for="to_date">To Date</label>
-                                        <input type="date" class="form-control" name="to_date"
-                                            value="{{ request('to_date') }}">
+                                        <input type="date" class="form-control" name="to_date" id="to_date">
                                     </div>
 
+
                                     <div class="col-md-4 mb-2 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                        <a href="{{ route('request_stock_list') }}" class="btn btn-secondary">Reset</a>
+                                        <button type="button" class="btn btn-primary mr-2"
+                                            id="filterButton">Search</button>
+                                        <a href="{{ route('stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
+                                        <!-- <a href="{{ route('stock_list_pdf') }}"
+                                            class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
+                                            id="downloadPdf" target="_blank">
+                                            <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                        </a> -->
+
+
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
+
+
+                    <!-- <div class="col-sm-6 col-md-3">
+                        <div class="user-list-files d-flex">
+                            <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
+                                    class="las la-plus mr-3"></i>Add Stock</a>
+                            <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
+                                    class="las la-plus mr-3"></i>Bulk Stocks </a>
+                        </div>
+                    </div> -->
+                </div>
 
 
            <!--         <div class="col-sm-6 col-md-3">
@@ -97,10 +114,9 @@
                                 </th> -->
 
                                 <th>Sr.No</th>
+                                <th>Requester Rig Name</th>
                                 <th>EDP Code</th>
-                                <th>Request No.</th>
-                                <th>Request ID</th>
-                                <th>Location</th>
+                                <th>Request Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -110,7 +126,9 @@
                                 @if(!in_array($stockdata->user_id, $datarig))
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>{{ $stockdata->name }} ({{ $stockdata->location_id }})</td>
+                                        <td>{{ $stockdata->Location_Name }}</td>
+                                        <td>{{ $stockdata->edp_code }}</td>
+                                        <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
 
                                         <!-- Status with Dynamic Color -->
                                         @php
@@ -130,7 +148,7 @@
                                             <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
                                         </td>
 
-                                        <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
+
 
                                         <td>
                                             <a class="badge badge-success mr-2" data-toggle="modal"
@@ -507,6 +525,79 @@
 
 
 <script>
+
+    //ajax filter for incomming request stock
+
+
+    $(document).ready(function () {
+            // Filter Stock Data on Button Click
+            $("#filterButton").click(function () {
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('incoming_request_filter.get') }}",
+                    data: $("#filterForm").serialize(),
+                    success: function (response) {
+                        let tableBody = $("#stockTable");
+                        tableBody.empty();
+                        if (response.data && response.data.length > 0) {
+                            $.each(response.data, function (index, stockdata) {
+                                let editButton = '';
+                                if (response.datarig.includes(stockdata.user_id)) {
+                                    editButton = `
+                                        <a class="badge badge-success mr-2" data-toggle="modal"
+                                                onclick="makeRequest(${stockdata.id})"
+                                                data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
+                                                href="#">
+                                                <i class="ri-arrow-right-circle-line"></i>
+                                            </a>
+                                        `;
+                                }
+                                tableBody.append(`
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${stockdata.location_name}</td>
+                                        <td>${stockdata.EDP_Code}</td>
+                                        <td>${stockdata.section}</td>
+                                        <td>${stockdata.description}</td>
+                                        <td>${stockdata.qty}</td>
+                                        <td>
+
+
+                                            <a class="badge badge-info mr-2" data-toggle="modal"
+                                                onclick="viewstockdata(${stockdata.id})"
+                                                data-target=".bd-example-modal-xl" data-placement="top" title="View"
+                                                href="#">
+                                                <i class="ri-eye-line mr-0"></i>
+                                            </a>
+
+
+                                            <a class="badge badge-success mr-2" data-toggle="modal"
+                                                onclick="addRequest(${stockdata.id})"
+                                                data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
+                                                href="#">
+                                                <i class="ri-arrow-right-circle-line"></i>
+                                            </a>
+                                            ${editButton}
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            tableBody.append(
+                                `<tr><td colspan="7" class="text-center">No records found</td></tr>`
+                            );
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
+            });
+        });
+    //ajax filter for incomming request stock
+
+
 //to bring data into the main modal
 function RequestStockData(id) {
     $.ajaxSetup({
