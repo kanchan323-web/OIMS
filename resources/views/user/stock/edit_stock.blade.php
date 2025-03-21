@@ -121,13 +121,13 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Available Quantity</label>
-                                        <input type="number" class="form-control" name="qty" id="qty"
-                                            value="{{ $editData->qty }}" required>
+                                        <input type="text" class="form-control" name="qty" id="qty"
+                                            value="{{ $editData->qty }}" required readonly>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">New Spareable</label>
-                                        <input type="number"
+                                        <input type="text"
                                             class="form-control @error('new_spareable') is-invalid @enderror"
                                             name="new_spareable" id="new_spareable"
                                             value="{{ old('new_spareable', $editData->new_spareable) }}" required>
@@ -139,7 +139,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Used Spareable</label>
-                                        <input type="number"
+                                        <input type="text"
                                             class="form-control @error('used_spareable') is-invalid @enderror"
                                             name="used_spareable" id="used_spareable"
                                             value="{{ old('used_spareable', $editData->used_spareable) }}" required>
@@ -209,8 +209,8 @@
             }, 3000);
         });
 
-        $(document).ready(function () {
-        function validateStock() {
+  $(document).ready(function () {
+     /*   function validateStock() {
             let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
             let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
             let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
@@ -227,7 +227,7 @@
                 return false;
             }
 
-          
+
             if (totalSpareable > availableQty) {
                 if (newSpareable > usedSpareable) {
                     $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
@@ -248,6 +248,18 @@
             if (!validateStock()) {
                 e.preventDefault();
             }
+        });
+        */
+        function calculateSum() {
+                var value1 = parseFloat($('#new_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var value2 = parseFloat($('#used_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var sum = value1 + value2; // Calculate the sum
+                $('#qty').val(sum); // Display the sum in the 'sum' input field
+        }
+
+            // Attach the keyup event to both input fields
+        $('#new_spareable, #used_spareable').on('keyup', function() {
+             calculateSum(); // Call the calculateSum function when either input changes
         });
     });
     </script>
