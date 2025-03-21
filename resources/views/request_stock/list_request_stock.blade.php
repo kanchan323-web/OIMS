@@ -98,7 +98,7 @@
 
                                 <th>Sr.No</th>
                                 <th>EDP Code</th>
-                                <th>Request No.</th> 
+                                <th>Request No.</th>
                                 <th>Request ID</th>
                                 <th>Location</th>
                                 <th>Status</th>
@@ -111,16 +111,16 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $stockdata->name }} ({{ $stockdata->location_id }})</td>
-                        
+
                                         <!-- Status with Dynamic Color -->
                                         @php
                                             $statusColors = [
-                                                'Pending' => 'badge-warning',       
-                                                'Approve' => 'badge-success',       
-                                                'Decline' => 'badge-danger',        
-                                                'Query' => 'badge-info',          
-                                                'Received' => 'badge-primary',      
-                                                'MIT' => 'badge-purple'               
+                                                'Pending' => 'badge-warning',
+                                                'Approve' => 'badge-success',
+                                                'Decline' => 'badge-danger',
+                                                'Query' => 'badge-info',
+                                                'Received' => 'badge-primary',
+                                                'MIT' => 'badge-purple'
                                             ];
 
                                             $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
@@ -129,9 +129,9 @@
                                         <td>
                                             <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
                                         </td>
-                        
+
                                         <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
-                        
+
                                         <td>
                                             <a class="badge badge-success mr-2" data-toggle="modal"
                                                 onclick="RequestStockData({{ json_encode($stockdata->id) }})"
@@ -149,7 +149,7 @@
                                 @endif
                             @endforeach
                         </tbody>
-                        
+
                     </table>
                 </div>
             </div>
@@ -216,7 +216,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="category">Category</label>
-                            <input type="text" class="form-control" placeholder="Category" id="category" name="category" readonly>
+                            <input type="text" class="form-control" placeholder="Category" id="category_id" name="category" readonly>
                             <div class="invalid-feedback">
                                 Enter Category Name
                             </div>
@@ -246,7 +246,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="">Status </label>
-                            <input type="text" class="form-control" name="status" id="status">
+                            <input type="text" class="form-control" name="status" id="status" readonly>
                             <div class="invalid-feedback">
                                 Enter Status
                             </div>
@@ -273,11 +273,11 @@
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="">New Spearable </label>
+                            <label for="">New  </label>
                             <input type="text" class="form-control" placeholder="New Spearable " name="new_spareable"
                                 id="new_spearable" readonly>
                             <div class="invalid-feedback">
-                                Enter New Spareable
+                                Enter New
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -289,11 +289,11 @@
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="">Used Spareable </label>
+                            <label for="">Used  </label>
                             <input type="text" class="form-control" placeholder="Used Spareable" name="used_spareable"
                                 id="used_spareable" readonly>
                             <div class="invalid-feedback">
-                                Enter Used Spareable
+                                Enter Used
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -343,15 +343,29 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th> New </th>
+                                                <th> Used </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td id="modal_total_new"></td>
+                                                <td id="modal_total_used"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
                                     <form id="receivedRequestForm">
                                         @csrf
                                         <div class="form-group">
-                                            <label for="modal_new_spareable">New Spareable</label>
+                                            <label for="modal_new_spareable">New </label>
                                             <input type="number" class="form-control" id="modal_new_spareable" name="modal_new_spareable" min="0" value="0">
                                         </div>
                                         <div class="form-group">
-                                            <label for="modal_used_spareable">Used Spareable</label>
+                                            <label for="modal_used_spareable">Used </label>
                                             <input type="number" class="form-control" id="modal_used_spareable" name="modal_used_spareable" min="0" value="0">
                                         </div>
                                         <div class="form-group">
@@ -367,7 +381,7 @@
                         </div>
                     </div>
 
-                    
+
                     <!-- Decline Request Modal -->
                     <div class="modal fade" id="declineReasonModal" tabindex="-1" role="dialog" aria-labelledby="declineReasonLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -395,7 +409,7 @@
                         </div>
                     </div>
 
-                    
+
                     <!-- Raise Query Modal -->
                     <div class="modal fade" id="raiseQueryModal" tabindex="-1" role="dialog" aria-labelledby="raiseQueryLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -503,7 +517,7 @@ function RequestStockData(id) {
 
     $.ajax({
         type: "GET",
-        url: "{{ route('request_stock_view.get') }}", 
+        url: "{{ route('request_stock_view.get') }}",
         data: { data: id },
         success: function(response) {
             if (!response || !response.data) {
@@ -512,7 +526,7 @@ function RequestStockData(id) {
             }
 
             var stockData = Array.isArray(response.data) ? response.data : [response.data];
-           
+
             if (stockData.length > 0 && stockData[0] !== null) {
                 var stock = stockData[0];
 
@@ -523,7 +537,7 @@ function RequestStockData(id) {
                     $("#requester_Id").val(stock.requesters_rig ?? '');
                     $("#Supplier_Location_Name").val(stock.suppliers_rig ?? '');
                     $("#EDP_Code").val(stock.edp_code ?? '');
-                    $("#category").val(stock.category ?? '');
+                    $("#category_id").val(stock.category ?? '');
                     $("#section").val(stock.section ?? '');
                     $("#description").val(stock.description ?? '');
                     $("#total_qty").val(stock.available_qty ?? '');
@@ -536,15 +550,15 @@ function RequestStockData(id) {
                     $("#request_date").val(stock.formatted_created_at ?? '');
 
                     if (stock.status == 4) {
-                        $(".btn-danger, .btn-primary").hide(); 
+                        $(".btn-danger, .btn-primary").hide();
                     } else if (stock.status == 6) {
-                        $(".btn-danger, .btn-primary").hide(); 
-                        $(".btn-success, .btn-primary").hide(); 
+                        $(".btn-danger, .btn-primary").hide();
+                        $(".btn-success, .btn-primary").hide();
                     } else if (stock.status == 3) {
-                        $(".btn-danger, .btn-primary").hide(); 
-                        $(".btn-success, .btn-primary").hide(); 
+                        $(".btn-danger, .btn-primary").hide();
+                        $(".btn-success, .btn-primary").hide();
                     } else {
-                        $(".btn-danger, .btn-primary").show(); 
+                        $(".btn-danger, .btn-primary").show();
                         $(".btn-success, .btn-primary").show();
                     }
                 } else {
@@ -611,7 +625,7 @@ $(document).ready(function () {
     // Prevent clicking outside sub-modal from closing the main modal
     $(".modal").on("hidden.bs.modal", function (e) {
         if ($(".modal:visible").length) {
-            $("body").addClass("modal-open"); 
+            $("body").addClass("modal-open");
         }
     });
 });
@@ -619,7 +633,7 @@ $(document).ready(function () {
 
 //For accept
 $(document).ready(function () {
-    console.log("Script Loaded!"); 
+    console.log("Script Loaded!");
 
     function validateSpareableInputs() {
         let requestedQty = parseInt($("#modal_req_qty").text().trim()) || 0;
@@ -631,7 +645,7 @@ $(document).ready(function () {
             $("#error_message").text("Total spareable quantity cannot exceed Requested Quantity.");
             return false;
         } else {
-            $("#error_message").text(""); 
+            $("#error_message").text("");
             return true;
         }
     }
@@ -639,7 +653,7 @@ $(document).ready(function () {
     $("#modal_new_spareable, #modal_used_spareable").on("input", function () {
         validateSpareableInputs();
     });
-    
+
     $(document).on("click", "#confirmReceivedRequest", function (e) {
         e.preventDefault();
         console.log("Submit Event Triggered!");
@@ -647,8 +661,8 @@ $(document).ready(function () {
         let requestId = $("#mainModalForm").find("#request_id").val();
         let newSpareable = $("#modal_new_spareable").val();
         let usedSpareable = $("#modal_used_spareable").val();
-        let supplierTotalQty = $("#modal_total_qty").text().trim(); 
-        
+        let supplierTotalQty = $("#modal_total_qty").text().trim();
+
         if (!requestId) {
             console.log("Request ID is missing!");
             return;
@@ -660,13 +674,13 @@ $(document).ready(function () {
             data: {
                 _token: "{{ csrf_token() }}",
                 request_id: requestId,
-                supplier_total_qty: supplierTotalQty, 
+                supplier_total_qty: supplierTotalQty,
                 supplier_new_spareable: newSpareable,
                 supplier_used_spareable: usedSpareable
             },
             success: function (response) {
                 if (response.success) {
-                    window.location.href = "{{ route('incoming_request_list') }}"; 
+                    window.location.href = "{{ route('incoming_request_list') }}";
                 }
             },
             error: function (xhr) {
@@ -774,9 +788,12 @@ $(document).ready(function () {
                 status: 4
             },
             success: function (response) {
+                //console.log(response);
                 if (response.success) {
-                    $("#modal_total_qty").text($("#total_qty").val());  
-                    $("#modal_req_qty").text($("#req_qty").val()); 
+                    $("#modal_total_qty").text($("#total_qty").val());
+                    $("#modal_req_qty").text($("#req_qty").val());
+                    $("#modal_total_new").text($("#new_spearable").val());
+                    $("#modal_total_used").text($("#used_spareable").val());
 
                     $("#confirmationModal").modal("hide");
 
@@ -816,8 +833,8 @@ function ViewRequestStatus(request_id) {
             if (response.length > 0) {
                 response.forEach(status => {
                     html += `<tr>
-                        <td><span class="badge badge-${status.status_id == 2 ? 'success' : 
-                            (status.status_id == 3 ? 'danger' : 
+                        <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                            (status.status_id == 3 ? 'danger' :
                             (status.status_id == 4 ? 'info' : 'secondary'))}">
                             ${status.status_name}
                         </span></td>
