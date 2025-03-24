@@ -131,24 +131,31 @@ class EdpController extends Controller
            
             $errors = [];
 
+            $processedEdpCodes = [];
+
             foreach (array_slice($rows, 1) as $index => $row) {
                 if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
-
+            
                 // Validate EDP code (Column Index 0)
                 if (!isset($row[0]) || !preg_match('/^\d{9}$/', $row[0])) {
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
-    
+            
                 $edpCode = $row[0];
                 $materialDesc = $row[1];
                 $uom = $row[2];
                 $section = $row[3];
                 $category = $row[4];
-               
-                // Check for existing EDP
+            
+                // Skip if this EDP code has already been processed in this file
+                if (in_array($edpCode, $processedEdpCodes)) {
+                    continue;
+                }
+            
+                // Check for existing EDP in the database
                 $existingEdp = Edp::where('edp_code', $edpCode)->first();
-    
+            
                 if ($existingEdp) {
                     // Update existing record
                     $existingEdp->update([
@@ -167,6 +174,9 @@ class EdpController extends Controller
                         'measurement' => $uom,
                     ]);
                 }
+            
+                // Add to processed EDP list
+                $processedEdpCodes[] = $edpCode;
             }
             
             Storage::delete($filePath);

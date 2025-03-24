@@ -38,7 +38,7 @@
                                 </div>
                             @endif
 
-                            <form class="needs-validation" novalidate method="POST" action="{{ route('admin.edp.import') }}"
+                            <form class="needs-validation" novalidate method="POST" id="AddBulkEDP" action="{{ route('admin.edp.import') }}"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-row align-items-center">
@@ -65,7 +65,7 @@
                                     </div>
 
                                 </div>
-                                <button class="btn btn-primary" type="submit">Import</button>
+                                <button class="btn btn-primary" id="AddBulkEDP" type="submit">Import</button>
                                 <a href="{{ url()->previous() }}" class="btn btn-light">Go Back</a>
                             </form>
                         </div>
@@ -74,8 +74,17 @@
             </div>
         </div>
     </div>
-
+    
     <script>
+          $(document).ready(function () {
+        $("#AddBulkEDP").on("submit", function () {
+            // Show loader
+            $("#loading").show();
+
+            // Disable submit button to prevent multiple clicks
+            $("#AddRequestStock button[type=submit]").prop("disabled", true);
+        });
+    });
         $(document).ready(function () {
             $('#file').on('change', function () {
                 let fileName = $(this).val().split('\\').pop();
@@ -93,5 +102,7 @@
                 $(".alert").fadeOut("slow");
             }, 7000);
         });
-    </script>
+ 
+  
+</script>
 @endsection

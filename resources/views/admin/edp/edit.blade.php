@@ -84,15 +84,23 @@
                                     <select class="form-control" name="section" required>
                                         <option value="" {{ empty($editData->section) ? 'selected' : '' }}>Select
                                             Section...</option>
-                                        <option value="ENGG" {{ $editData->section == 'ENGG' ? 'selected' : '' }}>ENGG
+                                        <option value="CHEM" {{ $editData->section == 'CHEM' ? 'selected' : '' }}>CHEM
                                         </option>
+                                        <option value="CMTG" {{ $editData->section == 'CMTG' ? 'selected' : '' }}>
+                                            CMTG</option>
                                         <option value="DRILL" {{ $editData->section == 'DRILL' ? 'selected' : '' }}>
                                             DRILL</option>
+                                        <option value="ENGG" {{ $editData->section == 'ENGG' ? 'selected' : '' }}>
+                                            ENGG</option>
+                                        <option value="HSD" {{ $editData->section == 'HSD' ? 'selected' : '' }}>
+                                            HSD</option>
+                                        <option value="WELL" {{ $editData->section == 'WELL' ? 'selected' : '' }}>
+                                            WELL</option>
                                     </select>
                                 </div>
 
 
-                                
+                              
 
                                 <div class="col-md-6 mb-3">
                                     <label for="measurement">Measurement</label>
@@ -119,5 +127,7 @@ $(document).ready(function() {
     }, 3000);
 });
 </script>
+
+
 
 @endsection
