@@ -112,7 +112,7 @@ class EdpController extends Controller
 
             // Expected headers
             $expectedHeaders = [
-                'EDP',
+                'Material',
                 'Material Description',
                 'Section',
                 'Category',
