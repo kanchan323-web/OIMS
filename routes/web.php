@@ -148,6 +148,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/filtered-requests', [RequestStockController::class, 'filterRequestStock'])->name('raised_requests.filter');
             Route::post('/request-status/update-request-status-raised', [RequestStockController::class, 'updateStatusforRequest'])->name('request.updateStatusforRequest'); 
             Route::post('/request-status/update-is-read-status', [RequestStockController::class, 'updateIsReadStatus'])->name('update.is_read.status');
+            Route::post('/update-stock', [StockController::class, 'updateStock'])->name('update.stock');
         });
        
         //User mapping

@@ -38,7 +38,7 @@ class RequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-            $Stock_Table_Data = Stock::select('stocks.id','stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->where('stocks.rig_id', '!=', $rig_id)
@@ -219,20 +219,20 @@ class RequestStockController extends Controller
         $user = Auth::user();
         $rigUser = RigUser::find($user->rig_id);
         //$where = array()
-        $requester_edpID= Stock::where([
-                        ['edp_code',  $request->req_edp_id],
-                        ['user_id', $user->id],
-                        ['rig_id', $rigUser->id]
-                     ])
-                    ->pluck('id')
-                    ->first();
+        $requester_edpID = Stock::where([
+            ['edp_code',  $request->req_edp_id],
+            ['user_id', $user->id],
+            ['rig_id', $rigUser->id]
+        ])
+            ->pluck('id')
+            ->first();
         if (!$requester_edpID) {
             session()->flash('error', 'EDP not existing in stock your stock list. First add stock in list then apply request.');
             return redirect()->back();
         }
 
-      //  echo 'wdhsid';
-       // print_r($requester_edpID);
+        //  echo 'wdhsid';
+        // print_r($requester_edpID);
         //die;
 
         try {
@@ -244,7 +244,7 @@ class RequestStockController extends Controller
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
                 'stock_id' => $request->stock_id,
-                'requester_stock_id'=>$requester_edpID,
+                'requester_stock_id' => $requester_edpID,
                 'requester_id' => $request->requester_id,
                 'requester_rig_id' => $request->requester_rig_id,
                 'supplier_id' => $request->supplier_id,
@@ -435,7 +435,7 @@ class RequestStockController extends Controller
 
 
 
-        return response()->json(['data' => $data]);
+            return response()->json(['data' => $data]);
         }
 
 
@@ -731,5 +731,53 @@ class RequestStockController extends Controller
             return response()->json(['success' => true, 'message' => 'Message marked as read']);
         }
         return response()->json(['success' => false, 'message' => 'Message status update failed'], 400);
+    }
+
+
+    public function updateStock(Request $request)
+    {
+        try {
+            // Fetch the request status using the provided request ID
+            $requestStatus = RequestStatus::find($request->request_id);
+
+            if (!$requestStatus) {
+                return response()->json(['success' => false, 'message' => 'Request status not found'], 404);
+            }
+
+            // Fetch requester details using requester_id
+            $requester = Requester::find($requestStatus->requester_id);
+
+            if (!$requester) {
+                return response()->json(['success' => false, 'message' => 'Requester not found'], 404);
+            }
+
+            // Get stock details
+            $stock = Stock::find($requester->stock_id);
+            $requesterStock = Stock::find($requester->requester_stock_id);
+
+            if (!$stock || !$requesterStock) {
+                return response()->json(['success' => false, 'message' => 'Stock data not found'], 404);
+            }
+
+            // Deduct from stock_id
+            $stock->new_spareable -= $requestStatus->supplier_new_spareable;
+            $stock->used_spareable -= $requestStatus->supplier_used_spareable;
+
+            // Ensure values don't go negative
+            $stock->new_spareable = max(0, $stock->new_spareable);
+            $stock->used_spareable = max(0, $stock->used_spareable);
+
+            // Add to requester_stock_id
+            $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
+            $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
+
+            // Save the updated stock values
+            $stock->save();
+            $requesterStock->save();
+
+            return response()->json(['success' => true, 'message' => 'Stock updated successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
     }
 }
