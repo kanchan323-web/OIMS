@@ -28,6 +28,5 @@ class RequestStatus extends Model
     {
         return $this->hasOne(RequestStatus::class, 'request_id', 'id');
     }
-    
 
 }

@@ -357,17 +357,16 @@ class RequestStockController extends Controller
     public function IncomingRequestStockList(Request $request)
     {
         $rig_id = Auth::user()->rig_id;
-
         $datarig = User::where('user_type', '!=', 'admin')
             ->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
-
         $data = Requester::select(
             'rig_users.name as Location_Name',
             'rig_users.location_id',
             'requesters.*',
             'mst_status.status_name',
+            'stocks.id as stock_id',
             'stocks.id as stock_id',
             'edps.edp_code',
         )->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
@@ -377,21 +376,21 @@ class RequestStockController extends Controller
             ->where('supplier_rig_id', $rig_id)
             ->with('requestStatuses')
             ->distinct()
+            ->with('requestStatuses')
+            ->distinct()
             ->orderBy('requesters.created_at', 'desc')
             ->get();
-
-
-            $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('edps.edp_code')
             ->get();
-       
         $moduleName = "Incoming Request List";
-
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
 
-    public function IncomingRequestStockFilter(Request $request) //
+
+
+    public function IncomingRequestStockFilter(Request $request)
     {
         $rig_id = Auth::user()->rig_id;
 
@@ -711,19 +710,18 @@ class RequestStockController extends Controller
         return response()->json(['data' => $data, 'datarig' => $datarig]);
     }
 
+
     public function updateIsReadStatus(Request $request)
     {
         $request->validate([
             'status_id' => 'required|exists:request_status,id',
         ]);
-
         $status = RequestStatus::find($request->status_id);
         if ($status && $status->is_read == 0) {
             $status->is_read = 1;
             $status->save();
             return response()->json(['success' => true, 'message' => 'Message marked as read']);
         }
-
         return response()->json(['success' => false, 'message' => 'Message status update failed'], 400);
     }
 }
