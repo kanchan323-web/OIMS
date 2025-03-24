@@ -218,6 +218,22 @@ class RequestStockController extends Controller
 
         $user = Auth::user();
         $rigUser = RigUser::find($user->rig_id);
+        //$where = array()
+        $requester_edpID= Stock::where([
+                        ['edp_code',  $request->req_edp_id],
+                        ['user_id', $user->id],
+                        ['rig_id', $rigUser->id]
+                     ])
+                    ->pluck('id')
+                    ->first();
+        if (!$requester_edpID) {
+            session()->flash('error', 'EDP not existing in stock your stock list. First add stock in list then apply request.');
+            return redirect()->back();
+        }
+
+      //  echo 'wdhsid';
+       // print_r($requester_edpID);
+        //die;
 
         try {
             $lastRequest = Requester::latest('id')->first();
@@ -228,6 +244,7 @@ class RequestStockController extends Controller
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
                 'stock_id' => $request->stock_id,
+                'requester_stock_id'=>$requester_edpID,
                 'requester_id' => $request->requester_id,
                 'requester_rig_id' => $request->requester_rig_id,
                 'supplier_id' => $request->supplier_id,
@@ -364,7 +381,7 @@ class RequestStockController extends Controller
             ->get();
 
 
-        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('edps.edp_code')
             ->get();
@@ -417,12 +434,13 @@ class RequestStockController extends Controller
 
 
 
-            return response()->json(['data' => $data]);
+        return response()->json(['data' => $data]);
         }
 
 
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
+
 
 
     public function accept(Request $request)
