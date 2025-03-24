@@ -10,7 +10,13 @@
                         <div class="header-title">
                             <h4 class="card-title">EDP List</h4>
                         </div>
-                        <a href="{{ route('admin.edp.create') }}" class="btn btn-primary">Add New</a>
+
+                        <div class="xl-offset-9 md-offset-4  sm-offset-4">
+                            <a href="{{ route('admin.edp.create') }}" class="btn btn-primary ">Add New</a>
+                            <a href="{{route('admin.import_edp')}}" class="btn btn-primary "><i
+                                class="las la-plus mr-3"></i>Bulk EDP </a>
+                        </div>
+                    
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -45,13 +51,9 @@
                                             </a>
                                             <a class="badge bg-warning mr-2" data-toggle="modal" data-target="#DeleteModal"  onclick="deleteCategory({{$list->id}})"  data-placement="top" title="" data-original-title="Delete"
                                             href="#"><i class="ri-delete-bin-line mr-0"></i></a>
-
                                         </td >
-                                      
                                     </tr>
-
                                     @endforeach
-
                                 </tbody>
                             </table>
                         </div>
@@ -61,6 +63,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
