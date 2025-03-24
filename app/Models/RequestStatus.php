@@ -23,4 +23,9 @@ class RequestStatus extends Model
         'rig_id'
     ];
 
+    public function requestStatus()
+    {
+        return $this->hasOne(RequestStatus::class, 'request_id', 'id');
+    }
+
 }

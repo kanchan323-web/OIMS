@@ -19,4 +19,9 @@ class Requester extends Model
         'supplier_id',
         'supplier_rig_id',
     ];
+    
+    public function requestStatuses()
+    {
+        return $this->hasMany(RequestStatus::class, 'request_id', 'id');
+    }
 }
