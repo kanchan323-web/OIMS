@@ -21,14 +21,6 @@
                             </button>
                         </div>
                     @endif
-                    @if (Session::get('error'))
-                        <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
-                            <strong>Error:</strong> {{ Session::get('error') }}
-                            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
 
                     <div class="row justify-content-between">
                         <div class="col-sm-6 col-md-9">
@@ -39,8 +31,9 @@
                                             <label for="edp_code">EDP Code</label>
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
-                                                @foreach ($EDP_Code_ID as $edp_code_id)
-                                                    <option value="{{ $edp_code_id->edp_code }}">{{ $edp_code_id->edp_code }}
+                                                @foreach ($data as $edp_code_data)
+                                                    <option value="{{ $edp_code_data->edp_code }}">
+                                                        {{ $edp_code_data->edp_code }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -63,10 +56,10 @@
                                                 id="filterButton">Search</button>
                                             <a href="{{ route('stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
                                             <!-- <a href="{{ route('stock_list_pdf') }}"
-                                                            class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
-                                                            id="downloadPdf" target="_blank">
-                                                            <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                                        </a> -->
+                                                class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
+                                                id="downloadPdf" target="_blank">
+                                                <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                            </a> -->
 
 
                                         </div>
@@ -74,17 +67,6 @@
                                 </form>
                             </div>
                         </div>
-
-
-                        <!-- <div class="col-sm-6 col-md-3">
-                                        <div class="user-list-files d-flex">
-                                            <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
-                                                    class="las la-plus mr-3"></i>Add Stock</a>
-                                            <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
-                                                    class="las la-plus mr-3"></i>Bulk Stocks </a>
-                                        </div>
-                                    </div> -->
-                    </div>
 
 
                         <!--         <div class="col-sm-6 col-md-3">
@@ -140,12 +122,7 @@
 
                                                                             $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
                                                                         @endphp
-                                                                            $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
-                                                                        @endphp
 
-                                                                        <td>
-                                                                            <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
-                                                                        </td>
                                                                         <td>
                                                                             <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
                                                                         </td>
@@ -184,8 +161,8 @@
                 </div>
 
 
+            </div>
         </div>
-    </div>
     </div>
 
 
@@ -338,20 +315,6 @@
                                     </div>
                                 </div>
 
-                            </div>
-                            <div class="d-flex justify-content-center mt-4">
-                                <button class="btn btn-danger mx-2" type="button" data-toggle="modal"
-                                    data-target="#declineReasonModal">
-                                    Decline Request
-                                </button>
-                                <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
-                                    Received Request
-                                </button>
-                                <button class="btn btn-primary mx-2" type="button" data-toggle="modal"
-                                    data-target="#raiseQueryModal">
-                                    Raise Query
-                                </button>
-                            </div>
                             </div>
                             <div class="d-flex justify-content-center mt-4">
                                 <button class="btn btn-danger mx-2" type="button" data-toggle="modal"
@@ -594,10 +557,8 @@
     <script>
 
         //ajax filter for incomming request stock
-        //ajax filter for incomming request stock
 
 
-        $(document).ready(function () {
         $(document).ready(function () {
             // Filter Stock Data on Button Click
             $("#filterButton").click(function () {
@@ -615,17 +576,26 @@
 
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
-                                let editButton = '';
-                                if (response.datarig.includes(stockdata.user_id)) {
-                                    editButton = `
-                                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                onclick="makeRequest(${stockdata.id})"
-                                                                data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
-                                                                href="#">
-                                                                <i class="ri-arrow-right-circle-line"></i>
-                                                            </a>
-                                                        `;
-                                }
+                                // Define status colors for different statuses
+                                let statusColors = {
+                                    'Pending': 'badge-warning',
+                                    'Approve': 'badge-success',
+                                    'Decline': 'badge-danger',
+                                    'Query': 'badge-info',
+                                    'Received': 'badge-primary',
+                                    'MIT': 'badge-purple'
+                                };
+
+                                // Get the correct class for the badge
+                                let badgeClass = statusColors[stockdata.status_name] || 'badge-secondary';
+
+                                // Format created_at date (assuming it's returned as ISO format)
+                                let formattedDate = new Date(stockdata.created_at).toLocaleString('en-GB', {
+                                    day: '2-digit', month: '2-digit', year: 'numeric',
+                                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                                });
+
+                                // Append row data to table
                                 tableBody.append(`
                                                             <tr>
                                                                 <td>${index + 1}</td>
@@ -690,27 +660,7 @@
 
                     if (stockData.length > 0 && stockData[0] !== null) {
                         var stock = stockData[0];
-                    if (stockData.length > 0 && stockData[0] !== null) {
-                        var stock = stockData[0];
 
-                        if (typeof stock === "object") {
-                            $("#request_id").val(stock.id ?? '');
-                            $("#location_id").val(stock.requester_name ?? '');
-                            $("#Supplier_Location_Id").val(stock.supplier_name ?? '');
-                            $("#requester_Id").val(stock.requesters_rig ?? '');
-                            $("#Supplier_Location_Name").val(stock.suppliers_rig ?? '');
-                            $("#EDP_Code").val(stock.edp_code ?? '');
-                            $("#category_id").val(stock.category ?? '');
-                            $("#section").val(stock.section ?? '');
-                            $("#description").val(stock.description ?? '');
-                            $("#total_qty").val(stock.available_qty ?? '');
-                            $("#req_qty").val(stock.requested_qty ?? '');
-                            $("#measurement").val(stock.measurement ?? '');
-                            $("#new_spearable").val(stock.new_spareable ?? '');
-                            $("#used_spareable").val(stock.used_spareable ?? '');
-                            $("#remarks").val(stock.remarks ?? '');
-                            $("#status").val(stock.status_name ?? '');
-                            $("#request_date").val(stock.formatted_created_at ?? '');
                         if (typeof stock === "object") {
                             $("#request_id").val(stock.id ?? '');
                             $("#location_id").val(stock.requester_name ?? '');
@@ -754,38 +704,11 @@
                 }
             });
         }
-                            if (stock.status == 4) {
-                                $(".btn-danger, .btn-primary").hide();
-                            } else if (stock.status == 6) {
-                                $(".btn-danger, .btn-primary").hide();
-                                $(".btn-success, .btn-primary").hide();
-                            } else if (stock.status == 3) {
-                                $(".btn-danger, .btn-primary").hide();
-                                $(".btn-success, .btn-primary").hide();
-                            } else {
-                                $(".btn-danger, .btn-primary").show();
-                                $(".btn-success, .btn-primary").show();
-                            }
-                        } else {
-                            console.error("Stock data is not a valid object:", stock);
-                        }
-                    } else {
-                        console.error("No stock data available.");
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching stock data:", error);
-                }
-            });
-        }
 
 
         //For deleting
         function deleteStockdata(id) {
-        //For deleting
-        function deleteStockdata(id) {
 
-            $("#delete_id").val(id);
             $("#delete_id").val(id);
 
         }
@@ -865,18 +788,7 @@
                     return true;
                 }
             }
-                if (totalSpareable > requestedQty) {
-                    $("#error_message").text("Total spareable quantity cannot exceed Requested Quantity.");
-                    return false;
-                } else {
-                    $("#error_message").text("");
-                    return true;
-                }
-            }
 
-            $("#modal_new_spareable, #modal_used_spareable").on("input", function () {
-                validateSpareableInputs();
-            });
             $("#modal_new_spareable, #modal_used_spareable").on("input", function () {
                 validateSpareableInputs();
             });
@@ -884,14 +796,7 @@
             $(document).on("click", "#confirmReceivedRequest", function (e) {
                 e.preventDefault();
                 console.log("Submit Event Triggered!");
-            $(document).on("click", "#confirmReceivedRequest", function (e) {
-                e.preventDefault();
-                console.log("Submit Event Triggered!");
 
-                let requestId = $("#mainModalForm").find("#request_id").val();
-                let newSpareable = $("#modal_new_spareable").val();
-                let usedSpareable = $("#modal_used_spareable").val();
-                let supplierTotalQty = $("#modal_total_qty").text().trim();
                 let requestId = $("#mainModalForm").find("#request_id").val();
                 let newSpareable = $("#modal_new_spareable").val();
                 let usedSpareable = $("#modal_used_spareable").val();
@@ -901,32 +806,7 @@
                     console.log("Request ID is missing!");
                     return;
                 }
-                if (!requestId) {
-                    console.log("Request ID is missing!");
-                    return;
-                }
 
-                $.ajax({
-                    url: "{{ route('request.accept') }}",
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        request_id: requestId,
-                        supplier_total_qty: supplierTotalQty,
-                        supplier_new_spareable: newSpareable,
-                        supplier_used_spareable: usedSpareable
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            window.location.href = "{{ route('incoming_request_list') }}";
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error("❌ AJAX Error:", xhr.responseText);
-                    }
-                });
-            });
-        });
                 $.ajax({
                     url: "{{ route('request.accept') }}",
                     type: "POST",
@@ -955,36 +835,10 @@
             // Decline Request
             $(document).on("submit", "#declineForm", function (e) {
                 e.preventDefault();
-        //for decline and query
-        $(document).ready(function () {
-            // Decline Request
-            $(document).on("submit", "#declineForm", function (e) {
-                e.preventDefault();
 
                 let requestId = $("#request_id").val();
                 let declineMsg = $("#decline_reason").val();
-                let requestId = $("#request_id").val();
-                let declineMsg = $("#decline_reason").val();
 
-                $.ajax({
-                    url: "{{ route('request.decline') }}",
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        request_id: requestId,
-                        decline_msg: declineMsg
-                    },
-                    success: function (response) {
-                        console.log("AJAX Success:", response);
-                        if (response.success) {
-                            window.location.href = "{{ route('incoming_request_list') }}";
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error("AJAX Error:", xhr.responseText);
-                    }
-                });
-            });
                 $.ajax({
                     url: "{{ route('request.decline') }}",
                     type: "POST",
@@ -1009,35 +863,10 @@
             $(document).on("submit", "#raiseQueryForm", function (e) {
                 e.preventDefault();
                 console.log("Query Event Triggered!");
-            // Raise Query
-            $(document).on("submit", "#raiseQueryForm", function (e) {
-                e.preventDefault();
-                console.log("Query Event Triggered!");
 
                 let requestId = $("#request_id").val();
                 let queryMsg = $("#query").val();
-                let requestId = $("#request_id").val();
-                let queryMsg = $("#query").val();
 
-                $.ajax({
-                    url: "{{ route('request.query') }}",
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        request_id: requestId,
-                        query_msg: queryMsg
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            window.location.href = "{{ route('incoming_request_list') }}";
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error("AJAX Error:", xhr.responseText);
-                    }
-                });
-            });
-        });
                 $.ajax({
                     url: "{{ route('request.query') }}",
                     type: "POST",
@@ -1064,22 +893,7 @@
                 e.preventDefault();
                 let requestId = $("#request_id").val();
                 let requestStatus = $("#request_status").val();
-        //for Accept modal popup and changing status to Approve
-        $(document).ready(function () {
-            $("#openReceivedRequestModal").click(function (e) {
-                e.preventDefault();
-                let requestId = $("#request_id").val();
-                let requestStatus = $("#request_status").val();
 
-                if (!requestId) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error!",
-                        text: "Request ID is missing!",
-                        confirmButtonColor: "#d33"
-                    });
-                    return;
-                }
                 if (!requestId) {
                     Swal.fire({
                         icon: "error",
@@ -1096,21 +910,11 @@
                     $("#receivedRequestModal").modal("show");
                     return;
                 }
-                if (requestStatus == "4") {
-                    $("#modal_total_qty").text($("#total_qty").val());
-                    $("#modal_req_qty").text($("#req_qty").val());
-                    $("#receivedRequestModal").modal("show");
-                    return;
-                }
 
                 $("#confirmationModal").modal("show");
             });
-                $("#confirmationModal").modal("show");
-            });
 
 
-            $("#confirmAccept").click(function () {
-                let requestId = $("#request_id").val();
             $("#confirmAccept").click(function () {
                 let requestId = $("#request_id").val();
 
@@ -1129,47 +933,9 @@
                             $("#modal_req_qty").text($("#req_qty").val());
                             $("#modal_total_new").text($("#new_spearable").val());
                             $("#modal_total_used").text($("#used_spareable").val());
-                $.ajax({
-                    url: "{{ route('request.updateStatus') }}",
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        request_id: requestId,
-                        status: 4
-                    },
-                    success: function (response) {
-                        //console.log(response);
-                        if (response.success) {
-                            $("#modal_total_qty").text($("#total_qty").val());
-                            $("#modal_req_qty").text($("#req_qty").val());
-                            $("#modal_total_new").text($("#new_spearable").val());
-                            $("#modal_total_used").text($("#used_spareable").val());
 
                             $("#confirmationModal").modal("hide");
-                            $("#confirmationModal").modal("hide");
 
-                            $("#receivedRequestModal").modal("show");
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Failed!",
-                                text: "Failed to update status!",
-                                confirmButtonColor: "#d33"
-                            });
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error(xhr.responseText);
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error!",
-                            text: "Error updating status. Please try again.",
-                            confirmButtonColor: "#d33"
-                        });
-                    }
-                });
-            });
-        });
                             $("#receivedRequestModal").modal("show");
                         } else {
                             Swal.fire({
@@ -1202,7 +968,6 @@
                 data: { request_id: request_id },
                 success: function (response) {
                     console.log(request_id);
-                    console.log(request_id);
                     console.log(response);
                     let html = "";
                     if (response.length > 0) {
@@ -1228,25 +993,11 @@
                                         <td>${status.requestor_name}</td>
                                         <td>${new Date(status.updated_at).toLocaleString()}</td>
                                     </tr>`;
-                                            ${status.status_name}
-                                        </span></td>
-                                        <td>
-                                            <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                            </button>
-                                        </td>
-                                        <td>${status.supplier_qty || 'N/A'}</td>
-                                        <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                        <td>${status.supplier_used_spareable || 'N/A'}</td>
-                                        <td>${status.requestor_name}</td>
-                                        <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                    </tr>`;
                         });
                     } else {
                         html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
                     }
                     $("#requestStatusData").html(html);
-                    $("#requestStatusModal").modal('show');
                     $("#requestStatusModal").modal('show');
                 },
                 error: function () {
