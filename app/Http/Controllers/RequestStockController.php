@@ -227,7 +227,7 @@ class RequestStockController extends Controller
                     ->pluck('id')
                     ->first();
         if (!$requester_edpID) {
-            session()->flash('error', 'EDP not existing in stock your stock list. First add stock in list then aplly request.');
+            session()->flash('error', 'EDP not existing in stock your stock list. First add stock in list then apply request.');
             return redirect()->back();
         }
 
