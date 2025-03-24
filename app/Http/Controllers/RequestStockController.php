@@ -370,54 +370,53 @@ class RequestStockController extends Controller
 
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig','EDP_Code_ID'));
     }
-    public function IncomingRequestStockFilter(Request $request)//
+    public function IncomingRequestStockFilter(Request $request)
     {
         $rig_id = Auth::user()->rig_id;
- 
-       
-
-        if ($request->ajax()) {
-           
-
-            
-
-            $data = Requester::select(
-                'rig_users.name',
-                'rig_users.location_id',
-                'requesters.*',
-                'mst_status.status_name',
-                'stocks.description',
-                'stocks.created_at as stock_created_at',
-                'edps.edp_code'
-            )
-            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-            ->join('stocks', 'requesters.stock_id', '=', 'stocks.id') // Join with stocks table
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id') // Join with edps table
-            ->when($request->edp_code, function ($query, $edp_code) {
-                return $query->where('stocks.edp_code', $edp_code);
-            })
-            ->when($request->description, function ($query, $description) {
-                return $query->where('stocks.description', 'LIKE', "%{$description}%");
-            })
-            ->when($request->form_date, function ($query) use ($request) {
-                return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-            })
-            ->when($request->to_date, function ($query) use ($request) {
-                return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-            })
-            ->where('requesters.supplier_rig_id', $rig_id)
-            ->orderBy('requesters.created_at', 'desc')
-            ->get();
-        
-           
-
-
-            return response()->json(['data' => $data]);
-    }
-
-
-        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
+        // Base Query
+        $query = Requester::select(
+            'rig_users.name as Location_Name',
+            'rig_users.location_id',
+            'requesters.*',
+            'mst_status.status_name',
+            'stocks.id',
+            'stocks.description',
+            'stocks.qty',
+            'stocks.created_at as stock_created_at',
+            'edps.edp_code'
+        )
+        ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+        ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+        ->where('requesters.supplier_rig_id', $rig_id); // Restrict to current rig's requests
+    
+        // Apply Filters
+        if (!empty($request->edp_code)) {
+            $query->where('edps.edp_code', $request->edp_code);
+        }
+    
+        if (!empty($request->description)) {
+            $query->where('stocks.description', 'LIKE', "%{$request->description}%");
+        }
+    
+        if (!empty($request->form_date)) {
+            $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date));
+        }
+    
+        if (!empty($request->to_date)) {
+            $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date));
+        }
+    
+        // Fetch the filtered data
+        $data = $query->orderBy('requesters.created_at', 'desc')->get();
+    
+        // If no data is found, return a proper response
+        if ($data->isEmpty()) {
+            return response()->json(['data' => [], 'message' => 'No records found']);
+        }
+    
+        return response()->json(['data' => $data]);
     }
 
 

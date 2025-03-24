@@ -453,7 +453,17 @@
 
 
 
+    <script>
+        $(document).ready(function () {
+            $("#AddRequestStock").on("submit", function () {
+                // Show loader
+                $("#loading").show();
 
+                // Disable submit button to prevent multiple clicks
+                $("#AddRequestStock button[type=submit]").prop("disabled", true);
+            });
+        });
+    </script>
 
 
     <script>
