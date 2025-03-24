@@ -20,7 +20,14 @@ class RequestStatus extends Model
         'supplier_new_spareable', 
         'supplier_used_spareable', 
         'user_id',
-        'rig_id'
+        'rig_id',
+        'is_read',
     ];
+
+    public function requestStatus()
+    {
+        return $this->hasOne(RequestStatus::class, 'request_id', 'id');
+    }
+    
 
 }

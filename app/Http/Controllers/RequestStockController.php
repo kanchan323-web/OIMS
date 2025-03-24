@@ -306,6 +306,7 @@ class RequestStockController extends Controller
             ->leftJoin('edps', 'edps.id', '=', 'stocks.edp_code')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.id', $request->data)
+            ->with('requestStatuses')
             ->select(
                 'requesters.*',
                 'request.id as requester_id',
@@ -350,36 +351,39 @@ class RequestStockController extends Controller
             'rig_users.location_id',
             'requesters.*',
             'mst_status.status_name',
-            'stocks.id',
+            'stocks.id as stock_id',
             'edps.edp_code',
-            )->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+        )->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('supplier_rig_id', $rig_id)
+            ->with('requestStatuses')
+            ->distinct()
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
-            
-            $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+
+        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('edps.edp_code')
             ->get();
-           
+       
         $moduleName = "Incoming Request List";
 
-        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig','EDP_Code_ID'));
+        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
-    public function IncomingRequestStockFilter(Request $request)//
+
+    public function IncomingRequestStockFilter(Request $request) //
     {
         $rig_id = Auth::user()->rig_id;
- 
-       
+
+
 
         if ($request->ajax()) {
-           
 
-            
+
+
 
             $data = Requester::select(
                 'rig_users.name',
@@ -390,31 +394,31 @@ class RequestStockController extends Controller
                 'stocks.created_at as stock_created_at',
                 'edps.edp_code'
             )
-            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-            ->join('stocks', 'requesters.stock_id', '=', 'stocks.id') // Join with stocks table
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id') // Join with edps table
-            ->when($request->edp_code, function ($query, $edp_code) {
-                return $query->where('stocks.edp_code', $edp_code);
-            })
-            ->when($request->description, function ($query, $description) {
-                return $query->where('stocks.description', 'LIKE', "%{$description}%");
-            })
-            ->when($request->form_date, function ($query) use ($request) {
-                return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-            })
-            ->when($request->to_date, function ($query) use ($request) {
-                return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-            })
-            ->where('requesters.supplier_rig_id', $rig_id)
-            ->orderBy('requesters.created_at', 'desc')
-            ->get();
-        
-           
+                ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id') // Join with stocks table
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id') // Join with edps table
+                ->when($request->edp_code, function ($query, $edp_code) {
+                    return $query->where('stocks.edp_code', $edp_code);
+                })
+                ->when($request->description, function ($query, $description) {
+                    return $query->where('stocks.description', 'LIKE', "%{$description}%");
+                })
+                ->when($request->form_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                })
+                ->when($request->to_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                })
+                ->where('requesters.supplier_rig_id', $rig_id)
+                ->orderBy('requesters.created_at', 'desc')
+                ->get();
+
+
 
 
             return response()->json(['data' => $data]);
-    }
+        }
 
 
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
@@ -687,5 +691,21 @@ class RequestStockController extends Controller
             ->toArray();
 
         return response()->json(['data' => $data, 'datarig' => $datarig]);
+    }
+
+    public function updateIsReadStatus(Request $request)
+    {
+        $request->validate([
+            'status_id' => 'required|exists:request_status,id',
+        ]);
+
+        $status = RequestStatus::find($request->status_id);
+        if ($status && $status->is_read == 0) {
+            $status->is_read = 1;
+            $status->save();
+            return response()->json(['success' => true, 'message' => 'Message marked as read']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Message status update failed'], 400);
     }
 }
