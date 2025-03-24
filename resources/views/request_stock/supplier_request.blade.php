@@ -110,10 +110,20 @@
                                                     title="Supplier Request" href="#">
                                                     <i class="ri-arrow-right-circle-line"></i>
                                                 </a>
-                                                <a class="badge badge-info" onclick="ViewRequestStatus({{ $stockdata->id }})"
-                                                    data-toggle="modal" data-placement="top" title="View Request Status" href="#">
-                                                    <i class="ri-eye-line"></i>
-                                                </a>
+                                                @php
+                                                                                $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
+                                                                            @endphp
+                                                                            <a class="badge badge-info position-relative"
+                                                                                onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
+                                                                                data-placement="top" title="View Request Status" href="#">
+                                                                                <i class="ri-eye-line"></i>
+                                                                                @if($hasUnread)
+                                                                                    <span
+                                                                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                                                        ●
+                                                                                    </span>
+                                                                                @endif
+                                                                            </a>
                                             </td>
                                         </tr>
                                     @endif
@@ -318,6 +328,63 @@
         </div>
     </div>
 
+    <!-- Request Status Modal -->
+    <div class="modal fade" id="requestStatusModal" tabindex="-1" role="dialog" aria-labelledby="requestStatusModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-white text-uppercase">
+                    <h5 class="modal-title ligth ligth-data" id="requestStatusModalLabel">Request Status Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive rounded mb-3">
+                        <table class="data-tables table mb-0 tbl-server-info">
+                            <thead class="bg-white text-uppercase">
+                                <tr class="ligth ligth-data">
+                                    <th>Status</th>
+                                    <th>Message</th>
+                                    <th>Supplier Qty</th>
+                                    <th>New Spareable</th>
+                                    <th>Used Spareable</th>
+                                    <th>Requestor</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestStatusData" class="ligth-body">
+                                <!-- Data will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Submodal for Viewing Message -->
+    <div class="modal fade" id="subModal" tabindex="-1" role="dialog" aria-labelledby="subModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-white">
+                    <h5 class="modal-title" id="subModalLabel">Message Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="subModalMessageContent"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary d-none" id="subModalQueryButton">Query</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         $(document).ready(function () {
@@ -435,8 +502,8 @@
                             if (stock.status == 4) {
                                 $(".btn-success, .btn-primary").hide(); 
                             } else if (stock.status == 6) {
-                                $(".btn-primary").hide();  // Hide Raise Query button
-                                $(".btn-success").show();  // Show Acknowledge Shipment button
+                                $(".btn-primary").hide();  
+                                $(".btn-success").show();  
                             } else if(stock.status == 5 || stock.status == 1 || stock.status == 3) {
                                 $(".btn-primary, .btn-success").hide();
                             } else if(stock.status == 2) {
@@ -492,7 +559,7 @@
                 let requestId = $("#request_id").val();
 
                 $.ajax({
-                    url: "{{ route('request.updateStatusforRequest') }}",
+                    url: "{{ route('update.stock') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -528,6 +595,108 @@
                 });
             });
         });
+
+
+        function ViewRequestStatus(request_id) {
+            $.ajax({
+                url: "{{ route('get.request.status') }}",
+                type: "GET",
+                data: { request_id: request_id },
+                success: function (response) {
+                    console.log(request_id);
+                    console.log(response);
+                    let html = "";
+                    if (response.length > 0) {
+                        response.forEach(status => {
+                            let message = status.decline_msg ? status.decline_msg : (status.query_msg ? status.query_msg : 'N/A');
+
+                            let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
+
+                            html += `<tr ${unreadStyle} data-status-id="${status.id}">
+                                        <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                    (status.status_id == 3 ? 'danger' :
+                                        (status.status_id == 4 ? 'info' : 'secondary'))}">
+                                            ${status.status_name}
+                                        </span></td>
+                                        <td>
+                                            <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                                ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                            </button>
+                                        </td>
+                                        <td>${status.supplier_qty || 'N/A'}</td>
+                                        <td>${status.supplier_new_spareable || 'N/A'}</td>
+                                        <td>${status.supplier_used_spareable || 'N/A'}</td>
+                                        <td>${status.requestor_name}</td>
+                                        <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                    </tr>`;
+                        });
+                    } else {
+                        html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
+                    }
+                    $("#requestStatusData").html(html);
+                    $("#requestStatusModal").modal('show');
+                },
+                error: function () {
+                    alert("Failed to fetch request status.");
+                }
+            });
+        }
+
+        // Event listener for message click
+        $(document).on("click", ".view-message", function () {
+            let message = $(this).data("message");
+            let statusId = $(this).data("status-id");
+            let row = $(this).closest("tr");
+
+            // Show message in a sub-modal
+            $("#subModalMessageContent").text(message);
+            $("#subModal").modal("show");
+
+            // If row is unread, update the status in DB and remove styles dynamically
+            if (row.attr("style")) {
+                $.ajax({
+                    url: "{{ route('update.is_read.status') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        status_id: statusId
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            // Remove inline styles dynamically
+                            row.removeAttr("style");
+                        }
+                    },
+                    error: function () {
+                        alert("Failed to update read status.");
+                    }
+                });
+            }
+        });
+
+
+
+        $(document).ready(function () {
+            let stockStatus = {{ $stockdata->status }};
+            let stockId = {{ json_encode($stockdata->id) }};
+            console.log(stockId);
+            if (stockStatus === 2) {
+                $('#subModalQueryButton').removeClass('d-none');
+            } else {
+                $('#subModalQueryButton').addClass('d-none');
+            }
+
+            $('#subModalQueryButton').on('click', function () {
+                $('.modal').modal('hide');
+
+                setTimeout(function () {
+                    $('.bd-example-modal-xl').modal('show');
+
+                    RequestStockData(stockId);
+                }, 500);
+            });
+        });
+
 
     </script>
     
