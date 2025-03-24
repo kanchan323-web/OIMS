@@ -368,7 +368,8 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="">EDP Code</label>
                                     <input type="text" class="form-control" name="edp_code" id="Redp_code" readonly>
-                                    <input type="hidden" class="form-control" name="stock_id" id="Redp_id" readonly>
+                                    <input type="hidden" class="form-control" name="stock_id" id="Rstock_id" readonly>
+                                    <input type="hidden" class="form-control" name="req_edp_id" id="req_edp_id" readonly>
                                     @error("stock_id")
                                         <small class="text-danger">{{$message}}</small>
                                     @enderror
@@ -485,12 +486,13 @@
                     data: id
                 },
                 success: function (response) {
-                   // console.log("stock id check:" + response.for_request_viewdata['id']);
-                  //  console.log("edp_code check:" + response.viewdata['edp_code']);
+                   // console.log("stock id check:" + response.for_request_viewdata['EDPID']);
+                  //  console.log("edp_code check:" + response.for_request_viewdata['edp_id']);
                     $("#Rlocation_id").val(response.for_request_viewdata['location_id']);
                     $("#Rlocation_name").val(response.for_request_viewdata['location_name']);
                     $("#Redp_code").val(response.viewdata['edp_code']);
-                    $("#Redp_id").val(id);
+                    $("#req_edp_id").val(response.for_request_viewdata['EDPID']);
+                    $("#Rstock_id").val(id);
                     $("#Rstock_code").val(response.for_request_viewdata['id']);
                     var sectionValue = response.for_request_viewdata['section'];
                     $("#Rsection").val(sectionValue);
@@ -520,7 +522,7 @@
                     $("#Rsupplier_location_name").val(response.viewdata['location_name']);
                     $("#Rsupplier_location_id").val(response.viewdata['rig_id']);
                     $("#Rsupplier_id").val(response.viewdata['user_id']);
-                    console.log(response.viewdata['location_id']);
+                  //  console.log(response.viewdata['location_id']);
                 }
             });
         }
