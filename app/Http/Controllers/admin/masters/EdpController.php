@@ -39,6 +39,10 @@ class EdpController extends Controller
             'description' => 'required',
         ]);
 
+        if (Edp::where('edp_code', $request->edp_code)->exists()) {
+            return redirect()->back()->with('error', 'EDP Code already exists!');
+        }
+
         $edp = new Edp;
         $edp->edp_code = $request->edp_code;
         $edp->category = $request->Category_Name;
