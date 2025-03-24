@@ -415,11 +415,10 @@ class RequestStockController extends Controller
 
             return response()->json(['data' => $data]);
     }
-}
+
 
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
-
 
 
     public function accept(Request $request)
