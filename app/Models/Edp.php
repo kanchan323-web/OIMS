@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Edp extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'edp_code',
+        'category',
+        'description',
+        'section',
+        'measurement',
+    ];
 }

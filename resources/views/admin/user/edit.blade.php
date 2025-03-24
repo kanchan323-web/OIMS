@@ -42,10 +42,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="user_type">User Type</label>
-                                    <select class="form-control" name="user_type" required>
-                                        {{-- <option value="admin" {{ $user->user_type == 'admin' ? 'selected' : '' }}>Admin</option> --}}
-                                        <option value="user" {{ $user->user_type == 'user' ? 'selected' : '' }}>User</option>
-                                    </select>
+                                    <input type="text" class="form-control" name="user" value="{{$user->user_type}}" readonly>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="rig_id">Select Rigs</label>

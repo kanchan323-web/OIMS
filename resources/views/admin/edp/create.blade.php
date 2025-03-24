@@ -97,15 +97,24 @@
 
                                             <option value="" {{ empty($editData->section) ? 'selected' : '' }}>
                                                 Select Section...</option>
-
-
                                             <option value="ENGG">
                                                 ENGG
                                             </option>
                                             <option value="DRILL">
                                                 DRILL
                                             </option>
-
+                                            <option value="CHEM">
+                                                CHEM
+                                            </option>
+                                            <option value="CMTG">
+                                                CMTG
+                                            </option>
+                                            <option value="HSD">
+                                                HSD
+                                            </option>
+                                            <option value="WELL">
+                                                WELL
+                                            </option>
                                         </select>
                                     </div>
 
