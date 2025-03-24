@@ -464,6 +464,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $request->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
+                'sent_to'	 => $requester->supplier_id,
+                'sent_from'  => Auth::id()
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -522,6 +524,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
+                'sent_to'	 => $requester->supplier_id,
+                'sent_from'  => Auth::id(),
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -578,6 +582,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
+                'sent_to'	 => $requester->supplier_id,
+                'sent_from'  => Auth::id(),
             ]);
 
             $requester_user = User::find($requester->requester_id);
