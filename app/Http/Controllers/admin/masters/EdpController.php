@@ -114,9 +114,9 @@ class EdpController extends Controller
             $expectedHeaders = [
                 'Material',
                 'Material Description',
+                'UoM',
                 'Section',
-                'Category',
-                'UoM'  
+                'Material Group' 
             ];
 
             // Ensure the uploaded file matches the expected headers
@@ -142,9 +142,10 @@ class EdpController extends Controller
     
                 $edpCode = $row[0];
                 $materialDesc = $row[1];
-                $section = $row[2];
-                $category = $row[3];
-                $uom = $row[4];
+                $uom = $row[2];
+                $section = $row[3];
+                $category = $row[4];
+               
                 // Check for existing EDP
                 $existingEdp = Edp::where('edp_code', $edpCode)->first();
     
