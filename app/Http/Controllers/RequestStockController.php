@@ -38,11 +38,11 @@ class RequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-        $Stock_Table_Data = Stock::select('stocks.*', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+            $Stock_Table_Data = Stock::select('stocks.id','stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->where('rig_id', '!=', $rig_id)
-            ->where('req_status', 'inactive')
+            ->where('stocks.rig_id', '!=', $rig_id)
+            ->where('stocks.req_status', 'inactive')
             ->orderBy('stocks.id', 'desc')
             ->get();
 
@@ -361,6 +361,7 @@ class RequestStockController extends Controller
             ->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
+
         $data = Requester::select(
             'rig_users.name as Location_Name',
             'rig_users.location_id',
@@ -369,17 +370,18 @@ class RequestStockController extends Controller
             'stocks.id as stock_id',
             'stocks.id as stock_id',
             'edps.edp_code',
-        )->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+        )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-            ->where('supplier_rig_id', $rig_id)
+            ->where('requesters.supplier_rig_id', $rig_id)
             ->with('requestStatuses')
             ->distinct()
             ->with('requestStatuses')
             ->distinct()
             ->orderBy('requesters.created_at', 'desc')
             ->get();
+
         $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('edps.edp_code')

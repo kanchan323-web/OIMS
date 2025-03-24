@@ -31,6 +31,9 @@ class MasterStatusSeeder extends Seeder
                 [
                     'status_name' => 'Decline',
                 ],
+                [
+                    'status_name' => 'MIT',
+                ],
                 ]);
 
                 $masterStatus->each(function($masterStatu){
