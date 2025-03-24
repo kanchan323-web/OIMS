@@ -54,6 +54,9 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/edp/{id}/edit', [EdpController::class, 'edit'])->name('admin.edp.edit');
         Route::post('/edp/update', [EdpController::class, 'update'])->name('admin.edp.update');
         Route::post('/edp/delete', [EdpController::class, 'destroy'])->name('admin.edp.destroy');
+        Route::get('/edp/import', [EdpController::class, 'showImportForm'])->name('admin.import_edp');
+        Route::post('/edp/import_bulk', [EdpController::class, 'import'])->name('admin.edp.import');
+        Route::get('/edp/sample-download', [EdpController::class, 'downloadSample'])->name('admin.edp.downloadSample');
 
         //Category master
         Route::get('/category', [CategoryController::class, 'index'])->name('admin.category.index');
