@@ -286,7 +286,9 @@
 
                             </div>
                             <div class="d-flex justify-content-center mt-4">
-
+                                <button class="btn btn-danger mx-2 decline_btn" type="button">
+                                    Decline
+                                </button>
                                 <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
                                     Acknowledge stock receival
                                 </button>
@@ -493,6 +495,9 @@
 
 
         function RequestStockData(id) {
+            $(".decline_btn").hide();
+            $('#status_msg').text('').removeClass();
+            $("#status_label").css('display','none');
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -529,10 +534,7 @@
                             $("#used_spareable").val(stock.used_spareable ?? '');
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
-
                             if (response.request_status !== null) {
-                                $('#status_msg').text('').removeClass();
-                                $("#status_label").css('display','none');
                                 if (stock.status == 5){
                                     $("#status_label").css('display','block');
                                     $("#status_msg").text(response.request_status['decline_msg']).addClass('text-danger');
@@ -542,21 +544,27 @@
                                     $('#status_msg').text(response.request_status['query_msg']).addClass('text-primary');
                                 }
                             }
-
+                            console.log(stock.status);
                             $("#request_date").val(stock.formatted_created_at ?? '');
-
+                            //debugger;
                             if (stock.status == 4) {
                                 $(".btn-success, .btn-primary").hide();
+                                $(".decline_btn").hide();
                             } else if (stock.status == 6) {
                                 $(".btn-primary").hide();
                                 $(".btn-success").show();
-                            } else if (stock.status == 5 || stock.status == 1 || stock.status == 3) {
-
+                                $(".decline_btn").hide();
+                            } else if (stock.status == 5 || stock.status == 3) {
                                 $(".btn-primary, .btn-success").hide();
                             } else if (stock.status == 2) {
                                 $(".btn-primary").show();
                                 $(".btn-success").hide();
-                            } else {
+                                $(".decline_btn").show();
+                            } else if (stock.status == 1) {
+                                $(".btn-primary, .btn-success").hide();
+                                $(".decline_btn, .btn-primary").show();
+                            }
+                            else {
                                 $(".btn-primary, .btn-success").show();
                             }
 
