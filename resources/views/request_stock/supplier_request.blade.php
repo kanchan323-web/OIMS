@@ -233,26 +233,6 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="">Status </label>
-                                    <input type="text" class="form-control" name="status" id="status" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Status
-                                    </div>
-                                    <!--       <select class="form-control" name="status">
-                                            <option disabled {{ request('status') ? '' : 'selected' }}>Select
-                                                Status...</option>
-                                            <option value="Pendding"
-                                                {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                            </option>
-                                            <option value="Pendding"
-                                                {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                            </option>
-                                            <option value="Pendding"
-                                                {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                            </option>
-                                        </select> -->
-                                </div>
-                                <div class="col-md-6 mb-3">
                                     <label for="">Supplier Total Quantity</label>
                                     <input type="text" class="form-control" placeholder="Supplier Total Quantity"
                                         name="total_qty" id="total_qty" readonly>
@@ -285,12 +265,23 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <label for="">Status </label>
+                                    <input type="text" class="form-control" name="status" id="status" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Status
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label for="request_date">Request Date</label>
                                     <input type="text" class="form-control" placeholder="Request Date" name="request_date"
                                         id="request_date" readonly>
                                     <div class="invalid-feedback">
                                         Enter Request Date
                                     </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label id="status_label" style="display:none">Supplier Status Message</label>
+                                    <span id="status_msg"></span>
                                 </div>
 
                             </div>
@@ -489,10 +480,8 @@
                     }
 
                     var stockData = Array.isArray(response.data) ? response.data : [response.data];
-
                     if (stockData.length > 0 && stockData[0] !== null) {
                         var stock = stockData[0];
-
                         if (typeof stock === "object") {
                             $("#request_id").val(stock.id ?? '');
                             $("#location_id").val(stock.requester_name ?? '');
@@ -510,6 +499,20 @@
                             $("#used_spareable").val(stock.used_spareable ?? '');
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
+
+                            if (response.request_status !== null) {
+                                $('#status_msg').text('').removeClass();
+                                $("#status_label").css('display','none');
+                                if (stock.status == 5){
+                                    $("#status_label").css('display','block');
+                                    $("#status_msg").text(response.request_status['decline_msg']).addClass('text-danger');
+                                }
+                                if (stock.status == 2){
+                                    $("#status_label").css('display','block');
+                                    $('#status_msg').text(response.request_status['query_msg']).addClass('text-primary');
+                                }
+                            }
+
                             $("#request_date").val(stock.formatted_created_at ?? '');
 
                             if (stock.status == 4) {
@@ -518,6 +521,7 @@
                                 $(".btn-primary").hide();
                                 $(".btn-success").show();
                             } else if (stock.status == 5 || stock.status == 1 || stock.status == 3) {
+
                                 $(".btn-primary, .btn-success").hide();
                             } else if (stock.status == 2) {
                                 $(".btn-primary").show();
