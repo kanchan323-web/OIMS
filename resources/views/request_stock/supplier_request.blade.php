@@ -296,10 +296,6 @@
                             </div>
                             <div class="d-flex justify-content-center mt-4">
 
-                                <button class="btn btn-danger mx-2" type="button" data-toggle="modal"
-                                    data-target="#declineReasonModal">
-                                    Decline Request
-                                </button>
                                 <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
                                     Acknowledge stock receival
                                 </button>
@@ -578,19 +574,40 @@
                 $.ajax({
                     url: "{{ route('update.stock') }}",
                     type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
                     data: {
-                        _token: "{{ csrf_token() }}",
-                        request_id: requestId,
+                        request_id: requestId
                     },
                     success: function (response) {
+                        console.log(response);
                         if (response.success) {
-                            window.location.href = "{{ route('raised_requests.index') }}"; // Redirect
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success!",
+                                text: response.message,
+                                confirmButtonColor: "#28a745"
+                            }).then(() => {
+                                window.location.href = "{{ route('raised_requests.index') }}"; // Redirect after confirmation
+                            });
                         } else {
-                            window.location.href = "{{ route('raised_requests.index') }}"; // Redirect on failure too
+                            Swal.fire({
+                                icon: "error",
+                                title: "Failed!",
+                                text: response.message,
+                                confirmButtonColor: "#d33"
+                            });
                         }
                     },
-                    error: function () {
-                        window.location.href = "{{ route('raised_requests.index') }}";
+                    error: function (xhr) {
+                        console.log(xhr.responseText);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "An error occurred while processing your request.",
+                            confirmButtonColor: "#d33"
+                        });
                     }
                 });
             });
@@ -700,7 +717,11 @@
             @else
                 console.error("Stock data is not available.");
             @endif
-        });
+            });
+
+
+
+
     </script>
 
 
