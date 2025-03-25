@@ -814,7 +814,7 @@
                 data: {
                     _token: document.querySelector('input[name="_token"]').value,
                     request_id: requestId,
-                    query: queryMessage
+                    query_msg: queryMessage
                 },
                 success: function (response) {
                     // Close all open modals
