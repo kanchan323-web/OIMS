@@ -39,32 +39,32 @@
                                                         <option value="{{ $edp->edp_id }}">{{ $edp->edp_code }}</option>
                                                     @endforeach
                                                 </select>
-                                            </div>
-
+                                            </div>                                            
+                                    
                                             <div class="col-md-2 mb-2">
                                                 <label for="location_name">Location Name</label>
                                                 <input type="text" class="form-control filter-input" placeholder="Location Name"
                                                     name="location_name" id="location_name" value="{{ request('location_name') }}">
                                             </div>
-
+                                    
                                             <div class="col-md-2 mb-2">
                                                 <label for="form_date">From Date</label>
                                                 <input type="date" class="form-control filter-input" name="form_date" id="form_date"
                                                     value="{{ request('form_date') }}">
                                             </div>
-
+                                    
                                             <div class="col-md-2 mb-2">
                                                 <label for="to_date">To Date</label>
                                                 <input type="date" class="form-control filter-input" name="to_date" id="to_date"
                                                     value="{{ request('to_date') }}">
                                             </div>
-
+                                    
                                             <div class="col-md-4 mb-2 d-flex align-items-end">
                                                 <button type="button" id="filterButton" class="btn btn-primary mr-2">Search</button>
                                                 <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
                                             </div>
                                         </div>
-                                    </form>
+                                    </form>                                    
                                 </form>
                             </div>
                         </div>
@@ -78,8 +78,7 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
-                                    <th>Supplier Rig Name</th>
-                                    <th>EDP Code</th>
+                                    <th>Location Name</th>
                                     <th>Status</th>
                                     <th>Date</th>
                                     <th>Action</th>
@@ -90,8 +89,7 @@
                                     @if(!in_array($stockdata->user_id, $datarig))
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $stockdata->location_name }}</td>
-                                            <td>{{ $stockdata->edp_code }}</td>
+                                            <td>{{ $stockdata->location_name }} ({{ $stockdata->location_id }})</td>
                                             @php
                                                 $statusColors = [
                                                     'Pending' => 'badge-warning',
@@ -131,7 +129,7 @@
                                     @endif
                                 @endforeach
                             </tbody>
-
+                            
                         </table>
                     </div>
                 </div>
@@ -197,7 +195,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="category">Category</label>
-                                <input type="text" class="form-control" placeholder="Category" id="category_id" name="category" readonly>
+                                <input type="text" class="form-control" placeholder="Category" id="category" name="category" readonly>
                                 <div class="invalid-feedback">
                                     Enter Category Name
                                 </div>
@@ -227,7 +225,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Status </label>
-                                <input type="text" class="form-control" name="status" id="status" readonly>
+                                <input type="text" class="form-control" name="status" id="status">
                                 <div class="invalid-feedback">
                                     Enter Status
                                 </div>
@@ -288,17 +286,17 @@
 
                         </div>
                         <div class="d-flex justify-content-center mt-4">
-
+                            
                             <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
                                 Acknowledge stock receival
                             </button>
                             <button class="btn btn-primary mx-2" type="button" data-toggle="modal" data-target="#raiseQueryModal">
                                 Raise Query
                             </button>
-
+                           
                         </div>
 
-
+                        
                         <!-- Confirmation Modal -->
                         <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -393,12 +391,12 @@
             function fetchFilteredData() {
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('raised_requests.filter') }}",
-                    data: $("#filterForm").serialize(),
+                    url: "{{ route('raised_requests.filter') }}", 
+                    data: $("#filterForm").serialize(), 
                     success: function (response) {
                         let tableBody = $("#stockTable");
                         tableBody.empty();
-
+    
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
                                 let badgeClass = {
@@ -409,7 +407,7 @@
                                     'Received': 'badge-primary',
                                     'MIT': 'badge-purple'
                                 }[stockdata.status_name] || 'badge-secondary';
-
+    
                                 tableBody.append(`
                                     <tr>
                                         <td>${index + 1}</td>
@@ -440,18 +438,18 @@
                     }
                 });
             }
-
+    
             // Submit button triggers the AJAX call
             $("#filterButton").click(function (e) {
                 e.preventDefault(); // Prevent form submission
                 fetchFilteredData();
             });
-
+    
             // Reset button to clear filters and reload data
             $("#resetButton").click(function () {
                 window.location.href = "{{ route('raised_requests.index') }}";
             });
-
+    
             // Auto-hide success/error messages
             setTimeout(function () {
                 $(".alert").fadeOut("slow");
@@ -469,7 +467,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "{{ route('request_stock_view.get') }}",
+                url: "{{ route('request_stock_view.get') }}", 
                 data: { data: id },
                 success: function(response) {
                     if (!response || !response.data) {
@@ -478,7 +476,7 @@
                     }
 
                     var stockData = Array.isArray(response.data) ? response.data : [response.data];
-
+                
                     if (stockData.length > 0 && stockData[0] !== null) {
                         var stock = stockData[0];
 
@@ -489,7 +487,7 @@
                             $("#requester_Id").val(stock.requesters_rig ?? '');
                             $("#Supplier_Location_Name").val(stock.suppliers_rig ?? '');
                             $("#EDP_Code").val(stock.edp_code ?? '');
-                            $("#category_id").val(stock.category ?? '');
+                            $("#category").val(stock.category ?? '');
                             $("#section").val(stock.section ?? '');
                             $("#description").val(stock.description ?? '');
                             $("#total_qty").val(stock.available_qty ?? '');
@@ -502,14 +500,14 @@
                             $("#request_date").val(stock.formatted_created_at ?? '');
 
                             if (stock.status == 4) {
-                                $(".btn-success, .btn-primary").hide();
+                                $(".btn-success, .btn-primary").hide(); 
                             } else if (stock.status == 6) {
-                                $(".btn-primary").hide();
-                                $(".btn-success").show();
+                                $(".btn-primary").hide();  
+                                $(".btn-success").show();  
                             } else if(stock.status == 5 || stock.status == 1 || stock.status == 3) {
                                 $(".btn-primary, .btn-success").hide();
                             } else if(stock.status == 2) {
-                                $(".btn-primary").show();
+                                $(".btn-primary").show();  
                                 $(".btn-success").hide();
                             } else {
                                 $(".btn-primary, .btn-success").show();
@@ -685,7 +683,7 @@
 
 
     </script>
-
-
-
+    
+    
+    
 @endsection

@@ -124,8 +124,6 @@ Route::middleware(['auth'])->group(function () {
 
         //Request stock
         Route::prefix('request-stock')->group(function () {
-
-
             Route::get('/request_stockList', [RequestStockController::class, 'RequestStockList'])->name('stock_list.get');
             Route::get('/filter', [RequestStockController::class, 'RequestStockFilter'])->name('request_stock_filter.get');
             Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('stock_list.request');
@@ -148,7 +146,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/filtered-requests', [RequestStockController::class, 'filterRequestStock'])->name('raised_requests.filter');
             Route::post('/request-status/update-request-status-raised', [RequestStockController::class, 'updateStatusforRequest'])->name('request.updateStatusforRequest'); 
             Route::post('/request-status/update-is-read-status', [RequestStockController::class, 'updateIsReadStatus'])->name('update.is_read.status');
-            Route::post('/update-stock', [StockController::class, 'updateStock'])->name('update.stock');
+            Route::post('/update-stock', [RequestStockController::class, 'updateStock'])->name('update.stock');
         });
        
         //User mapping
