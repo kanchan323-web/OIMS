@@ -742,44 +742,56 @@ class RequestStockController extends Controller
     public function updateStock(Request $request)
     {
         DB::beginTransaction();
-
+    
         try {
             $requestStatus = RequestStatus::where('request_id', $request->request_id)
                 ->where('status_id', 6)
                 ->first();
-
+    
             if (!$requestStatus) {
-                return redirect()->route('raised_requests.index')->with('error', 'Request status not found or already processed.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Request status not found or already processed.'
+                ]);
             }
-
+    
             $requester = Requester::find($request->request_id);
             if (!$requester) {
-                return redirect()->route('raised_requests.index')->with('error', 'Requester not found.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Requester not found.'
+                ]);
             }
-
+    
             $stock = Stock::find($requester->stock_id);
             $requesterStock = Stock::find($requester->requester_stock_id);
-
+    
             if (!$stock) {
-                return redirect()->route('raised_requests.index')->with('error', 'Stock data not found for stock ID.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stock data not found for stock ID.'
+                ]);
             }
-
+    
             if (!$requesterStock) {
-                return redirect()->route('raised_requests.index')->with('error', 'Stock data not found for requester stock ID.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stock data not found for requester stock ID.'
+                ]);
             }
-
+    
             $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
             $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
-
+    
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
-
+    
             $stock->save();
             $requesterStock->save();
-
+    
             $requester->status = 3;
             $requester->save();
-
+    
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 3,
@@ -793,15 +805,21 @@ class RequestStockController extends Controller
                 'sent_to' => $requester->supplier_id,
                 'sent_from' => Auth::id()
             ]);
-
+    
             DB::commit();
-
-            session()->flash('success', 'Stock updated and requester status updated successfully.');
-            return response()->json(['success' => true]);
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Stock updated and requester status updated successfully.'
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'An error occurred: ' . $e->getMessage());
-            return response()->json(['success' => false]);
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred: ' . $e->getMessage()
+            ]);
         }
     }
+    
 }
