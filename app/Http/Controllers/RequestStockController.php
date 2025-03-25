@@ -217,7 +217,9 @@ class RequestStockController extends Controller
         ]);
 
         $user = Auth::user();
+      
         $rigUser = RigUser::find($user->rig_id);
+       
         //$where = array()
         $requester_edpID = Stock::where([
             ['edp_code',  $request->req_edp_id],
@@ -226,6 +228,10 @@ class RequestStockController extends Controller
         ])
             ->pluck('id')
             ->first();
+
+        
+
+
         if (!$requester_edpID) {
             session()->flash('error', 'EDP not existing in stock your stock list. First add stock in list then apply request.');
             return redirect()->back();
@@ -396,13 +402,7 @@ class RequestStockController extends Controller
     {
         $rig_id = Auth::user()->rig_id;
 
-
-
         if ($request->ajax()) {
-
-
-
-
             $data = Requester::select(
                 'rig_users.name',
                 'rig_users.location_id',
@@ -455,6 +455,10 @@ class RequestStockController extends Controller
             $requester->update(['status' => 6]);
 
             $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
+
+           if(Auth::user()->id == $requester->supplier_id ){
+                dd("check");
+           }
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -691,7 +695,6 @@ class RequestStockController extends Controller
     public function filterRequestStock(Request $request)
     {
         $userId = Auth::id();
-
         $query = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.supplier_id', $userId)

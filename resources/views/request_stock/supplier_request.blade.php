@@ -117,6 +117,8 @@
                                                                                 onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
                                                                                 data-placement="top" title="View Request Status" href="#">
                                                                                 <i class="ri-eye-line"></i>
+                                                                                <input type="hidden" id="StockdataID" value="{{ $stockdata->id }}">
+                                                                                <input type="hidden" id="StockdataStatusName" value="{{ $stockdata->status_name }}">
                                                                                 @if($hasUnread)
                                                                                     <span
                                                                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -677,8 +679,11 @@
 
 
         $(document).ready(function () {
-            let stockStatus = {{ $stockdata->status }};
-            let stockId = {{ json_encode($stockdata->id) }};
+
+            let  stockId = $('#StockdataID').val();
+            let  stockStatus= $('#StockdataStatusName').val();
+
+
             console.log(stockId);
             if (stockStatus === 2) {
                 $('#subModalQueryButton').removeClass('d-none');
