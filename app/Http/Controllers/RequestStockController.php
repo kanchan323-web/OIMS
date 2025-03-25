@@ -672,9 +672,6 @@ class RequestStockController extends Controller
         $userId = Auth::id();
         $rig_id = Auth::user()->rig_id;
 
-
-
-
         $data = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
@@ -684,9 +681,6 @@ class RequestStockController extends Controller
             ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name','edps.edp_code')
             ->orderBy('requesters.created_at', 'desc')
             ->get();
-
-
-
 
         $datarig = User::where('user_type', '!=', 'admin')
             ->where('rig_id', $rig_id)
