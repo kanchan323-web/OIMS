@@ -466,7 +466,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $request->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'	 => $requester->supplier_id,
+                'sent_to'     => $requester->supplier_id,
                 'sent_from'  => Auth::id()
             ]);
 
@@ -526,7 +526,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'	 => $requester->supplier_id,
+                'sent_to'     => $requester->supplier_id,
                 'sent_from'  => Auth::id(),
             ]);
 
@@ -584,7 +584,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'	 => $requester->supplier_id,
+                'sent_to'     => $requester->supplier_id,
                 'sent_from'  => Auth::id(),
             ]);
 
@@ -736,48 +736,67 @@ class RequestStockController extends Controller
 
     public function updateStock(Request $request)
     {
+        DB::beginTransaction();
+
         try {
-            // Fetch the request status using the provided request ID
-            $requestStatus = RequestStatus::find($request->request_id);
+            $requestStatus = RequestStatus::where('request_id', $request->request_id)
+                ->where('status_id', 6)
+                ->first();
 
             if (!$requestStatus) {
-                return response()->json(['success' => false, 'message' => 'Request status not found'], 404);
+                return redirect()->route('raised_requests.index')->with('error', 'Request status not found or already processed.');
             }
 
-            // Fetch requester details using requester_id
-            $requester = Requester::find($requestStatus->requester_id);
-
+            $requester = Requester::find($request->request_id);
             if (!$requester) {
-                return response()->json(['success' => false, 'message' => 'Requester not found'], 404);
+                return redirect()->route('raised_requests.index')->with('error', 'Requester not found.');
             }
 
-            // Get stock details
             $stock = Stock::find($requester->stock_id);
             $requesterStock = Stock::find($requester->requester_stock_id);
 
-            if (!$stock || !$requesterStock) {
-                return response()->json(['success' => false, 'message' => 'Stock data not found'], 404);
+            if (!$stock) {
+                return redirect()->route('raised_requests.index')->with('error', 'Stock data not found for stock ID.');
             }
 
-            // Deduct from stock_id
-            $stock->new_spareable -= $requestStatus->supplier_new_spareable;
-            $stock->used_spareable -= $requestStatus->supplier_used_spareable;
+            if (!$requesterStock) {
+                return redirect()->route('raised_requests.index')->with('error', 'Stock data not found for requester stock ID.');
+            }
 
-            // Ensure values don't go negative
-            $stock->new_spareable = max(0, $stock->new_spareable);
-            $stock->used_spareable = max(0, $stock->used_spareable);
+            $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
+            $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
 
-            // Add to requester_stock_id
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
 
-            // Save the updated stock values
             $stock->save();
             $requesterStock->save();
 
-            return response()->json(['success' => true, 'message' => 'Stock updated successfully'], 200);
+            $requester->status = 3;
+            $requester->save();
+
+            RequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 3,
+                'decline_msg' => null,
+                'query_msg' => null,
+                'supplier_qty' => $requestStatus->supplier_qty,
+                'supplier_new_spareable' => $requestStatus->supplier_new_spareable,
+                'supplier_used_spareable' => $requestStatus->supplier_used_spareable,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to' => $requester->supplier_id,
+                'sent_from' => Auth::id()
+            ]);
+
+            DB::commit();
+
+            session()->flash('success', 'Stock updated and requester status updated successfully.');
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()], 500);
+            DB::rollBack();
+            session()->flash('error', 'An error occurred: ' . $e->getMessage());
+            return response()->json(['success' => false]);
         }
     }
 }
