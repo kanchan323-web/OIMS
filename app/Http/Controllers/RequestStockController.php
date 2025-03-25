@@ -454,9 +454,7 @@ class RequestStockController extends Controller
 
             $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
 
-           if(Auth::user()->id == $requester->supplier_id ){
-                dd("check");
-           }
+          
 
            if( Auth::id() == $requester->supplier_id ){    
             $sent_to = $requester->request_id;
