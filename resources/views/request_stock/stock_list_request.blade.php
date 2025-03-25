@@ -105,7 +105,7 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
-                                    <th>Location Name</th>
+                                    <th>Supplier Rig Name</th>
                                     <th>EDP</th>
                                     <th>Section</th>
                                     <th>Description</th>
