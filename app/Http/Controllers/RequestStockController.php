@@ -922,4 +922,67 @@ class RequestStockController extends Controller
             ], 500);
         }
     }
+
+    public function acceptPendingRequest(Request $request)
+    {
+
+        try {
+            $requester = Requester::find($request->request_id);
+            if (!$requester) {
+                return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+            }
+
+            $requester->update(['status' => 4]);
+            if( Auth::id() == $requester->supplier_id ){    
+                $sent_to = $requester->request_id;
+               }else{
+                $sent_to = $requester->supplier_id;
+               }
+               
+
+            RequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 4,
+                'query_msg' => null,
+                'supplier_qty' => null,     
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to'     =>$sent_to,
+                'sent_from'  => Auth::id()
+            ]);
+
+            $requester_user = User::find($requester->requester_id);
+            $supplier_user = User::find($requester->supplier_id);
+
+            if (!$requester_user || !$supplier_user) {
+                return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+            }
+
+            $receiverEmail = $requester_user->email;
+
+            $mailData = [
+                'title' => 'Stock Request Declined',
+                'request_id' => $request->request_id,
+                'stock_id' => $requester->RID,
+                'requester_name' => $requester_user->user_name,
+                'supplier_name' => $supplier_user->user_name,
+                'requested_qty' => $requester->requested_qty,
+                'requester_rig_id' => $requester->rig_id,
+                'supplier_rig_id' => Auth::user()->rig_id,
+                'created_at' => $requester->created_at->format('d-m-Y'),
+            ];
+
+            Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
+
+            session()->flash('success', 'Request Accept successfully.');
+
+            return response()->json(['success' => true, 'message' => 'Request Accept successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
+        }
+       
+    }
+    
 }
