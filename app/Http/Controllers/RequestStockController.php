@@ -357,7 +357,7 @@ class RequestStockController extends Controller
         }
 
         $request_status = RequestStatus::where('request_status.request_id', $request->data)
-        ->orderBy('request_status.updated_at', 'desc')
+        ->orderBy('request_status.created_at', 'desc')
         ->select(['request_status.*'])
         ->first();
 
@@ -877,7 +877,7 @@ class RequestStockController extends Controller
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
-                'status_id' => 2, 
+                'status_id' => 2,
                 'decline_msg' => null,
                 'query_msg' => $request->query_msg,
                 'supplier_qty' => null,
