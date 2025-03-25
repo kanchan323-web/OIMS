@@ -217,9 +217,11 @@ class RequestStockController extends Controller
         ]);
 
         $user = Auth::user();
-      
+
+
         $rigUser = RigUser::find($user->rig_id);
-       
+
+
         //$where = array()
         $requester_edpID = Stock::where([
             ['edp_code',  $request->req_edp_id],
@@ -229,7 +231,8 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->first();
 
-        
+
+
 
 
         if (!$requester_edpID) {
@@ -353,7 +356,12 @@ class RequestStockController extends Controller
             return response()->json(['success' => false, 'message' => 'Request not found']);
         }
 
-        return response()->json(['success' => true, 'data' => $requestStock]);
+        $request_status = RequestStatus::where('request_status.request_id', $request->data)
+        ->orderBy('request_status.created_at', 'desc')
+        ->select(['request_status.*'])
+        ->first();
+
+        return response()->json(['success' => true, 'data' => $requestStock,'request_status' => $request_status]);
     }
 
 
@@ -454,13 +462,14 @@ class RequestStockController extends Controller
 
             $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
 
-          
 
-           if( Auth::id() == $requester->supplier_id ){    
-            $sent_to = $requester->request_id;
-           }else{
-            $sent_to = $requester->supplier_id;
-           }
+
+
+            if (Auth::id() == $requester->supplier_id) {
+                $sent_to = $requester->request_id;
+            } else {
+                $sent_to = $requester->supplier_id;
+            }
 
 
             RequestStatus::create([
@@ -473,7 +482,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $request->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     =>$sent_to,
+                'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
 
@@ -522,11 +531,11 @@ class RequestStockController extends Controller
             }
 
             $requester->update(['status' => 5]);
-            if( Auth::id() == $requester->supplier_id ){    
+            if (Auth::id() == $requester->supplier_id) {
                 $sent_to = $requester->request_id;
-               }else{
+            } else {
                 $sent_to = $requester->supplier_id;
-               }
+            }
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -538,7 +547,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     =>$sent_to,
+                'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
 
@@ -586,11 +595,11 @@ class RequestStockController extends Controller
 
             $requester->update(['status' => 2]);
 
-            if( Auth::id() == $requester->supplier_id ){    
+            if (Auth::id() == $requester->supplier_id) {
                 $sent_to = $requester->request_id;
-               }else{
+            } else {
                 $sent_to = $requester->supplier_id;
-               }
+            }
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -602,7 +611,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     =>$sent_to,
+                'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
 
@@ -696,7 +705,7 @@ class RequestStockController extends Controller
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             //->where('requesters.supplier_id', $userId)
             ->where('requesters.requester_rig_id', $rig_id)
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name','edps.edp_code')
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code')
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
@@ -707,7 +716,7 @@ class RequestStockController extends Controller
         $stocks = Stock::select('id')->where('rig_id', $rig_id)->distinct()->get();
         $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
 
-        return view('request_stock.supplier_request', compact('data','moduleName', 'datarig', 'edps'));
+        return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig', 'edps'));
     }
 
 
@@ -759,19 +768,22 @@ class RequestStockController extends Controller
     public function updateStock(Request $request)
     {
         DB::beginTransaction();
-    
+
+
         try {
             $requestStatus = RequestStatus::where('request_id', $request->request_id)
                 ->where('status_id', 6)
                 ->first();
-    
+
+
             if (!$requestStatus) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Request status not found or already processed.'
                 ]);
             }
-    
+
+
             $requester = Requester::find($request->request_id);
             if (!$requester) {
                 return response()->json([
@@ -779,36 +791,44 @@ class RequestStockController extends Controller
                     'message' => 'Requester not found.'
                 ]);
             }
-    
+
+
             $stock = Stock::find($requester->stock_id);
             $requesterStock = Stock::find($requester->requester_stock_id);
-    
+
+
             if (!$stock) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Stock data not found for stock ID.'
                 ]);
             }
-    
+
+
             if (!$requesterStock) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Stock data not found for requester stock ID.'
                 ]);
             }
-    
+
+
             $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
             $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
-    
+
+
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
-    
+
+
             $stock->save();
             $requesterStock->save();
-    
+
+
             $requester->status = 3;
             $requester->save();
-    
+
+
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 3,
@@ -822,20 +842,84 @@ class RequestStockController extends Controller
                 'sent_to' => $requester->supplier_id,
                 'sent_from' => Auth::id()
             ]);
-    
+
+
             DB::commit();
-    
+
+
             return response()->json([
                 'success' => true,
                 'message' => 'Stock updated and requester status updated successfully.'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-    
+
+
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred: ' . $e->getMessage()
             ]);
+        }
+    }
+
+
+    public function queryforRaisedRequest(Request $request)
+    {
+        try {
+            $requester = Requester::find($request->request_id);
+            if (!$requester) {
+                return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+            }
+
+            $requester->update(['status' => 2]);
+
+            $sent_to = (Auth::id() == $requester->supplier_id) ? $requester->requester_id : $requester->supplier_id;
+
+            RequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 2,
+                'decline_msg' => null,
+                'query_msg' => $request->query_msg,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id()
+            ]);
+
+            // Fetch requester and supplier details
+            $requester_user = User::find($requester->requester_id);
+            $supplier_user = User::find($requester->supplier_id);
+
+            if (!$requester_user || !$supplier_user) {
+                return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+            }
+
+            // Prepare email data
+            $mailData = [
+                'title' => 'Stock Request Query Raised',
+                'request_id' => $request->request_id,
+                'stock_id' => $requester->RID,
+                'requester_name' => $requester_user->user_name,
+                'supplier_name' => $supplier_user->user_name,
+                'requested_qty' => $requester->requested_qty,
+                'query_msg' => $request->query_msg,
+                'requester_rig_id' => $requester->rig_id,
+                'supplier_rig_id' => Auth::user()->rig_id,
+                'created_at' => $requester->created_at->format('d-m-Y'),
+            ];
+
+            // Mail::to($requester_user->email)->send(new RequestQueryMail($mailData));
+
+            return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error occurred while processing the query.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 

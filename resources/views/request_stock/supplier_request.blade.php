@@ -233,26 +233,6 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="">Status </label>
-                                    <input type="text" class="form-control" name="status" id="status" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Status
-                                    </div>
-                                    <!--       <select class="form-control" name="status">
-                                                    <option disabled {{ request('status') ? '' : 'selected' }}>Select
-                                                        Status...</option>
-                                                    <option value="Pendding"
-                                                        {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                                    </option>
-                                                    <option value="Pendding"
-                                                        {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                                    </option>
-                                                    <option value="Pendding"
-                                                        {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                                    </option>
-                                                </select> -->
-                                </div>
-                                <div class="col-md-6 mb-3">
                                     <label for="">Supplier Total Quantity</label>
                                     <input type="text" class="form-control" placeholder="Supplier Total Quantity"
                                         name="total_qty" id="total_qty" readonly>
@@ -285,6 +265,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <label for="">Status </label>
+                                    <input type="text" class="form-control" name="status" id="status" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Status
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label for="request_date">Request Date</label>
                                     <input type="text" class="form-control" placeholder="Request Date" name="request_date"
                                         id="request_date" readonly>
@@ -306,11 +293,23 @@
                                     Accept
                                 </button>
                             </div>
+                            
+
+
+
+                            <div class="d-flex justify-content-center mt-4">
+                                <button class="acceptanc_button btn btn-info mx-2" type="button" data-toggle="modal"
+                                    data-target="#acba" style="display: none;">
+                                    Accept
+                                </button>
+                            </div>
                             {{-- 711 work here --}}
 
                             <div class="d-flex justify-content-center mt-4">
-
-                                <button class="btn btn-success mx-2" type="button">
+                                <button class="btn btn-danger mx-2 decline_btn" type="button">
+                                    Decline
+                                </button>
+                                <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
                                     Acknowledge stock receival
                                 </button>
                                 <button class="btn btn-primary mx-2" type="button" data-toggle="modal"
@@ -320,8 +319,36 @@
 
                             </div>
 
-
-
+                            <!-- Raise Query Modal -->
+                            <div class="modal fade" id="raiseQueryModal" tabindex="-1" role="dialog"
+                                aria-labelledby="raiseQueryLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="raiseQueryLabel">Enter Query</h5>
+                                            <button type="button" class="close sub-modal-close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="raiseQueryForm" method="post">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="query">Query</label>
+                                                    <textarea class="form-control" id="query" name="query" rows="3"
+                                                        required></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                                    <button type="button" class="btn btn-primary mx-2"
+                                                        onclick="submitQuery()">Submit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Confirmation Modal -->
                             <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
@@ -523,6 +550,9 @@
 
 
         function RequestStockData(id) {
+            $(".decline_btn").hide();
+            $('#status_msg').text('').removeClass();
+            $("#status_label").css('display','none');
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -540,10 +570,8 @@
                     }
 
                     var stockData = Array.isArray(response.data) ? response.data : [response.data];
-
                     if (stockData.length > 0 && stockData[0] !== null) {
                         var stock = stockData[0];
-
                         if (typeof stock === "object") {
 
                             //  711 working here
@@ -569,19 +597,37 @@
                             $("#used_spareable").val(stock.used_spareable ?? '');
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
+                            if (response.request_status !== null) {
+                                if (stock.status == 5){
+                                    $("#status_label").css('display','block');
+                                    $("#status_msg").text(response.request_status['decline_msg']).addClass('text-danger');
+                                }
+                                if (stock.status == 2){
+                                    $("#status_label").css('display','block');
+                                    $('#status_msg').text(response.request_status['query_msg']).addClass('text-primary');
+                                }
+                            }
+                            console.log(stock.status);
                             $("#request_date").val(stock.formatted_created_at ?? '');
-
+                            //debugger;
                             if (stock.status == 4) {
                                 $(".btn-success, .btn-primary").hide();
+                                $(".decline_btn").hide();
                             } else if (stock.status == 6) {
                                 $(".btn-primary").hide();
                                 $(".btn-success").show();
-                            } else if (stock.status == 5 || stock.status == 1 || stock.status == 3) {
+                                $(".decline_btn").hide();
+                            } else if (stock.status == 5 || stock.status == 3) {
                                 $(".btn-primary, .btn-success").hide();
                             } else if (stock.status == 2) {
                                 $(".btn-primary").show();
                                 $(".btn-success").hide();
-                            } else {
+                                $(".decline_btn").show();
+                            } else if (stock.status == 1) {
+                                $(".btn-primary, .btn-success").hide();
+                                $(".decline_btn, .btn-primary").show();
+                            }
+                            else {
                                 $(".btn-primary, .btn-success").show();
                             }
 
@@ -776,11 +822,100 @@
             @else
                 console.error("Stock data is not available.");
             @endif
+                                                            });
+
+        //For multiple modal seamless transitions
+        $(document).ready(function () {
+            // Open Decline Modal without closing Main Modal
+            $('[data-target="#declineReasonModal"]').on("click", function () {
+                $("#declineReasonModal").modal("show");
+            });
+
+            // Open Raise Query Modal without closing Main Modal
+            $('[data-target="#raiseQueryModal"]').on("click", function () {
+                $("#raiseQueryModal").modal("show");
+            });
+
+
+            // Close only the sub-modal (Decline or Raise Query), keep Main Modal open
+            $(".sub-modal-close").on("click", function () {
+                $(this).closest(".modal").modal("hide");
+            });
+
+
+            // Prevent clicking outside sub-modal from closing the main modal
+            $(".modal").on("hidden.bs.modal", function (e) {
+                if ($(".modal:visible").length) {
+                    $("body").addClass("modal-open");
+                }
+            });
+        });
+
+
+        // JavaScript function (can be in a script tag or external JS file)
+        function submitQuery() {
+            // Get the request_id and query message
+            var requestId = document.getElementById('request_id').value;
+            var queryMessage = document.getElementById('query').value;
+
+            // Validate the query
+            if (!queryMessage.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Please enter a query message.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Send AJAX request
+            $.ajax({
+                url: "{{ route('request.raisedrequestquery') }}",
+                type: 'POST',
+                data: {
+                    _token: document.querySelector('input[name="_token"]').value,
+                    request_id: requestId,
+                    query_msg: queryMessage
+                },
+                success: function (response) {
+                    // Close all open modals
+                    $('.modal').modal('hide');
+
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your query has been submitted successfully.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
                     });
 
+                    // Reset the form
+                    document.getElementById('raiseQueryForm').reset();
+                },
+                error: function (xhr) {
+                    // Close all open modals
+                    $('.modal').modal('hide');
 
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An error occurred: ' +
+                            (xhr.responseJSON?.message || 'Unknown error'),
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
 
-
+        // Close modal function (for the close buttons)
+        function closeModal() {
+            $('#raiseQueryModal').modal('hide');
+        }
 
 
     </script>
