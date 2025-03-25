@@ -218,7 +218,9 @@ class RequestStockController extends Controller
 
         $user = Auth::user();
 
+
         $rigUser = RigUser::find($user->rig_id);
+
 
         //$where = array()
         $requester_edpID = Stock::where([
@@ -228,6 +230,7 @@ class RequestStockController extends Controller
         ])
             ->pluck('id')
             ->first();
+
 
 
 
@@ -353,7 +356,12 @@ class RequestStockController extends Controller
             return response()->json(['success' => false, 'message' => 'Request not found']);
         }
 
-        return response()->json(['success' => true, 'data' => $requestStock]);
+        $request_status = RequestStatus::where('request_status.request_id', $request->data)
+        ->orderBy('request_status.updated_at', 'desc')
+        ->select(['request_status.*'])
+        ->first();
+
+        return response()->json(['success' => true, 'data' => $requestStock,'request_status' => $request_status]);
     }
 
 
@@ -453,6 +461,7 @@ class RequestStockController extends Controller
             $requester->update(['status' => 6]);
 
             $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
+
 
 
 
@@ -760,10 +769,12 @@ class RequestStockController extends Controller
     {
         DB::beginTransaction();
 
+
         try {
             $requestStatus = RequestStatus::where('request_id', $request->request_id)
                 ->where('status_id', 6)
                 ->first();
+
 
             if (!$requestStatus) {
                 return response()->json([
@@ -771,6 +782,7 @@ class RequestStockController extends Controller
                     'message' => 'Request status not found or already processed.'
                 ]);
             }
+
 
             $requester = Requester::find($request->request_id);
             if (!$requester) {
@@ -780,8 +792,10 @@ class RequestStockController extends Controller
                 ]);
             }
 
+
             $stock = Stock::find($requester->stock_id);
             $requesterStock = Stock::find($requester->requester_stock_id);
+
 
             if (!$stock) {
                 return response()->json([
@@ -790,6 +804,7 @@ class RequestStockController extends Controller
                 ]);
             }
 
+
             if (!$requesterStock) {
                 return response()->json([
                     'success' => false,
@@ -797,17 +812,22 @@ class RequestStockController extends Controller
                 ]);
             }
 
+
             $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
             $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
+
 
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
 
+
             $stock->save();
             $requesterStock->save();
 
+
             $requester->status = 3;
             $requester->save();
+
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -823,7 +843,9 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
+
             DB::commit();
+
 
             return response()->json([
                 'success' => true,
@@ -831,6 +853,7 @@ class RequestStockController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
 
             return response()->json([
                 'success' => false,
