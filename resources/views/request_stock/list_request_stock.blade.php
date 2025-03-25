@@ -126,9 +126,6 @@
                                                                         <td>
                                                                             <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
                                                                         </td>
-
-
-
                                                                         <td>
                                                                             <a class="badge badge-success mr-2" data-toggle="modal"
                                                                                 onclick="RequestStockData({{ json_encode($stockdata->id) }})"
@@ -136,6 +133,9 @@
                                                                                 href="#">
                                                                                 <i class="ri-arrow-right-circle-line"></i>
                                                                             </a>
+                                                                             <input type="hidden" id="StockdataID" value="{{ $stockdata->id }}">
+                                                                             <input type="hidden" id="StockdataStatusName" value="{{ $stockdata->status_name }}">
+                                                                       
                                                                             @php
                                                                                 $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
                                                                             @endphp
@@ -1041,9 +1041,11 @@
 
 
         $(document).ready(function () {
-            let stockStatus = {{ $stockdata->status }};
-            let stockId = {{ json_encode($stockdata->id) }};
-            console.log(stockId);
+
+            let  stockId = $('#StockdataID').val();
+            let  stockStatus= $('#StockdataStatusName').val();
+        
+            // console.log(stockId);
             if (stockStatus === 2) {
                 $('#subModalQueryButton').removeClass('d-none');
             } else {

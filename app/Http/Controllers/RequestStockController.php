@@ -217,7 +217,9 @@ class RequestStockController extends Controller
         ]);
 
         $user = Auth::user();
+      
         $rigUser = RigUser::find($user->rig_id);
+       
         //$where = array()
         $requester_edpID = Stock::where([
             ['edp_code',  $request->req_edp_id],
@@ -226,6 +228,10 @@ class RequestStockController extends Controller
         ])
             ->pluck('id')
             ->first();
+
+        
+
+
         if (!$requester_edpID) {
             session()->flash('error', 'EDP not existing in stock your stock list. First add stock in list then apply request.');
             return redirect()->back();
@@ -298,8 +304,6 @@ class RequestStockController extends Controller
                 return redirect()->route('stock_list.get')
                     ->with(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
             }
-
-
 
             if ($SendRequest) {
                 Session::flash('success', 'Request of Stock Sent successfully!');
@@ -396,13 +400,7 @@ class RequestStockController extends Controller
     {
         $rig_id = Auth::user()->rig_id;
 
-
-
         if ($request->ajax()) {
-
-
-
-
             $data = Requester::select(
                 'rig_users.name',
                 'rig_users.location_id',
@@ -456,6 +454,15 @@ class RequestStockController extends Controller
 
             $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
 
+          
+
+           if( Auth::id() == $requester->supplier_id ){    
+            $sent_to = $requester->request_id;
+           }else{
+            $sent_to = $requester->supplier_id;
+           }
+
+
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 6,
@@ -466,7 +473,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $request->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $requester->supplier_id,
+                'sent_to'     =>$sent_to,
                 'sent_from'  => Auth::id()
             ]);
 
@@ -515,6 +522,11 @@ class RequestStockController extends Controller
             }
 
             $requester->update(['status' => 5]);
+            if( Auth::id() == $requester->supplier_id ){    
+                $sent_to = $requester->request_id;
+               }else{
+                $sent_to = $requester->supplier_id;
+               }
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -526,8 +538,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $requester->supplier_id,
-                'sent_from'  => Auth::id(),
+                'sent_to'     =>$sent_to,
+                'sent_from'  => Auth::id()
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -574,6 +586,12 @@ class RequestStockController extends Controller
 
             $requester->update(['status' => 2]);
 
+            if( Auth::id() == $requester->supplier_id ){    
+                $sent_to = $requester->request_id;
+               }else{
+                $sent_to = $requester->supplier_id;
+               }
+
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 2,
@@ -584,8 +602,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $requester->supplier_id,
-                'sent_from'  => Auth::id(),
+                'sent_to'     =>$sent_to,
+                'sent_from'  => Auth::id()
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -696,7 +714,6 @@ class RequestStockController extends Controller
     public function filterRequestStock(Request $request)
     {
         $userId = Auth::id();
-
         $query = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.supplier_id', $userId)
