@@ -305,8 +305,6 @@ class RequestStockController extends Controller
                     ->with(['email_error' => 'Stock request sent, but email failed: ' . $e->getMessage()]);
             }
 
-
-
             if ($SendRequest) {
                 Session::flash('success', 'Request of Stock Sent successfully!');
                 return redirect()->route('stock_list.get');
@@ -460,6 +458,13 @@ class RequestStockController extends Controller
                 dd("check");
            }
 
+           if( Auth::id() == $requester->supplier_id ){    
+            $sent_to = $requester->request_id;
+           }else{
+            $sent_to = $requester->supplier_id;
+           }
+
+
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 6,
@@ -470,7 +475,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $request->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $requester->supplier_id,
+                'sent_to'     =>$sent_to,
                 'sent_from'  => Auth::id()
             ]);
 
@@ -519,6 +524,11 @@ class RequestStockController extends Controller
             }
 
             $requester->update(['status' => 5]);
+            if( Auth::id() == $requester->supplier_id ){    
+                $sent_to = $requester->request_id;
+               }else{
+                $sent_to = $requester->supplier_id;
+               }
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -530,8 +540,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $requester->supplier_id,
-                'sent_from'  => Auth::id(),
+                'sent_to'     =>$sent_to,
+                'sent_from'  => Auth::id()
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -578,6 +588,12 @@ class RequestStockController extends Controller
 
             $requester->update(['status' => 2]);
 
+            if( Auth::id() == $requester->supplier_id ){    
+                $sent_to = $requester->request_id;
+               }else{
+                $sent_to = $requester->supplier_id;
+               }
+
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 2,
@@ -588,8 +604,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $requester->supplier_id,
-                'sent_from'  => Auth::id(),
+                'sent_to'     =>$sent_to,
+                'sent_from'  => Auth::id()
             ]);
 
             $requester_user = User::find($requester->requester_id);
