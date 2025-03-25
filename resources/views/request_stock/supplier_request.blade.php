@@ -297,6 +297,36 @@
 
                             </div>
 
+                            <!-- Raise Query Modal -->
+                            <div class="modal fade" id="raiseQueryModal" tabindex="-1" role="dialog"
+                                aria-labelledby="raiseQueryLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="raiseQueryLabel">Enter Query</h5>
+                                            <button type="button" class="close sub-modal-close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="raiseQueryForm" method="post">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="query">Query</label>
+                                                    <textarea class="form-control" id="query" name="query" rows="3"
+                                                        required></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                                    <button type="button" class="btn btn-primary mx-2"
+                                                        onclick="submitQuery()">Submit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Confirmation Modal -->
                             <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
@@ -413,25 +443,25 @@
                                 }[stockdata.status_name] || 'badge-secondary';
 
                                 tableBody.append(`
-                                            <tr>
-                                                <td>${index + 1}</td>
-                                                <td>${stockdata.location_name} (${stockdata.location_id})</td>
-                                                <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
-                                                <td>
-                                                    <a class="badge badge-success mr-2" data-toggle="modal"
-                                                            onclick="RequestStockData(${stockdata.id})"
-                                                            data-target=".bd-example-modal-xl" data-placement="top"
-                                                            title="Supplier Request" href="#">
-                                                            <i class="ri-arrow-right-circle-line"></i>
-                                                        </a>
-                                                    <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                            data-toggle="modal" data-placement="top" title="View Request Status" href="#">
-                                                            <i class="ri-eye-line"></i>
-                                                        </a>
-                                                </td>
-                                            </tr>
-                                        `);
+                                                                                            <tr>
+                                                                                                <td>${index + 1}</td>
+                                                                                                <td>${stockdata.location_name} (${stockdata.location_id})</td>
+                                                                                                <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                                                                <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
+                                                                                                <td>
+                                                                                                    <a class="badge badge-success mr-2" data-toggle="modal"
+                                                                                                            onclick="RequestStockData(${stockdata.id})"
+                                                                                                            data-target=".bd-example-modal-xl" data-placement="top"
+                                                                                                            title="Supplier Request" href="#">
+                                                                                                            <i class="ri-arrow-right-circle-line"></i>
+                                                                                                        </a>
+                                                                                                    <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                                                            data-toggle="modal" data-placement="top" title="View Request Status" href="#">
+                                                                                                            <i class="ri-eye-line"></i>
+                                                                                                        </a>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        `);
                             });
                         } else {
                             tableBody.append(`<tr><td colspan="5" class="text-center">No records found</td></tr>`);
@@ -635,22 +665,22 @@
                             let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                                <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                                                                                <td><span class="badge badge-${status.status_id == 2 ? 'success' :
                                     (status.status_id == 3 ? 'danger' :
                                         (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                                    ${status.status_name}
-                                                </span></td>
-                                                <td>
-                                                    <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                        ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                                    </button>
-                                                </td>
-                                                <td>${status.supplier_qty || 'N/A'}</td>
-                                                <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                                <td>${status.supplier_used_spareable || 'N/A'}</td>
-                                                <td>${status.requestor_name}</td>
-                                                <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                            </tr>`;
+                                                                                                    ${status.status_name}
+                                                                                                </span></td>
+                                                                                                <td>
+                                                                                                    <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                                                                                        ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                                                                                    </button>
+                                                                                                </td>
+                                                                                                <td>${status.supplier_qty || 'N/A'}</td>
+                                                                                                <td>${status.supplier_new_spareable || 'N/A'}</td>
+                                                                                                <td>${status.supplier_used_spareable || 'N/A'}</td>
+                                                                                                <td>${status.requestor_name}</td>
+                                                                                                <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                                                                            </tr>`;
                         });
                     } else {
                         html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
@@ -721,9 +751,100 @@
             @else
                 console.error("Stock data is not available.");
             @endif
+                                                            });
+
+        //For multiple modal seamless transitions
+        $(document).ready(function () {
+            // Open Decline Modal without closing Main Modal
+            $('[data-target="#declineReasonModal"]').on("click", function () {
+                $("#declineReasonModal").modal("show");
+            });
+
+            // Open Raise Query Modal without closing Main Modal
+            $('[data-target="#raiseQueryModal"]').on("click", function () {
+                $("#raiseQueryModal").modal("show");
             });
 
 
+            // Close only the sub-modal (Decline or Raise Query), keep Main Modal open
+            $(".sub-modal-close").on("click", function () {
+                $(this).closest(".modal").modal("hide");
+            });
+
+
+            // Prevent clicking outside sub-modal from closing the main modal
+            $(".modal").on("hidden.bs.modal", function (e) {
+                if ($(".modal:visible").length) {
+                    $("body").addClass("modal-open");
+                }
+            });
+        });
+
+
+        // JavaScript function (can be in a script tag or external JS file)
+        function submitQuery() {
+            // Get the request_id and query message
+            var requestId = document.getElementById('request_id').value;
+            var queryMessage = document.getElementById('query').value;
+
+            // Validate the query
+            if (!queryMessage.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Please enter a query message.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // Send AJAX request
+            $.ajax({
+                url: "{{ route('request.raisedrequestquery') }}",
+                type: 'POST',
+                data: {
+                    _token: document.querySelector('input[name="_token"]').value,
+                    request_id: requestId,
+                    query: queryMessage
+                },
+                success: function (response) {
+                    // Close all open modals
+                    $('.modal').modal('hide');
+
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your query has been submitted successfully.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+
+                    // Reset the form
+                    document.getElementById('raiseQueryForm').reset();
+                },
+                error: function (xhr) {
+                    // Close all open modals
+                    $('.modal').modal('hide');
+
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An error occurred: ' +
+                            (xhr.responseJSON?.message || 'Unknown error'),
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+
+        // Close modal function (for the close buttons)
+        function closeModal() {
+            $('#raiseQueryModal').modal('hide');
+        }
 
 
     </script>
