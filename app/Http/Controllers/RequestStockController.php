@@ -357,12 +357,12 @@ class RequestStockController extends Controller
         }
         $user = Auth::user();
         $request_status = RequestStatus::where('request_status.request_id', $request->data)
-        ->where('request_status.sent_to', $user->id)
-        ->orderBy('request_status.created_at', 'desc')
-        ->select(['request_status.*'])
-        ->first();
+            ->where('request_status.sent_to', $user->id)
+            ->orderBy('request_status.created_at', 'desc')
+            ->select(['request_status.*'])
+            ->first();
 
-        return response()->json(['success' => true, 'data' => $requestStock,'request_status' => $request_status]);
+        return response()->json(['success' => true, 'data' => $requestStock, 'request_status' => $request_status]);
     }
 
 
@@ -767,12 +767,10 @@ class RequestStockController extends Controller
     {
         DB::beginTransaction();
 
-
         try {
             $requestStatus = RequestStatus::where('request_id', $request->request_id)
                 ->where('status_id', 6)
                 ->first();
-
 
             if (!$requestStatus) {
                 return response()->json([
@@ -780,7 +778,6 @@ class RequestStockController extends Controller
                     'message' => 'Request status not found or already processed.'
                 ]);
             }
-
 
             $requester = Requester::find($request->request_id);
             if (!$requester) {
@@ -790,10 +787,8 @@ class RequestStockController extends Controller
                 ]);
             }
 
-
             $stock = Stock::find($requester->stock_id);
             $requesterStock = Stock::find($requester->requester_stock_id);
-
 
             if (!$stock) {
                 return response()->json([
@@ -802,7 +797,6 @@ class RequestStockController extends Controller
                 ]);
             }
 
-
             if (!$requesterStock) {
                 return response()->json([
                     'success' => false,
@@ -810,24 +804,25 @@ class RequestStockController extends Controller
                 ]);
             }
 
-
             $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
             $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
-
-
+            $stock->qty = max(0, $stock->new_spareable + $stock->used_spareable); 
+            
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
+            $requesterStock->qty = $requesterStock->new_spareable + $requesterStock->used_spareable; 
 
-
+            // Save changes
             $stock->save();
             $requesterStock->save();
 
-
+            // Update requester status
             $requester->status = 3;
             $requester->save();
 
             $sent_to = (Auth::id() == $requester->supplier_id) ? $requester->requester_id : $requester->supplier_id;
 
+            // Create new request status entry
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 3,
@@ -842,17 +837,14 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
-
             DB::commit();
-
 
             return response()->json([
                 'success' => true,
-                'message' => 'Stock updated and requester status updated successfully.'
+                'message' => 'Stock updated and requester stock updated successfully.'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
 
             return response()->json([
                 'success' => false,
@@ -860,6 +852,8 @@ class RequestStockController extends Controller
             ]);
         }
     }
+
+
 
 
     public function queryforRaisedRequest(Request $request)
@@ -932,11 +926,11 @@ class RequestStockController extends Controller
             }
 
             $requester->update(['status' => 4]);
-            if( Auth::id() == $requester->supplier_id ){
+            if (Auth::id() == $requester->supplier_id) {
                 $sent_to = $requester->requester_id;
-               }else{
+            } else {
                 $sent_to = $requester->supplier_id;
-               }
+            }
 
 
             RequestStatus::create([
@@ -948,7 +942,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     =>$sent_to,
+                'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
 
@@ -981,7 +975,6 @@ class RequestStockController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
         }
-
     }
 
     public function declineforRaisedRequest(Request $request)
@@ -1040,6 +1033,4 @@ class RequestStockController extends Controller
             return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
         }
     }
-
-
 }
