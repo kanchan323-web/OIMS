@@ -135,7 +135,7 @@
                                                                             </a>
                                                                              <input type="hidden" id="StockdataID" value="{{ $stockdata->id }}">
                                                                              <input type="hidden" id="StockdataStatusName" value="{{ $stockdata->status_name }}">
-                                                                       
+
                                                                             @php
                                                                                 $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
                                                                             @endphp
@@ -255,26 +255,6 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="">Status </label>
-                                    <input type="text" class="form-control" name="status" id="status" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Status
-                                    </div>
-                                    <!--       <select class="form-control" name="status">
-                                                        <option disabled {{ request('status') ? '' : 'selected' }}>Select
-                                                            Status...</option>
-                                                        <option value="Pendding"
-                                                            {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                                        </option>
-                                                        <option value="Pendding"
-                                                            {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                                        </option>
-                                                        <option value="Pendding"
-                                                            {{ request('status') == 'Pendding' ? 'selected' : '' }}>Pendding
-                                                        </option>
-                                                    </select> -->
-                                </div>
-                                <div class="col-md-6 mb-3">
                                     <label for="">Supplier Total Quantity</label>
                                     <input type="text" class="form-control" placeholder="Supplier Total Quantity"
                                         name="total_qty" id="total_qty" readonly>
@@ -307,6 +287,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <label for="">Status </label>
+                                    <input type="text" class="form-control" name="status" id="status" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Status
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label for="request_date">Request Date</label>
                                     <input type="text" class="form-control" placeholder="Request Date" name="request_date"
                                         id="request_date" readonly>
@@ -314,7 +301,10 @@
                                         Enter Request Date
                                     </div>
                                 </div>
-
+                                <div class="col-md-6 mb-3">
+                                    <label id="status_label" style="display:none">Request Status Message</label>
+                                    <span id="status_msg"></span>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-center mt-4">
                                 <button class="btn btn-danger mx-2" type="button" data-toggle="modal"
@@ -654,8 +644,6 @@
                         console.error("No valid data received.");
                         return;
                     }
-
-
                     var stockData = Array.isArray(response.data) ? response.data : [response.data];
 
                     if (stockData.length > 0 && stockData[0] !== null) {
@@ -678,6 +666,16 @@
                             $("#used_spareable").val(stock.used_spareable ?? '');
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
+                            if (response.request_status !== null) {
+                                if (stock.status == 5) {
+                                    $("#status_label").css('display', 'block');
+                                    $("#status_msg").text(response.request_status['decline_msg']).addClass('text-danger');
+                                }
+                                if (stock.status == 2) {
+                                    $("#status_label").css('display', 'block');
+                                    $('#status_msg').text(response.request_status['query_msg']).addClass('text-primary');
+                                }
+                            }
                             $("#request_date").val(stock.formatted_created_at ?? '');
 
                             if (stock.status == 4) {
@@ -1044,7 +1042,7 @@
 
             let  stockId = $('#StockdataID').val();
             let  stockStatus= $('#StockdataStatusName').val();
-        
+
             // console.log(stockId);
             if (stockStatus === 2) {
                 $('#subModalQueryButton').removeClass('d-none');
