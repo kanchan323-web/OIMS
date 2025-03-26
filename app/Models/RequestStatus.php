@@ -22,6 +22,8 @@ class RequestStatus extends Model
         'user_id',
         'rig_id',
         'is_read',
+        'sent_to',
+        'sent_from',    
     ];
 
     public function requestStatus()
