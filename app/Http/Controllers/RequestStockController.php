@@ -962,19 +962,19 @@ class RequestStockController extends Controller
 
             $receiverEmail = $requester_user->email;
 
-            $mailData = [
-                'title' => 'Stock Request Declined',
-                'request_id' => $request->request_id,
-                'stock_id' => $requester->RID,
-                'requester_name' => $requester_user->user_name,
-                'supplier_name' => $supplier_user->user_name,
-                'requested_qty' => $requester->requested_qty,
-                'requester_rig_id' => $requester->rig_id,
-                'supplier_rig_id' => Auth::user()->rig_id,
-                'created_at' => $requester->created_at->format('d-m-Y'),
-            ];
+            // $mailData = [
+            //     'title' => 'Stock Request Declined',
+            //     'request_id' => $request->request_id,
+            //     'stock_id' => $requester->RID,
+            //     'requester_name' => $requester_user->user_name,
+            //     'supplier_name' => $supplier_user->user_name,
+            //     'requested_qty' => $requester->requested_qty,
+            //     'requester_rig_id' => $requester->rig_id,
+            //     'supplier_rig_id' => Auth::user()->rig_id,
+            //     'created_at' => $requester->created_at->format('d-m-Y'),
+            // ];
 
-            Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
+            // Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
 
             session()->flash('success', 'Request Accept successfully.');
 
