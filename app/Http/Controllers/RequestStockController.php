@@ -825,6 +825,7 @@ class RequestStockController extends Controller
             $requester->status = 3;
             $requester->save();
 
+            $sent_to = (Auth::id() == $requester->supplier_id) ? $requester->requester_id : $requester->supplier_id;
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -836,7 +837,7 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $requestStatus->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to' => $requester->supplier_id,
+                'sent_to' => $sent_to,
                 'sent_from' => Auth::id()
             ]);
 
