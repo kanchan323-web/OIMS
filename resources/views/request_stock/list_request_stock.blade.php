@@ -680,6 +680,7 @@
 
                             if (stock.status == 4) {
                                 $(".btn-danger, .btn-primary").hide();
+                                $(".btn-success").show();
                             } else if (stock.status == 6) {
                                 $(".btn-danger, .btn-primary").hide();
                                 $(".btn-success, .btn-primary").hide();
