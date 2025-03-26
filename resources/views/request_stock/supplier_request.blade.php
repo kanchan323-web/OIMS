@@ -285,25 +285,16 @@
                             </div>
                             {{-- 711 work here --}}
 
-
-
-
-
-
-
-                            {{-- 711 work here --}}
-
                             <div class="d-flex justify-content-center mt-4">
-                                <button class="btn btn-danger mx-2 decline_btn" type="button">
+                                <button class="btn btn-danger mx-2 decline_btn" type="button"
+                                    data-target="#declineReasonModal">
                                     Decline
                                 </button>
 
-
-                                    <button class="acceptanc_button btn btn-info mx-2" type="button" data-toggle="modal"
-                                        data-target="#acba" style="display: none;">
-                                        Accept
-                                    </button>
-                          
+                                <button class="acceptanc_button btn btn-info mx-2" type="button" data-toggle="modal"
+                                    data-target="#acba" style="display: none;">
+                                    Accept
+                                </button>
 
                                 <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
                                     Acknowledge stock receival
@@ -313,6 +304,37 @@
                                     Raise Query
                                 </button>
 
+                            </div>
+
+                            <!-- Decline Request Modal -->
+                            <div class="modal fade" id="declineReasonModal" tabindex="-1" role="dialog"
+                                aria-labelledby="declineReasonLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="declineReasonLabel">Enter Decline Reason</h5>
+                                            <button type="button" class="close sub-modal-close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="declineForm">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="decline_reason">Reason for Declining</label>
+                                                    <textarea class="form-control" id="decline_reason" name="decline_reason"
+                                                        rows="3" required></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                                    <button type="button" class="btn btn-danger mx-2"
+                                                        onclick="declineRequest()">Submit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Raise Query Modal -->
@@ -400,9 +422,9 @@
                                 <tr class="ligth ligth-data">
                                     <th>Status</th>
                                     <th>Message</th>
-                                    <th>Supplier Qty</th>
-                                    <th>New Spareable</th>
-                                    <th>Used Spareable</th>
+                                    <th>Total Qty</th>
+                                    <th>New</th>
+                                    <th>Used</th>
                                     <th>Requestor</th>
                                     <th>Date</th>
                                 </tr>
@@ -497,25 +519,25 @@
                                 }[stockdata.status_name] || 'badge-secondary';
 
                                 tableBody.append(`
-                                                        <tr>
-                                                            <td>${index + 1}</td>
-                                                            <td>${stockdata.location_name} (${stockdata.location_id})</td>
-                                                            <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                            <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
-                                                            <td>
-                                                                <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                        onclick="RequestStockData(${stockdata.id})"
-                                                                        data-target=".bd-example-modal-xl" data-placement="top"
-                                                                        title="Supplier Request" href="#">
-                                                                        <i class="ri-arrow-right-circle-line"></i>
-                                                                    </a>
-                                                                <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                                        data-toggle="modal" data-placement="top" title="View Request Status" href="#">
-                                                                        <i class="ri-eye-line"></i>
-                                                                    </a>
-                                                            </td>
-                                                        </tr>
-                                                    `);
+                                                                                                        <tr>
+                                                                                                            <td>${index + 1}</td>
+                                                                                                            <td>${stockdata.location_name} (${stockdata.location_id})</td>
+                                                                                                            <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                                                                            <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
+                                                                                                            <td>
+                                                                                                                <a class="badge badge-success mr-2" data-toggle="modal"
+                                                                                                                        onclick="RequestStockData(${stockdata.id})"
+                                                                                                                        data-target=".bd-example-modal-xl" data-placement="top"
+                                                                                                                        title="Supplier Request" href="#">
+                                                                                                                        <i class="ri-arrow-right-circle-line"></i>
+                                                                                                                    </a>
+                                                                                                                <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                                                                        data-toggle="modal" data-placement="top" title="View Request Status" href="#">
+                                                                                                                        <i class="ri-eye-line"></i>
+                                                                                                                    </a>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    `);
                             });
                         } else {
                             tableBody.append(`<tr><td colspan="5" class="text-center">No records found</td></tr>`);
@@ -733,22 +755,22 @@
                             let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                                            <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                                                                                            <td><span class="badge badge-${status.status_id == 2 ? 'success' :
                                     (status.status_id == 3 ? 'danger' :
                                         (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                                                ${status.status_name}
-                                                            </span></td>
-                                                            <td>
-                                                                <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                                    ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                                                </button>
-                                                            </td>
-                                                            <td>${status.supplier_qty || 'N/A'}</td>
-                                                            <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                                            <td>${status.supplier_used_spareable || 'N/A'}</td>
-                                                            <td>${status.requestor_name}</td>
-                                                            <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                                        </tr>`;
+                                                                                                                ${status.status_name}
+                                                                                                            </span></td>
+                                                                                                            <td>
+                                                                                                                <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                                                                                                    ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                                                                                                </button>
+                                                                                                            </td>
+                                                                                                            <td>${status.supplier_qty || 'N/A'}</td>
+                                                                                                            <td>${status.supplier_new_spareable || 'N/A'}</td>
+                                                                                                            <td>${status.supplier_used_spareable || 'N/A'}</td>
+                                                                                                            <td>${status.requestor_name}</td>
+                                                                                                            <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                                                                                        </tr>`;
                         });
                     } else {
                         html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
@@ -819,7 +841,7 @@
             @else
                 console.error("Stock data is not available.");
             @endif
-                                                                });
+                                                                                                                });
 
         //For multiple modal seamless transitions
         $(document).ready(function () {
@@ -977,9 +999,66 @@
                 },
             });
         }
-    </script>
 
-    {{-- 711 work here --}}
+
+
+        function declineRequest() {
+            var requestId = document.getElementById('request_id').value;
+            var declineMsg = document.getElementById('decline_reason').value;
+
+            if (!declineMsg.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Please enter a reason for declining.',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('request.raisedrequestdecline') }}",
+                type: 'POST',
+                data: {
+                    _token: document.querySelector('input[name="_token"]').value,
+                    request_id: requestId,
+                    decline_msg: declineMsg
+                },
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Request has been declined successfully.',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Close all modals
+                        $('.modal').modal('hide');
+
+                        // Clear input field
+                        document.getElementById('decline_reason').value = '';
+
+                        // Redirect to raised_requests.index
+                        window.location.href = "{{ route('raised_requests.index') }}";
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An error occurred: ' + (xhr.responseJSON?.message || 'Unknown error'),
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Close all modals
+                        $('.modal').modal('hide');
+                    });
+                }
+            });
+        }
+
+    </script>
 
 
 @endsection

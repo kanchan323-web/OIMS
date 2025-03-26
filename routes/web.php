@@ -149,7 +149,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update-stock', [RequestStockController::class, 'updateStock'])->name('update.stock');
             Route::post('/request-status/query-for-raised-request', [RequestStockController::class, 'queryforRaisedRequest'])->name('request.raisedrequestquery');
             Route::post('/accept-pending-request', [RequestStockController::class, 'acceptPendingRequest'])->name('request.pending.accept');
-
+            Route::post('/decline-pending-request', [RequestStockController::class, 'declineforRaisedRequest'])->name('request.raisedrequestdecline');
         });
        
         //User mapping
