@@ -299,11 +299,11 @@
                                 </button>
 
 
-                                    <button class="acceptanc_button btn btn-info mx-2" type="button" data-toggle="modal"
-                                        data-target="#acba" style="display: none;">
-                                        Accept
-                                    </button>
-                          
+                                <button class="acceptanc_button btn btn-info mx-2" type="button" data-toggle="modal"
+                                    data-target="#acba" style="display: none;">
+                                    Accept
+                                </button>
+
 
                                 <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
                                     Acknowledge stock receival
@@ -451,7 +451,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="acceptPendingRequestForm">
-                        <input type="text" value="" name="" id="acceptPendingfield">
+                        <input type="hidden" value="" name="" id="acceptPendingfield">
                         @csrf
                         <strong>
                             <div class="modal-body">
@@ -497,25 +497,25 @@
                                 }[stockdata.status_name] || 'badge-secondary';
 
                                 tableBody.append(`
-                                                        <tr>
-                                                            <td>${index + 1}</td>
-                                                            <td>${stockdata.location_name} (${stockdata.location_id})</td>
-                                                            <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                            <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
-                                                            <td>
-                                                                <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                        onclick="RequestStockData(${stockdata.id})"
-                                                                        data-target=".bd-example-modal-xl" data-placement="top"
-                                                                        title="Supplier Request" href="#">
-                                                                        <i class="ri-arrow-right-circle-line"></i>
-                                                                    </a>
-                                                                <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                                        data-toggle="modal" data-placement="top" title="View Request Status" href="#">
-                                                                        <i class="ri-eye-line"></i>
-                                                                    </a>
-                                                            </td>
-                                                        </tr>
-                                                    `);
+                                                            <tr>
+                                                                <td>${index + 1}</td>
+                                                                <td>${stockdata.location_name} (${stockdata.location_id})</td>
+                                                                <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                                <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
+                                                                <td>
+                                                                    <a class="badge badge-success mr-2" data-toggle="modal"
+                                                                            onclick="RequestStockData(${stockdata.id})"
+                                                                            data-target=".bd-example-modal-xl" data-placement="top"
+                                                                            title="Supplier Request" href="#">
+                                                                            <i class="ri-arrow-right-circle-line"></i>
+                                                                        </a>
+                                                                    <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                            data-toggle="modal" data-placement="top" title="View Request Status" href="#">
+                                                                            <i class="ri-eye-line"></i>
+                                                                        </a>
+                                                                </td>
+                                                            </tr>
+                                                        `);
                             });
                         } else {
                             tableBody.append(`<tr><td colspan="5" class="text-center">No records found</td></tr>`);
@@ -572,7 +572,7 @@
                         if (typeof stock === "object") {
 
                             //  711 working here
-                            if (stock.status_name == 'Pending' || stock.status_name == 'Query') {
+                            if (stock.status_name == 'Query') {
                                 $(".acceptanc_button").show();
                                 $("#acceptPendingfield").val(stock.id ?? '');
                             }
@@ -733,22 +733,22 @@
                             let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                                            <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                                                <td><span class="badge badge-${status.status_id == 2 ? 'success' :
                                     (status.status_id == 3 ? 'danger' :
                                         (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                                                ${status.status_name}
-                                                            </span></td>
-                                                            <td>
-                                                                <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                                    ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                                                </button>
-                                                            </td>
-                                                            <td>${status.supplier_qty || 'N/A'}</td>
-                                                            <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                                            <td>${status.supplier_used_spareable || 'N/A'}</td>
-                                                            <td>${status.requestor_name}</td>
-                                                            <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                                        </tr>`;
+                                                                    ${status.status_name}
+                                                                </span></td>
+                                                                <td>
+                                                                    <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                                                        ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                                                    </button>
+                                                                </td>
+                                                                <td>${status.supplier_qty || 'N/A'}</td>
+                                                                <td>${status.supplier_new_spareable || 'N/A'}</td>
+                                                                <td>${status.supplier_used_spareable || 'N/A'}</td>
+                                                                <td>${status.requestor_name}</td>
+                                                                <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                                            </tr>`;
                         });
                     } else {
                         html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
@@ -819,7 +819,7 @@
             @else
                 console.error("Stock data is not available.");
             @endif
-                                                                });
+                                                                    });
 
         //For multiple modal seamless transitions
         $(document).ready(function () {
@@ -965,18 +965,36 @@
                     $(".accept_confirmation").prop("disabled", true); // Disable button during request
                 },
                 success: function (response) {
-                    console.log("Server Response:", response); // Debugging
-                    alert("Received Data: " + JSON.stringify(response.received_data));
+                    console.log("Server Response:", response.requeser_id); // Debugging
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your Request has Accept  successfully.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.reload(); // Reload the page after clicking OK
+                        }
+                    });
                 },
-                error: function (xhr) {
+            error: function (xhr) {
                     console.log("AJAX Error:", xhr.responseText); // Debugging
-                    alert("Error occurred while processing your request.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong! Please try again.',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    });
                 },
                 complete: function () {
                     $(".accept_confirmation").prop("disabled", false); // Re-enable button after request
                 },
             });
         }
+
     </script>
 
     {{-- 711 work here --}}
