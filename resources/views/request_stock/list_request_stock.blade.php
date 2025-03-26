@@ -629,6 +629,9 @@
 
         //to bring data into the main modal
         function RequestStockData(id) {
+            $(".btn-danger").hide();
+            $('#status_msg').text('').removeClass();
+            $("#status_label").css('display', 'none');
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
