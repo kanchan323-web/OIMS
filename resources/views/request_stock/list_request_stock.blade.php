@@ -311,7 +311,7 @@
                                     data-target="#declineReasonModal">
                                     Decline Request
                                 </button>
-                                <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
+                                <button class="btn btn-success mx-2 receivedRequestBTN" type="button" id="openReceivedRequestModal">
                                     Received Request
                                 </button>
                                 <button class="btn btn-primary mx-2" type="button" data-toggle="modal"
@@ -681,6 +681,7 @@
                             if (stock.status == 4) {
                                 $(".btn-danger, .btn-primary").hide();
                                 $(".btn-success").show();
+                                $(".receivedRequestBTN").text("Accept");
                             } else if (stock.status == 6) {
                                 $(".btn-danger, .btn-primary").hide();
                                 $(".btn-success, .btn-primary").hide();
@@ -693,6 +694,7 @@
                             } else {
                                 $(".btn-danger, .btn-primary").show();
                                 $(".btn-success, .btn-primary").show();
+                                $(".receivedRequestBTN").text("Received Request");
                             }
                         } else {
                             console.error("Stock data is not a valid object:", stock);
