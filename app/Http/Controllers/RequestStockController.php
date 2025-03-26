@@ -463,14 +463,11 @@ class RequestStockController extends Controller
             $supplier_total_qty = $request->supplier_new_spareable + $request->supplier_used_spareable;
 
 
-
-
             if (Auth::id() == $requester->supplier_id) {
-                $sent_to = $requester->request_id;
+                $sent_to = $requester->requester_id;
             } else {
                 $sent_to = $requester->supplier_id;
             }
-
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
@@ -510,7 +507,7 @@ class RequestStockController extends Controller
                 'created_at' => $requester->created_at->format('d-m-Y'),
             ];
 
-            Mail::to($receiverEmail)->send(new RequestAcceptedMail($mailData));
+            // Mail::to($receiverEmail)->send(new RequestAcceptedMail($mailData));
 
             session()->flash('success', 'Request accepted successfully.');
 
@@ -532,7 +529,7 @@ class RequestStockController extends Controller
 
             $requester->update(['status' => 5]);
             if (Auth::id() == $requester->supplier_id) {
-                $sent_to = $requester->request_id;
+                $sent_to = $requester->requester_id;
             } else {
                 $sent_to = $requester->supplier_id;
             }
@@ -573,7 +570,7 @@ class RequestStockController extends Controller
                 'created_at' => $requester->created_at->format('d-m-Y'),
             ];
 
-            Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
+            // Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
 
             session()->flash('success', 'Request declined successfully.');
 
@@ -596,7 +593,7 @@ class RequestStockController extends Controller
             $requester->update(['status' => 2]);
 
             if (Auth::id() == $requester->supplier_id) {
-                $sent_to = $requester->request_id;
+                $sent_to = $requester->requester_id;
             } else {
                 $sent_to = $requester->supplier_id;
             }
@@ -632,7 +629,7 @@ class RequestStockController extends Controller
                 'created_at' => $requester->created_at->format('d-m-Y'),
             ];
 
-            Mail::to($receiverEmail)->send(new RequestQueryMail($mailData));
+            // Mail::to($receiverEmail)->send(new RequestQueryMail($mailData));
 
             session()->flash('success', 'Query raised successfully.');
 
@@ -934,7 +931,7 @@ class RequestStockController extends Controller
 
             $requester->update(['status' => 4]);
             if( Auth::id() == $requester->supplier_id ){    
-                $sent_to = $requester->request_id;
+                $sent_to = $requester->requester_id;
                }else{
                 $sent_to = $requester->supplier_id;
                }
