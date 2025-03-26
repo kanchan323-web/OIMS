@@ -355,8 +355,9 @@ class RequestStockController extends Controller
         if (!$requestStock) {
             return response()->json(['success' => false, 'message' => 'Request not found']);
         }
-
+        $user = Auth::user();
         $request_status = RequestStatus::where('request_status.request_id', $request->data)
+        ->where('request_status.sent_to', $user->id)
         ->orderBy('request_status.created_at', 'desc')
         ->select(['request_status.*'])
         ->first();
@@ -931,18 +932,18 @@ class RequestStockController extends Controller
             }
 
             $requester->update(['status' => 4]);
-            if( Auth::id() == $requester->supplier_id ){    
+            if( Auth::id() == $requester->supplier_id ){
                 $sent_to = $requester->requester_id;
                }else{
                 $sent_to = $requester->supplier_id;
                }
-               
+
 
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 4,
                 'query_msg' => null,
-                'supplier_qty' => null,     
+                'supplier_qty' => null,
                 'supplier_new_spareable' => null,
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
@@ -980,7 +981,7 @@ class RequestStockController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
         }
-       
+
     }
 
     public function declineforRaisedRequest(Request $request)
@@ -990,13 +991,13 @@ class RequestStockController extends Controller
                 'request_id' => 'required|exists:requesters,id',
                 'decline_msg' => 'required|string'
             ]);
-    
+
             $requester = Requester::findOrFail($request->request_id);
-    
+
             $requester->update(['status' => 5]);
-    
+
             $sent_to = (Auth::id() == $requester->supplier_id) ? $requester->requester_id : $requester->supplier_id;
-    
+
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 5,
@@ -1010,14 +1011,14 @@ class RequestStockController extends Controller
                 'sent_to' => $sent_to,
                 'sent_from' => Auth::id()
             ]);
-    
+
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
-    
+
             if (!$requester_user || !$supplier_user) {
                 return response()->json(['success' => false, 'message' => 'User not found.'], 404);
             }
-    
+
             $mailData = [
                 'title' => 'Stock Request Declined',
                 'request_id' => $request->request_id,
@@ -1030,15 +1031,15 @@ class RequestStockController extends Controller
                 'supplier_rig_id' => Auth::user()->rig_id,
                 'created_at' => $requester->created_at->format('d-m-Y'),
             ];
-    
+
             // Send email
             // Mail::to($requester_user->email)->send(new RequestDeclinedMail($mailData));
-    
+
             return response()->json(['success' => true, 'message' => 'Request declined successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
         }
     }
-    
-    
+
+
 }
