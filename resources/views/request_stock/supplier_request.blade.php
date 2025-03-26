@@ -575,6 +575,9 @@
                             if (stock.status_name == 'Query') {
                                 $(".acceptanc_button").show();
                                 $("#acceptPendingfield").val(stock.id ?? '');
+                            
+                            }else{
+                                $(".acceptanc_button").hide();
                             }
                             //  711 working here
 
