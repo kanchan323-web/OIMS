@@ -279,6 +279,11 @@
                                         Enter Request Date
                                     </div>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <label id="status_label" style="display:none">Supplier Status Message</label>
+                                    <span id="status_msg"></span>
+                                </div>
+
                             </div>
 
                             <div class="d-flex justify-content-center mt-4">
