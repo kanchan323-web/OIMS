@@ -287,10 +287,10 @@
                             </div>
 
                             <div class="d-flex justify-content-center mt-4">
-                                <button class="btn btn-danger mx-2 decline_btn" type="button">
+                                <button class="btn btn-danger mx-2 decline_btn" type="button"
+                                    data-target="#declineReasonModal">
                                     Decline
                                 </button>
-
 
                                 <button class="acceptanc_button btn btn-info mx-2" type="button" data-toggle="modal"
                                     data-target="#acba" style="display: none;">
@@ -306,6 +306,37 @@
                                     Raise Query
                                 </button>
 
+                            </div>
+
+                            <!-- Decline Request Modal -->
+                            <div class="modal fade" id="declineReasonModal" tabindex="-1" role="dialog"
+                                aria-labelledby="declineReasonLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="declineReasonLabel">Enter Decline Reason</h5>
+                                            <button type="button" class="close sub-modal-close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="declineForm">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="decline_reason">Reason for Declining</label>
+                                                    <textarea class="form-control" id="decline_reason" name="decline_reason"
+                                                        rows="3" required></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                                    <button type="button" class="btn btn-danger mx-2"
+                                                        onclick="declineRequest()">Submit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Raise Query Modal -->
@@ -393,9 +424,9 @@
                                 <tr class="ligth ligth-data">
                                     <th>Status</th>
                                     <th>Message</th>
-                                    <th>Supplier Qty</th>
-                                    <th>New Spareable</th>
-                                    <th>Used Spareable</th>
+                                    <th>Total Qty</th>
+                                    <th>New</th>
+                                    <th>Used</th>
                                     <th>Requestor</th>
                                     <th>Date</th>
                                 </tr>
@@ -971,9 +1002,66 @@
                 },
             });
         }
-    </script>
 
-    {{-- 711 work here --}}
+
+
+        function declineRequest() {
+            var requestId = document.getElementById('request_id').value;
+            var declineMsg = document.getElementById('decline_reason').value;
+
+            if (!declineMsg.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Please enter a reason for declining.',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('request.raisedrequestdecline') }}",
+                type: 'POST',
+                data: {
+                    _token: document.querySelector('input[name="_token"]').value,
+                    request_id: requestId,
+                    decline_msg: declineMsg
+                },
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Request has been declined successfully.',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Close all modals
+                        $('.modal').modal('hide');
+
+                        // Clear input field
+                        document.getElementById('decline_reason').value = '';
+
+                        // Redirect to raised_requests.index
+                        window.location.href = "{{ route('raised_requests.index') }}";
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An error occurred: ' + (xhr.responseJSON?.message || 'Unknown error'),
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Close all modals
+                        $('.modal').modal('hide');
+                    });
+                }
+            });
+        }
+
+    </script>
 
 
 @endsection
