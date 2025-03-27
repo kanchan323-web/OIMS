@@ -55,13 +55,13 @@
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="category_id">Category</label>
                                         <input type="text" class="form-control" name="category" id="category_id" required
-                                        readonly>
-                                    <!--    <select class="form-control" name="category" id="category_id" required>
-                                            <option selected disabled value="">Select Category...</option>
-                                            <option value="Spares">Spares</option>
-                                            <option value="Stores">Stores</option>
-                                            <option value="Capital items">Capital items</option>
-                                        </select> -->
+                                            readonly>
+                                        <!--    <select class="form-control" name="category" id="category_id" required>
+                                                <option selected disabled value="">Select Category...</option>
+                                                <option value="Spares">Spares</option>
+                                                <option value="Stores">Stores</option>
+                                                <option value="Capital items">Capital items</option>
+                                            </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -80,12 +80,12 @@
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="section_id">Section</label>
                                         <input type="text" class="form-control" name="section" id="section_id" required
-                                        readonly>
-                                    <!--    <select class="form-control" name="section" id="section_id" required>
-                                            <option selected disabled value="">Select Section...</option>
-                                            <option value="ENGG">ENGG</option>
-                                            <option value="DRILL">DRILL</option>
-                                        </select> -->
+                                            readonly>
+                                        <!--    <select class="form-control" name="section" id="section_id" required>
+                                                <option selected disabled value="">Select Section...</option>
+                                                <option value="ENGG">ENGG</option>
+                                                <option value="DRILL">DRILL</option>
+                                            </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
@@ -172,7 +172,7 @@
                         url: "{{ route('get_edp_details') }}",
                         data: { edp_code: edpCode },
                         success: function (response) {
-                           // console.log("EDP & Stock Data:", response);
+                            // console.log("EDP & Stock Data:", response);
 
                             if (response.success) {
                                 $("#category_id").val(response.edp.category).prop('disabled', true);
@@ -216,35 +216,35 @@
         });
 
         $(document).ready(function () {
-    /*    function validateStock() {
-            let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
-            let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
-            let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
-            let totalSpareable = newSpareable + usedSpareable;
-            $("#new-error, #used-error").remove();
+            /*    function validateStock() {
+                    let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
+                    let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
+                    let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
+                    let totalSpareable = newSpareable + usedSpareable;
+                    $("#new-error, #used-error").remove();
 
-            if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
-                return true;
-            }
-            if (newSpareable > availableQty) {
-                $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
-                return false;
-            }
-            if (totalSpareable > availableQty) {
-                if (newSpareable > usedSpareable) {
-                    $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
-                } else {
-                    $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                    if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
+                        return true;
+                    }
+                    if (newSpareable > availableQty) {
+                        $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
+                        return false;
+                    }
+                    if (totalSpareable > availableQty) {
+                        if (newSpareable > usedSpareable) {
+                            $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                        } else {
+                            $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                        }
+                        return false;
+                    }
+                    return true;
                 }
-                return false;
-            }
-            return true;
-        }
-        $("#qty, #new_spareable, #used_spareable").on("input", function () {
-            validateStock();
-        });
-        */
-           function calculateSum() {
+                $("#qty, #new_spareable, #used_spareable").on("input", function () {
+                    validateStock();
+                });
+                */
+            function calculateSum() {
                 var value1 = parseFloat($('#new_spareable').val()) || 0; // Default to 0 if empty or invalid
                 var value2 = parseFloat($('#used_spareable').val()) || 0; // Default to 0 if empty or invalid
                 var sum = value1 + value2; // Calculate the sum
@@ -252,17 +252,62 @@
             }
 
             // Attach the keyup event to both input fields
-            $('#new_spareable, #used_spareable').on('keyup', function() {
+            $('#new_spareable, #used_spareable').on('keyup', function () {
                 calculateSum(); // Call the calculateSum function when either input changes
             });
 
-  /*      $("#addStockForm").on("submit", function (e) {
-            if (!calculateSum()) {
-                e.preventDefault();
-            }
+            /*      $("#addStockForm").on("submit", function (e) {
+                      if (!calculateSum()) {
+                          e.preventDefault();
+                      }
+                  });
+                  */
         });
-        */
-     });
+
+
+        $(document).ready(function () {
+            let unitTypes = {
+                'EA': 'integer', 'KIT': 'integer', 'PAA': 'integer', 'PAC': 'integer', 'ROL': 'integer', 'ST': 'integer',
+                'FT': 'decimal', 'GAL': 'decimal', 'KG': 'decimal', 'KL': 'decimal', 'L': 'decimal', 'LB': 'decimal',
+                'M': 'decimal', 'M3': 'decimal', 'MT': 'decimal', 'NO': 'integer'
+            };
+
+            function validateInput(field) {
+                let unit = $("#measurement").val()?.trim(); // Get UOM value
+                let value = $(field).val(); // Get field value
+                let isValid = true;
+
+                if (unit && unitTypes[unit]) {
+                    isValid = unitTypes[unit] === 'integer' ? /^\d+$/.test(value) : /^\d*\.?\d*$/.test(value);
+                }
+
+                toggleError(field, isValid, `Invalid input! Expected ${unitTypes[unit] || 'unknown'}.`);
+                toggleSubmit();
+            }
+
+            function toggleError(field, condition, msg) {
+                $(field).toggleClass("is-invalid", !condition).next(".invalid-feedback").remove();
+                if (!condition) $(field).after(`<div class="invalid-feedback">${msg}</div>`);
+            }
+
+            function toggleSubmit() {
+                $("button[type='submit']").prop("disabled", $(".is-invalid").length > 0);
+            }
+
+            // Validate on input change
+            $("#new_spareable, #used_spareable").on("input", function () {
+                validateInput(this);
+            });
+
+            // Trigger validation when UOM changes
+            $("#measurement").on("change", function () {
+                $("#new_spareable, #used_spareable").trigger("input");
+            });
+
+            // Trigger validation if there's pre-filled data
+            $("#new_spareable, #used_spareable").trigger("input");
+        });
+
     </script>
 
 
