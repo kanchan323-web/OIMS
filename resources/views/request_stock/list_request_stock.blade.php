@@ -56,10 +56,10 @@
                                                 id="filterButton">Search</button>
                                             <a href="{{ route('stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
                                             <!-- <a href="{{ route('stock_list_pdf') }}"
-                                                class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
-                                                id="downloadPdf" target="_blank">
-                                                <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                            </a> -->
+                                                                                    class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
+                                                                                    id="downloadPdf" target="_blank">
+                                                                                    <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                                                                </a> -->
 
 
                                         </div>
@@ -70,94 +70,106 @@
 
 
                         <!--         <div class="col-sm-6 col-md-3">
-                            <div class="user-list-files d-flex">
-                                <a href="{{ route('request_stock_add') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Add Stock</a>
-                                <a href="#" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks
-                                </a>
+                                                                <div class="user-list-files d-flex">
+                                                                    <a href="{{ route('request_stock_add') }}" class="btn btn-primary add-list"><i
+                                                                            class="las la-plus mr-3"></i>Add Stock</a>
+                                                                    <a href="#" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks
+                                                                    </a>
+                                                        </div>
+                                                            </div>  -->
                     </div>
-                        </div>  -->
                 </div>
-            </div>
 
-            <div class="col-lg-12">
-                <div class="table-responsive rounded mb-3">
-                    <table class="data-tables table mb-0 tbl-server-info">
-                        <thead class="bg-white text-uppercase">
-                            <tr class="ligth ligth-data">
+                <div class="col-lg-12">
+                    <div class="table-responsive rounded mb-3">
+                        <table class="data-tables table mb-0 tbl-server-info">
+                            <thead class="bg-white text-uppercase">
+                                <tr class="ligth ligth-data">
                                     <!-- <th>
-                                        <div class="checkbox d-inline-block">
-                                            <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                            <label for="checkbox1" class="mb-0"></label>
-                                        </div>
-                                    </th> -->
+                                                                            <div class="checkbox d-inline-block">
+                                                                                <input type="checkbox" class="checkbox-input" id="checkbox1">
+                                                                                <label for="checkbox1" class="mb-0"></label>
+                                                                            </div>
+                                                                        </th> -->
 
-                                <th>Sr.No</th>
-                                <th>Requester Rig Name</th>
-                                <th>EDP Code</th>
-                                <th>Request Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
+                                    <th>Sr.No</th>
+                                    <th>Requester Rig Name</th>
+                                    <th>EDP Code</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
                             <tbody class="ligth-body" id="stockTable">
-                            @foreach($data as $index => $stockdata)
-                                                @if(!in_array($stockdata->user_id, $datarig))
-                                                                    <tr>
-                                                                        <td>{{ $index + 1 }}</td>
-                                                                        <td>{{ $stockdata->Location_Name }}</td>
-                                                                        <td>{{ $stockdata->edp_code }}</td>
-                                                                        <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
+                                @foreach($data as $index => $stockdata)
+                                                        @if(!in_array($stockdata->user_id, $datarig))
+                                                                                <tr>
+                                                                                    <td>{{ $index + 1 }}</td>
+                                                                                    <td>{{ $stockdata->Location_Name }}</td>
+                                                                                    <td>{{ $stockdata->edp_code }}</td>
+                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
 
                                                                                     <!-- Status with Dynamic Color -->
-                                                                        @php
-                                                                            $statusColors = [
-                                                                                'Pending' => 'badge-warning',
-                                                                                'Approve' => 'badge-success',
-                                                                                'Decline' => 'badge-danger',
-                                                                                'Query' => 'badge-info',
-                                                                                'Received' => 'badge-primary',
-                                                                                'MIT' => 'badge-purple'
-                                                                            ];
+                                                                                    @php
+                                                                                        $statusColors = [
+                                                                                            'Pending' => 'badge-warning',
+                                                                                            'Approve' => 'badge-success',
+                                                                                            'Decline' => 'badge-danger',
+                                                                                            'Query' => 'badge-info',
+                                                                                            'Received' => 'badge-primary',
+                                                                                            'MIT' => 'badge-purple'
+                                                                                        ];
 
-                                                                            $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
-                                                                        @endphp
+                                                                                        $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
+                                                                                    @endphp
 
-                                                                        <td>
-                                                                            <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
-                                                                        </td>
-                                                                        <td>
-                                                                            <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                                onclick="RequestStockData({{ json_encode($stockdata->id) }})"
-                                                                                data-target=".bd-example-modal-xl" data-placement="top" title="Supplier Request"
-                                                                                href="#">
-                                                                                <i class="ri-arrow-right-circle-line"></i>
-                                                                            </a>
-                                                                             <input type="hidden" id="StockdataID" value="{{ $stockdata->id }}">
-                                                                             <input type="hidden" id="StockdataStatusName" value="{{ $stockdata->status_name }}">
+                                                                                    <td>
+                                                                                        <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
+                                                                                    </td>
+                                                                                    <td class="text-center">
+                                                                                        <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
+                                                                                            <a class="badge badge-success" data-toggle="modal"
+                                                                                                onclick="RequestStockData({{ json_encode($stockdata->id) }})"
+                                                                                                data-target=".bd-example-modal-xl" data-placement="top" title="Supplier Request"
+                                                                                                href="#">
+                                                                                                <i class="ri-arrow-right-circle-line"></i>
+                                                                                            </a>
+                                                                                    
+                                                                                            <input type="hidden" id="StockdataID" value="{{ $stockdata->id }}">
+                                                                                            <input type="hidden" id="StockdataStatusName" value="{{ $stockdata->status_name }}">
+                                                                                    
+                                                                                            @php
+                                                                                                $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
+                                                                                            @endphp
+                                                                                    
+                                                                                            <a class="badge badge-info position-relative"
+                                                                                                onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
+                                                                                                data-placement="top" title="View Request Status" href="#">
+                                                                                                <i class="ri-eye-line"></i>
+                                                                                                @if($hasUnread)
+                                                                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                                                                        ●
+                                                                                                    </span>
+                                                                                                @endif
+                                                                                            </a>
+                                                                                    
+                                                                                            @if($stockdata->status == 6)
+                                                                                                <a class="badge badge-warning" data-toggle="modal"
+                                                                                                    onclick="openEditReceivedRequestModal({{ json_encode($stockdata->id) }})"
+                                                                                                    data-target="#receivedRequestModal" data-placement="top"
+                                                                                                    title="Edit Received Request">
+                                                                                                    <i class="ri-edit-line"></i>
+                                                                                                </a>
+                                                                                            @endif
+                                                                                        </div>
+                                                                                    </td>                                                                                    
+                                                                                </tr>
+                                                        @endif
+                                @endforeach
+                            </tbody>
 
-                                                                            @php
-                                                                                $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
-                                                                            @endphp
-                                                                            <a class="badge badge-info position-relative"
-                                                                                onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
-                                                                                data-placement="top" title="View Request Status" href="#">
-                                                                                <i class="ri-eye-line"></i>
-                                                                                @if($hasUnread)
-                                                                                    <span
-                                                                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                                                                        ●
-                                                                                    </span>
-                                                                                @endif
-                                                                            </a>
-                                                                        </td>
-                                                                    </tr>
-                                                @endif
-                            @endforeach
-                        </tbody>
-
-                    </table>
-                </div>
+                        </table>
+                    </div>
                 </div>
 
 
@@ -311,174 +323,175 @@
                                     data-target="#declineReasonModal">
                                     Decline Request
                                 </button>
-                                <button class="btn btn-success mx-2 receivedRequestBTN" type="button" id="openReceivedRequestModal">
+                                <button class="btn btn-success mx-2 receivedRequestBTN" type="button"
+                                    id="openReceivedRequestModal">
                                     Received Request
                                 </button>
                                 <button class="btn btn-primary mx-2" type="button" data-toggle="modal"
                                     data-target="#raiseQueryModal">
                                     Raise Query
                                 </button>
-                    </div>
+                            </div>
 
-                    <!-- Received Request Modal -->
-                    <div class="modal fade" id="receivedRequestModal" tabindex="-1" role="dialog"
-                        aria-labelledby="receivedRequestLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="receivedRequestLabel">Received Request Details</h5>
-                                    <button type="button" class="close sub-modal-close" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Supplier Total Quantity</th>
-                                                <th>Requester Requested Quantity</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td id="modal_total_qty"></td>
-                                                <td id="modal_req_qty"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th> New </th>
-                                                <th> Used </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td id="modal_total_new"></td>
-                                                <td id="modal_total_used"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <!-- Received Request Modal -->
+                            <div class="modal fade" id="receivedRequestModal" tabindex="-1" role="dialog"
+                                aria-labelledby="receivedRequestLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="receivedRequestLabel">Received Request Details</h5>
+                                            <button type="button" class="close sub-modal-close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Supplier Total Quantity</th>
+                                                        <th>Requester Requested Quantity</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td id="modal_total_qty"></td>
+                                                        <td id="modal_req_qty"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th> New </th>
+                                                        <th> Used </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td id="modal_total_new"></td>
+                                                        <td id="modal_total_used"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
 
-                                    <form id="receivedRequestForm">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="modal_new_spareable">New </label>
-                                            <input type="number" class="form-control" id="modal_new_spareable"
-                                                name="modal_new_spareable" min="0" value="0">
+                                            <form id="receivedRequestForm">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="modal_new_spareable">New </label>
+                                                    <input type="number" class="form-control" id="modal_new_spareable"
+                                                        name="modal_new_spareable" min="0" value="0">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="modal_used_spareable">Used </label>
+                                                    <input type="number" class="form-control" id="modal_used_spareable"
+                                                        name="modal_used_spareable" min="0" value="0">
+                                                </div>
+                                                <div class="form-group">
+                                                    <span id="error_message" class="text-danger"></span>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                                    <button type="button" class="btn btn-success mx-2"
+                                                        id="confirmReceivedRequest">Confirm</button>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="modal_used_spareable">Used </label>
-                                            <input type="number" class="form-control" id="modal_used_spareable"
-                                                name="modal_used_spareable" min="0" value="0">
-                                        </div>
-                                        <div class="form-group">
-                                            <span id="error_message" class="text-danger"></span>
-                                        </div>
-                                        <div class="d-flex justify-content-center mt-3">
-                                            <button type="button"
-                                                class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
-                                            <button type="button" class="btn btn-success mx-2"
-                                                id="confirmReceivedRequest">Confirm</button>
-                                        </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
 
-                    <!-- Decline Request Modal -->
-                    <div class="modal fade" id="declineReasonModal" tabindex="-1" role="dialog"
-                        aria-labelledby="declineReasonLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="declineReasonLabel">Enter Decline Reason</h5>
-                                    <button type="button" class="close sub-modal-close" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="declineForm">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="decline_reason">Reason for Declining</label>
-                                            <textarea class="form-control" id="decline_reason" name="decline_reason"
-                                                rows="3" required></textarea>
+                            <!-- Decline Request Modal -->
+                            <div class="modal fade" id="declineReasonModal" tabindex="-1" role="dialog"
+                                aria-labelledby="declineReasonLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="declineReasonLabel">Enter Decline Reason</h5>
+                                            <button type="button" class="close sub-modal-close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
                                         </div>
-                                        <div class="d-flex justify-content-center mt-3">
-                                            <button type="button"
-                                                class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
-                                            <button type="submit" class="btn btn-danger mx-2">Submit</button>
+                                        <div class="modal-body">
+                                            <form id="declineForm">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="decline_reason">Reason for Declining</label>
+                                                    <textarea class="form-control" id="decline_reason" name="decline_reason"
+                                                        rows="3" required></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                                    <button type="submit" class="btn btn-danger mx-2">Submit</button>
+                                                </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
 
-                    <!-- Raise Query Modal -->
-                    <div class="modal fade" id="raiseQueryModal" tabindex="-1" role="dialog"
-                        aria-labelledby="raiseQueryLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="raiseQueryLabel">Enter Query</h5>
-                                    <button type="button" class="close sub-modal-close" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="raiseQueryForm">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="query">Query</label>
-                                            <textarea class="form-control" id="query" name="query" rows="3"
-                                                required></textarea>
+                            <!-- Raise Query Modal -->
+                            <div class="modal fade" id="raiseQueryModal" tabindex="-1" role="dialog"
+                                aria-labelledby="raiseQueryLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="raiseQueryLabel">Enter Query</h5>
+                                            <button type="button" class="close sub-modal-close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
                                         </div>
-                                        <div class="d-flex justify-content-center mt-3">
-                                            <button type="button"
-                                                class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
-                                            <button type="submit" class="btn btn-primary mx-2">Submit</button>
+                                        <div class="modal-body">
+                                            <form id="raiseQueryForm">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label for="query">Query</label>
+                                                    <textarea class="form-control" id="query" name="query" rows="3"
+                                                        required></textarea>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="button"
+                                                        class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary mx-2">Submit</button>
+                                                </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Confirmation Modal -->
-                    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
-                        aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    Are you sure you want to accept this request?
-                                </div>
-                                <div class="modal-footer">
+                            <!-- Confirmation Modal -->
+                            <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
+                                aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to accept this request?
+                                        </div>
+                                        <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-success" id="confirmAccept">Yes, Accept
-                                        it!</button>
+                                            <button type="button" class="btn btn-success" id="confirmAccept">Yes, Accept
+                                                it!</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                 </div>
             </div>
         </div>
@@ -544,6 +557,76 @@
 
 
 
+    <!-- Edit Received Request Modal -->
+    <div class="modal fade" id="editReceivedRequestModal" tabindex="-1" role="dialog"
+        aria-labelledby="editReceivedRequestLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editReceivedRequestLabel">Edit Received Request Details</h5>
+                    <button type="button" class="close sub-modal-close" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Supplier Total Quantity</th>
+                                <th>Requester Requested Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="edit_modal_total_qty"></td>
+                                <td id="edit_modal_req_qty"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th> New </th>
+                                <th> Used </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="edit_modal_total_new"></td>
+                                <td id="edit_modal_total_used"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <form id="editReceivedRequestForm">
+                        @csrf
+                        <div class="form-group">
+                            <label for="edit_modal_new_spareable">New </label>
+                            <input type="number" class="form-control" id="edit_modal_new_spareable"
+                                name="edit_modal_new_spareable" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_modal_used_spareable">Used </label>
+                            <input type="number" class="form-control" id="edit_modal_used_spareable"
+                                name="edit_modal_used_spareable" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <span id="edit_error_message" class="text-danger"></span>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <button type="button" class="btn btn-secondary mx-2 sub-modal-close">Cancel</button>
+                            <button type="button" class="btn btn-success mx-2"
+                                id="confirmEditReceivedRequest">Confirm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <script>
 
         //ajax filter for incomming request stock
@@ -587,35 +670,35 @@
 
                                 // Append row data to table
                                 tableBody.append(`
-                                                            <tr>
-                                                                <td>${index + 1}</td>
-                            <td>${stockdata.Location_Name}</td>
-                            <td>${stockdata.edp_code}</td>
-                            <td>${formattedDate}</td>
-                            <td>
-                                <span class="badge ${badgeClass}">${stockdata.status_name}</span>
-                            </td>
-                            <td>
-                                                                    <a class="badge badge-success mr-2" data-toggle="modal"
-                                    onclick="RequestStockData(${stockdata.id})"
-                                    data-target=".bd-example-modal-xl" data-placement="top"
-                                    title="Supplier Request" href="#">
-                                                                        <i class="ri-arrow-right-circle-line"></i>
-                                                                    </a>
-                                <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                    data-toggle="modal" data-placement="top"
-                                    title="View Request Status" href="#">
-                                    <i class="ri-eye-line"></i>
-                                </a>
+                                                                                                <tr>
+                                                                                                    <td>${index + 1}</td>
+                                                                <td>${stockdata.Location_Name}</td>
+                                                                <td>${stockdata.edp_code}</td>
+                                                                <td>${formattedDate}</td>
+                                                                <td>
+                                                                    <span class="badge ${badgeClass}">${stockdata.status_name}</span>
                                                                 </td>
-                                                            </tr>
-                                                        `);
+                                                                <td>
+                                                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
+                                                                        onclick="RequestStockData(${stockdata.id})"
+                                                                        data-target=".bd-example-modal-xl" data-placement="top"
+                                                                        title="Supplier Request" href="#">
+                                                                                                            <i class="ri-arrow-right-circle-line"></i>
+                                                                                                        </a>
+                                                                    <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                        data-toggle="modal" data-placement="top"
+                                                                        title="View Request Status" href="#">
+                                                                        <i class="ri-eye-line"></i>
+                                                                    </a>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            `);
                             });
 
                         } else {
                             tableBody.append(`
-                        <tr><td colspan="6" class="text-center">No records found</td></tr>
-                    `);
+                                                            <tr><td colspan="6" class="text-center">No records found</td></tr>
+                                                        `);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -984,22 +1067,22 @@
                             let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                        <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                                                            <td><span class="badge badge-${status.status_id == 2 ? 'success' :
                                     (status.status_id == 3 ? 'danger' :
                                         (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                            ${status.status_name}
-                                        </span></td>
-                                        <td>
-                                            <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                            </button>
-                                        </td>
-                                        <td>${status.supplier_qty || 'N/A'}</td>
-                                        <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                        <td>${status.supplier_used_spareable || 'N/A'}</td>
-                                        <td>${status.requestor_name}</td>
-                                        <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                    </tr>`;
+                                                                                ${status.status_name}
+                                                                            </span></td>
+                                                                            <td>
+                                                                                <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                                                                    ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                                                                </button>
+                                                                            </td>
+                                                                            <td>${status.supplier_qty || 'N/A'}</td>
+                                                                            <td>${status.supplier_new_spareable || 'N/A'}</td>
+                                                                            <td>${status.supplier_used_spareable || 'N/A'}</td>
+                                                                            <td>${status.requestor_name}</td>
+                                                                            <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                                                        </tr>`;
                         });
                     } else {
                         html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
@@ -1049,8 +1132,8 @@
 
         $(document).ready(function () {
 
-            let  stockId = $('#StockdataID').val();
-            let  stockStatus= $('#StockdataStatusName').val();
+            let stockId = $('#StockdataID').val();
+            let stockStatus = $('#StockdataStatusName').val();
 
             // console.log(stockId);
             if (stockStatus === 2) {
@@ -1070,6 +1153,86 @@
             });
         });
 
+
+
+        // Function to open the Edit Received Request Modal
+        function openEditReceivedRequestModal(requestId) {
+            $.ajax({
+                url: "{{ url('/user/request-stock/get-request-status') }}/" + requestId,
+                type: 'GET',
+                success: function (response) {
+                    console.log(response);
+                    if (response.success) {
+                        // Reset modal content before showing it again
+                        $('#edit_modal_total_qty').text(response.data.supplier_qty);
+                        $('#edit_modal_req_qty').text(response.data.requested_qty);
+                        $('#edit_modal_total_new').text(response.data.supplier_new_spareable);
+                        $('#edit_modal_total_used').text(response.data.supplier_used_spareable);
+
+                        $('#edit_modal_new_spareable').val(response.data.supplier_new_spareable);
+                        $('#edit_modal_used_spareable').val(response.data.supplier_used_spareable);
+
+                        // Ensure previous modals are completely removed before showing a new one
+                        $('#editReceivedRequestModal').modal('hide');
+                        $('.modal-backdrop').remove(); // Remove leftover backdrops
+                        $('body').removeClass('modal-open').css('overflow', 'auto'); // Restore scrolling
+
+                        // Delay opening the modal to ensure it's fully reset
+                        setTimeout(() => {
+                            $('#editReceivedRequestModal').modal('show');
+                        }, 300);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Failed to fetch request details.');
+                }
+            });
+        }
+
+        // Close modal and reset page
+        $(document).on('click', '.sub-modal-close', function () {
+            $('#editReceivedRequestModal').modal('hide'); // Hide the modal
+        });
+
+        // Ensure modal cleanup when completely hidden
+        $('#editReceivedRequestModal').on('hidden.bs.modal', function () {
+            $('.modal-backdrop').remove(); // Remove any remaining backdrop
+            $('body').removeClass('modal-open').css('overflow', 'auto'); // Restore scrolling
+        });
+
+
+        $('#confirmEditReceivedRequest').click(function () {
+            let requestId = $('#StockdataID').val();
+            let newSpareable = $('#edit_modal_new_spareable').val();
+            let usedSpareable = $('#edit_modal_used_spareable').val();
+            // Show confirmation prompt before proceeding
+            // if (!confirm('Are you sure you want to update the request status?')) {
+            //     return; // Exit if the user cancels
+            // }
+
+            $.ajax({
+                url: "{{ url('/user/request-stock/update-request-status') }}/" + requestId,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    new_spareable: newSpareable,
+                    used_spareable: usedSpareable
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Redirect to the list page where the success message will be displayed
+                        window.location.href = "{{ route('incoming_request_list') }}";
+                    } else {
+                        $('#error_message').text(response.message);
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while updating the request.');
+                }
+            });
+        });
 
 
 

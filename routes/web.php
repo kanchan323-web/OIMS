@@ -134,8 +134,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
             Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
             Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
-            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');//
-            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get');//
+            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list'); 
+            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get'); 
             Route::post('/request-status/accept', [RequestStockController::class, 'accept'])->name('request.accept');
             Route::post('/request-status/decline', [RequestStockController::class, 'decline'])->name('request.decline');
             Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('request.query');
@@ -144,14 +144,16 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/status-list', [RequestStockController::class, 'getRequestStatus'])->name('get.request.status');
             Route::get('/raised-requests', [RequestStockController::class, 'RaisedRequestList'])->name('raised_requests.index');
             Route::get('/filtered-requests', [RequestStockController::class, 'filterRequestStock'])->name('raised_requests.filter');
-            Route::post('/request-status/update-request-status-raised', [RequestStockController::class, 'updateStatusforRequest'])->name('request.updateStatusforRequest'); 
+            Route::post('/request-status/update-request-status-raised', [RequestStockController::class, 'updateStatusforRequest'])->name('request.updateStatusforRequest');
             Route::post('/request-status/update-is-read-status', [RequestStockController::class, 'updateIsReadStatus'])->name('update.is_read.status');
             Route::post('/update-stock', [RequestStockController::class, 'updateStock'])->name('update.stock');
             Route::post('/request-status/query-for-raised-request', [RequestStockController::class, 'queryforRaisedRequest'])->name('request.raisedrequestquery');
             Route::post('/accept-pending-request', [RequestStockController::class, 'acceptPendingRequest'])->name('request.pending.accept');
             Route::post('/decline-pending-request', [RequestStockController::class, 'declineforRaisedRequest'])->name('request.raisedrequestdecline');
+            Route::get('/get-request-status/{id}', [RequestStockController::class, 'getRequestStatusforEdit'])->name('request-status.get');
+            Route::post('/update-request-status/{id}', [RequestStockController::class, 'updateRequestStatus'])->name('request-status.update');
         });
-       
+
         //User mapping
         Route::get('/mapuserlist', [LoginController::class, 'mapuserlist'])->name('map_all_user_list');
         Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');

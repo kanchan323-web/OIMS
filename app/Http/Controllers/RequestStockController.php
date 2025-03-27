@@ -1025,4 +1025,56 @@ class RequestStockController extends Controller
             return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
         }
     }
+
+
+    public function getRequestStatusforEdit($requestId)
+    {
+        $requestStatus = RequestStatus::where('request_id', $requestId)
+            ->where('status_id', 6)
+            ->latest()
+            ->first();
+
+        $requesters = Requester::where('id', $requestId)->first();
+
+        if (!$requestStatus) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Request status not found.'
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'supplier_qty' => $requesters->available_qty,
+                'requested_qty' => $requesters->requested_qty,
+                'supplier_new_spareable' => $requestStatus->supplier_new_spareable,
+                'supplier_used_spareable' => $requestStatus->supplier_used_spareable
+            ]
+        ]);
+    }
+
+
+    public function updateRequestStatus(Request $request, $requestId)
+    {
+        $requestStatus = RequestStatus::where('request_id', $requestId)->first();
+
+        if (!$requestStatus) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Request status not found.'
+            ]);
+        }
+
+        // Update the values
+        $requestStatus->supplier_new_spareable = $request->new_spareable;
+        $requestStatus->supplier_used_spareable = $request->used_spareable;
+        $requestStatus->supplier_qty = $request->new_spareable + $request->used_spareable;
+        $requestStatus->save();
+
+        // Flash success message and send JSON response
+        session()->flash('success', 'Request status updated successfully.');
+
+        return response()->json(['success' => true]);
+    }
 }
