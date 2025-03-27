@@ -57,11 +57,11 @@
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="category" id="category_id" required>
-                                                <option selected disabled value="">Select Category...</option>
-                                                <option value="Spares">Spares</option>
-                                                <option value="Stores">Stores</option>
-                                                <option value="Capital items">Capital items</option>
-                                            </select> -->
+                                                                        <option selected disabled value="">Select Category...</option>
+                                                                        <option value="Spares">Spares</option>
+                                                                        <option value="Stores">Stores</option>
+                                                                        <option value="Capital items">Capital items</option>
+                                                                    </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -82,10 +82,10 @@
                                         <input type="text" class="form-control" name="section" id="section_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="section" id="section_id" required>
-                                                <option selected disabled value="">Select Section...</option>
-                                                <option value="ENGG">ENGG</option>
-                                                <option value="DRILL">DRILL</option>
-                                            </select> -->
+                                                                        <option selected disabled value="">Select Section...</option>
+                                                                        <option value="ENGG">ENGG</option>
+                                                                        <option value="DRILL">DRILL</option>
+                                                                    </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
@@ -273,40 +273,52 @@
             };
 
             function validateInput(field) {
-                let unit = $("#measurement").val()?.trim(); // Get UOM value
-                let value = $(field).val(); // Get field value
+                let unit = $("#measurement").val()?.trim();
+                let value = $(field).val().trim();
                 let isValid = true;
+                let errorMsg = "";
 
                 if (unit && unitTypes[unit]) {
-                    isValid = unitTypes[unit] === 'integer' ? /^\d+$/.test(value) : /^\d*\.?\d*$/.test(value);
+                    if (unitTypes[unit] === 'integer') {
+                        isValid = /^\d+$/.test(value);
+                        errorMsg = isValid ? "" : "Only whole numbers allowed!";
+                    } else if (unitTypes[unit] === 'decimal') {
+                        if (/^\d+(\.\d+)?$/.test(value)) {
+                            let decimalPart = value.includes(".") ? value.split(".")[1] : "";
+                            isValid = decimalPart.length <= 10;
+                            errorMsg = isValid ? "" : "Max 10 decimal places allowed!";
+                            console.log("Current Value:", value);
+                        } else {
+                            isValid = false;
+                            errorMsg = "Invalid decimal format!";
+                        }
+                    }
                 }
 
-                toggleError(field, isValid, `Invalid input! Expected ${unitTypes[unit] || 'unknown'}.`);
+                toggleError(field, isValid, errorMsg);
                 toggleSubmit();
             }
 
-            function toggleError(field, condition, msg) {
-                $(field).toggleClass("is-invalid", !condition).next(".invalid-feedback").remove();
-                if (!condition) $(field).after(`<div class="invalid-feedback">${msg}</div>`);
+            function toggleError(field, isValid, message) {
+                $(field).toggleClass("is-invalid", !isValid).next(".invalid-feedback").remove();
+                if (!isValid) $(field).after(`<div class="invalid-feedback">${message}</div>`);
             }
 
             function toggleSubmit() {
                 $("button[type='submit']").prop("disabled", $(".is-invalid").length > 0);
             }
 
-            // Validate on input change
             $("#new_spareable, #used_spareable").on("input", function () {
                 validateInput(this);
             });
 
-            // Trigger validation when UOM changes
             $("#measurement").on("change", function () {
                 $("#new_spareable, #used_spareable").trigger("input");
             });
 
-            // Trigger validation if there's pre-filled data
             $("#new_spareable, #used_spareable").trigger("input");
         });
+
 
     </script>
 
