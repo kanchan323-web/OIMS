@@ -47,10 +47,11 @@
                                         <label for="edp_code">EDP Code</label>
                                         <input type="text" class="form-control @error('edp_code') is-invalid @enderror"
                                             name="edp_code" value="{{ old('edp_code') }}" required>
+                                        <div class="text-danger" id="edpError" style="display: none;"></div> 
                                         @error('edp_code')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
-                                    </div>
+                                      </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="category">Select Category</label>
@@ -123,10 +124,18 @@
                                             <input type="text" class="form-control" name="section" required>
                                         </div> -->
 
-                                    <div class="col-md-6 mb-3">
-                                        <label for="measurement">Measurement</label>
-                                        <input type="text" class="form-control" name="measurement" required>
-                                    </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="measurement">Measurement</label>
+                                            <select class="form-control" name="measurement" required>
+                                                <option value="">Select Measurement</option> <!-- Placeholder option -->
+                                                
+                                                @foreach ($UoM as $unit)
+                                                    <option value="{{ $unit->abbreviation }}">
+                                                        {{ $unit->abbreviation }} - {{ $unit->unit_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
 
                                 </div>
@@ -140,6 +149,21 @@
         </div>
     </div>
     <script>
+        $(document).ready(function () {
+            $("form").on("submit", function (e) {
+                let edpCode = $("input[name='edp_code']").val();
+                let regex = /^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/; // 9 digits OR 2-3 letters + 6-7 digits
+                
+                if (!regex.test(edpCode)) {
+                    e.preventDefault(); // Stop form submission
+                    $("#edpError").text("EDP Code must be 9 digits OR start with 2-3 letters followed by 6-7 digits.").show();
+                } else {
+                    $("#edpError").hide();
+                }
+            });
+        });
+
+
         $(document).ready(function () {
             // Automatically fade out alerts after 3 seconds
             setTimeout(function () {
