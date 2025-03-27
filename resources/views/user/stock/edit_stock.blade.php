@@ -72,12 +72,12 @@
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly value="{{ old('category', $editData->category) }}">
                                         <!--    <select class="form-control @error('category') is-invalid @enderror" name="category"
-                                                                        id="category_id" readonly required>
-                                                                        <option selected disabled value="">Select Category...</option>
-                                                                        <option value="Spares" {{ old('category', $editData->category) == 'Spares' ? 'selected' : '' }}>Spares</option>
-                                                                        <option value="Stores" {{ old('category', $editData->category) == 'Stores' ? 'selected' : '' }}>Stores</option>
-                                                                        <option value="Capital items" {{ old('category', $editData->category) == 'Capital items' ? 'selected' : '' }}>Capital items</option>
-                                                                    </select> -->
+                                                                            id="category_id" readonly required>
+                                                                            <option selected disabled value="">Select Category...</option>
+                                                                            <option value="Spares" {{ old('category', $editData->category) == 'Spares' ? 'selected' : '' }}>Spares</option>
+                                                                            <option value="Stores" {{ old('category', $editData->category) == 'Stores' ? 'selected' : '' }}>Stores</option>
+                                                                            <option value="Capital items" {{ old('category', $editData->category) == 'Capital items' ? 'selected' : '' }}>Capital items</option>
+                                                                        </select> -->
                                         @error('category')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -100,11 +100,11 @@
                                         <input type="text" class="form-control" name="section" id="section_id" required
                                             readonly value="{{ old('section', $editData->section) }}">
                                         <!--  <select class="form-control @error('section') is-invalid @enderror" name="section"
-                                                                        id="section_id" readonly required>
-                                                                        <option selected disabled value="">Select Section...</option>
-                                                                        <option value="ENGG" {{ old('section', $editData->section) == 'ENGG' ? 'selected' : '' }}>ENGG</option>
-                                                                        <option value="DRILL" {{ old('section', $editData->section) == 'DRILL' ? 'selected' : '' }}>DRILL</option>
-                                                                    </select> -->
+                                                                            id="section_id" readonly required>
+                                                                            <option selected disabled value="">Select Section...</option>
+                                                                            <option value="ENGG" {{ old('section', $editData->section) == 'ENGG' ? 'selected' : '' }}>ENGG</option>
+                                                                            <option value="DRILL" {{ old('section', $editData->section) == 'DRILL' ? 'selected' : '' }}>DRILL</option>
+                                                                        </select> -->
                                         @error('section')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -273,26 +273,51 @@
             };
 
             function validateInput(field) {
-                let unit = $("#measurement").val(), value = $(field).val();
-                let isValid = unitTypes[unit] === 'integer' ? /^\d+$/.test(value) : /^\d*\.?\d*$/.test(value);
-                toggleError(field, isValid, `Invalid input! Expected ${unitTypes[unit]}.`);
+                let unit = $("#measurement").val()?.trim();
+                let value = $(field).val().trim();
+                let isValid = true;
+                let errorMsg = "";
+
+                if (unit && unitTypes[unit]) {
+                    if (unitTypes[unit] === 'integer') {
+                        isValid = /^\d+$/.test(value);
+                        errorMsg = isValid ? "" : "Only whole numbers allowed!";
+                    } else if (unitTypes[unit] === 'decimal') {
+                        if (/^\d+(\.\d+)?$/.test(value)) {
+                            let decimalPart = value.includes(".") ? value.split(".")[1] : "";
+                            isValid = decimalPart.length <= 10;
+                            errorMsg = isValid ? "" : "Max 10 decimal places allowed!";
+                            console.log("Current Value:", value);
+                        } else {
+                            isValid = false;
+                            errorMsg = "Invalid decimal format!";
+                        }
+                    }
+                }
+
+                toggleError(field, isValid, errorMsg);
                 toggleSubmit();
             }
 
-            function toggleError(field, condition, msg) {
-                $(field).toggleClass("is-invalid", !condition).next(".invalid-feedback").remove();
-                if (!condition) $(field).after(`<div class="invalid-feedback">${msg}</div>`);
+            function toggleError(field, isValid, message) {
+                $(field).toggleClass("is-invalid", !isValid).next(".invalid-feedback").remove();
+                if (!isValid) $(field).after(`<div class="invalid-feedback">${message}</div>`);
             }
 
             function toggleSubmit() {
                 $("button[type='submit']").prop("disabled", $(".is-invalid").length > 0);
             }
 
-            $("#new_spareable, #used_spareable").on("input", function () { validateInput(this); });
-            $("#measurement").change(() => $("#new_spareable, #used_spareable").trigger("input"));
+            $("#new_spareable, #used_spareable").on("input", function () {
+                validateInput(this);
+            });
+
+            $("#measurement").on("change", function () {
+                $("#new_spareable, #used_spareable").trigger("input");
+            });
+
+            $("#new_spareable, #used_spareable").trigger("input");
         });
-
-
 
 
     </script>
