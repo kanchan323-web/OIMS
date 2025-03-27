@@ -1191,15 +1191,13 @@
             });
         }
 
-        // Close modal and reset page
         $(document).on('click', '.sub-modal-close', function () {
-            $('#editReceivedRequestModal').modal('hide'); // Hide the modal
+            $('#editReceivedRequestModal').modal('hide'); 
         });
 
-        // Ensure modal cleanup when completely hidden
         $('#editReceivedRequestModal').on('hidden.bs.modal', function () {
-            $('.modal-backdrop').remove(); // Remove any remaining backdrop
-            $('body').removeClass('modal-open').css('overflow', 'auto'); // Restore scrolling
+            $('.modal-backdrop').remove(); 
+            $('body').removeClass('modal-open').css('overflow', 'auto'); 
         });
 
 
@@ -1208,7 +1206,7 @@
             let newSpareable = parseInt($('#edit_modal_new_spareable').val()) || 0;
             let usedSpareable = parseInt($('#edit_modal_used_spareable').val()) || 0;
             let requestedQty = parseInt($('#edit_modal_req_qty').text()) || 0; 
-            
+
             if ((newSpareable + usedSpareable) > requestedQty) {
                 $('#edit_error_message').text("Total of 'New' and 'Used' cannot exceed the Requested Quantity.");
                 return;
