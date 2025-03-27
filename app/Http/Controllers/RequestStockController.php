@@ -1065,7 +1065,10 @@ class RequestStockController extends Controller
 
     public function updateRequestStatus(Request $request, $requestId)
     {
-        $requestStatus = RequestStatus::where('request_id', $requestId)->first();
+        $requestStatus = RequestStatus::where('request_id', $requestId)
+        ->where('status_id', 6)
+        ->latest()
+        ->first();
 
         if (!$requestStatus) {
             return response()->json([
@@ -1074,13 +1077,11 @@ class RequestStockController extends Controller
             ]);
         }
 
-        // Update the values
         $requestStatus->supplier_new_spareable = $request->new_spareable;
         $requestStatus->supplier_used_spareable = $request->used_spareable;
         $requestStatus->supplier_qty = $request->new_spareable + $request->used_spareable;
         $requestStatus->save();
 
-        // Flash success message and send JSON response
         session()->flash('success', 'Request status updated successfully.');
 
         return response()->json(['success' => true]);

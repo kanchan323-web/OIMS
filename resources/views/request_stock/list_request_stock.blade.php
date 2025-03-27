@@ -600,6 +600,7 @@
 
                     <form id="editReceivedRequestForm">
                         @csrf
+                        <input type="hidden" id="edit_request_id" name="edit_request_id">
                         <div class="form-group">
                             <label for="edit_modal_new_spareable">New </label>
                             <input type="number" class="form-control" id="edit_modal_new_spareable"
@@ -623,9 +624,6 @@
             </div>
         </div>
     </div>
-
-
-
 
     <script>
 
@@ -1160,7 +1158,10 @@
                 success: function (response) {
                     console.log(response);
                     if (response.success) {
-                        // Reset modal content before showing it again
+                        // Store requestId in the hidden input field
+                        $('#edit_request_id').val(requestId);
+
+                        // Populate modal fields
                         $('#edit_modal_total_qty').text(response.data.supplier_qty);
                         $('#edit_modal_req_qty').text(response.data.requested_qty);
                         $('#edit_modal_total_new').text(response.data.supplier_new_spareable);
@@ -1169,12 +1170,11 @@
                         $('#edit_modal_new_spareable').val(response.data.supplier_new_spareable);
                         $('#edit_modal_used_spareable').val(response.data.supplier_used_spareable);
 
-                        // Ensure previous modals are completely removed before showing a new one
+                        // Remove previous modals and show new one
                         $('#editReceivedRequestModal').modal('hide');
-                        $('.modal-backdrop').remove(); // Remove leftover backdrops
-                        $('body').removeClass('modal-open').css('overflow', 'auto'); // Restore scrolling
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open').css('overflow', 'auto');
 
-                        // Delay opening the modal to ensure it's fully reset
                         setTimeout(() => {
                             $('#editReceivedRequestModal').modal('show');
                         }, 300);
@@ -1201,14 +1201,15 @@
 
 
         $('#confirmEditReceivedRequest').click(function () {
-            let requestId = $('#StockdataID').val();
-            let newSpareable = $('#edit_modal_new_spareable').val();
-            let usedSpareable = $('#edit_modal_used_spareable').val();
-            // Show confirmation prompt before proceeding
-            // if (!confirm('Are you sure you want to update the request status?')) {
-            //     return; // Exit if the user cancels
-            // }
-
+            let requestId = $('#edit_request_id').val();
+            let newSpareable = parseInt($('#edit_modal_new_spareable').val()) || 0;
+            let usedSpareable = parseInt($('#edit_modal_used_spareable').val()) || 0;
+            let requestedQty = parseInt($('#edit_modal_req_qty').text()) || 0; 
+            
+            if ((newSpareable + usedSpareable) > requestedQty) {
+                $('#edit_error_message').text("Total of 'New' and 'Used' cannot exceed the Requested Quantity.");
+                return;
+            }
             $.ajax({
                 url: "{{ url('/user/request-stock/update-request-status') }}/" + requestId,
                 type: 'POST',
@@ -1219,10 +1220,9 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        // Redirect to the list page where the success message will be displayed
-                        window.location.href = "{{ route('incoming_request_list') }}";
+                        window.location.href = "{{ route('incoming_request_list') }}"; 
                     } else {
-                        $('#error_message').text(response.message);
+                        $('#edit_error_message').text(response.message);
                     }
                 },
                 error: function () {
