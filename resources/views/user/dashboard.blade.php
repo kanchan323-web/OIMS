@@ -10,8 +10,8 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Total Stock</p>
-                                            <h4>40</h4>
+                                            <p class="mb-2">Incoming Requests </p>
+                                            <h4>{{$countIncommingRequest}}</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">
@@ -26,8 +26,8 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Total Request</p>
-                                            <h4>31</h4>
+                                            <p class="mb-2">Pending Incoming Requests  </p>
+                                            <h4>{{$PendingIncommingRequest}}</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">
@@ -42,8 +42,8 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Pending Request</p>
-                                            <h4> 98</h4>
+                                            <p class="mb-2">Raised Requests </p>
+                                            <h4>{{$RaisedRequests}}</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">
@@ -58,8 +58,8 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Approve Request</p>
-                                            <h4>45</h4>
+                                            <p class="mb-2">Pending Rasised Requests</p>
+                                            <h4>{{$RaisedRequestsRequests}}</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">
