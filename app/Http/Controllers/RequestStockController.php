@@ -43,6 +43,7 @@ class RequestStockController extends Controller
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->where('stocks.rig_id', '!=', $rig_id)
             ->where('stocks.req_status', 'inactive')
+            ->where('stocks.qty','!=', 0)
             ->orderBy('stocks.id', 'desc')
             ->get();
 
@@ -56,14 +57,9 @@ class RequestStockController extends Controller
 
     public function RequestStockFilter(Request $request)
     {
-
-
         $rig_id = Auth::user()->rig_id;
-
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
-
-
             $data = Stock::query()
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('stocks.edp_code', $edp_code);
@@ -86,12 +82,10 @@ class RequestStockController extends Controller
                 ->orderBy('stocks.id', 'desc')
                 ->get();
 
-
             $datarig = User::where('user_type', '!=', 'admin')
                 ->where('rig_id', $rig_id)
                 ->pluck('id')
                 ->toArray();
-
 
             return response()->json(['data' => $data, 'datarig' => $datarig, 'stockData' => $stockData]);
         }
@@ -217,32 +211,32 @@ class RequestStockController extends Controller
         ]);
 
         $user = Auth::user();
-
-
         $rigUser = RigUser::find($user->rig_id);
-
-
-        //$where = array()
-        $requester_edpID = Stock::where([
+        $edp_data = Edp::find($request->req_edp_id);
+        $requester_stockID = Stock::where([
             ['edp_code',  $request->req_edp_id],
             ['user_id', $user->id],
             ['rig_id', $rigUser->id]
-        ])
-            ->pluck('id')
-            ->first();
+        ])->pluck('id')->first();
 
-
-
-
-
-        if (!$requester_edpID) {
-            session()->flash('error', 'EDP not existing in stock your stock list. First add stock in list then apply request.');
-            return redirect()->back();
+        if (!$requester_stockID) {
+            $stock_data = Stock::create([
+                'edp_code'      => $request->req_edp_id,
+                'rig_id'        => $rigUser->id,
+                'location_id'   => $rigUser->location_id,
+                'location_name' => $rigUser->name,
+                'description'   => $edp_data->description,
+                'section'       => $edp_data->section,
+                'category'      => $edp_data->category,
+                'qty'           => 0,
+                'new_spareable' => 0,
+                'used_spareable' => 0,
+                'measurement'   => $edp_data->measurement,
+                'remarks'       => '',
+                'user_id'       => $user->id,
+            ]);
+            $requester_stockID = $stock_data->id;
         }
-
-        //  echo 'wdhsid';
-        // print_r($requester_edpID);
-        //die;
 
         try {
             $lastRequest = Requester::latest('id')->first();
@@ -253,7 +247,7 @@ class RequestStockController extends Controller
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
                 'stock_id' => $request->stock_id,
-                'requester_stock_id' => $requester_edpID,
+                'requester_stock_id' => $requester_stockID,
                 'requester_id' => $request->requester_id,
                 'requester_rig_id' => $request->requester_rig_id,
                 'supplier_id' => $request->supplier_id,
@@ -278,7 +272,6 @@ class RequestStockController extends Controller
                 'supplier_rig_id' => $request->supplier_rig_id,
                 'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
             ];
-
             $mailDataRequester = [
                 'title' => 'Stock Request Confirmation - ONGC',
                 'supplier_name' => $supplierData->user_name,
@@ -290,9 +283,6 @@ class RequestStockController extends Controller
                 'supplier_rig_id' => $request->supplier_rig_id,
                 'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
             ];
-
-
-
             try {
                 if ($supplierData) {
                     $supplierEmail = $supplierData->email;
@@ -806,11 +796,11 @@ class RequestStockController extends Controller
 
             $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
             $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
-            $stock->qty = max(0, $stock->new_spareable + $stock->used_spareable); 
-            
+            $stock->qty = max(0, $stock->new_spareable + $stock->used_spareable);
+
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
-            $requesterStock->qty = $requesterStock->new_spareable + $requesterStock->used_spareable; 
+            $requesterStock->qty = $requesterStock->new_spareable + $requesterStock->used_spareable;
 
             // Save changes
             $stock->save();
