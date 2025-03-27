@@ -561,6 +561,8 @@ class RequestStockController extends Controller
                 'created_at' => $requester->created_at->format('d-m-Y'),
             ];
 
+            Stock::where('id', $requester->stock_id)->update(['req_status' => 'inactive']);
+
             // Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
 
             session()->flash('success', 'Request declined successfully.');
