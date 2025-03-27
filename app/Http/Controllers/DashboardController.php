@@ -65,10 +65,6 @@ class DashboardController extends Controller
                     ->where('mst_status.status_name', 'Pending') // Count only "Pending" statuses
                     ->count();
 
-                   
-                  
-    
-                
 
             return view('user.dashboard',compact('countIncommingRequest','PendingIncommingRequest','RaisedRequests','RaisedRequestsRequests'));
         }else{
