@@ -524,6 +524,7 @@
                                                                 <tr>
                                                                     <td>${index + 1}</td>
                                                                     <td>${stockdata.location_name} (${stockdata.location_id})</td>
+                                                                    <td>${stockdata.edp_code}</td>
                                                                     <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
                                                                     <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
                                                                     <td>
