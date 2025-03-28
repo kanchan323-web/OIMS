@@ -35,6 +35,7 @@ class RequestStockController extends Controller
         $EDP_Code_ID = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
             ->where('rig_id', '!=', $rig_id)
+            ->where('qty','!=', 0)
             ->where('req_status', 'inactive')
             ->get();
 
