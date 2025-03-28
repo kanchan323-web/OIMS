@@ -11,10 +11,9 @@
                                 <h4 class="card-title">Add or Edit Stock</h4>
                             </div>
                         </div>
-
                         <div class="card-body">
                             <form class="needs-validation" novalidate method="POST" id="addStockForm"
-                                action="{{ route('admin.stockSubmit') }}">
+                                action="{{ route('stockSubmit') }}">
                                 @csrf
                                 <input type="hidden" name="id" id="id">
 
@@ -55,12 +54,14 @@
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="category_id">Category</label>
-                                        <select class="form-control" name="category" id="category_id" required>
-                                            <option selected disabled value="">Select Category...</option>
-                                            <option value="Spares">Spares</option>
-                                            <option value="Stores">Stores</option>
-                                            <option value="Capital items">Capital items</option>
-                                        </select>
+                                        <input type="text" class="form-control" name="category" id="category_id" required
+                                            readonly>
+                                        <!--    <select class="form-control" name="category" id="category_id" required>
+                                                                        <option selected disabled value="">Select Category...</option>
+                                                                        <option value="Spares">Spares</option>
+                                                                        <option value="Stores">Stores</option>
+                                                                        <option value="Capital items">Capital items</option>
+                                                                    </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -78,11 +79,13 @@
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="section_id">Section</label>
-                                        <select class="form-control" name="section" id="section_id" required>
-                                            <option selected disabled value="">Select Section...</option>
-                                            <option value="ENGG">ENGG</option>
-                                            <option value="DRILL">DRILL</option>
-                                        </select>
+                                        <input type="text" class="form-control" name="section" id="section_id" required
+                                            readonly>
+                                        <!--    <select class="form-control" name="section" id="section_id" required>
+                                                                        <option selected disabled value="">Select Section...</option>
+                                                                        <option value="ENGG">ENGG</option>
+                                                                        <option value="DRILL">DRILL</option>
+                                                                    </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
@@ -100,15 +103,15 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="qty">Available Quantity</label>
-                                        <input type="number" class="form-control" name="qty" id="qty" required>
+                                        <input type="number" class="form-control" name="qty" id="qty" required readonly>
                                         @error('qty')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="new_spareable">New Spareable</label>
-                                        <input type="number" class="form-control" name="new_spareable" id="new_spareable"
+                                        <label for="new_spareable">New </label>
+                                        <input type="text" class="form-control" name="new_spareable" id="new_spareable"
                                             required>
                                         @error('new_spareable')
                                             <div class="text-danger">{{ $message }}</div>
@@ -116,8 +119,8 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="used_spareable">Used Spareable</label>
-                                        <input type="number" class="form-control" name="used_spareable" id="used_spareable"
+                                        <label for="used_spareable">Used </label>
+                                        <input type="text" class="form-control" name="used_spareable" id="used_spareable"
                                             required>
                                         @error('used_spareable')
                                             <div class="text-danger">{{ $message }}</div>
@@ -135,31 +138,16 @@
 
                                 <button class="btn btn-primary" type="submit">Submit Form</button>
                                 <a href="{{ route('add_stock') }}" class="btn btn-secondary">Reset</a>
-                                <a href="{{ url()->previous() ?: route('admin.stock_list') }}" class="btn btn-light">Go Back</a>
+                                <a href="{{ url()->previous() ?: route('stock_list') }}" class="btn btn-light">Go Back</a>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-    
-
-
-
-
-
-
-
-
-
-
     <script>
-
-
         $(document).ready(function () {
             function toggleFields(show) {
                 if (show) {
@@ -181,10 +169,10 @@
 
                     $.ajax({
                         type: "GET",
-                        url: "{{ route('admin.get_edp_details') }}",
+                        url: "{{ route('get_edp_details') }}",
                         data: { edp_code: edpCode },
                         success: function (response) {
-                            console.log("EDP & Stock Data:", response);
+                            // console.log("EDP & Stock Data:", response);
 
                             if (response.success) {
                                 $("#category_id").val(response.edp.category).prop('disabled', true);
@@ -195,15 +183,15 @@
                                 $("#section_hidden").val(response.edp.section);
 
                                 if (response.stock) {
-                                    console.log(response.stock);
-                                    $("#addStockForm").attr("action", "{{ route('admin.update_stock') }}");
+                                    //console.log(response.stock);
+                                    $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                                     $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);
                                     $("#new_spareable").val(response.stock.new_spareable);
                                     $("#used_spareable").val(response.stock.used_spareable);
                                     $("#remarks").val(response.stock.remarks);
                                 } else {
-                                    $("#addStockForm").attr("action", "{{ route('admin.stockSubmit') }}");
+                                    $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
                                     $("#id").val('');
                                     $("#qty").val('');
                                     $("#new_spareable").val('');
@@ -227,48 +215,111 @@
             toggleFields(false);
         });
 
+        $(document).ready(function () {
+            /*    function validateStock() {
+                    let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
+                    let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
+                    let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
+                    let totalSpareable = newSpareable + usedSpareable;
+                    $("#new-error, #used-error").remove();
+
+                    if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
+                        return true;
+                    }
+                    if (newSpareable > availableQty) {
+                        $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
+                        return false;
+                    }
+                    if (totalSpareable > availableQty) {
+                        if (newSpareable > usedSpareable) {
+                            $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                        } else {
+                            $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+                $("#qty, #new_spareable, #used_spareable").on("input", function () {
+                    validateStock();
+                });
+                */
+            function calculateSum() {
+                var value1 = parseFloat($('#new_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var value2 = parseFloat($('#used_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var sum = value1 + value2; // Calculate the sum
+                $('#qty').val(sum); // Display the sum in the 'sum' input field
+            }
+
+            // Attach the keyup event to both input fields
+            $('#new_spareable, #used_spareable').on('keyup', function () {
+                calculateSum(); // Call the calculateSum function when either input changes
+            });
+
+            /*      $("#addStockForm").on("submit", function (e) {
+                      if (!calculateSum()) {
+                          e.preventDefault();
+                      }
+                  });
+                  */
+        });
+
 
         $(document).ready(function () {
-        function validateStock() {
-            let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
-            let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
-            let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
-            let totalSpareable = newSpareable + usedSpareable;
+            let unitTypes = {
+                'EA': 'integer', 'KIT': 'integer', 'PAA': 'integer', 'PAC': 'integer', 'ROL': 'integer', 'ST': 'integer',
+                'FT': 'decimal', 'GAL': 'decimal', 'KG': 'decimal', 'KL': 'decimal', 'L': 'decimal', 'LB': 'decimal',
+                'M': 'decimal', 'M3': 'decimal', 'MT': 'decimal', 'NO': 'integer'
+            };
 
-            $("#new-error, #used-error").remove();
+            function validateInput(field) {
+                let unit = $("#measurement").val()?.trim();
+                let value = $(field).val().trim();
+                let isValid = true;
+                let errorMsg = "";
 
-            if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
-                return true;
-            }
-
-            if (newSpareable > availableQty) {
-                $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
-                return false;
-            }
-
-          
-            if (totalSpareable > availableQty) {
-                if (newSpareable > usedSpareable) {
-                    $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
-                } else {
-                    $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                if (unit && unitTypes[unit]) {
+                    if (unitTypes[unit] === 'integer') {
+                        isValid = /^\d+$/.test(value);
+                        errorMsg = isValid ? "" : "Only whole numbers allowed!";
+                    } else if (unitTypes[unit] === 'decimal') {
+                        if (/^\d+(\.\d+)?$/.test(value)) {
+                            let decimalPart = value.includes(".") ? value.split(".")[1] : "";
+                            isValid = decimalPart.length <= 10;
+                            errorMsg = isValid ? "" : "Max 10 decimal places allowed!";
+                            console.log("Current Value:", value);
+                        } else {
+                            isValid = false;
+                            errorMsg = "Invalid decimal format!";
+                        }
+                    }
                 }
-                return false;
+
+                toggleError(field, isValid, errorMsg);
+                toggleSubmit();
             }
 
-            return true;
-        }
-
-        $("#qty, #new_spareable, #used_spareable").on("input", function () {
-            validateStock();
-        });
-
-        $("#addStockForm").on("submit", function (e) {
-            if (!validateStock()) {
-                e.preventDefault();
+            function toggleError(field, isValid, message) {
+                $(field).toggleClass("is-invalid", !isValid).next(".invalid-feedback").remove();
+                if (!isValid) $(field).after(`<div class="invalid-feedback">${message}</div>`);
             }
+
+            function toggleSubmit() {
+                $("button[type='submit']").prop("disabled", $(".is-invalid").length > 0);
+            }
+
+            $("#new_spareable, #used_spareable").on("input", function () {
+                validateInput(this);
+            });
+
+            $("#measurement").on("change", function () {
+                $("#new_spareable, #used_spareable").trigger("input");
+            });
+
+            $("#new_spareable, #used_spareable").trigger("input");
         });
-    });
+
+
     </script>
 
 

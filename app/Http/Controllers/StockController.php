@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UnitOfMeasurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\ReCaptcha;
@@ -107,27 +108,45 @@ class StockController extends Controller
 
     public function stockSubmit(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
+    
+        $rules = [
             'location_id' => 'required',
             'location_name' => 'required',
-            //'edp_code' => 'required|integer|exists:edps,id|unique:stocks,edp_code',
             'edp_code' => 'required',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
             'qty' => 'required|numeric',
             'measurement' => 'required',
-            'new_spareable' => 'required|numeric',
-            'used_spareable' => 'required|numeric',
             'remarks' => 'required'
-        ]);
-
+        ];
+    
+        // Apply dynamic validation based on unit type
+        if ($unit) {
+            if ($unit->type == 'integer') {
+                $rules['new_spareable'] = 'required|integer';
+                $rules['used_spareable'] = 'required|integer';
+            } elseif ($unit->type == 'decimal') {
+                $rules['new_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+                $rules['used_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+            }
+        } else {
+            return redirect()->back()
+                ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
+                ->withInput();
+        }
+    
+        // Validate request
+        $validator = Validator::make($request->all(), $rules);
+    
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-
+    
+        // Store stock data
         $user = Auth::user();
         $stock = new Stock;
         $stock->location_id = $request->location_id;
@@ -144,9 +163,9 @@ class StockController extends Controller
         $stock->user_id = $user->id;
         $stock->rig_id = $user->rig_id;
         $stock->save();
-
+    
         Session::flash('success', 'Stock submitted successfully!');
-
+    
         return redirect()->route('stock_list');
     }
 
@@ -315,34 +334,46 @@ class StockController extends Controller
     {
         $dataid = $request->id;
         $user = Auth::user();
+    
+        $stock = Stock::find($dataid);
+        if (!$stock) {
+            return redirect()->route('stock_list')->with('error', 'Stock not found.');
+        }
 
-        $update_data = $request->validate([
-           // 'location_id' => 'required',
-           // 'location_name' => 'required',
+        $unit = UnitOfMeasurement::where('name', $request->measurement)->first();
+    
+        $rules = [
             'edp_code' => 'required|integer',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
             'qty' => 'required|numeric',
             'measurement' => 'required',
-            'new_spareable' => 'required|numeric',
-            'used_spareable' => 'required|numeric',
             'remarks' => 'required'
-        ]);
-
-        // Add rig_id from authenticated user
-        $update_data['rig_id'] = $user->rig_id;
-
-        $stock = Stock::find($dataid);
-        if (!$stock) {
-            return redirect()->route('stock_list')->with('error', 'Stock not found.');
+        ];
+    
+        if ($unit) {
+            if ($unit->type == 'integer') {
+                $rules['new_spareable'] = 'required|integer';
+                $rules['used_spareable'] = 'required|integer';
+            } elseif ($unit->type == 'decimal') {
+                $rules['new_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+                $rules['used_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+            }
+        } else {
+            return redirect()->back()
+                ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
+                ->withInput();
         }
-
-        $stock->update($update_data);
-
+    
+        $validatedData = $request->validate($rules);
+    
+        $validatedData['rig_id'] = $user->rig_id;
+    
+        $stock->update($validatedData);
+    
         return redirect()->route('stock_list')->with('success', 'Stock updated successfully!');
     }
-
 
     public function DeleteStock(Request $request)
     {
