@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\admin;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Mail\RequestAcceptedMail;
 use App\Mail\RequestDeclinedMail;
 use App\Mail\RequestQueryMail;
 use App\Models\Edp;
 use App\Models\RequestStatus;
-use Illuminate\Http\Request;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
 use App\Models\Stock;
@@ -22,11 +23,9 @@ use App\Mail\supplier_stock_mail;
 
 
 use Illuminate\Support\Facades\Session;
-
-
-class RequestStockController extends Controller
+class AdminRequestStockController extends Controller
 {
-
+    
     public function RequestStockList(Request $request)
     {
         $rig_id = Auth::user()->rig_id;
