@@ -715,8 +715,9 @@ class RequestStockController extends Controller
         $userId = Auth::id();
         $query = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->where('requesters.supplier_id', $userId)
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name')
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code')
             ->when($request->edp_id, function ($query, $edp_id) {
                 return $query->where('stocks.edp_code', $edp_id);
             })
