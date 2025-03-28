@@ -411,8 +411,8 @@ class RequestStockController extends Controller
             )
                 ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
                 ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id') // Join with stocks table
-                ->join('edps', 'stocks.edp_code', '=', 'edps.id') // Join with edps table
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id') 
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id') 
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('stocks.edp_code', $edp_code);
                 })
