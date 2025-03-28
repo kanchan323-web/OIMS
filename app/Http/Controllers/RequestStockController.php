@@ -79,6 +79,7 @@ class RequestStockController extends Controller
                 ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
                 ->where('rig_id', '!=', $rig_id)
                 ->where('req_status', 'inactive')
+                ->where('qty','!=', 0)
                 ->orderBy('stocks.id', 'desc')
                 ->get();
 
@@ -372,14 +373,13 @@ class RequestStockController extends Controller
             'mst_status.status_name',
             'stocks.id as stock_id',
             'stocks.id as stock_id',
+            'stocks.description',
             'edps.edp_code',
         )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.supplier_rig_id', $rig_id)
-            ->with('requestStatuses')
-            ->distinct()
             ->with('requestStatuses')
             ->distinct()
             ->orderBy('requesters.created_at', 'desc')
@@ -401,7 +401,7 @@ class RequestStockController extends Controller
 
         if ($request->ajax()) {
             $data = Requester::select(
-                'rig_users.name',
+                'rig_users.name as Location_Name',
                 'rig_users.location_id',
                 'requesters.*',
                 'mst_status.status_name',

@@ -30,7 +30,7 @@
                                     </button>
                                 </div>
                             @endif
-                            <form class="needs-validation" novalidate method="POST" action="{{ route('admin.update_stock') }}"
+                            <form class="needs-validation" novalidate method="POST" action="{{ route('update_stock') }}"
                                 id="editStockForm">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $editData->id }}">
@@ -49,8 +49,9 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location ID</label>
-                                        <input type="text" class="form-control @error('location_id') is-invalid @enderror" 
-                                            name="location_id" value="{{ old('location_id', $editData->location_id) }}" required readonly>
+                                        <input type="text" class="form-control @error('location_id') is-invalid @enderror"
+                                            name="location_id" value="{{ old('location_id', $editData->location_id) }}"
+                                            required readonly>
                                         @error('location_id')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -58,22 +59,25 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Location Name</label>
-                                        <input type="text" class="form-control @error('location_name') is-invalid @enderror" 
-                                            name="location_name" value="{{ old('location_name', $editData->location_name) }}" required readonly>
+                                        <input type="text" class="form-control @error('location_name') is-invalid @enderror"
+                                            name="location_name"
+                                            value="{{ old('location_name', $editData->location_name) }}" required readonly>
                                         @error('location_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                    </div>                                    
+                                    </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Category</label>
-                                        <select class="form-control @error('category') is-invalid @enderror" name="category"
-                                            id="category_id" readonly required>
-                                            <option selected disabled value="">Select Category...</option>
-                                            <option value="Spares" {{ old('category', $editData->category) == 'Spares' ? 'selected' : '' }}>Spares</option>
-                                            <option value="Stores" {{ old('category', $editData->category) == 'Stores' ? 'selected' : '' }}>Stores</option>
-                                            <option value="Capital items" {{ old('category', $editData->category) == 'Capital items' ? 'selected' : '' }}>Capital items</option>
-                                        </select>
+                                        <input type="text" class="form-control" name="category" id="category_id" required
+                                            readonly value="{{ old('category', $editData->category) }}">
+                                        <!--    <select class="form-control @error('category') is-invalid @enderror" name="category"
+                                                                            id="category_id" readonly required>
+                                                                            <option selected disabled value="">Select Category...</option>
+                                                                            <option value="Spares" {{ old('category', $editData->category) == 'Spares' ? 'selected' : '' }}>Spares</option>
+                                                                            <option value="Stores" {{ old('category', $editData->category) == 'Stores' ? 'selected' : '' }}>Stores</option>
+                                                                            <option value="Capital items" {{ old('category', $editData->category) == 'Capital items' ? 'selected' : '' }}>Capital items</option>
+                                                                        </select> -->
                                         @error('category')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -93,12 +97,14 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Section</label>
-                                        <select class="form-control @error('section') is-invalid @enderror" name="section"
-                                            id="section_id" readonly required>
-                                            <option selected disabled value="">Select Section...</option>
-                                            <option value="ENGG" {{ old('section', $editData->section) == 'ENGG' ? 'selected' : '' }}>ENGG</option>
-                                            <option value="DRILL" {{ old('section', $editData->section) == 'DRILL' ? 'selected' : '' }}>DRILL</option>
-                                        </select>
+                                        <input type="text" class="form-control" name="section" id="section_id" required
+                                            readonly value="{{ old('section', $editData->section) }}">
+                                        <!--  <select class="form-control @error('section') is-invalid @enderror" name="section"
+                                                                            id="section_id" readonly required>
+                                                                            <option selected disabled value="">Select Section...</option>
+                                                                            <option value="ENGG" {{ old('section', $editData->section) == 'ENGG' ? 'selected' : '' }}>ENGG</option>
+                                                                            <option value="DRILL" {{ old('section', $editData->section) == 'DRILL' ? 'selected' : '' }}>DRILL</option>
+                                                                        </select> -->
                                         @error('section')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -117,14 +123,13 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Available Quantity</label>
-                                        <input type="number" class="form-control" name="qty" id="qty"
-                                            value="{{ $editData->qty }}" required>
+                                        <input type="text" class="form-control" name="qty" id="qty"
+                                            value="{{ $editData->qty }}" required readonly>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">New Spareable</label>
-                                        <input type="number"
-                                            class="form-control @error('new_spareable') is-invalid @enderror"
+                                        <input type="text" class="form-control @error('new_spareable') is-invalid @enderror"
                                             name="new_spareable" id="new_spareable"
                                             value="{{ old('new_spareable', $editData->new_spareable) }}" required>
                                         @error('new_spareable')
@@ -135,7 +140,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Used Spareable</label>
-                                        <input type="number"
+                                        <input type="text"
                                             class="form-control @error('used_spareable') is-invalid @enderror"
                                             name="used_spareable" id="used_spareable"
                                             value="{{ old('used_spareable', $editData->used_spareable) }}" required>
@@ -156,7 +161,7 @@
                                 </div>
 
                                 <button class="btn btn-primary" type="submit">Update Stock</button>
-                                <a href="{{ route('admin.stock_list') }}" class="btn btn-light">Go Back</a>
+                                <a href="{{ route('stock_list') }}" class="btn btn-light">Go Back</a>
                             </form>
                         </div>
                     </div>
@@ -176,7 +181,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('admin.get_edp_details') }}",
+                    url: "{{ route('get_edp_details') }}",
                     data: { edp_code: edpCode },
                     success: function (response) {
                         console.log("EDP Data for Edit:", response);
@@ -205,48 +210,116 @@
             }, 3000);
         });
 
-        
         $(document).ready(function () {
-        function validateStock() {
-            let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
-            let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
-            let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
-            let totalSpareable = newSpareable + usedSpareable;
+            /*   function validateStock() {
+                   let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
+                   let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
+                   let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
+                   let totalSpareable = newSpareable + usedSpareable;
 
-            $("#new-error, #used-error").remove();
+                   $("#new-error, #used-error").remove();
 
-            if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
-                return true;
+                   if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
+                       return true;
+                   }
+
+                   if (newSpareable > availableQty) {
+                       $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
+                       return false;
+                   }
+
+
+                   if (totalSpareable > availableQty) {
+                       if (newSpareable > usedSpareable) {
+                           $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                       } else {
+                           $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+                       }
+                       return false;
+                   }
+
+                   return true;
+               }
+
+               $("#qty, #new_spareable, #used_spareable").on("input", function () {
+                   validateStock();
+               });
+
+               $("#addStockForm").on("submit", function (e) {
+                   if (!validateStock()) {
+                       e.preventDefault();
+                   }
+               });
+               */
+            function calculateSum() {
+                var value1 = parseFloat($('#new_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var value2 = parseFloat($('#used_spareable').val()) || 0; // Default to 0 if empty or invalid
+                var sum = value1 + value2; // Calculate the sum
+                $('#qty').val(sum); // Display the sum in the 'sum' input field
             }
 
-            if (newSpareable > availableQty) {
-                $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
-                return false;
-            }
+            // Attach the keyup event to both input fields
+            $('#new_spareable, #used_spareable').on('keyup', function () {
+                calculateSum(); // Call the calculateSum function when either input changes
+            });
+        });
 
-          
-            if (totalSpareable > availableQty) {
-                if (newSpareable > usedSpareable) {
-                    $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
-                } else {
-                    $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
+
+        $(document).ready(function () {
+            let unitTypes = {
+                'EA': 'integer', 'KIT': 'integer', 'PAA': 'integer', 'PAC': 'integer', 'ROL': 'integer', 'ST': 'integer',
+                'FT': 'decimal', 'GAL': 'decimal', 'KG': 'decimal', 'KL': 'decimal', 'L': 'decimal', 'LB': 'decimal',
+                'M': 'decimal', 'M3': 'decimal', 'MT': 'decimal', 'NO': 'integer'
+            };
+
+            function validateInput(field) {
+                let unit = $("#measurement").val()?.trim();
+                let value = $(field).val().trim();
+                let isValid = true;
+                let errorMsg = "";
+
+                if (unit && unitTypes[unit]) {
+                    if (unitTypes[unit] === 'integer') {
+                        isValid = /^\d+$/.test(value);
+                        errorMsg = isValid ? "" : "Only whole numbers allowed!";
+                    } else if (unitTypes[unit] === 'decimal') {
+                        if (/^\d+(\.\d+)?$/.test(value)) {
+                            let decimalPart = value.includes(".") ? value.split(".")[1] : "";
+                            isValid = decimalPart.length <= 10;
+                            errorMsg = isValid ? "" : "Max 10 decimal places allowed!";
+                            console.log("Current Value:", value);
+                        } else {
+                            isValid = false;
+                            errorMsg = "Invalid decimal format!";
+                        }
+                    }
                 }
-                return false;
+
+                toggleError(field, isValid, errorMsg);
+                toggleSubmit();
             }
 
-            return true;
-        }
-
-        $("#qty, #new_spareable, #used_spareable").on("input", function () {
-            validateStock();
-        });
-
-        $("#addStockForm").on("submit", function (e) {
-            if (!validateStock()) {
-                e.preventDefault();
+            function toggleError(field, isValid, message) {
+                $(field).toggleClass("is-invalid", !isValid).next(".invalid-feedback").remove();
+                if (!isValid) $(field).after(`<div class="invalid-feedback">${message}</div>`);
             }
+
+            function toggleSubmit() {
+                $("button[type='submit']").prop("disabled", $(".is-invalid").length > 0);
+            }
+
+            $("#new_spareable, #used_spareable").on("input", function () {
+                validateInput(this);
+            });
+
+            $("#measurement").on("change", function () {
+                $("#new_spareable, #used_spareable").trigger("input");
+            });
+
+            $("#new_spareable, #used_spareable").trigger("input");
         });
-    });
+
+
     </script>
 
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\UnitOfMeasurement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\ReCaptcha;
@@ -104,20 +105,36 @@ class AdminStockController extends Controller
 
     public function stockSubmit(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
+    
+        $rules = [
             'location_id' => 'required',
             'location_name' => 'required',
-            'edp_code' => 'required|integer|exists:edps,id|unique:stocks,edp_code',
+            'edp_code' => 'required',
             'category' => 'required',
             'description' => 'required',
             'section' => 'required',
             'qty' => 'required|numeric',
             'measurement' => 'required',
-            'new_spareable' => 'required|numeric',
-            'used_spareable' => 'required|numeric',
             'remarks' => 'required'
-        ]);
-
+        ];
+    
+        if ($unit) {
+            if ($unit->type == 'integer') {
+                $rules['new_spareable'] = 'required|integer';
+                $rules['used_spareable'] = 'required|integer';
+            } elseif ($unit->type == 'decimal') {
+                $rules['new_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+                $rules['used_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+            }
+        } else {
+            return redirect()->back()
+                ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
+                ->withInput();
+        }
+    
+        $validator = Validator::make($request->all(), $rules);
+    
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -303,12 +320,20 @@ class AdminStockController extends Controller
         return view('admin.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName, 'edpCodes' => $edpCodes]);
     }
 
+    
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
-        $user = Auth::user(); 
-
-        $update_data = $request->validate([
+        $user = Auth::user();
+    
+        $stock = Stock::find($dataid);
+        if (!$stock) {
+            return redirect()->route('admin.stock_list')->with('error', 'Stock not found.');
+        }
+    
+        $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
+    
+        $rules = [
             'location_id' => 'required',
             'location_name' => 'required',
             'edp_code' => 'required|integer',
@@ -317,24 +342,32 @@ class AdminStockController extends Controller
             'section' => 'required',
             'qty' => 'required|numeric',
             'measurement' => 'required',
-            'new_spareable' => 'required|numeric',
-            'used_spareable' => 'required|numeric',
             'remarks' => 'required'
-        ]);
-
-        // Add rig_id from authenticated user
-        $update_data['rig_id'] = $user->rig_id;
-
-        $stock = Stock::find($dataid);
-        if (!$stock) {
-            return redirect()->route('admin.stock_list')->with('error', 'Stock not found.');
+        ];
+    
+        if ($unit) {
+            if ($unit->type == 'integer') {
+                $rules['new_spareable'] = 'required|integer';
+                $rules['used_spareable'] = 'required|integer';
+            } elseif ($unit->type == 'decimal') {
+                $rules['new_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+                $rules['used_spareable'] = 'required|numeric|regex:/^\d+(\.\d{1,10})?$/';
+            }
+        } else {
+            return redirect()->back()
+                ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
+                ->withInput();
         }
-
-        $stock->update($update_data);
-
+    
+        $validatedData = $request->validate($rules);
+    
+        $validatedData['rig_id'] = $user->rig_id;
+    
+        $stock->update($validatedData);
+    
         return redirect()->route('admin.stock_list')->with('success', 'Stock updated successfully!');
     }
-
+    
 
     public function DeleteStock(Request $request)
     {

@@ -95,6 +95,7 @@
                                     <th>Sr.No</th>
                                     <th>Requester Rig Name</th>
                                     <th>EDP Code</th>
+                                    <th>Description</th>
                                     <th>Request Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -107,6 +108,7 @@
                                                                                     <td>{{ $index + 1 }}</td>
                                                                                     <td>{{ $stockdata->Location_Name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
+                                                                                    <td>{{ $stockdata->description }}</td>
                                                                                     <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
 
                                                                                     <!-- Status with Dynamic Color -->
@@ -672,6 +674,7 @@
                                                                                                     <td>${index + 1}</td>
                                                                 <td>${stockdata.Location_Name}</td>
                                                                 <td>${stockdata.edp_code}</td>
+                                                                <td>${stockdata.description}</td>
                                                                 <td>${formattedDate}</td>
                                                                 <td>
                                                                     <span class="badge ${badgeClass}">${stockdata.status_name}</span>
