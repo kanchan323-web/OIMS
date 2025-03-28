@@ -11,7 +11,7 @@
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
                                             <p class="mb-2">Total Stock</p>
-                                            <h4>31</h4>
+                                            <h4>{{$totalStock}}</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">
@@ -27,7 +27,7 @@
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
                                             <p class="mb-2">Total Request</p>
-                                            <h4>19</h4>
+                                            <h4>{{$totalRequester}}</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">
@@ -43,11 +43,11 @@
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
                                             <p class="mb-2">Escalation</p>
-                                            <h4>50</h4>
+                                            <h4>&nbsp;</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">
-                                        <span class="bg-danger iq-progress progress-1" data-percent="70">
+                                        <span class="bg-danger iq-progress progress-6" data-percent="70">
                                         </span>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
                                             <p class="mb-2">Total Users</p>
-                                            <h4>45/h4>
+                                            <h4>{{$totalUser}}</h4>
                                         </div>
                                     </div>
                                     <div class="iq-progress-bar mt-2">

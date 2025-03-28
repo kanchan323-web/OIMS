@@ -110,111 +110,91 @@ class EdpController extends Controller
     }
 
     public function import(Request $request)
-{
-    $request->validate([
-        'file' => 'required|mimes:xlsx,xls,csv'
-    ]);
-
-    try {
-        $file = $request->file('file');
-        $filePath = $file->storeAs('temp', $file->getClientOriginalName());
-        $spreadsheet = IOFactory::load(storage_path('app/' . $filePath));
-        $sheet = $spreadsheet->getActiveSheet();
-        $rows = $sheet->toArray();
-
-        // Expected headers
-        $expectedHeaders = [
-            'Material',
-            'Material Description',
-            'UoM',
-            'Section',
-            'Material Group'
-        ];
-
-        // Ensure the uploaded file matches the expected headers
-        $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
-        if ($actualHeaders !== $expectedHeaders) {
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+    
+        try {
+            $file = $request->file('file');
+            $filePath = $file->storeAs('temp', $file->getClientOriginalName());
+            $spreadsheet = IOFactory::load(storage_path('app/' . $filePath));
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows = $sheet->toArray();
+    
+            // Expected headers
+            $expectedHeaders = ['Material', 'Material Description', 'UoM', 'Section', 'Material Group'];
+            $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
+    
+            // Check headers
+            if ($actualHeaders !== $expectedHeaders) {
+                Storage::delete($filePath);
+                session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
+                return redirect()->back();
+            }
+    
+            $errors = [];
+            $seenEdpCodes = [];
+            $allowedUoM = ['EA', 'FT', 'GAL', 'KG', 'KIT', 'KL', 'L', 'LB', 'M', 'M3', 'MT', 'NO', 'PAA', 'PAC', 'ROL', 'ST'];
+    
+            // **Step 1: Validate all rows first**
+            foreach (array_slice($rows, 1) as $index => $row) {
+                if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
+    
+                $edpCode = trim($row[0] ?? '');
+                $uom = strtoupper(trim($row[2] ?? ''));
+    
+                // Validate EDP code (must be exactly 9 digits)
+                if (!preg_match('/^\d{9}$/', $edpCode)) {
+                    $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
+                }
+    
+                // Validate UoM
+                if (!in_array($uom, $allowedUoM)) {
+                    $errors[] = "Row " . ($index + 2) . ": Invalid UoM value '{$uom}'.";
+                }
+    
+                // **Check for duplicate EDP codes within the file**
+                if (isset($seenEdpCodes[$edpCode])) {
+                    $errors[] = "Row " . ($index + 2) . ": Duplicate EDP code '{$edpCode}' found.";
+                } else {
+                    $seenEdpCodes[$edpCode] = true;
+                }
+            }
+    
+            // **Step 2: If any row is invalid or duplicate, terminate the operation**
+            if (!empty($errors)) {
+                Storage::delete($filePath);
+                session()->flash('error', ['Uploaded file not validated.', ...$errors]);
+                return redirect()->back();
+            }
+    
+            // **Step 3: Process the validated data**
+            foreach (array_slice($rows, 1) as $row) {
+                if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
+    
+                Edp::updateOrCreate(
+                    ['edp_code' => trim($row[0])],
+                    [
+                        'description' => trim($row[1]),
+                        'measurement' => strtoupper(trim($row[2])),
+                        'section' => trim($row[3]),
+                        'category' => trim($row[4])
+                    ]
+                );
+            }
+    
             Storage::delete($filePath);
-            session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
+            session()->flash('success', 'Excel file imported successfully!');
+            return redirect()->route('admin.edp.index');
+    
+        } catch (\Exception $e) {
+            Storage::delete($filePath);
+            session()->flash('error', 'Error importing file: ' . $e->getMessage());
             return redirect()->back();
         }
-
-        $user = Auth::user();
-        $errors = [];
-        $processedEdpCodes = [];
-
-        // Allowed UoM values
-        $allowedUoM = [
-            'EA', 'FT', 'GAL', 'KG', 'KIT', 'KL', 'L', 'LB',
-            'M', 'M3', 'MT', 'NO', 'PAA', 'PAC', 'ROL', 'ST'
-        ];
-
-        foreach (array_slice($rows, 1) as $index => $row) {
-            if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
-
-            // Validate EDP code (Column Index 0)
-            if (!isset($row[0]) || !preg_match('/^\d{9}$/', $row[0])) {
-                $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
-                continue;
-            }
-
-            $edpCode = $row[0];
-            $materialDesc = $row[1];
-            $uom = strtoupper(trim($row[2])); // Convert UoM to uppercase
-            $section = $row[3];
-            $category = $row[4];
-
-            // Validate UoM
-            if (!in_array($uom, $allowedUoM)) {
-                $errors[] = "Row " . ($index + 2) . ": Invalid UoM value '{$uom}'. Allowed values are: " . implode(', ', $allowedUoM);
-                continue;
-            }
-
-            // Skip if this EDP code has already been processed in this file
-            if (in_array($edpCode, $processedEdpCodes)) {
-                continue;
-            }
-
-            // Check for existing EDP in the database
-            $existingEdp = Edp::where('edp_code', $edpCode)->first();
-
-            if ($existingEdp) {
-                // Update existing record
-                $existingEdp->update([
-                    'description' => $materialDesc,
-                    'section'     => $section,
-                    'category'    => $category,
-                    'measurement' => $uom,
-                ]);
-            } else {
-                // Insert new EDP record
-                Edp::create([
-                    'edp_code'    => $edpCode,
-                    'description' => $materialDesc,
-                    'section'     => $section,
-                    'category'    => $category,
-                    'measurement' => $uom,
-                ]);
-            }
-
-            // Add to processed EDP list
-            $processedEdpCodes[] = $edpCode;
-        }
-
-        Storage::delete($filePath);
-
-        if (!empty($errors)) {
-            session()->flash('error', $errors);
-            return redirect()->back();
-        }
-
-        session()->flash('success', 'Excel file imported successfully!');
-        return redirect()->route('admin.edp.index');
-    } catch (\Exception $e) {
-        session()->flash('error', 'Error importing file: ' . $e->getMessage());
-        return redirect()->back();
     }
-}
+
 
    
 }
