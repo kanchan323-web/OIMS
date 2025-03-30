@@ -13,7 +13,7 @@ use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\masters\EdpController;
 use App\Http\Controllers\admin\masters\CategoryController;
-
+use App\Http\Controllers\NotificationController;
 
 //Admin Portal Section
 
@@ -82,6 +82,10 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/stock_list', [AdminStockController::class, 'stock_list'])->name('admin.stock_list');
         Route::get('/stock_filter', [AdminStockController::class, 'stock_filter'])->name('admin.stock_filter');
         Route::get('/check-edp-stock', [AdminStockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
+    
+        //notifications
+        Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
+        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
     });
 });
 
@@ -159,6 +163,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mapuseraddstocklist', [LoginController::class, 'mapuserstockview'])->name('map_user_stock_list');
         Route::post('/mapusergetdata', [LoginController::class, 'mapuserdataget'])->name('map_all_user_data.post');
         Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
+
+        //Notifications
+        Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
+        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
     });
 });
 
