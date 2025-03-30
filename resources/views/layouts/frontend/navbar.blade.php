@@ -121,66 +121,25 @@
                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                                 </svg>
-                                <span class="bg-primary "></span>
+                                <span class="bg-primary" id="notification-count">0</span> <!-- Dynamic Count -->
                             </a>
+
                             <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <div class="card shadow-none m-0">
-                                    <div class="card-body p-0 ">
+                                    <div class="card-body p-0">
                                         <div class="cust-title p-3">
                                             <div class="d-flex align-items-center justify-content-between">
                                                 <h5 class="mb-0">Notifications</h5>
-                                                <a class="badge badge-primary badge-card" href="#">3</a>
+                                                <a class="badge badge-primary badge-card"
+                                                    id="notification-count-badge">0</a>
                                             </div>
                                         </div>
-                                        <div class="px-3 pt-0 pb-0 sub-card">
-                                            <a href="#" class="iq-sub-card">
-                                                <div class="media align-items-center cust-card py-3 border-bottom">
-                                                    <div class="">
-                                                        <img class="avatar-50 rounded-small"
-                                                            src="../assets/images/user/01.jpg" alt="01">
-                                                    </div>
-                                                    <div class="media-body ml-3">
-                                                        <div class="d-flex align-items-center justify-content-between">
-                                                            <h6 class="mb-0">Emma Watson</h6>
-                                                            <small class="text-dark"><b>12 : 47 pm</b></small>
-                                                        </div>
-                                                        <small class="mb-0">Lorem ipsum dolor sit amet</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="iq-sub-card">
-                                                <div class="media align-items-center cust-card py-3 border-bottom">
-                                                    <div class="">
-                                                        <img class="avatar-50 rounded-small"
-                                                            src="../assets/images/user/02.jpg" alt="02">
-                                                    </div>
-                                                    <div class="media-body ml-3">
-                                                        <div class="d-flex align-items-center justify-content-between">
-                                                            <h6 class="mb-0">Ashlynn Franci</h6>
-                                                            <small class="text-dark"><b>11 : 30 pm</b></small>
-                                                        </div>
-                                                        <small class="mb-0">Lorem ipsum dolor sit amet</small>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <a href="#" class="iq-sub-card">
-                                                <div class="media align-items-center cust-card py-3">
-                                                    <div class="">
-                                                        <img class="avatar-50 rounded-small"
-                                                            src="../assets/images/user/03.jpg" alt="03">
-                                                    </div>
-                                                    <div class="media-body ml-3">
-                                                        <div class="d-flex align-items-center justify-content-between">
-                                                            <h6 class="mb-0">Kianna Carder</h6>
-                                                            <small class="text-dark"><b>11 : 21 pm</b></small>
-                                                        </div>
-                                                        <small class="mb-0">Lorem ipsum dolor sit amet</small>
-                                                    </div>
-                                                </div>
-                                            </a>
+                                        <div class="px-3 pt-0 pb-0 sub-card" id="notification-list">
+                                            <p class="text-center py-3">No new notifications</p>
+                                            <!-- Default message -->
                                         </div>
-                                        <a class="right-ic btn btn-primary btn-block position-relative p-2" href="#"
-                                            role="button">
+                                        <a class="right-ic btn btn-primary btn-block position-relative p-2"
+                                            href="{{ route('notifications.index') }}">
                                             View All
                                         </a>
                                     </div>
@@ -224,3 +183,58 @@
         </nav>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    function fetchNotifications() {
+        $.ajax({
+            url: "{{ route('notifications.fetch') }}",
+            method: "GET",
+            success: function(response) {
+                let notificationList = $("#notification-list");
+                let notificationCount = $("#notification-count");
+                let notificationBadge = $("#notification-count-badge");
+
+                notificationList.empty();
+                if (response.notifications.length > 0) {
+                    response.notifications.forEach(notification => {
+                        notificationList.append(`
+                            <a href="#" class="iq-sub-card mark-as-read" data-id="${notification.id}">
+                                <div class="media align-items-center cust-card py-3 border-bottom">
+                                    <div class="media-body ml-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <h6 class="mb-0">${notification.message}</h6>
+                                            <small class="text-dark"><b>${notification.created_at}</b></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        `);
+                    });
+                } else {
+                    notificationList.append('<p class="text-center py-3">No new notifications</p>');
+                }
+
+                notificationCount.text(response.unread_count);
+                notificationBadge.text(response.unread_count);
+            }
+        });
+    }
+
+    fetchNotifications(); // Load on page load
+    setInterval(fetchNotifications, 5000); // Refresh every 5 seconds
+
+    $(document).on("click", ".mark-as-read", function() {
+        let notificationId = $(this).data("id");
+
+        $.ajax({
+            url: "{{ route('notifications.markRead') }}",
+            method: "POST",
+            data: { id: notificationId, _token: "{{ csrf_token() }}" },
+            success: function() {
+                fetchNotifications();
+            }
+        });
+    });
+});
+</script>
