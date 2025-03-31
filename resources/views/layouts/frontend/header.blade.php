@@ -14,11 +14,14 @@
       <link rel="stylesheet" href="{{ asset('resources/vendor/remixicon/fonts/remixicon.css') }}">  </head>
       <script src="{{ asset('resources/js/jquery-3.7.1.min.js') }}"></script>
       <script src="{{ asset('resources/js/highcharts.js') }}"></script>
+      <script src="{{ asset('resources/js/accessibility.js') }}"></script>
+      <script src="{{ asset('resources/js/export-data.js') }}"></script>
+      <script src="{{ asset('resources/js/exporting.js') }}"></script>
+      <script src="{{ asset('resources/js/variable-pie.js') }}"></script>
       
       <meta name="csrf-token" content="{{ csrf_token() }}">
 
       <style>
-/* General Styling */
 .highcharts-figure,
 .highcharts-data-table table {
     min-width: 320px;

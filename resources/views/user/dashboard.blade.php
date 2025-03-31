@@ -179,6 +179,19 @@
 
                     </div>
                 </div>
+                <div class="col-lg-8">
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title"> Stock Comparison Imcoming and Raised Request</h4>
+                            </div>
+
+                        </div>
+                        <div id="combinedChartContainer" style="width:100%; height:600px;"></div>
+
+
+                    </div>
+                </div>
               
 
             </div>
@@ -459,6 +472,96 @@
                 name: 'Users',
                 colorByPoint: true,
                 data: chartData
+            }]
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var statusData = @json($statusCounts);
+        var dailyData = @json($dailyRequests);
+        var weeklyData = @json($weeklyRequests);
+        var topItemsData = @json($topItems);
+
+        // Process data for the charts
+        var pieData = statusData.map(function(item) {
+            return { name: item.status, y: item.count };
+        });
+
+        var lineData = dailyData.map(function(item) {
+            return [new Date(item.date).getTime(), item.count];
+        });
+
+        var barCategories = weeklyData.map(function(item) {
+            return 'Week ' + item.week;
+        });
+
+        var barData = weeklyData.map(function(item) {
+            return item.count;
+        });
+
+        var topItemsCategories = topItemsData.map(function(item) {
+            return item.item_name;
+        });
+
+        var topItemsDataSeries = topItemsData.map(function(item) {
+            return item.total_requested;
+        });
+
+        // Combined Chart
+        Highcharts.chart('combinedChartContainer', {
+            title: {
+                text: 'Stock Requests Overview'
+            },
+            xAxis: [{
+                categories: barCategories,
+                title: {
+                    text: 'Weeks'
+                },
+                opposite: true
+            }, {
+                type: 'datetime',
+                title: {
+                    text: 'Date'
+                }
+            }],
+            yAxis: [{
+                title: {
+                    text: 'Number of Requests'
+                }
+            }],
+            series: [{
+                type: 'pie',
+                name: 'Request Status',
+                data: pieData,
+                center: [100, 80],
+                size: 100,
+                showInLegend: false,
+                dataLabels: {
+                    enabled: true
+                }
+            }, {
+                type: 'line',
+                name: 'Daily Requests',
+                data: lineData,
+                xAxis: 1
+            }, {
+                type: 'column',
+                name: 'Weekly Requests',
+                data: barData,
+                xAxis: 0
+            }, {
+                type: 'bar',
+                name: 'Top Requested Items',
+                data: topItemsDataSeries,
+                xAxis: 0,
+                yAxis: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y}'
+                }
             }]
         });
     });
