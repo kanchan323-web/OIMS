@@ -139,7 +139,8 @@
                                             <!-- Default message -->
                                         </div>
                                         <a class="right-ic btn btn-primary btn-block position-relative p-2"
-                                            href="{{ route('notifications.index') }}">
+                                            href="">
+                                            {{-- {{ route('notifications.index') }} --}}
                                             View All
                                         </a>
                                     </div>
