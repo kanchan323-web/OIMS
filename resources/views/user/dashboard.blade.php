@@ -480,11 +480,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var statusData = @json($statusCounts);
-        var dailyData = @json($dailyRequests);
-        var weeklyData = @json($weeklyRequests);
-        var topItemsData = @json($topItems);
-
+  
         // Process data for the charts
         var pieData = statusData.map(function(item) {
             return { name: item.status, y: item.count };
