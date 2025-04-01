@@ -16,6 +16,8 @@ use App\Http\Controllers\admin\masters\CategoryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\RequestReportController;
+use App\Http\Controllers\admin\StockReportController as AdminStockReportController;
+use App\Http\Controllers\admin\RequestReportController as AdminRequestReportController;
 
 //Admin Portal Section
 
@@ -120,6 +122,14 @@ Route::middleware(['admin.auth'])->group(function () {
             Route::get('/get-request-status/{id}', [RequestStockController::class, 'getRequestStatusforEdit'])->name('admin.request-status.get');
             Route::post('/update-request-status/{id}', [RequestStockController::class, 'updateRequestStatus'])->name('admin.request-status.update');
         });
+
+           //Reports
+        Route::prefix('reports')->group(function () {
+            Route::get('/stocks', [AdminStockReportController::class, 'index'])->name('stock_reports.index');
+            Route::get('/requests', [AdminRequestReportController::class, 'index'])->name('request_reports.index');
+        });
+
+
     });
 });
 
