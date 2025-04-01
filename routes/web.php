@@ -15,6 +15,10 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\masters\EdpController;
 use App\Http\Controllers\admin\masters\CategoryController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\StockReportController;
+use App\Http\Controllers\RequestReportController;
+use App\Http\Controllers\admin\StockReportController as AdminStockReportController;
+use App\Http\Controllers\admin\RequestReportController as AdminRequestReportController;
 
 //Admin Portal Section
 
@@ -84,6 +88,7 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/stock_filter', [AdminStockController::class, 'stock_filter'])->name('admin.stock_filter');
         Route::get('/check-edp-stock', [AdminStockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
 
+
         //notifications
         Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
         Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
@@ -119,6 +124,14 @@ Route::middleware(['admin.auth'])->group(function () {
             Route::get('/get-request-status/{id}', [AdminRequestStockController::class, 'getRequestStatusforEdit'])->name('admin.request-status.get');
             Route::post('/update-request-status/{id}', [AdminRequestStockController::class, 'updateRequestStatus'])->name('admin.request-status.update');
         });
+
+           //Reports
+        Route::prefix('reports')->group(function () {
+            Route::get('/stocks', [AdminStockReportController::class, 'index'])->name('stock_reports.index');
+            Route::get('/requests', [AdminRequestReportController::class, 'index'])->name('request_reports.index');
+        });
+
+
     });
 });
 
@@ -173,6 +186,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
             Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
             Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get');
+            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
+            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get');
             Route::post('/request-status/accept', [RequestStockController::class, 'accept'])->name('request.accept');
             Route::post('/request-status/decline', [RequestStockController::class, 'decline'])->name('request.decline');
             Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('request.query');
@@ -200,6 +215,12 @@ Route::middleware(['auth'])->group(function () {
         //Notifications
         Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
         Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
+
+        //Reports
+        Route::prefix('reports')->group(function () {
+            Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
+            Route::get('/request', [RequestReportController::class, 'index'])->name('request_report.index');
+        });
     });
 });
 

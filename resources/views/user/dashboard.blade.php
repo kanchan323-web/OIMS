@@ -105,7 +105,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -116,19 +116,7 @@
                         <div id="StockLevels"></div>
                     </div>
                 </div>
-                <div class="col-lg-8">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Percentage Of Total Stock</h4>
-                            </div>
-
-                        </div>
-                        <div id="PercentageOfStock"></div>
-
-                    </div>
-                </div>
-                <div class="col-lg-8">
+                <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -140,7 +128,20 @@
 
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 col-md-12 col-sm-12">
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Percentage Of Total Stock</h4>
+                            </div>
+
+                        </div>
+                        <div id="PercentageOfStock"></div>
+
+                    </div>
+                </div>
+              
+                <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -153,7 +154,19 @@
 
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-4 col-md-12 col-sm-12">
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title"> Stock Comparison Imcoming and Raised Request</h4>
+                            </div>
+
+                        </div>
+                        <div id="stockComparisonChart" style="width:100%; height:500px;"></div>
+
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -167,19 +180,8 @@
                     </div>
                 </div>
                
-                <div class="col-lg-8">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title"> Stock Comparison Imcoming and Raised Request</h4>
-                            </div>
-
-                        </div>
-                        <div id="stockComparisonChart" style="width:100%; height:500px;"></div>
-
-                    </div>
-                </div>
-                <div class="col-lg-8">
+             
+                {{-- <div class="col-lg-8">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -191,7 +193,7 @@
 
 
                     </div>
-                </div>
+                </div> --}}
               
 
             </div>
