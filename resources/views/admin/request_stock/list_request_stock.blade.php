@@ -1,4 +1,4 @@
-@extends('layouts.frontend.layout')
+@extends('layouts.frontend.admin_layout')
 @section('page-content')
     <div class="content-page">
         <div class="container-fluid">
@@ -54,7 +54,7 @@
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
+                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
                                             <!-- <a href="{{ route('stock_list_pdf') }}"
                                                                                     class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
                                                                                     id="downloadPdf" target="_blank">
@@ -71,7 +71,7 @@
 
                         <!--         <div class="col-sm-6 col-md-3">
                                                                 <div class="user-list-files d-flex">
-                                                                    <a href="{{ route('request_stock_add') }}" class="btn btn-primary add-list"><i
+                                                                    <a href="{{ route('admin.request_stock_add') }}" class="btn btn-primary add-list"><i
                                                                             class="las la-plus mr-3"></i>Add Stock</a>
                                                                     <a href="#" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks
                                                                     </a>
@@ -639,7 +639,7 @@
                 // console.log("hello");
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('incoming_request_filter.get') }}",
+                    url: "{{ route('admin.incoming_request_filter.get') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
 
@@ -724,7 +724,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "{{ route('request_stock_view.get') }}",
+                url: "{{ route('admin.request_stock_view.get') }}",
                 data: { data: id },
                 success: function (response) {
                     if (!response || !response.data) {
@@ -899,7 +899,7 @@
                 }
 
                 $.ajax({
-                    url: "{{ route('request.accept') }}",
+                    url: "{{ route('admin.request.accept') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -941,7 +941,7 @@
                     success: function (response) {
                         console.log("AJAX Success:", response);
                         if (response.success) {
-                            window.location.href = "{{ route('incoming_request_list') }}";
+                            window.location.href = "{{ route('admin.incoming_request_list') }}";
                         }
                     },
                     error: function (xhr) {
@@ -959,7 +959,7 @@
                 let queryMsg = $("#query").val();
 
                 $.ajax({
-                    url: "{{ route('request.query') }}",
+                    url: "{{ route('admin.request.query') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -968,7 +968,7 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            window.location.href = "{{ route('incoming_request_list') }}";
+                            window.location.href = "{{ route('admin.incoming_request_list') }}";
                         }
                     },
                     error: function (xhr) {
@@ -1010,7 +1010,7 @@
                 let requestId = $("#request_id").val();
 
                 $.ajax({
-                    url: "{{ route('request.updateStatus') }}",
+                    url: "{{ route('admin.request.updateStatus') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -1110,7 +1110,7 @@
             // If row is unread, update the status in DB and remove styles dynamically
             if (row.attr("style")) {
                 $.ajax({
-                    url: "{{ route('update.is_read.status') }}",
+                    url: "{{ route('admin.update.is_read.status') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -1159,7 +1159,7 @@
         // Function to open the Edit Received Request Modal
         function openEditReceivedRequestModal(requestId) {
             $.ajax({
-                url: "{{ url('/user/request-stock/get-request-status') }}/" + requestId,
+                url: "{{ url('/admin/request-stock/get-request-status') }}/" + requestId,
                 type: 'GET',
                 success: function (response) {
                     console.log(response);
@@ -1215,7 +1215,7 @@
                 return;
             }
             $.ajax({
-                url: "{{ url('/user/request-stock/update-request-status') }}/" + requestId,
+                url: "{{ url('/admin/request-stock/update-request-status') }}/" + requestId,
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

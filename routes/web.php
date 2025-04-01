@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\AdminRequestStockController;
 use App\Http\Controllers\Admin\Masters\RigUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User;
@@ -82,41 +83,41 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/stock_list', [AdminStockController::class, 'stock_list'])->name('admin.stock_list');
         Route::get('/stock_filter', [AdminStockController::class, 'stock_filter'])->name('admin.stock_filter');
         Route::get('/check-edp-stock', [AdminStockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
-    
+
         //notifications
         Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
         Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
 
-
+        //Request Stock
         Route::prefix('request-stock')->group(function () {
-            Route::get('/request_stockList', [RequestStockController::class, 'RequestStockList'])->name('admin.stock_list.get');
-            Route::get('/filter', [RequestStockController::class, 'RequestStockFilter'])->name('admin.request_stock_filter.get');
-            Route::get('/stockList', [RequestStockController::class, 'StockList'])->name('admin.stock_list.request');
-            Route::get('/list', [RequestStockController::class, 'RequestStockList'])->name('admin.request_stock_list');
-            Route::get('/supplier_request', [RequestStockController::class, 'SupplierRequest'])->name('admin.supplier_request.get');
-            Route::get('/add', [RequestStockController::class, 'RequestStockAdd'])->name('admin.request_stock_add');
-            Route::post('/addSubmit', [RequestStockController::class, 'RequestStockAddPost'])->name('admin.request_stock_add.post');
-            Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('admin.request_stock_view.get');
-            Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('admin.request_stock_filter');
-            Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('admin.get_stockrequest_data');
-            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('admin.incoming_request_list'); 
-            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('admin.incoming_request_filter.get'); 
-            Route::post('/request-status/accept', [RequestStockController::class, 'accept'])->name('admin.request.accept');
-            Route::post('/request-status/decline', [RequestStockController::class, 'decline'])->name('admin.request.decline');
-            Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('admin.request.query');
-            Route::get('/request-status/get-request-stock/{id}', [RequestStockController::class, 'getRequestStock']);
-            Route::post('/request-status/update-request-status', [RequestStockController::class, 'updateStatus'])->name('admin.request.updateStatus');
-            Route::get('/status-list', [RequestStockController::class, 'getRequestStatus'])->name('admin.get.request.status');
-            Route::get('/raised-requests', [RequestStockController::class, 'RaisedRequestList'])->name('admin.raised_requests.index');
-            Route::get('/filtered-requests', [RequestStockController::class, 'filterRequestStock'])->name('admin.raised_requests.filter');
-            Route::post('/request-status/update-request-status-raised', [RequestStockController::class, 'updateStatusforRequest'])->name('admin.request.updateStatusforRequest');
-            Route::post('/request-status/update-is-read-status', [RequestStockController::class, 'updateIsReadStatus'])->name('admin.update.is_read.status');
-            Route::post('/update-stock', [RequestStockController::class, 'updateStock'])->name('admin.update.stock');
-            Route::post('/request-status/query-for-raised-request', [RequestStockController::class, 'queryforRaisedRequest'])->name('admin.request.raisedrequestquery');
-            Route::post('/accept-pending-request', [RequestStockController::class, 'acceptPendingRequest'])->name('admin.request.pending.accept');
-            Route::post('/decline-pending-request', [RequestStockController::class, 'declineforRaisedRequest'])->name('admin.request.raisedrequestdecline');
-            Route::get('/get-request-status/{id}', [RequestStockController::class, 'getRequestStatusforEdit'])->name('admin.request-status.get');
-            Route::post('/update-request-status/{id}', [RequestStockController::class, 'updateRequestStatus'])->name('admin.request-status.update');
+            Route::get('/request_stockList', [AdminRequestStockController::class, 'RequestStockList'])->name('admin.stock_list.get');
+            Route::get('/filter', [AdminRequestStockController::class, 'RequestStockFilter'])->name('admin.request_stock_filter.get');
+            Route::get('/stockList', [AdminRequestStockController::class, 'StockList'])->name('admin.stock_list.request');
+            Route::get('/list', [AdminRequestStockController::class, 'RequestStockList'])->name('admin.request_stock_list');
+            Route::get('/supplier_request', [AdminRequestStockController::class, 'SupplierRequest'])->name('admin.supplier_request.get');
+            Route::get('/add', [AdminRequestStockController::class, 'RequestStockAdd'])->name('admin.request_stock_add');
+            Route::post('/addSubmit', [AdminRequestStockController::class, 'RequestStockAddPost'])->name('admin.request_stock_add.post');
+            Route::get('/view', [AdminRequestStockController::class, 'RequestStockViewPost'])->name('admin.request_stock_view.get');
+            Route::post('/filter', [AdminRequestStockController::class, 'request_stock_filter'])->name('admin.request_stock_filter');
+            Route::get('/get_stockrequest_data', [AdminStockController::class, 'get_stockrequest_data'])->name('admin.get_stockrequest_data');
+            Route::get('/incoming_request_list', [AdminRequestStockController::class, 'IncomingRequestStockList'])->name('admin.incoming_request_list');
+            Route::get('/incoming_request_list_filter', [AdminRequestStockController::class, 'IncomingRequestStockFilter'])->name('admin.incoming_request_filter.get');
+            Route::post('/request-status/accept', [AdminRequestStockController::class, 'accept'])->name('admin.request.accept');
+            Route::post('/request-status/decline', [AdminRequestStockController::class, 'decline'])->name('admin.request.decline');
+            Route::post('/request-status/query', [AdminRequestStockController::class, 'query'])->name('admin.request.query');
+            Route::get('/request-status/get-request-stock/{id}', [AdminRequestStockController::class, 'getRequestStock']);
+            Route::post('/request-status/update-request-status', [AdminRequestStockController::class, 'updateStatus'])->name('admin.request.updateStatus');
+            Route::get('/status-list', [AdminRequestStockController::class, 'getRequestStatus'])->name('admin.get.request.status');
+            Route::get('/raised-requests', [AdminRequestStockController::class, 'RaisedRequestList'])->name('admin.raised_requests.index');
+            Route::get('/filtered-requests', [AdminRequestStockController::class, 'filterRequestStock'])->name('admin.raised_requests.filter');
+            Route::post('/request-status/update-request-status-raised', [AdminRequestStockController::class, 'updateStatusforRequest'])->name('admin.request.updateStatusforRequest');
+            Route::post('/request-status/update-is-read-status', [AdminRequestStockController::class, 'updateIsReadStatus'])->name('admin.update.is_read.status');
+            Route::post('/update-stock', [AdminRequestStockController::class, 'updateStock'])->name('admin.update.stock');
+            Route::post('/request-status/query-for-raised-request', [AdminRequestStockController::class, 'queryforRaisedRequest'])->name('admin.request.raisedrequestquery');
+            Route::post('/accept-pending-request', [AdminRequestStockController::class, 'acceptPendingRequest'])->name('admin.request.pending.accept');
+            Route::post('/decline-pending-request', [AdminRequestStockController::class, 'declineforRaisedRequest'])->name('admin.request.raisedrequestdecline');
+            Route::get('/get-request-status/{id}', [AdminRequestStockController::class, 'getRequestStatusforEdit'])->name('admin.request-status.get');
+            Route::post('/update-request-status/{id}', [AdminRequestStockController::class, 'updateRequestStatus'])->name('admin.request-status.update');
         });
     });
 });
@@ -170,8 +171,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/view', [RequestStockController::class, 'RequestStockViewPost'])->name('request_stock_view.get');
             Route::post('/filter', [RequestStockController::class, 'request_stock_filter'])->name('request_stock_filter');
             Route::get('/get_stockrequest_data', [StockController::class, 'get_stockrequest_data'])->name('get_stockrequest_data');
-            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list'); 
-            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get'); 
+            Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
+            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get');
             Route::post('/request-status/accept', [RequestStockController::class, 'accept'])->name('request.accept');
             Route::post('/request-status/decline', [RequestStockController::class, 'decline'])->name('request.decline');
             Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('request.query');

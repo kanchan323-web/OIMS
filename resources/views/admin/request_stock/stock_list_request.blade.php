@@ -1,4 +1,4 @@
-@extends('layouts.frontend.layout')
+@extends('layouts.frontend.admin_layout')
 @section('page-content')
 
 
@@ -72,7 +72,7 @@
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
+                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
                                             <!-- <a href="{{ route('stock_list_pdf') }}"
                                                 class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
                                                 id="downloadPdf" target="_blank">

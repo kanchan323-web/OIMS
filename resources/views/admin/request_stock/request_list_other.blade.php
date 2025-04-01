@@ -1,4 +1,4 @@
-@extends('layouts.frontend.layout')
+@extends('layouts.frontend.admin_layout')
 @section('page-content')
 
 <div class="content-page">
@@ -30,7 +30,7 @@
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
 
-                            <form action="{{ route('stock_list') }}" method="get" class="mr-3 position-relative">
+                            <form action="{{ route('admin.stock_list') }}" method="get" class="mr-3 position-relative">
                                 <div class="row">
                                     <div class="col-md-2 mb-2">
                                         <label for="category">Category</label>
@@ -63,7 +63,7 @@
 
                                     <div class="col-md-4 mb-2 d-flex align-items-end">
                                         <button type="submit" class="btn btn-primary mr-2">Search</button>
-                                        <a href="{{ route('stock_list') }}" class="btn btn-secondary">Reset</a>
+                                        <a href="{{ route('admin.stock_list') }}" class="btn btn-secondary">Reset</a>
                                     </div>
                                 </div>
                             </form>
@@ -75,9 +75,9 @@
 
                     <div class="col-sm-6 col-md-3">
                         <div class="user-list-files d-flex">
-                            <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
+                            <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Add Stock</a>
-                            <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
+                            <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Bulk Stocks </a>
                         </div>
                     </div>
@@ -334,7 +334,7 @@
         $.ajaxSetup({ headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') } });
         $.ajax({
             type: "GET",
-            url: "{{route('request_stock_view.get')}}",
+            url: "{{route('admin.request_stock_view.get')}}",
             data: { data: id },
             success: function (response) {
 
