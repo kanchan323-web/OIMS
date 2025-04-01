@@ -224,18 +224,18 @@
                     </a>
                     <ul id="request" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                         <li class="">
-                            <a href="{{route('request_stock_list')}}">
+                            <a href="{{route(name: 'admin.stock_list.get')}}">
                                 <i class="las la-minus"></i><span>All Stock Request List</span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="{{route('request_stock_add')}}">
-                                <i class="las la-minus"></i><span>Add Request</span>
+                            <a href="{{route('admin.incoming_request_list')}}">
+                                <i class="las la-minus"></i><span>Incoming Requests</span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="{{route('request_stock_add')}}">
-                                <i class="las la-minus"></i><span>Incomming Request</span>
+                            <a href="{{route('admin.raised_requests.index')}}">
+                                <i class="las la-minus"></i><span>Raised Requests</span>
                             </a>
                         </li>
                     </ul>

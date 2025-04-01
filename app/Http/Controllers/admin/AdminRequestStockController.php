@@ -23,9 +23,10 @@ use App\Mail\supplier_stock_mail;
 
 
 use Illuminate\Support\Facades\Session;
+
 class AdminRequestStockController extends Controller
 {
-    
+
     public function RequestStockList(Request $request)
     {
         $rig_id = Auth::user()->rig_id;
@@ -34,7 +35,7 @@ class AdminRequestStockController extends Controller
         $EDP_Code_ID = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
             ->where('rig_id', '!=', $rig_id)
-            ->where('qty','!=', 0)
+            ->where('qty', '!=', 0)
             ->where('req_status', 'inactive')
             ->get();
 
@@ -43,7 +44,7 @@ class AdminRequestStockController extends Controller
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->where('stocks.rig_id', '!=', $rig_id)
             ->where('stocks.req_status', 'inactive')
-            ->where('stocks.qty','!=', 0)
+            ->where('stocks.qty', '!=', 0)
             ->orderBy('stocks.id', 'desc')
             ->get();
 
@@ -51,7 +52,7 @@ class AdminRequestStockController extends Controller
         $moduleName = "Request Stock List";
 
 
-        return view('request_stock.stock_list_request', compact('Stock_Table_Data', 'moduleName', 'EDP_Code_ID'));
+        return view('admin.request_stock.stock_list_request', compact('Stock_Table_Data', 'moduleName', 'EDP_Code_ID'));
     }
 
 
@@ -79,7 +80,7 @@ class AdminRequestStockController extends Controller
                 ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
                 ->where('rig_id', '!=', $rig_id)
                 ->where('req_status', 'inactive')
-                ->where('qty','!=', 0)
+                ->where('qty', '!=', 0)
                 ->orderBy('stocks.id', 'desc')
                 ->get();
 
@@ -120,7 +121,7 @@ class AdminRequestStockController extends Controller
 
         $data = RequestStock::get();
         $moduleName = "Request Stocks List";
-        return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig'));
+        return view('admin.request_stock.supplier_request', compact('data', 'moduleName', 'datarig'));
     }
 
 
@@ -154,7 +155,7 @@ class AdminRequestStockController extends Controller
             ->get();
 
         $moduleName = "Request Stock List";
-        return view('request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
+        return view('admin.request_stock.stock_list_request', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
 
@@ -185,7 +186,7 @@ class AdminRequestStockController extends Controller
 
 
         $moduleName = "Request Stocks filter";
-        return view('request_stock.list_request_stock', compact('data', 'moduleName'));
+        return view('admin.request_stock.list_request_stock', compact('data', 'moduleName'));
     }
 
 
@@ -194,7 +195,7 @@ class AdminRequestStockController extends Controller
     public function RequestStockAdd(Request $request)
     {
         $moduleName = "Add Stock";
-        return view('request_stock.add_request_stock', compact('moduleName'));
+        return view('admin.request_stock.add_request_stock', compact('moduleName'));
     }
 
 
@@ -304,7 +305,7 @@ class AdminRequestStockController extends Controller
                 return redirect()->route('stock_list.get');
             }
         } catch (\Exception $e) {
-            return redirect()->route('stock_list.get')->withErrors('An error occurred: ' . $e->getMessage());
+            return redirect()->route('admin.stock_list.get')->withErrors('An error occurred: ' . $e->getMessage());
         }
     }
 
@@ -362,7 +363,7 @@ class AdminRequestStockController extends Controller
     {
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
-            ->where('rig_id', $rig_id)
+            //->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
 
@@ -379,7 +380,7 @@ class AdminRequestStockController extends Controller
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-            ->where('requesters.supplier_rig_id', $rig_id)
+            //->where('requesters.supplier_rig_id', $rig_id)
             ->with('requestStatuses')
             ->distinct()
             ->orderBy('requesters.created_at', 'desc')
@@ -390,7 +391,7 @@ class AdminRequestStockController extends Controller
             ->select('edps.edp_code')
             ->get();
         $moduleName = "Incoming Request List";
-        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
+        return view('admin.request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
 
 
@@ -411,8 +412,8 @@ class AdminRequestStockController extends Controller
             )
                 ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
                 ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id') 
-                ->join('edps', 'stocks.edp_code', '=', 'edps.id') 
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('stocks.edp_code', $edp_code);
                 })
@@ -436,7 +437,7 @@ class AdminRequestStockController extends Controller
         }
 
 
-        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
+        return view('admin.request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
     }
 
 
@@ -694,19 +695,23 @@ class AdminRequestStockController extends Controller
             ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             //->where('requesters.supplier_id', $userId)
-            ->where('requesters.requester_rig_id', $rig_id)
+            //->where('requesters.requester_rig_id', $rig_id)
             ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code')
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
         $datarig = User::where('user_type', '!=', 'admin')
-            ->where('rig_id', $rig_id)
+            //->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
-        $stocks = Stock::select('id')->where('rig_id', $rig_id)->distinct()->get();
-        $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
+        $stocks = Stock::select('id')
+            //->where('rig_id', $rig_id)
+            ->distinct()->get();
+        $edps = Edp::select('edp_code', 'id as edp_id')
+           // ->whereIn('id', $stocks)
+            ->distinct()->get();
 
-        return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig', 'edps'));
+        return view('admin.request_stock.supplier_request', compact('data', 'moduleName', 'datarig', 'edps'));
     }
 
 
@@ -1061,9 +1066,9 @@ class AdminRequestStockController extends Controller
     public function updateRequestStatus(Request $request, $requestId)
     {
         $requestStatus = RequestStatus::where('request_id', $requestId)
-        ->where('status_id', 6)
-        ->latest()
-        ->first();
+            ->where('status_id', 6)
+            ->latest()
+            ->first();
 
         if (!$requestStatus) {
             return response()->json([
