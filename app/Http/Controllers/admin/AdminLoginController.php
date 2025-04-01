@@ -18,7 +18,7 @@ class AdminLoginController extends Controller
 
     public function authenticate(Request $request)
     {
-        
+
         $validated = $request->validate([
             'login'    => 'required|string',
             'password' => 'required|min:3',
@@ -30,7 +30,7 @@ class AdminLoginController extends Controller
             'captcha.required'  => 'Please enter the CAPTCHA.',
             'captcha.captcha'   => 'Incorrect CAPTCHA! Try again.',
         ]);
-        
+
         $fieldType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
 
         $user = User::where($fieldType, $request->login)->first();
@@ -60,16 +60,15 @@ class AdminLoginController extends Controller
     {
         return view('admin.login');
     }
-    
-    public function profile(Request $request){
+
+    public function profile(Request $request)
+    {
 
         $moduleName = "Admin Profile";
         $rig_id = Auth::user()->rig_id;
-      $RigUser =  RigUser::where('id',$rig_id)->first();
+        $RigUser =  RigUser::where('id', $rig_id)->first();
 
-            return view('admin.admin_profile',compact('moduleName','RigUser'));
-
-        
+        return view('admin.admin_profile', compact('moduleName', 'RigUser'));
     }
     /*    public function register(){
         return view('register');

@@ -340,7 +340,7 @@ class StockController extends Controller
             return redirect()->route('stock_list')->with('error', 'Stock not found.');
         }
 
-        $unit = UnitOfMeasurement::where('name', $request->measurement)->first();
+        $unit = UnitOfMeasurement::where('unit_name', $request->measurement)->first();
     
         $rules = [
             'edp_code' => 'required|integer',
