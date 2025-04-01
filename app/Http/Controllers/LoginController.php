@@ -21,14 +21,13 @@ class LoginController extends Controller
         return view('user.login');
     }
 
-    public function profile(Request $request){
+    public function profile(Request $request)
+    {
         $moduleName = "User Profile";
         $rig_id = Auth::user()->rig_id;
-      $RigUser =  RigUser::where('id',$rig_id)->first();
-      
+        $RigUser =  RigUser::where('id', $rig_id)->first();
 
-        
-            return view('user.user_profile',compact('moduleName','RigUser'));
+        return view('user.user_profile', compact('moduleName', 'RigUser'));
     }
 
     public function authenticate(Request $request)
@@ -126,10 +125,10 @@ class LoginController extends Controller
             ->get();
 
         $data = User::where('id', $id)->first();
-        
+
 
         if ($tally->isEmpty()) {
-            return redirect()->back()->with('error','No Data Found for the Selected User');
+            return redirect()->back()->with('error', 'No Data Found for the Selected User');
         }
 
         return view('user.map_user_add_stock_view', compact('data', 'tally', 'moduleName'));
@@ -142,8 +141,7 @@ class LoginController extends Controller
 
         $id = $request->data;
 
-        $data = DB::table('users')
-            ->join('stocks', 'users.id', '=', 'stocks.user_id')
+        $data = User::join('stocks', 'users.id', '=', 'stocks.user_id')
             ->select('users.*', 'stocks.*')
             ->where('users.id', $id)
             ->get();
