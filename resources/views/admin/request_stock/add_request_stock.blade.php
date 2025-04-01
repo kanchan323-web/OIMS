@@ -1,4 +1,4 @@
-@extends('layouts.frontend.layout')
+@extends('layouts.frontend.admin_layout')
 @section('page-content')
 
 <div class="content-page">
@@ -13,7 +13,7 @@
                     </div>
                     <div class="card-body">
                         <form class="needs-validation" novalidate method="POST"
-                            action="{{ route('request_stock_add.post') }}" id="addStockForm">
+                            action="{{ route('admin.request_stock_add.post') }}" id="addStockForm">
                             @csrf
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">

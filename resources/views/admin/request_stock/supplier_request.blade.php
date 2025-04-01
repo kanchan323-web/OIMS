@@ -1,4 +1,4 @@
-@extends('layouts.frontend.layout')
+@extends('layouts.frontend.admin_layout')
 @section('page-content')
 
     <div class="content-page">
@@ -26,7 +26,7 @@
                     <div class="row justify-content-between">
                         <div class="col-md-9">
                             <div id="user_list_datatable_info" class="dataTables_filter">
-                                <form action="{{ route('request_stock_filter') }}" method="post"
+                                <form action="{{ route('admin.request_stock_filter') }}" method="post"
                                     class="mr-3 position-relative">
                                     <form id="filterForm" class="mr-3 position-relative">
                                         @csrf
@@ -503,7 +503,7 @@
             function fetchFilteredData() {
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('raised_requests.filter') }}",
+                    url: "{{ route('admin.raised_requests.filter') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
                         let tableBody = $("#stockTable");
@@ -560,7 +560,7 @@
 
             // Reset button to clear filters and reload data
             $("#resetButton").click(function () {
-                window.location.href = "{{ route('raised_requests.index') }}";
+                window.location.href = "{{ route('admin.raised_requests.index') }}";
             });
 
             // Auto-hide success/error messages
@@ -583,7 +583,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "{{ route('request_stock_view.get') }}",
+                url: "{{ route(name: 'admin.request_stock_view.get') }}",
                 data: { data: id },
                 success: function (response) {
                     if (!response || !response.data) {
@@ -701,7 +701,7 @@
                 let requestId = $("#request_id").val();
 
                 $.ajax({
-                    url: "{{ route('update.stock') }}",
+                    url: "{{ route('admin.update.stock') }}",
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -718,7 +718,7 @@
                                 text: response.message,
                                 confirmButtonColor: "#28a745"
                             }).then(() => {
-                                window.location.href = "{{ route('raised_requests.index') }}"; // Redirect after confirmation
+                                window.location.href = "{{ route('admin.raised_requests.index') }}"; // Redirect after confirmation
                             });
                         } else {
                             Swal.fire({
@@ -746,7 +746,7 @@
 
         function ViewRequestStatus(request_id) {
             $.ajax({
-                url: "{{ route('get.request.status') }}",
+                url: "{{ route('admin.get.request.status') }}",
                 type: "GET",
                 data: { request_id: request_id },
                 success: function (response) {
@@ -802,7 +802,7 @@
             // If row is unread, update the status in DB and remove styles dynamically
             if (row.attr("style")) {
                 $.ajax({
-                    url: "{{ route('update.is_read.status') }}",
+                    url: "{{ route('admin.update.is_read.status') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -896,7 +896,7 @@
 
             // Send AJAX request
             $.ajax({
-                url: "{{ route('request.raisedrequestquery') }}",
+                url: "{{ route('admin.request.raisedrequestquery') }}",
                 type: 'POST',
                 data: {
                     _token: document.querySelector('input[name="_token"]').value,
@@ -961,7 +961,7 @@
 
         function acceptbtn() {
             let acceptPendingValue = $("#acceptPendingfield").val();
-            let requestUrl = "{{ route('request.pending.accept') }}";
+            let requestUrl = "{{ route('admin.request.pending.accept') }}";
 
             $.ajax({
                 url: requestUrl,
@@ -1022,7 +1022,7 @@
             }
 
             $.ajax({
-                url: "{{ route('request.raisedrequestdecline') }}",
+                url: "{{ route('admin.request.raisedrequestdecline') }}",
                 type: 'POST',
                 data: {
                     _token: document.querySelector('input[name="_token"]').value,
@@ -1044,7 +1044,7 @@
                         document.getElementById('decline_reason').value = '';
 
                         // Redirect to raised_requests.index
-                        window.location.href = "{{ route('raised_requests.index') }}";
+                        window.location.href = "{{ route('admin.raised_requests.index') }}";
                     });
                 },
                 error: function (xhr) {
