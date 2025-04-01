@@ -110,7 +110,7 @@
     .file-label {
         display: block;
         padding: 12px 20px;
-        background-color: #f6ff00;
+        background-color: #0044ff;
         color: #fff;
         text-align: center;
         font-weight: bold;

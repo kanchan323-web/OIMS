@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Stock;
 use App\Models\Requester;
-use DB;
+use Illuminate\Support\Facades\DB;
 class DashboardController extends Controller
 {
     public function index(){
