@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('requesters', function (Blueprint $table) {
+        Schema::create('logs_requesters', function (Blueprint $table) {
             $table->id();
             $table->string('status',15)->default('Pendding');
             $table->integer('available_qty');
@@ -22,15 +22,21 @@ return new class extends Migration
             $table->integer('supplier_id');
             $table->integer('supplier_rig_id');
             $table->timestamps();
+
+            // New columns
+            $table->unsignedBigInteger('creater_id');
+            $table->string('creater_type');
+            $table->unsignedBigInteger('receiver_id');
+            $table->string('receiver_type');
+            $table->text('message');
         });
     }
-    
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('requesters');
+        Schema::dropIfExists('logs_requesters');
     }
 };

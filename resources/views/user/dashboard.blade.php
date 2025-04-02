@@ -109,7 +109,7 @@
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Stock Level By Category</h4>
+                                <h4 class="card-title">Overview Of Stoks Levels</h4>
                             </div>
 
                         </div>
@@ -132,7 +132,7 @@
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Percentage Of Total Stock</h4>
+                                <h4 class="card-title">Overview Of  Percentage Stock</h4>
                             </div>
 
                         </div>
@@ -145,7 +145,7 @@
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header zzd-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title"> User with Most Stock Request</h4>
+                                <h4 class="card-title"> Overview Of Stock Request</h4>
                             </div>
 
                         </div>
@@ -158,7 +158,7 @@
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title"> Stock Comparison Imcoming and Raised Request</h4>
+                                <h4 class="card-title">Overview Of Stock Comparison</h4>
                             </div>
 
                         </div>
