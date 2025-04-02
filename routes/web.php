@@ -208,6 +208,7 @@ Route::middleware(['auth'])->group(function () {
         //Reports
         Route::prefix('reports')->group(function () {
             Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
+            Route::get('/report_stock_filter', [StockReportController::class, 'report_stock_filter'])->name('report_stock_filter');
             Route::get('/request', [RequestReportController::class, 'index'])->name('request_report.index');
         });
     });
