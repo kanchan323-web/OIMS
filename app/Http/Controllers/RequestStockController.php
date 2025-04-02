@@ -803,9 +803,6 @@ class RequestStockController extends Controller
             $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
             $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
             $stock->qty = max(0, $stock->new_spareable + $stock->used_spareable);
-            if (is_null($stock->initial_qty) || empty($stock->initial_qty)) {
-                $stock->initial_qty = max(0, $stock->new_spareable + $stock->used_spareable);
-            }
 
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
