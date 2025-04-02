@@ -7,6 +7,7 @@ use App\Mail\RequestDeclinedMail;
 use App\Mail\RequestQueryMail;
 use App\Models\Edp;
 use App\Models\RequestStatus;
+use App\Notifications\NewRequestNotification;
 use Illuminate\Http\Request;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
@@ -19,8 +20,7 @@ use App\Models\Requester;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\requestor_stock_mail;
 use App\Mail\supplier_stock_mail;
-
-
+use App\Models\Notification;
 use Illuminate\Support\Facades\Session;
 
 
@@ -35,7 +35,7 @@ class RequestStockController extends Controller
         $EDP_Code_ID = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
             ->where('rig_id', '!=', $rig_id)
-            ->where('qty','!=', 0)
+            ->where('qty', '!=', 0)
             ->where('req_status', 'inactive')
             ->get();
 
@@ -44,7 +44,7 @@ class RequestStockController extends Controller
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->where('stocks.rig_id', '!=', $rig_id)
             ->where('stocks.req_status', 'inactive')
-            ->where('stocks.qty','!=', 0)
+            ->where('stocks.qty', '!=', 0)
             ->orderBy('stocks.id', 'desc')
             ->get();
 
@@ -80,7 +80,7 @@ class RequestStockController extends Controller
                 ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
                 ->where('rig_id', '!=', $rig_id)
                 ->where('req_status', 'inactive')
-                ->where('qty','!=', 0)
+                ->where('qty', '!=', 0)
                 ->orderBy('stocks.id', 'desc')
                 ->get();
 
@@ -1067,9 +1067,9 @@ class RequestStockController extends Controller
     public function updateRequestStatus(Request $request, $requestId)
     {
         $requestStatus = RequestStatus::where('request_id', $requestId)
-        ->where('status_id', 6)
-        ->latest()
-        ->first();
+            ->where('status_id', 6)
+            ->latest()
+            ->first();
 
         if (!$requestStatus) {
             return response()->json([
@@ -1086,5 +1086,26 @@ class RequestStockController extends Controller
         session()->flash('success', 'Request status updated successfully.');
 
         return response()->json(['success' => true]);
+    }
+
+    private function notifyAdmins($message, $url = null)
+    {
+        $admins = User::where('user_type', 'admin')->get();
+        $user = Auth::user(); 
+
+        foreach ($admins as $admin) {
+            Notification::create([
+                'type'            => NewRequestNotification::class,
+                'notifiable_type' => User::class,
+                'notifiable_id'   => $admin->id,
+                'user_id'         => $user->id,
+                'data'            => json_encode([
+                    'message' => $message,
+                    'url'     => $url ?? route('admin.dashboard') 
+                ]),
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
+        }
     }
 }

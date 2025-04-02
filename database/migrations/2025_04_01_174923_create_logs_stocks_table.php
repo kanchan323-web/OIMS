@@ -28,6 +28,13 @@ return new class extends Migration
             $table->integer('rig_id')->nullable();
             $table->timestamps();
 
+              // New columns
+              $table->unsignedBigInteger('creater_id');
+              $table->string('creater_type');
+              $table->unsignedBigInteger('receiver_id');
+              $table->string('receiver_type');
+              $table->text('message');
+
             
         });
     }
