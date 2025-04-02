@@ -134,17 +134,47 @@
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
+                                <h4 class="card-title">Stock Overview</h4>
+                            </div>
+
+                        </div>
+                        
+                        <div class="card-body">
+                 
+                        <div id="stockChart" style="width:100%; height:400px;"></div>
+                        </div>
+                    </div>
+                </div>  
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Request Overview</h4>
+                            </div>
+
+                        </div>
+                        
+                        <div class="card-body">
+                            <div id="rigRequestsChart" style="width:100%; height:400px;"></div>
+             
+                     
+                        </div>
+                    </div>
+                </div>  
+                {{-- <div class="col-lg-4 col-md-12 col-sm-12">
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
                                 <h4 class="card-title">Master Overview</h4>
                             </div>
 
                         </div>
                         
                         <div class="card-body">
-                        <div id="edpsCategoriesChart" style="width:100%; height:400px;"></div>
-
+                        <div id="requestDistributionChart" style="width:100%; height:400px;"></div>
                         </div>
                     </div>
-                </div>  
+                </div>   --}}
                 {{-- <div class="col-lg-6">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex align-items-center justify-content-between">
@@ -175,7 +205,99 @@
             <!-- Page end  -->
         </div>
     </div>
+    <script>
+        var ownStockRequests = @json($ownStockRequests);
+        var supplierStockRequests = @json($supplierStockRequests);
+    
+        Highcharts.chart('requestDistributionChart', {
+            chart: { type: 'pie' },
+            title: { text: 'Request Distribution: Own Stock vs Supplier Stock' },
+            series: [{
+                name: 'Requests',
+                data: [
+                    { name: 'Own Stock', y: ownStockRequests, color: '#4CAF50' },
+                    { name: 'Supplier Stock', y: supplierStockRequests, color: '#FF5733' }
+                ]
+            }]
+        });
+    </script>
+    <script>
+        var rigRequests = @json($rigRequests);
+        var incomingRequests = @json($incomingRequests);
+    
+        var rigNames = rigRequests.map(item => item.rig_name);
+    
+        var totalRequestsSent = rigNames.map(rig => {
+            let requestItem = rigRequests.find(item => item.rig_name === rig);
+            return requestItem ? Number(requestItem.total_requests_sent) : 0;
+        });
+    
+        var totalRequestsReceived = rigNames.map(rig => {
+            let receivedItem = incomingRequests.find(item => item.rig_name === rig);
+            return receivedItem ? Number(receivedItem.total_requests_received) : 0;
+        });
+    
+        Highcharts.chart('rigRequestsChart', {
+            chart: { type: 'column' }, // ✅ Changed to column (vertical bar)
+            title: { text: 'Rig Requests & Incoming Requests' },
+    
+            xAxis: {
+                categories: rigNames,
+                title: { text: 'Rigs' }
+            },
+            yAxis: { title: { text: 'Total Requests' } },
+    
+            series: [{
+                name: 'Requests Sent',
+                data: totalRequestsSent,
+                color: '#007bff'
+            }, {
+                name: 'Incoming Requests',
+                data: totalRequestsReceived,
+                color: '#ff5733'
+            }]
+        });
+    </script>
 
+    <script>
+        var inventoryLevels = @json($inventoryLevels);
+        var stockRequests = @json($stockRequests);
+        var stockMovements = @json($stockMovements);
+    
+        Highcharts.chart('stockChart', {
+            chart: { type: 'column' },
+            title: { text: 'Inventory Levels' },
+    
+            xAxis: [{
+                categories: inventoryLevels.map(item => item.category),
+                title: { text: 'Categories' }
+            }, {
+                categories: stockMovements.map(item => item.month),
+                title: { text: '' },
+                opposite: false
+            }],
+    
+            yAxis: [{ 
+                title: { text: 'Total Stock (Qty)' }
+            }, { 
+                title: { text: '' }, 
+                opposite: false
+            }],
+    
+            series: [{
+                name: 'Total Stock',
+                type: 'column',
+                data: inventoryLevels.map(item => item.total_qty),
+                color: '#4CAF50'
+            }]
+        });
+    </script>
+    
+    <!-- HTML Containers for Charts -->
+  
+    
+
+</script>
     <script> 
         document.addEventListener("DOMContentLoaded", function () {  
             var rigData = @json($rigOverview);
