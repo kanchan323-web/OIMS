@@ -231,6 +231,7 @@ class RequestStockController extends Controller
                 'section'       => $edp_data->section,
                 'category'      => $edp_data->category,
                 'qty'           => 0,
+                'initial_qty'   => 0,
                 'new_spareable' => 0,
                 'used_spareable' => 0,
                 'measurement'   => $edp_data->measurement,
@@ -412,8 +413,8 @@ class RequestStockController extends Controller
             )
                 ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
                 ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id') 
-                ->join('edps', 'stocks.edp_code', '=', 'edps.id') 
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('stocks.edp_code', $edp_code);
                 })
@@ -802,6 +803,9 @@ class RequestStockController extends Controller
             $stock->new_spareable = max(0, $stock->new_spareable - $requestStatus->supplier_new_spareable);
             $stock->used_spareable = max(0, $stock->used_spareable - $requestStatus->supplier_used_spareable);
             $stock->qty = max(0, $stock->new_spareable + $stock->used_spareable);
+            if (is_null($stock->initial_qty) || empty($stock->initial_qty)) {
+                $stock->initial_qty = max(0, $stock->new_spareable + $stock->used_spareable);
+            }
 
             $requesterStock->new_spareable += $requestStatus->supplier_new_spareable;
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;

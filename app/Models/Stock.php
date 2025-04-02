@@ -17,6 +17,7 @@ class Stock extends Model
         'description',
         'section',
         'qty',
+        'initial_qty',
         'measurement',
         'new_spareable',
         'used_spareable',

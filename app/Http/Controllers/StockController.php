@@ -109,7 +109,7 @@ class StockController extends Controller
     public function stockSubmit(Request $request)
     {
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
-    
+
         $rules = [
             'location_id' => 'required',
             'location_name' => 'required',
@@ -121,7 +121,7 @@ class StockController extends Controller
             'measurement' => 'required',
             'remarks' => 'required'
         ];
-    
+
         // Apply dynamic validation based on unit type
         if ($unit) {
             if ($unit->type == 'integer') {
@@ -136,16 +136,15 @@ class StockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
-    
+
         // Validate request
         $validator = Validator::make($request->all(), $rules);
-    
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
         }
-    
+
         // Store stock data
         $user = Auth::user();
         $stock = new Stock;
@@ -156,6 +155,7 @@ class StockController extends Controller
         $stock->description = $request->description;
         $stock->section = $request->section;
         $stock->qty = $request->qty;
+        $stock->initial_qty = $request->qty;
         $stock->measurement = $request->measurement;
         $stock->new_spareable = $request->new_spareable;
         $stock->used_spareable = $request->used_spareable;
@@ -163,9 +163,9 @@ class StockController extends Controller
         $stock->user_id = $user->id;
         $stock->rig_id = $user->rig_id;
         $stock->save();
-    
+
         Session::flash('success', 'Stock submitted successfully!');
-    
+
         return redirect()->route('stock_list');
     }
 
@@ -271,6 +271,7 @@ class StockController extends Controller
                         'section'       => $edp->section,
                         'category'      => $edp->category,
                         'qty'           => (int) $row[1],
+                        'initial_qty'   => (int) $row[1],
                         'new_spareable' => (int) $row[2],
                         'used_spareable' => (int) $row[3],
                         'measurement'   => $edp->measurement,
@@ -334,14 +335,14 @@ class StockController extends Controller
     {
         $dataid = $request->id;
         $user = Auth::user();
-    
+
         $stock = Stock::find($dataid);
         if (!$stock) {
             return redirect()->route('stock_list')->with('error', 'Stock not found.');
         }
 
         $unit = UnitOfMeasurement::where('unit_name', $request->measurement)->first();
-    
+
         $rules = [
             'edp_code' => 'required|integer',
             'category' => 'required',
@@ -351,7 +352,7 @@ class StockController extends Controller
             'measurement' => 'required',
             'remarks' => 'required'
         ];
-    
+
         if ($unit) {
             if ($unit->type == 'integer') {
                 $rules['new_spareable'] = 'required|integer';
@@ -365,13 +366,13 @@ class StockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
-    
+
         $validatedData = $request->validate($rules);
-    
+
         $validatedData['rig_id'] = $user->rig_id;
-    
+
         $stock->update($validatedData);
-    
+
         return redirect()->route('stock_list')->with('success', 'Stock updated successfully!');
     }
 
