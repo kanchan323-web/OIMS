@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\NewRequestNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Mail\ResetPasswordMail;
+use App\Models\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Hash;
@@ -49,6 +51,9 @@ class LoginController extends Controller
             ->first();
 
         if ($user && Auth::attempt(['email' => $user->email, 'password' => $request->password])) {
+
+            $this->notifyAdmins("User '{$user->user_name}' has logged in.");
+
             return redirect()->route('user.dashboard');
         }
 
@@ -57,7 +62,13 @@ class LoginController extends Controller
 
     public function logout()
     {
+        $user = Auth::user();
         Auth::logout();
+        
+        if ($user) {
+            $this->notifyAdmins("User '{$user->user_name}' has logged out.");
+        }
+
         return redirect()->route('user.login');
     }
 
@@ -194,10 +205,30 @@ class LoginController extends Controller
 
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
+        $this->notifyAdmins("User '{$user->user_name}' has changed their password.");
+
         if ($user->user_type === 'admin') {
             return redirect()->route('admin.login')->with('success', 'Password has been reset successfully!');
         } else {
             return redirect()->route('user.login')->with('success', 'Password has been reset successfully!');
+        }
+    }
+
+
+    private function notifyAdmins($message)
+    {
+        $admins = User::where('user_type', 'admin')->get();
+        
+        foreach ($admins as $admin) {
+            Notification::create([
+                'type'            => NewRequestNotification::class,
+                'notifiable_type' => User::class,
+                'notifiable_id'   => $admin->id,
+                'user_id'         => $admin->id, 
+                'data'            => json_encode(['message' => $message, 'url' => null]),
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
         }
     }
 }

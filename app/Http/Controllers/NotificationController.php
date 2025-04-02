@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -11,12 +12,16 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
+        if ($user->user_type === 'admin') {
             // Admins see ALL notifications
             $notifications = Notification::latest()->take(5)->get();
         } else {
             // Users see only THEIR notifications
-            $notifications = Notification::where('user_id', $user->id)->latest()->take(5)->get();
+            $notifications = Notification::where('notifiable_id', $user->id)
+                ->where('notifiable_type', get_class($user))
+                ->latest()
+                ->take(5)
+                ->get();
         }
 
         return response()->json([
@@ -24,12 +29,13 @@ class NotificationController extends Controller
             'notifications' => $notifications->map(function ($notification) {
                 return [
                     'id' => $notification->id,
-                    'message' => $notification->message,
+                    'message' => json_decode($notification->data)->message ?? 'No message',
                     'created_at' => $notification->created_at->diffForHumans(),
                 ];
             }),
         ]);
     }
+
 
     public function markAsRead(Request $request)
     {

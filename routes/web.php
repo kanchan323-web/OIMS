@@ -88,11 +88,6 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/stock_filter', [AdminStockController::class, 'stock_filter'])->name('admin.stock_filter');
         Route::get('/check-edp-stock', [AdminStockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
 
-
-        //notifications
-        Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
-        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
-
         //Request Stock
         Route::prefix('request-stock')->group(function () {
             Route::get('/request_stockList', [AdminRequestStockController::class, 'RequestStockList'])->name('admin.stock_list.get');
@@ -125,13 +120,11 @@ Route::middleware(['admin.auth'])->group(function () {
             Route::post('/update-request-status/{id}', [AdminRequestStockController::class, 'updateRequestStatus'])->name('admin.request-status.update');
         });
 
-           //Reports
+        //Reports
         Route::prefix('reports')->group(function () {
             Route::get('/stocks', [AdminStockReportController::class, 'index'])->name('stock_reports.index');
             Route::get('/requests', [AdminRequestReportController::class, 'index'])->name('request_reports.index');
         });
-
-
     });
 });
 
@@ -212,10 +205,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/mapusergetdata', [LoginController::class, 'mapuserdataget'])->name('map_all_user_data.post');
         Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
 
-        //Notifications
-        Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
-        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
-
         //Reports
         Route::prefix('reports')->group(function () {
             Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
@@ -232,3 +221,7 @@ Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name(
 Route::post('/submitpassword', [LoginController::class, 'submitpassword'])->name('submitpassword');
 Route::get('/reset-password/{user_id}/{token}', [LoginController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [LoginController::class, 'updatePassword'])->name('password.update');
+
+//Notifications
+Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
+Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
