@@ -113,6 +113,7 @@
                             </div>
                         </li>
 
+                        <!-- Notifications Dropdown -->
                         <li class="nav-item nav-icon dropdown">
                             <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -138,12 +139,9 @@
                                         </div>
                                         <div class="px-3 pt-0 pb-0 sub-card" id="notification-list">
                                             <p class="text-center py-3">No new notifications</p>
-                                            <!-- Default message -->
                                         </div>
-                                        <a class="right-ic btn btn-primary btn-block position-relative p-2" href="">
-                                            {{-- {{ route('notifications.index') }} --}}
-                                            View All
-                                        </a>
+                                        <button class="btn btn-primary btn-block" id="view-all-notifications">View
+                                            All</button>
                                     </div>
                                 </div>
                             </div>
@@ -185,23 +183,52 @@
         </nav>
     </div>
 </div>
+
+<!-- Notifications Modal -->
+<div id="notificationsModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">All Notifications</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group" id="modal-notification-list"></ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary" id="mark-all-as-read">Mark All as Read</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     $(document).ready(function () {
         function fetchNotifications() {
             $.ajax({
-                url: "{{ route('notifications.fetch') }}", 
+                url: "{{ route('notifications.fetch') }}",
                 method: "GET",
                 success: function (response) {
                     let notificationList = $("#notification-list");
                     let notificationCount = $("#notification-count");
                     let notificationBadge = $("#notification-count-badge");
+                    let modalNotificationList = $("#modal-notification-list");
 
                     notificationList.empty();
+                    modalNotificationList.empty();
 
                     if (response.notifications.length > 0) {
                         response.notifications.forEach(notification => {
+                            let highlightClass = notification.read_at ? "" : "text-primary font-weight-bold";
+
+                            // Small dropdown notifications
                             notificationList.append(`
-                            <a href="javascript:void(0);" class="iq-sub-card mark-as-read" data-id="${notification.id}">
+                            <a href="javascript:void(0);" class="iq-sub-card mark-as-read ${highlightClass}" 
+                               data-id="${notification.id}" data-url="${notification.url || ''}">
                                 <div class="media align-items-center cust-card py-3 border-bottom">
                                     <div class="media-body ml-3">
                                         <div class="d-flex align-items-center justify-content-between">
@@ -212,13 +239,21 @@
                                 </div>
                             </a>
                         `);
+
+                            // Modal notifications
+                            modalNotificationList.append(`
+                            <li class="list-group-item d-flex justify-content-between align-items-center mark-as-read ${highlightClass}"
+                                data-id="${notification.id}" data-url="${notification.url || ''}">
+                                <span>${notification.message}</span>
+                                <small>${notification.created_at}</small>
+                            </li>
+                        `);
                         });
 
                         notificationBadge.text(response.unread_count).show();
                         notificationCount.text(response.unread_count).show();
                     } else {
                         notificationList.append('<p class="text-center py-3">No new notifications</p>');
-
                         notificationBadge.hide();
                         notificationCount.hide();
                     }
@@ -226,19 +261,19 @@
             });
         }
 
-        fetchNotifications(); 
-        setInterval(fetchNotifications, 5000); 
+        fetchNotifications();
+        setInterval(fetchNotifications, 5000);
 
         $(document).on("click", ".mark-as-read", function (e) {
             e.preventDefault();
 
             let clickedElement = $(this);
-            let notificationId = clickedElement.attr("data-id"); 
+            let notificationId = clickedElement.attr("data-id");
+            let notificationUrl = clickedElement.attr("data-url").trim();
 
-
-            if (!notificationId || notificationId == "0") {
+            if (!notificationId || notificationId === "0") {
                 console.error("Invalid notification ID:", notificationId);
-                return; 
+                return;
             }
 
             $.ajax({
@@ -248,11 +283,38 @@
                 success: function () {
                     clickedElement.fadeOut(300, function () {
                         $(this).remove();
-                        fetchNotifications(); 
+                        fetchNotifications();
                     });
+
+                    if (notificationUrl && notificationUrl !== "null" && notificationUrl !== "") {
+                        setTimeout(() => {
+                            window.location.href = notificationUrl;
+                        }, 300);
+                    }
+                }
+            });
+        });
+
+        $("#view-all-notifications").click(function () {
+            $("#notificationsModal").modal("show");
+        });
+
+        $("#mark-all-as-read").click(function () {
+            $.ajax({
+                url: "{{ route('notifications.markAllRead') }}",
+                method: "POST",
+                data: { _token: "{{ csrf_token() }}" },
+                success: function () {
+                    $("#modal-notification-list").fadeOut(300, function () {
+                        $(this).empty();
+                        fetchNotifications();
+                    });
+                    $("#notificationsModal").modal("hide");
                 }
             });
         });
     });
+
+
 
 </script>
