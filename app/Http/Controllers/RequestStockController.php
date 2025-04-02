@@ -808,6 +808,10 @@ class RequestStockController extends Controller
             $requesterStock->used_spareable += $requestStatus->supplier_used_spareable;
             $requesterStock->qty = $requesterStock->new_spareable + $requesterStock->used_spareable;
 
+            if (empty($requesterStock->initial_qty)) {
+                $requesterStock->initial_qty = $requesterStock->qty;
+            }
+
             // Save changes
             $stock->save();
             $requesterStock->save();
