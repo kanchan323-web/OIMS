@@ -29,7 +29,7 @@
                                 <div class="row">
                                     <div class="col-md-2 mb-2">
                                         <label for="edp_code">Report Type</label>
-                                        <select class="form-control" name="edp_code" id="edp_code">
+                                        <select class="form-control" name="report_type" id="report_type">
                                             <option disabled selected>Select Report Type...</option>
                                                 <option value="1">Stock Overview</option>
                                                 <option value="2">Stock Movements</option>
@@ -99,5 +99,52 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+            // Filter Stock Data on Button Click
+            $("#filterButton").click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('report_stock_filter') }}",
+                    data: $("#filterForm").serialize(),
+                    success: function (response) {
+                        console.log(response.data);
+                        let tableBody = $("#stockTable");
+                        tableBody.empty();
+
+                        if (response.data && response.data.length > 0) {
+                            $.each(response.data, function (index, stockdata) {
+                               // console.log("Stock data:", stockdata);\
+                               var date = stockdata.created_at;
+                               var dateObj = new Date(date);
+                               var formattedDate = dateObj.toISOString().split('T')[0];
+
+                                tableBody.append(`
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${stockdata.EDP_Code}</td>
+                                    <td>${stockdata.section}</td>
+                                    <td>${stockdata.description}</td>
+                                    <td>${stockdata.initial_qty}</td>
+                                    <td>${stockdata.qty}</td>
+                                    <td>${formattedDate}</td>
+                                </tr>
+                            `);
+                            });
+                        } else {
+                            tableBody.append(
+                                `<tr><td colspan="7" class="text-center">No records found</td></tr>`
+                            );
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
+            });
+        });
+
+</script>
 
 @endsection

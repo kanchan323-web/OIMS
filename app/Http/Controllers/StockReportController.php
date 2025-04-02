@@ -49,4 +49,32 @@ class StockReportController extends Controller
         //return view('reports.stock_reports', compact('data', 'moduleName', 'datarig', 'edps'));
         return view('reports.stock_reports', compact('moduleName',));
     }
+
+    public function report_stock_filter(Request $request)
+    {
+        $moduleName = "Report Stock";
+        $rig_id = Auth::user()->rig_id;
+        if ($request->ajax()) {
+
+            $data = Stock::query()
+                ->when($request->form_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                })
+                ->when($request->to_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                });
+
+            $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
+            ->where('rig_id', $rig_id)
+            ->get();
+
+            return response()->json(['data' => $data]);
+        }
+
+      //  $data = Stock::all();
+     //   $stockData = Stock::select('edp_code')->distinct()->get();
+       // return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData'));
+    }
 }
