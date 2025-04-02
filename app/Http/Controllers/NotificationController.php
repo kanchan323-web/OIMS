@@ -13,32 +13,44 @@ class NotificationController extends Controller
         $user = Auth::user();
 
         if ($user->user_type === 'admin') {
-            // Admins see ALL UNREAD notifications
-            $notifications = Notification::whereNull('read_at')->latest()->take(5)->get();
+            $dropdownNotifications = Notification::whereNull('read_at')->latest()->take(5)->get();
+            $modalNotifications = Notification::whereNull('read_at')->latest()->get();
         } else {
-            // Users see only THEIR UNREAD notifications
-            $notifications = Notification::where('notifiable_id', $user->id)
+            $dropdownNotifications = Notification::where('notifiable_id', $user->id)
                 ->where('notifiable_type', get_class($user))
                 ->whereNull('read_at')
                 ->latest()
                 ->take(5)
                 ->get();
+
+            $modalNotifications = Notification::where('notifiable_id', $user->id)
+                ->where('notifiable_type', get_class($user))
+                ->whereNull('read_at')
+                ->latest()
+                ->get();
         }
 
         return response()->json([
-            'unread_count' => $notifications->count(),
-            'notifications' => $notifications->map(function ($notification) {
-                $data = json_decode($notification->data, true); // Decode JSON data
-
+            'unread_count' => $dropdownNotifications->count(),
+            'dropdown_notifications' => $dropdownNotifications->map(function ($notification) {
                 return [
                     'id' => $notification->id,
-                    'message' => $data['message'] ?? 'No message', // Extract message
-                    'url' => $data['url'] ?? null, // Extract URL separately
+                    'message' => json_decode($notification->data)->message ?? 'No message',
+                    'url' => json_decode($notification->data)->url ?? null,
+                    'created_at' => $notification->created_at->diffForHumans(),
+                ];
+            }),
+            'modal_notifications' => $modalNotifications->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'message' => json_decode($notification->data)->message ?? 'No message',
+                    'url' => json_decode($notification->data)->url ?? null,
                     'created_at' => $notification->created_at->diffForHumans(),
                 ];
             }),
         ]);
     }
+
 
 
     public function markAsRead(Request $request)
