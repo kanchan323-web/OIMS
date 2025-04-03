@@ -117,7 +117,7 @@
                     </div>
                 </div> --}}
                
-                <div class="col-lg-4 col-md-12 col-sm-12">
+                {{-- <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -128,7 +128,7 @@
                         <div id="PercentageOfStock"></div>
 
                     </div>
-                </div>
+                </div> --}}
               
                 {{-- <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
@@ -155,18 +155,66 @@
 
                     </div>
                 </div> --}}
-                <div class="col-lg-8 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Overview Of Stock Comparison</h4>
+              
+                <div class="col-lg-4 col-md-12 col-sm-12">
+                  
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-header">
+                                <h4 class="card-title">Overview Of Stock Inventory</h4>
                             </div>
+                            <div class="card-body">
+                                <div id="stockPieChart" style="width: 100%; height: 400px;"></div>
+                                <div class="chart-summary mt-3">  </div>
 
+                                <div class="chart-summary mt-3">
+
+                                    {{-- <p><strong>Total Stock:</strong> {{ $totalStock }} items</p>
+                                    <p><strong>Available:</strong> {{ $totalStock - $RaisedRequestsRequests }} items ({{ number_format(($totalStock - $RaisedRequestsRequests)/$totalStock*100, 1) }}%)</p>
+                                    <p><strong>Pending Requests:</strong> {{ $RaisedRequestsRequests }} items ({{ number_format($RaisedRequestsRequests/$totalStock*100, 1) }}%)</p> --}}
+
+                                </div>
+                            </div>
                         </div>
-                 
-                    <div id="combinedStockChart" style="width: 100%; height: 400px;"></div>
-
                     </div>
+                    
+
+                    <div class="col-lg-8 col-md-12 col-sm-12">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-header d-flex justify-content-between">
+                                <div class="header-title">
+                                    <h4 class="card-title">Overview Of Stock Comparison</h4>
+                                </div>
+    
+                            </div>
+                     
+                        <div id="combinedStockChart" style="width: 100%; height: 400px;"></div>
+    
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-header d-flex justify-content-between">
+                                <div class="header-title">
+                                    <h4 class="card-title">Overview Of Stock Comparison</h4>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary time-period-btn" data-period="daily">Daily</button>
+                                    <button class="btn btn-sm btn-outline-primary time-period-btn" data-period="weekly">Weekly</button>
+                                    <button class="btn btn-sm btn-outline-primary time-period-btn active" data-period="monthly">Monthly</button>
+                                </div>
+                            </div>
+                     
+                            <div id="stockChart" style="width:100%; height:400px;"></div>
+    
+                        </div>
+                    </div>
+
+
+                  
+                    </div>
+
                 </div>
              
               
@@ -175,6 +223,157 @@
             <!-- Page end  -->
         </div>
     </div>
+    
+{{-- new --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Data from Laravel
+        const dailyData = @json($dailyAdditions);
+        const weeklyData = @json($weeklyAdditions);
+        const monthlyData = @json($monthlyAdditions);
+        
+        // Process data for Highcharts
+        function processData(data, period) {
+            return Object.entries(data).map(([time, quantity]) => {
+                let date;
+                
+                if (period === 'daily') {
+                    date = new Date(time).getTime();
+                } 
+                else if (period === 'weekly') {
+                    const year = time.substring(0,4);
+                    const week = time.substring(4);
+                    date = new Date(year, 0, 1 + (week - 1) * 7).getTime();
+                } 
+                else {
+                    date = new Date(time + '-01').getTime();
+                }
+                
+                return {
+                    x: date,
+                    y: quantity,
+                    originalDate: time
+                };
+            }).sort((a, b) => a.x - b.x);
+        }
+    
+        // Initialize chart
+        const chart = Highcharts.chart('stockChart', {
+            chart: {
+                type: 'line',
+                zoomType: 'x'
+            },
+            title: {
+                text: 'Stock Additions Over Time'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            yAxis: {
+                title: {
+                    text: 'Number of Items Added'
+                },
+                min: 0
+            },
+            series: [{
+                name: 'Daily',
+                data: processData(dailyData, 'daily'),
+                visible: false
+            }, {
+                name: 'Weekly',
+                data: processData(weeklyData, 'weekly'),
+                visible: false
+            }, {
+                name: 'Monthly',
+                data: processData(monthlyData, 'monthly')
+            },
+        ]
+        });
+    
+        // Time period selector
+        document.querySelectorAll('.time-period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const period = this.dataset.period;
+                chart.series.forEach(series => {
+                    series.setVisible(series.name.toLowerCase() === period);
+                });
+            });
+        });
+    });
+    </script>
+{{-- new --}}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get data from Laravel
+        const totalStock = @json($totalStock);
+        const pendingRaisedRequests = @json($RaisedRequestsRequests);
+        
+        // Calculate percentages
+        const availableStock = totalStock - pendingRaisedRequests;
+        const availablePercent = totalStock > 0 ? (availableStock / totalStock * 100).toFixed(1) : 0;
+        const pendingPercent = totalStock > 0 ? (pendingRaisedRequests / totalStock * 100).toFixed(1) : 0;
+    
+        // Create the pie chart
+        Highcharts.chart('stockPieChart', {
+            chart: {
+                type: 'pie',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: 'Stock  Inventory Status',
+                align: 'left'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y} items)'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        distance: -50,
+                        filter: {
+                            property: 'percentage',
+                            operator: '>',
+                            value: 4
+                        }
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Stock',
+                colorByPoint: true,
+                data: [{
+                    name: 'Own Inventory',
+                    y: availableStock,
+                    percentage: parseFloat(availablePercent),
+                    color: '#7ee2ff' // Green
+                }, {
+                    name: 'Suppliers Inventory',
+                    y: pendingRaisedRequests,
+                    percentage: parseFloat(pendingPercent),
+                    color: '#ff9770' // Orange
+                }]
+            }],
+            credits: {
+                enabled: true
+            }
+        });
+    });
+    </script>
+{{-- new --}}
+
 
 {{-- OK --}}
 <script>
@@ -203,7 +402,7 @@
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Count'
+                    text: 'Quantity'
                 }
             },
             tooltip: {
@@ -223,7 +422,7 @@
                 }
             },
             series: [{
-                name: 'Stock Count',
+                name: 'Stock Quantity',
                 data: stockValues,
                 color: '#7CB5EC'  // Blue
             }, {

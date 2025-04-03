@@ -20,10 +20,13 @@ class DashboardController extends Controller
                 ->where('mst_status.status_name', 'Pending')
                 ->count();
             $RaisedRequests = Requester::where('requester_rig_id', $rig_id)->count();
+
             $RaisedRequestsRequests = Requester::leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
                 ->where('requesters.requester_rig_id', $rig_id)
                 ->where('mst_status.status_name', 'Pending')
                 ->count();
+
+                
     
             // Stock category data
             $categoryCounts = Stock::where('rig_id', $rig_id)
@@ -33,6 +36,8 @@ class DashboardController extends Controller
                 ->pluck('Category_count', 'category');
     
             $totalStock = Stock::where('rig_id', $rig_id)->count();
+           
+
             $categoryPercentages = Stock::select(
                     'category',
                     DB::raw('COUNT(*) as category_count'),
@@ -43,33 +48,36 @@ class DashboardController extends Controller
                 ->groupBy('category')
                 ->pluck('percentage', 'category');
     
-            // Stock additions over time
-            $dailyAdditions = Stock::select(
+                $dailyAdditions = Stock::select(
                     DB::raw('DATE(created_at) as date'), 
-                    DB::raw('COUNT(id) as total_additions')
+                    DB::raw('COUNT(id) as quantity')
                 )
                 ->where('rig_id', $rig_id)
                 ->groupBy('date')
                 ->orderBy('date', 'ASC')
-                ->get();
-    
-            $weeklyAdditions = Stock::select(
+                ->get()
+                ->pluck('quantity', 'date');  // Pluck as [date => quantity] pairs
+            
+           
+                $weeklyAdditions = Stock::select(
                     DB::raw('YEARWEEK(created_at) as week'), 
-                    DB::raw('COUNT(id) as total_additions')
+                    DB::raw('COUNT(id) as quantity')
                 )
                 ->where('rig_id', $rig_id)
                 ->groupBy('week')
                 ->orderBy('week', 'ASC')
-                ->get();
+                ->get()
+                ->pluck('quantity', 'week');
     
-            $monthlyAdditions = Stock::select(
+                $monthlyAdditions = Stock::select(
                     DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), 
-                    DB::raw('COUNT(id) as total_additions')
+                    DB::raw('COUNT(id) as quantity')
                 )
                 ->where('rig_id', $rig_id)
                 ->groupBy('month')
                 ->orderBy('month', 'ASC')
-                ->get();
+                ->get()
+                ->pluck('quantity', 'month'); 
     
             // Requests data by category
             $incomingStockCounts = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
@@ -120,6 +128,7 @@ class DashboardController extends Controller
                 ->groupBy('date')
                 ->orderBy('date', 'ASC')
                 ->get();
+                
     
             $weeklyRaisedRequests = Requester::select(
                     DB::raw('YEARWEEK(created_at) as week'),
@@ -151,7 +160,7 @@ class DashboardController extends Controller
             return view('user.dashboard', compact(
                 'dailyAdditions', 'weeklyAdditions', 'monthlyAdditions',
                 'categoryCounts', 'categoryPercentages',
-                'countIncomingRequest', 'PendingIncomingRequest',
+                'countIncomingRequest', 'PendingIncomingRequest','totalStock',
                 'RaisedRequests', 'RaisedRequestsRequests',
                 'incomingStockCounts', 'raisedStockCounts', 'topUsers',
                 'dailyIncomingRequests', 'weeklyIncomingRequests', 'monthlyIncomingRequests',
