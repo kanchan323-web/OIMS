@@ -105,7 +105,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-12 col-sm-12">
+                {{-- <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -115,19 +115,8 @@
                         </div>
                         <div id="StockLevels"></div>
                     </div>
-                </div>
-                {{-- <div class="col-lg-4 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Percentage Of Total Stock</h4>
-                            </div>
-
-                        </div>
-                        <div id="container" style="width:100%; height:500px;"></div>
-
-                    </div>
                 </div> --}}
+               
                 <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
@@ -141,7 +130,7 @@
                     </div>
                 </div>
               
-                <div class="col-lg-4 col-md-12 col-sm-12">
+                {{-- <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header zzd-flex justify-content-between">
                             <div class="header-title">
@@ -153,8 +142,8 @@
                         <div id="topUsersChart" style="width:100%; height:500px;"></div>
 
                     </div>
-                </div>
-                <div class="col-lg-12 col-md-12 col-sm-12">
+                </div> --}}
+                {{-- <div class="col-lg-12 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -165,35 +154,21 @@
                         <div id="stockComparisonChart" style="width:100%; height:500px;"></div>
 
                     </div>
+                </div> --}}
+                <div class="col-lg-8 col-md-12 col-sm-12">
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Overview Of Stock Comparison</h4>
+                            </div>
+
+                        </div>
+                 
+                    <div id="combinedStockChart" style="width: 100%; height: 400px;"></div>
+
+                    </div>
                 </div>
-                {{-- <div class="col-lg-4 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title"> Stock Requests</h4>
-                            </div>
-
-                        </div>
-
-                        <div id="stockRequestsChart" style="width:100%; height:500px;"></div>
-
-                    </div>
-                </div> --}}
-               
              
-                {{-- <div class="col-lg-8">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title"> Stock Comparison Imcoming and Raised Request</h4>
-                            </div>
-
-                        </div>
-                        <div id="combinedChartContainer" style="width:100%; height:600px;"></div>
-
-
-                    </div>
-                </div> --}}
               
 
             </div>
@@ -201,37 +176,99 @@
         </div>
     </div>
 
-
+{{-- OK --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all data from Laravel
+        const stockCategories = @json(array_keys($categoryCounts->toArray()));
+        const stockValues = @json(array_values($categoryCounts->toArray()));
+        const incomingData = @json(array_values($incomingStockCounts->toArray()));
+        const raisedData = @json(array_values($raisedStockCounts->toArray()));
+    
+        // Create the combined chart
+        Highcharts.chart('combinedStockChart', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Stock Analysis by Category'
+            },
+            xAxis: {
+                categories: stockCategories,
+                crosshair: true,
+                title: {
+                    text: 'Stock Categories'
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Count'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0,
+                    grouping: true,  // Group columns together
+                    groupPadding: 0.1
+                }
+            },
+            series: [{
+                name: 'Stock Count',
+                data: stockValues,
+                color: '#7CB5EC'  // Blue
+            }, {
+                name: 'Incoming Requests',
+                data: incomingData,
+                color: '#90ED7D'  // Green
+            }, {
+                name: 'Raised Requests',
+                data: raisedData,
+                color: '#F7A35C'  // Orange
+            }],
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        });
+    });
+    </script>
+{{-- OK --}}
+{{-- OK --}}
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Laravel data passed using Blade syntax
-            const dailyData = @json($dailyAdditions).map(item => [new Date(item.date).getTime(), item.total_additions]);
-            const weeklyData = @json($weeklyAdditions).map(item => [item.week, item.total_additions]);
-            const monthlyData = @json($monthlyAdditions).map(item => [item.month, item.total_additions]);
+            const categories = @json(array_keys($incomingStockCounts->toArray()));
+            const incomingData = @json(array_values($incomingStockCounts->toArray()));
+            const raisedData = @json(array_values($raisedStockCounts->toArray()));
 
-            // Initialize Highcharts
-            Highcharts.chart('container', {
-                title: { text: 'Stock Additions Over Time', align: 'left' },
-                subtitle: { text: 'Daily, Weekly, and Monthly Trade', align: 'left' },
-                yAxis: { title: { text: 'Total Stock Additions' } },
-                xAxis: { type: 'datetime', title: { text: 'Time Period' } },
-                legend: { layout: 'vertical', align: 'right', verticalAlign: 'middle' },
-                plotOptions: { series: { label: { connectorAllowed: false } } },
+            // Initialize Highcharts Bar Chart
+            Highcharts.chart('stockComparisonChart', {
+                chart: { type: 'bar' },
+                title: { text: 'Comparison of Incoming vs Raised Requests' },
+                xAxis: { categories: categories, title: { text: 'Stock Categories' } },
+                yAxis: { title: { text: 'Number of Requests' } },
+                legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
                 series: [
-                    { name: 'Daily Additions', data: dailyData },
-                    { name: 'Weekly Additions', data: weeklyData },
-                    { name: 'Monthly Additions', data: monthlyData }
-                ],
-                responsive: {
-                    rules: [{
-                        condition: { maxWidth: 500 },
-                        chartOptions: { legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' } }
-                    }]
-                }
+                    { name: 'Incoming Requests', data: incomingData },
+                    { name: 'Raised Requests', data: raisedData }
+                ]
             });
         });
     </script>
+{{-- OK --}}
 
+{{-- OK --}}
     <script>
         (function (H) {
             H.seriesTypes.pie.prototype.animate = function (init) {
@@ -332,8 +369,9 @@
             }]
         });
     </script>
+{{-- OK --}}
 
-
+{{-- OK --}}
     <script>
         var categories_name = @json(array_keys($categoryCounts->toArray()));
         var categories_values = @json(array_values($categoryCounts->toArray()));
@@ -378,73 +416,13 @@
             ]
         });
     </script>
-
-    {{-- Comparision --}}
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Laravel data passed using Blade syntax
-            const categories = @json(array_keys($incomingStockCounts->toArray()));
-            const incomingData = @json(array_values($incomingStockCounts->toArray()));
-            const raisedData = @json(array_values($raisedStockCounts->toArray()));
-
-            // Initialize Highcharts Bar Chart
-            Highcharts.chart('stockComparisonChart', {
-                chart: { type: 'bar' },
-                title: { text: 'Comparison of Incoming vs Raised Requests' },
-                xAxis: { categories: categories, title: { text: 'Stock Categories' } },
-                yAxis: { title: { text: 'Number of Requests' } },
-                legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
-                series: [
-                    { name: 'Incoming Requests', data: incomingData },
-                    { name: 'Raised Requests', data: raisedData }
-                ]
-            });
-        });
-    </script>
+{{-- OK --}}
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Laravel data passed using Blade syntax
-        const dailyDates = @json($dailyRequests->pluck('date')->toArray());
-        const dailyCounts = @json($dailyRequests->pluck('total_requests')->toArray());
 
-        const weeklyDates = @json($weeklyRequests->pluck('week')->toArray());
-        const weeklyCounts = @json($weeklyRequests->pluck('total_requests')->toArray());
 
-        const monthlyDates = @json($monthlyRequests->pluck('month')->toArray());
-        const monthlyCounts = @json($monthlyRequests->pluck('total_requests')->toArray());
 
-        // Function to create chart with selected type
-        function createChart(type) {
-            Highcharts.chart('stockRequestsChart', {
-                chart: { type: type === 'step' ? 'line' : type },
-                title: { text: 'Stock Requests Over Time' },
-                xAxis: { categories: dailyDates, title: { text: 'Date' } },
-                yAxis: { title: { text: 'Number of Requests' } },
-                legend: { layout: 'horizontal', align: 'center', verticalAlign: 'bottom' },
-                plotOptions: {
-                    series: { step: type === 'step' } // Enable step mode only for Step Line
-                },
-                series: [
-                    { name: 'Daily Requests', data: dailyCounts },
-                    { name: 'Weekly Requests', data: weeklyCounts },
-                    { name: 'Monthly Requests', data: monthlyCounts }
-                ]
-            });
-        }
-
-        // Initial Chart Load
-        createChart('line');
-
-        // Dropdown Change Event
-        document.getElementById('chartType').addEventListener('change', function () {
-            createChart(this.value);
-        });
-    });
-</script>
-
+{{-- OK --}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Laravel data passed using Blade syntax
@@ -478,91 +456,7 @@
         });
     });
 </script>
+{{-- OK --}}
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-  
-        // Process data for the charts
-        var pieData = statusData.map(function(item) {
-            return { name: item.status, y: item.count };
-        });
-
-        var lineData = dailyData.map(function(item) {
-            return [new Date(item.date).getTime(), item.count];
-        });
-
-        var barCategories = weeklyData.map(function(item) {
-            return 'Week ' + item.week;
-        });
-
-        var barData = weeklyData.map(function(item) {
-            return item.count;
-        });
-
-        var topItemsCategories = topItemsData.map(function(item) {
-            return item.item_name;
-        });
-
-        var topItemsDataSeries = topItemsData.map(function(item) {
-            return item.total_requested;
-        });
-
-        // Combined Chart
-        Highcharts.chart('combinedChartContainer', {
-            title: {
-                text: 'Stock Requests Overview'
-            },
-            xAxis: [{
-                categories: barCategories,
-                title: {
-                    text: 'Weeks'
-                },
-                opposite: true
-            }, {
-                type: 'datetime',
-                title: {
-                    text: 'Date'
-                }
-            }],
-            yAxis: [{
-                title: {
-                    text: 'Number of Requests'
-                }
-            }],
-            series: [{
-                type: 'pie',
-                name: 'Request Status',
-                data: pieData,
-                center: [100, 80],
-                size: 100,
-                showInLegend: false,
-                dataLabels: {
-                    enabled: true
-                }
-            }, {
-                type: 'line',
-                name: 'Daily Requests',
-                data: lineData,
-                xAxis: 1
-            }, {
-                type: 'column',
-                name: 'Weekly Requests',
-                data: barData,
-                xAxis: 0
-            }, {
-                type: 'bar',
-                name: 'Top Requested Items',
-                data: topItemsDataSeries,
-                xAxis: 0,
-                yAxis: 0,
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.y}'
-                }
-            }]
-        });
-    });
-</script>
 
 @endsection
