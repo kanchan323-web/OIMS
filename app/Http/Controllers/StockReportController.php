@@ -47,7 +47,7 @@ class StockReportController extends Controller
         $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
 */
         //return view('reports.stock_reports', compact('data', 'moduleName', 'datarig', 'edps'));
-        return view('reports.stock_reports', compact('moduleName',));
+        return view('reports.stock.stock_reports', compact('moduleName',));
     }
 
     public function report_stock_filter(Request $request)
