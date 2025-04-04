@@ -96,17 +96,11 @@
                 <div class="table-responsive rounded mb-3">
                     <table class="data-tables table mb-0 tbl-server-info">
                         <thead class="bg-white text-uppercase">
-                            <tr class="ligth ligth-data">
-                                <th>Sr.No</th>
-                                <th>EDP Code</th>
-                                <th>Section</th>
-                                <th>Category</th>
-                                <th>Total Qty </th>
-                                <th>Available Qty</th>
-                                <th>Date</th>
+                            <tr class="ligth ligth-data" id="tableHeaders">
+                                <!-- Headers will be set dynamically -->
                             </tr>
                         </thead>
-                        <tbody class="ligth-body" id="stockTable">
+                        <tbody class="ligth-body" id="reportTable">
                         </tbody>
                     </table>
                 </div>
@@ -125,6 +119,143 @@
                     url: "{{ route('report_stock_filter') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
+                         console.log("AJAX Response:", response.data);
+                        let tableBody = $("#reportTable");
+                        let tableHeaders = $("#tableHeaders");
+
+                        tableBody.empty();
+                        tableHeaders.empty();
+
+                        if (!response.data) {
+                            console.warn("No data received.");
+                            tableBody.html('<tr><td colspan="6" class="text-center">No records found</td></tr>');
+                            return;
+                        }
+
+                        let reportType = $("#report_type").val();
+                        let headers = "";
+                        let rows = "";
+
+                        switch (reportType) {
+                            case "1":
+                            if (response.data && response.data.length > 0) {
+                                headers = "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total QTY</th><th>Available QTY</th><th>Date</th>";
+                                $.each(response.data, function (index, stockdata) {
+                                    var date = stockdata.created_at;
+                                    var dateObj = new Date(date);
+                                    var formattedDate = dateObj.toISOString().split('T')[0];
+                                rows += `<tr>
+                                                <td>${index + 1}</td>
+                                                <td>${stockdata.EDP_Code}</td>
+                                                <td>${stockdata.section}</td>
+                                                <td>${stockdata.description}</td>
+                                                <td>${stockdata.initial_qty}</td>
+                                                <td>${stockdata.qty}</td>
+                                                <td>${formattedDate}</td>
+                                            </tr>`;
+                                    });
+                                }
+                                break;
+
+                            case "2":
+                            if (response.data && response.data.length > 0) {
+                                headers = "<th>Sr.No</th><th>Edp Code</th><th>Addition Qty</th><th>Supplier Rig</th><th>Date</th>";
+                                $.each(response.data, function (index, stockdata) {
+                                rows += `<tr>
+                                               <td>${index + 1}</td>
+                                                <td>${stockdata.EDP_Code}</td>
+                                                <td>${stockdata.name}</td>
+                                                <td>${stockdata.requested_qty}</td>
+                                                <td>${stockdata.created_at}</td>
+                                            </tr>`;
+                                        });
+                                    }
+                                break;
+
+                            case "3":
+                                headers = "<th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Rig Name</th><th>Created At</th>";
+
+                                if (Array.isArray(response.data)) {
+                                    response.data.forEach((item, index) => {
+                                        // Determine status label and color
+                                        let statusLabel, statusColor;
+                                        switch (item.status_id) {
+                                            case 1:
+                                                statusLabel = "Pending";
+                                                statusColor = "badge-warning"; // Yellow
+                                                break;
+                                            case 4:
+                                                statusLabel = "Approved";
+                                                statusColor = "badge-success"; // Green
+                                                break;
+                                            case 3:
+                                                statusLabel = "Received";
+                                                statusColor = "badge-primary"; // Blue
+                                                break;
+                                            case 6:
+                                                statusLabel = "MIT";
+                                                statusColor = "badge-purple"; // purple
+                                                break;
+                                            case 2:
+                                                statusLabel = "Query";
+                                                statusColor = "badge-info"; // Light blue
+                                                break;
+                                            case 5:
+                                                statusLabel = "Declined";
+                                                statusColor = "badge-danger"; // Red
+                                                break;
+                                            default:
+                                                statusLabel = "Unknown";
+                                                statusColor = "badge-secondary"; // Light Gray
+                                        }
+
+                                        rows += `<tr>
+                                                            <td>${index + 1}</td>
+                                                            <td>${item.supplier_qty ?? 0}</td>
+                                                            <td><span class="badge ${statusColor}">${statusLabel}</span></td>
+                                                            <td>${item.processed_by_name ?? '-'}</td>
+                                                            <td>${item.rig_name ?? '-'}</td>
+                                                            <td>${item.created_at ?? '-'}</td>
+                                                        </tr>`;
+                                    });
+                                }
+
+
+                                break;
+
+                            case "4":
+                                headers = "<th>Sr.No</th><th>Request ID</th><th>Requested Stock</th><th>Requesters Stock</th><th>Status</th><th>Expected Delivery</th><th>Actual Delivery</th>";
+
+                                if (Array.isArray(response.data)) {
+                                    response.data.forEach((item, index) => {
+                                        // Determine status badge
+                                        let statusBadge = item.status === "Delivered"
+                                            ? `<span class="badge badge-success">Delivered</span>`
+                                            : `<span class="badge badge-danger">Not Delivered</span>`;
+
+                                        rows += `<tr>
+                                            <td>${index + 1}</td>
+                                            <td>${item.request_id ?? '-'}</td>
+                                            <td>${item.requested_stock_item ?? 'Nill'}</td>
+                                            <td>${item.requester_stock_item ?? 'Nill'}</td>
+                                            <td>${statusBadge}</td>
+                                            <td>${item.expected_delivery ?? '-'}</td>
+                                            <td>${item.actual_delivery ?? '-'}</td>
+                                        </tr>`;
+                                    });
+                                }
+                                break;
+                            default:
+                                tableBody.html('<tr><td colspan="5" class="text-center">Invalid Report Type</td></tr>');
+                                return;
+                        }
+
+                        tableHeaders.html(headers);
+                        tableBody.html(rows || '<tr><td colspan="6" class="text-center">No records found</td></tr>');
+                    },
+               /*     success: function (response) {
+
+
                         console.log(response.data);
                         let tableBody = $("#stockTable");
                         tableBody.empty();
@@ -153,7 +284,7 @@
                                 `<tr><td colspan="7" class="text-center">No records found</td></tr>`
                             );
                         }
-                    },
+                    }, */
                     error: function (xhr, status, error) {
                         console.error("Error fetching data:", error);
                     }

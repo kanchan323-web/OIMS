@@ -44,57 +44,50 @@ class StockReportController extends Controller
         );
 
         $response = $this->stock_common_filter($data);
-
-       // dd($response);
-
-      /*  $rig_id = Auth::user()->rig_id;
-
-        stock_common_filter($request->form_date,$request->to_date);
-        if ($request->ajax()) {
-
-            $data = Stock::query()
-                ->when($request->form_date, function ($query) use ($request) {
-                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-                })
-                ->when($request->to_date, function ($query) use ($request) {
-                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-                });
-
-            $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
-            ->where('rig_id', $rig_id)
-            ->get();
-        } */
         return response()->json(['data' => $response]);
     }
 
     private function stock_common_filter($data){
+       // dd($data);
 
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
 
-        if (!empty($data['from_date']) || !empty($data['to_date'])) {
-            $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
-          // $query->whereDate('stocks.created_at', '>=', $data['from_date']->startOfDay());
+        if($data['report_type']==2){
+
+            if (!empty($data['from_date']) || !empty($data['to_date'])) {
+                $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
+            }
+            $get_data = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
+            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+            ->select('edps.edp_code AS EDP_Code','rig_users.name','requesters.requested_qty','request_status.created_at')
+            ->where('rig_users.id', $rig_id)
+            ->where('request_status.status_id', 3)
+            ->get();
+
+            return  $get_data;
+        }elseif($data['report_type']==3){
+
+        }elseif($data['report_type']==4){
+
+        }else{
+
+            if (!empty($data['from_date']) || !empty($data['to_date'])) {
+                $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
+            }
+            $get_data = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
+            ->where('rig_id', $rig_id)
+            ->get();
         }
-     /*   if(empty($data['to_date'])){
-            $query->whereDate('stocks.created_at', '<=', $data['to_date']->endOfDay());
-        } */
-
-        $get_data = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
-        ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-        ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
-        ->where('rig_id', $rig_id)
-        ->get();
         return $get_data;
-
-        dd($get_data);
 
     }
 
-    public function stockPdfDownload(Request $request)
-    {
+    public function stockPdfDownload(Request $request){
         $moduleName = "Download Stock Report";
 
         $data = array(
@@ -111,8 +104,7 @@ class StockReportController extends Controller
         return $pdf->download('Stock_Report.pdf');
     }
 
-    public function stockExcelDownload(Request $request)
-    {
+    public function stockExcelDownload(Request $request){
         $data = array(
             'report_type' => $request->report_type,
             'from_date' => $request->form_date,
