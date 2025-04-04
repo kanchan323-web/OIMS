@@ -23,7 +23,7 @@
                 @endif
 
                 <div class="row justify-content-between">
-                    <div class="col-sm-12 col-md-12">
+                    <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
                             <form id="filterForm" class="mr-3 position-relative">
                                 <div class="row">
@@ -55,7 +55,7 @@
                                             class="btn btn-secondary ml-2">Reset</a>
                                     </div>
 
-                                    <div class="col-md-4 mb-2 d-flex align-items-end">
+                           <!--         <div class="col-md-4 mb-2 d-flex align-items-end">
                                         <div class="user-list-files d-flex">
                                             <a href="{{ route('report_stockPdfDownload') }}"
                                                 class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
@@ -68,9 +68,25 @@
                                                 <i class="fas fa-file-excel mr-1"></i> Export Excel
                                             </a>
                                         </div>
-                                    </div>
+                                    </div>  -->
+
                                 </div>
                             </form>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3">
+                        <div class="user-list-files d-flex">
+                            <a href="{{ route('report_stockPdfDownload') }}"
+                                class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
+                                id="downloadPdf" target="_blank">
+                                <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                            </a>
+                            <a href="{{ route('report_stockExcelDownload') }}"
+                                class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
+                                id="downloadexcel" target="_blank">
+                                <i class="fas fa-file-excel mr-1"></i> Export Excel
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -148,15 +164,12 @@
      $(document).ready(function () {
         $("#downloadPdf").click(function (e) {
                 e.preventDefault();
-
                 let baseUrl = "{{ route('report_stockPdfDownload') }}";
                 let formData = $("#filterForm").serializeArray();
-
                 let filteredParams = formData
                     .filter(item => item.value.trim() !== "")
                     .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
                     .join("&");
-
                 let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
                 window.open(finalUrl, '_blank');
         });
@@ -165,15 +178,12 @@
     $(document).ready(function () {
         $("#downloadexcel").click(function (e) {
                 e.preventDefault();
-
                 let baseUrl = "{{ route('report_stockExcelDownload') }}";
                 let formData = $("#filterForm").serializeArray();
-
                 let filteredParams = formData
                     .filter(item => item.value.trim() !== "")
                     .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
                     .join("&");
-
                 let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
                 window.open(finalUrl, '_blank');
         });
