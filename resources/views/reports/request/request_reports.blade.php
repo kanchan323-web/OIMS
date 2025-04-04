@@ -95,22 +95,22 @@
                             case "summary":
                                 headers = "<th>Sr.No</th><th>Total Requests</th><th>Approved</th><th>Declined</th><th>Pending</th>";
                                 rows += `<tr>
-                                            <td>1</td>
-                                            <td class="text-purple"><strong>${response.data.total_requests ?? 0}</strong></td>
-                                            <td class="text-success"><strong>${response.data.approved ?? 0}</strong></td>
-                                            <td class="text-danger"><strong>${response.data.declined ?? 0}</strong></td>
-                                            <td class="text-warning"><strong>${response.data.pending ?? 0}</strong></td>
-                                        </tr>`;
+                                                <td>1</td>
+                                                <td class="text-purple"><strong>${response.data.total_requests ?? 0}</strong></td>
+                                                <td class="text-success"><strong>${response.data.approved ?? 0}</strong></td>
+                                                <td class="text-danger"><strong>${response.data.declined ?? 0}</strong></td>
+                                                <td class="text-warning"><strong>${response.data.pending ?? 0}</strong></td>
+                                            </tr>`;
                                 break;
 
                             case "approval_rates":
                                 headers = "<th>Sr.No</th><th>Approval Rate (%)</th><th>Decline Rate (%)</th><th>Pending (%)</th>";
                                 rows += `<tr>
-                                            <td>1</td>
-                                            <td class="text-success"><strong>${response.data.approval_rate ?? 0}%</strong></td>
-                                            <td class="text-danger"><strong>${response.data.decline_rate ?? 0}%</strong></td>
-                                            <td class="text-warning"><strong>${response.data.pending_rate ?? 0}%</strong></td>
-                                        </tr>`;
+                                                <td>1</td>
+                                                <td class="text-success"><strong>${response.data.approval_rate ?? 0}%</strong></td>
+                                                <td class="text-danger"><strong>${response.data.decline_rate ?? 0}%</strong></td>
+                                                <td class="text-warning"><strong>${response.data.pending_rate ?? 0}%</strong></td>
+                                            </tr>`;
                                 break;
 
 
@@ -152,13 +152,13 @@
                                         }
 
                                         rows += `<tr>
-                                                        <td>${index + 1}</td>
-                                                        <td>${item.supplier_qty ?? 0}</td>
-                                                        <td><span class="badge ${statusColor}">${statusLabel}</span></td>
-                                                        <td>${item.processed_by_name ?? '-'}</td>
-                                                        <td>${item.rig_name ?? '-'}</td>
-                                                        <td>${item.created_at ?? '-'}</td>
-                                                    </tr>`;
+                                                            <td>${index + 1}</td>
+                                                            <td>${item.supplier_qty ?? 0}</td>
+                                                            <td><span class="badge ${statusColor}">${statusLabel}</span></td>
+                                                            <td>${item.processed_by_name ?? '-'}</td>
+                                                            <td>${item.rig_name ?? '-'}</td>
+                                                            <td>${item.created_at ?? '-'}</td>
+                                                        </tr>`;
                                     });
                                 }
 
@@ -166,16 +166,24 @@
                                 break;
 
                             case "fulfillment_status":
-                                headers = "<th>Sr.No</th><th>Request ID</th><th>Stock Delivered</th><th>Expected Delivery</th><th>Actual Delivery</th>";
+                                headers = "<th>Sr.No</th><th>Request ID</th><th>Requested Stock</th><th>Requesters Stock</th><th>Status</th><th>Expected Delivery</th><th>Actual Delivery</th>";
+
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
+                                        // Determine status badge
+                                        let statusBadge = item.status === "Delivered"
+                                            ? `<span class="badge badge-success">Delivered</span>`
+                                            : `<span class="badge badge-danger">Not Delivered</span>`;
+
                                         rows += `<tr>
-                                                        <td>${index + 1}</td>
-                                                        <td>${item.request_id ?? '-'}</td>
-                                                        <td>${item.stock_delivered ?? 0}</td>
-                                                        <td>${item.expected_delivery ?? '-'}</td>
-                                                        <td>${item.actual_delivery ?? '-'}</td>
-                                                    </tr>`;
+                                            <td>${index + 1}</td>
+                                            <td>${item.request_id ?? '-'}</td>
+                                            <td>${item.requested_stock_item ?? 'Nill'}</td>
+                                            <td>${item.requester_stock_item ?? 'Nill'}</td>
+                                            <td>${statusBadge}</td>
+                                            <td>${item.expected_delivery ?? '-'}</td>
+                                            <td>${item.actual_delivery ?? '-'}</td>
+                                        </tr>`;
                                     });
                                 }
                                 break;
@@ -185,11 +193,11 @@
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
                                         rows += `<tr>
-                                                        <td>${index + 1}</td>
-                                                        <td>${item.request_id ?? '-'}</td>
-                                                        <td>${item.consumed ?? 0}</td>
-                                                        <td>${item.remaining_stock ?? 0}</td>
-                                                    </tr>`;
+                                                            <td>${index + 1}</td>
+                                                            <td>${item.request_id ?? '-'}</td>
+                                                            <td>${item.consumed ?? 0}</td>
+                                                            <td>${item.remaining_stock ?? 0}</td>
+                                                        </tr>`;
                                     });
                                 }
                                 break;

@@ -32,7 +32,7 @@ class Requester extends Model
 
     public function requesterStock()
     {
-        return $this->belongsTo(Stock::class, 'requesters_stock_id');
+        return $this->belongsTo(Stock::class, 'requester_stock_id');
     }
 
     public function latestStatus()
