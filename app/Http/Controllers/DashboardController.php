@@ -7,171 +7,189 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Stock;
 use App\Models\Requester;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class DashboardController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         if (Auth::check()) {
             $rig_id = Auth::user()->rig_id;
-    
-            // Basic counts
+
+            //   Top-Card-data
             $countIncomingRequest = Requester::where('supplier_rig_id', $rig_id)->count();
             $PendingIncomingRequest = Requester::leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
                 ->where('requesters.supplier_rig_id', $rig_id)
                 ->where('mst_status.status_name', 'Pending')
                 ->count();
             $RaisedRequests = Requester::where('requester_rig_id', $rig_id)->count();
-
             $RaisedRequestsRequests = Requester::leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
                 ->where('requesters.requester_rig_id', $rig_id)
                 ->where('mst_status.status_name', 'Pending')
                 ->count();
+            //   Top-Card-data
 
-                
-    
+            // Overview Of Stock Comparison   
+            $totalStock = Stock::where('rig_id', $rig_id)->count();
+            $dailyAdditions = Stock::select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(id) as quantity')
+            )
+                ->where('rig_id', $rig_id)
+                ->groupBy('date')
+                ->orderBy('date', 'ASC')
+                ->get()
+                ->pluck('quantity', 'date');  // Pluck as [date => quantity] pairs
+
+            $weeklyAdditions = Stock::select(
+                DB::raw('YEARWEEK(created_at) as week'),
+                DB::raw('COUNT(id) as quantity')
+            )
+                ->where('rig_id', $rig_id)
+                ->groupBy('week')
+                ->orderBy('week', 'ASC')
+                ->get()
+                ->pluck('quantity', 'week');
+
+            $monthlyAdditions = Stock::select(
+                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+                DB::raw('COUNT(id) as quantity')
+            )
+                ->where('rig_id', $rig_id)
+                ->groupBy('month')
+                ->orderBy('month', 'ASC')
+                ->get()
+                ->pluck('quantity', 'month');
+
+            // Overview Of Stock Comparison 
+
             // Stock category data
             $categoryCounts = Stock::where('rig_id', $rig_id)
                 ->whereIn('category', ['Spares', 'Stores', 'Capital Item'])
                 ->groupBy('category')
                 ->select('category', DB::raw('COUNT(*) as Category_count'))
                 ->pluck('Category_count', 'category');
-    
-            $totalStock = Stock::where('rig_id', $rig_id)->count();
-           
 
-            $categoryPercentages = Stock::select(
-                    'category',
-                    DB::raw('COUNT(*) as category_count'),
-                    DB::raw('ROUND((COUNT(*) / ' . $totalStock . ') * 100, 2) as percentage')
-                )
+
+            $currentStock = Stock::where('rig_id', $rig_id)
                 ->whereIn('category', ['Spares', 'Stores', 'Capital Item'])
-                ->where('rig_id', $rig_id)
+                ->selectRaw('category, SUM(qty) as total_quantity')
                 ->groupBy('category')
-                ->pluck('percentage', 'category');
-    
-                $dailyAdditions = Stock::select(
-                    DB::raw('DATE(created_at) as date'), 
-                    DB::raw('COUNT(id) as quantity')
-                )
-                ->where('rig_id', $rig_id)
-                ->groupBy('date')
-                ->orderBy('date', 'ASC')
                 ->get()
-                ->pluck('quantity', 'date');  // Pluck as [date => quantity] pairs
-            
-           
-                $weeklyAdditions = Stock::select(
-                    DB::raw('YEARWEEK(created_at) as week'), 
-                    DB::raw('COUNT(id) as quantity')
-                )
-                ->where('rig_id', $rig_id)
-                ->groupBy('week')
-                ->orderBy('week', 'ASC')
-                ->get()
-                ->pluck('quantity', 'week');
-    
-                $monthlyAdditions = Stock::select(
-                    DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'), 
-                    DB::raw('COUNT(id) as quantity')
-                )
-                ->where('rig_id', $rig_id)
-                ->groupBy('month')
-                ->orderBy('month', 'ASC')
-                ->get()
-                ->pluck('quantity', 'month'); 
-    
+                ->pluck('total_quantity', 'category');
+
             // Requests data by category
             $incomingStockCounts = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
                 ->where('requesters.supplier_rig_id', $rig_id)
                 ->groupBy('stocks.category')
                 ->select('stocks.category', DB::raw('COUNT(requesters.id) as total'))
                 ->pluck('total', 'category');
-    
+
             $raisedStockCounts = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
                 ->where('requesters.requester_rig_id', $rig_id)
                 ->groupBy('stocks.category')
                 ->select('stocks.category', DB::raw('COUNT(requesters.id) as total'))
                 ->pluck('total', 'category');
-    
-            // Time-based requests data
-            $dailyIncomingRequests = Requester::select(
-                    DB::raw('DATE(created_at) as date'),
-                    DB::raw('COUNT(id) as total_requests')
-                )
-                ->where('supplier_rig_id', $rig_id)
-                ->groupBy('date')
-                ->orderBy('date', 'ASC')
-                ->get();
-    
-            $weeklyIncomingRequests = Requester::select(
-                    DB::raw('YEARWEEK(created_at) as week'),
-                    DB::raw('COUNT(id) as total_requests')
-                )
-                ->where('supplier_rig_id', $rig_id)
-                ->groupBy('week')
-                ->orderBy('week', 'ASC')
-                ->get();
-    
-            $monthlyIncomingRequests = Requester::select(
-                    DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-                    DB::raw('COUNT(id) as total_requests')
-                )
-                ->where('supplier_rig_id', $rig_id)
-                ->groupBy('month')
-                ->orderBy('month', 'ASC')
-                ->get();
-    
-            $dailyRaisedRequests = Requester::select(
-                    DB::raw('DATE(created_at) as date'),
-                    DB::raw('COUNT(id) as total_requests')
-                )
-                ->where('requester_rig_id', $rig_id)
-                ->groupBy('date')
-                ->orderBy('date', 'ASC')
-                ->get();
-                
-    
-            $weeklyRaisedRequests = Requester::select(
-                    DB::raw('YEARWEEK(created_at) as week'),
-                    DB::raw('COUNT(id) as total_requests')
-                )
-                ->where('requester_rig_id', $rig_id)
-                ->groupBy('week')
-                ->orderBy('week', 'ASC')
-                ->get();
-    
-            $monthlyRaisedRequests = Requester::select(
-                    DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-                    DB::raw('COUNT(id) as total_requests')
-                )
-                ->where('requester_rig_id', $rig_id)
-                ->groupBy('month')
-                ->orderBy('month', 'ASC')
-                ->get();
-    
-            // Top users
-            $topUsers = Requester::select('users.id', 'users.user_name')
-                ->join('users', 'requesters.requester_id', '=', 'users.id')
-                ->where('requesters.requester_rig_id', $rig_id)
-                ->groupBy('users.id', 'users.user_name')
-                ->orderByDesc('users.id')
-                ->limit(5)
-                ->get();
-    
+
+
+            // In your controller:
+            $weeklyStockData = [];
+            $monthlyStockData = [];
+            $yearlyStockData = [];
+
+            $categories = ['Spares', 'Stores', 'Capital Item'];
+
+            foreach ($categories as $category) {
+                // Weekly data
+                $weeklyStockData[$category] = Stock::where('rig_id', $rig_id)
+                    ->where('category', $category)
+                    ->selectRaw('YEAR(created_at) as year, 
+                    WEEK(created_at) as week, 
+                    MONTH(created_at) as month, 
+                    SUM(qty) as quantity')
+                    ->groupBy('year', 'week', 'month')
+                    ->orderBy('year')
+                    ->orderBy('week')
+                    ->get()
+                    ->map(function ($item) {
+                        $monthName = \Carbon\Carbon::create()->month($item->month)->format('M');
+                        return [
+                            'name' => "Week {$item->week}, {$monthName} {$item->year}",  // Format: "Week 23, Jun 2023"
+                            'y' => (int) $item->quantity,
+                            'week' => $item->week,
+                            'month' => $item->month,
+                            'monthName' => $monthName,
+                            'year' => $item->year
+                        ];
+                    })->toArray();
+
+                // Monthly data
+                $monthlyStockData[$category] = Stock::where('rig_id', $rig_id)
+                    ->where('category', $category)
+                    ->selectRaw("
+                    YEAR(created_at) as year,
+                    MONTH(created_at) as month,
+                    DATE_FORMAT(created_at, '%Y-%m') as period,
+                    SUM(qty) as quantity
+                ")
+                    ->groupBy('year', 'month', 'period')
+                    ->orderBy('year', 'asc')
+                    ->orderBy('month', 'asc')
+                    ->get()
+                    ->map(function ($item) {
+                        $date = \Carbon\Carbon::createFromFormat('!m', $item->month)->month($item->month)->year($item->year);
+
+                        return [
+                            'period' => $item->period,  // '2023-01'
+                            'name' => $date->format('F Y'),  // 'January 2023'
+                            'shortName' => $date->format('M Y'),  // 'Jan 2023'
+                            'y' => (int) $item->quantity,
+                            'month' => $item->month,
+                            'year' => $item->year,
+                            'sortKey' => $item->year * 100 + $item->month  // Creates a sortable numeric key (202301)
+                        ];
+                    })
+                    ->sortBy('sortKey')  // Extra sorting guarantee
+                    ->values()  // Reset array keys after sorting
+                    ->toArray();
+
+                // Yearly data
+                $yearlyStockData[$category] = Stock::where('rig_id', $rig_id)
+                    ->where('category', $category)
+                    ->selectRaw("YEAR(created_at) as period, SUM(qty) as quantity")
+                    ->groupBy('period')
+                    ->orderBy('period')
+                    ->get()
+                    ->map(function ($item) {
+                        return [(string) $item->period, (int) $item->quantity];
+                    })->toArray();
+            }
+
+
+
             return view('user.dashboard', compact(
-                'dailyAdditions', 'weeklyAdditions', 'monthlyAdditions',
-                'categoryCounts', 'categoryPercentages',
-                'countIncomingRequest', 'PendingIncomingRequest','totalStock',
-                'RaisedRequests', 'RaisedRequestsRequests',
-                'incomingStockCounts', 'raisedStockCounts', 'topUsers',
-                'dailyIncomingRequests', 'weeklyIncomingRequests', 'monthlyIncomingRequests',
-                'dailyRaisedRequests', 'weeklyRaisedRequests', 'monthlyRaisedRequests'
+                'countIncomingRequest',
+                'PendingIncomingRequest',
+                'RaisedRequests',
+                'RaisedRequestsRequests',
+                'dailyAdditions',
+                'weeklyAdditions',
+                'currentStock',
+                'monthlyAdditions',
+                'categoryCounts',
+                'totalStock',
+                'incomingStockCounts',
+                'raisedStockCounts',
+                'weeklyStockData',
+                'monthlyStockData',
+                'yearlyStockData'
             ));
         } else {
             return redirect()->route('user.login');
         }
     }
 
-    public function test(){
+    public function test()
+    {
 
     }
 }

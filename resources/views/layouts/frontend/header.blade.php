@@ -22,8 +22,8 @@
       <meta name="csrf-token" content="{{ csrf_token() }}">
 
       <style>
-.highcharts-figure,
-.highcharts-data-table table {
+    .highcharts-figure,
+    .highcharts-data-table table {
     min-width: 320px;
     max-width: 100%;
     margin: 1.5em auto;
