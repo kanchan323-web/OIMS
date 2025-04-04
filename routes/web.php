@@ -31,6 +31,7 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::prefix('/admin')->group(function () {
         Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
         Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
@@ -125,6 +126,10 @@ Route::middleware(['admin.auth'])->group(function () {
             Route::get('/stocks', [AdminStockReportController::class, 'index'])->name('stock_reports.index');
             Route::get('/requests', [AdminRequestReportController::class, 'index'])->name('request_reports.index');
         });
+
+        //request stocks reports
+        Route::get('/request-report', [RequestReportController::class, 'index'])->name('admin.request_report');
+        Route::get('/request-report/fetch', [RequestReportController::class, 'fetchReport'])->name('report.fetch');
     });
 });
 
@@ -214,6 +219,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/stockExcelDownload', [StockReportController::class, 'stockExcelDownload'])->name('report_stockExcelDownload');
             Route::get('/request', [RequestReportController::class, 'index'])->name('request_report.index');
         });
+
+        //Request stocks Reports
+        Route::get('/request-report', [RequestReportController::class, 'index'])->name('request_report');
+        Route::get('/request-report/fetch', [RequestReportController::class, 'fetchReport'])->name('report.fetch');
+
     });
 });
 
