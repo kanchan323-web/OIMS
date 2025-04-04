@@ -439,7 +439,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="">Expected Delivery Date</label>
                                     <input type="date" class="form-control" name="expected_date" id="expected_date">
-                                        <small class="text-primary">If date not select It'll add 15 days on now date as expected date.</small>
+                                        <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
                                 </div>
                             </div>
                             <button class="btn btn-primary" id="AddRequestStock" type="submit">Submit Request</button>
