@@ -130,11 +130,6 @@
                     </div>
                 </div>
 
-
-
-
-              
-              
             </div>
 
         </div>
@@ -220,8 +215,8 @@
             // Color mapping function
             function getCategoryColor(category) {
                 const colors = {
-                    'Spares': '#7cb5ec',
-                    'Stores': '#434348',
+                    'Spares': '#7ee2ff',
+                    'Stores': '#ff9770',
                     'Capital Item': '#90ed7d'
                 };
                 return colors[category] || Highcharts.getOptions().colors[0];
