@@ -246,6 +246,13 @@ class RequestStockController extends Controller
             $nextId = $lastRequest ? $lastRequest->id + 1 : 1;
             $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
 
+            if(empty($request->expected_date)){
+                $curr_date = Carbon::now();
+                $expected_date = $curr_date->addDays(15);
+            }else{
+                $expected_date = $request->expected_date;
+            }
+
             $SendRequest = Requester::insert([
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
@@ -258,6 +265,7 @@ class RequestStockController extends Controller
                 'RID' => $RID,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expected_date' => $expected_date,
             ]);
 
             $updated_stock_status =  Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
@@ -1091,7 +1099,7 @@ class RequestStockController extends Controller
     private function notifyAdmins($message, $url = null)
     {
         $admins = User::where('user_type', 'admin')->get();
-        $user = Auth::user(); 
+        $user = Auth::user();
 
         foreach ($admins as $admin) {
             Notification::create([
@@ -1101,7 +1109,7 @@ class RequestStockController extends Controller
                 'user_id'         => $user->id,
                 'data'            => json_encode([
                     'message' => $message,
-                    'url'     => $url ?? route('admin.dashboard') 
+                    'url'     => $url ?? route('admin.dashboard')
                 ]),
                 'created_at'      => now(),
                 'updated_at'      => now(),

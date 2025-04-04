@@ -24,5 +24,6 @@ class Stock extends Model
         'remarks',
         'user_id',
         'rig_id',
+        'expected_date',
     ];
 }
