@@ -30,36 +30,6 @@ class DashboardController extends Controller
 
             // Overview Of Stock Comparison   
             $totalStock = Stock::where('rig_id', $rig_id)->count();
-            $dailyAdditions = Stock::select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('COUNT(id) as quantity')
-            )
-                ->where('rig_id', $rig_id)
-                ->groupBy('date')
-                ->orderBy('date', 'ASC')
-                ->get()
-                ->pluck('quantity', 'date');  // Pluck as [date => quantity] pairs
-
-            $weeklyAdditions = Stock::select(
-                DB::raw('YEARWEEK(created_at) as week'),
-                DB::raw('COUNT(id) as quantity')
-            )
-                ->where('rig_id', $rig_id)
-                ->groupBy('week')
-                ->orderBy('week', 'ASC')
-                ->get()
-                ->pluck('quantity', 'week');
-
-            $monthlyAdditions = Stock::select(
-                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-                DB::raw('COUNT(id) as quantity')
-            )
-                ->where('rig_id', $rig_id)
-                ->groupBy('month')
-                ->orderBy('month', 'ASC')
-                ->get()
-                ->pluck('quantity', 'month');
-
             // Overview Of Stock Comparison 
 
             // Stock category data
@@ -171,10 +141,7 @@ class DashboardController extends Controller
                 'PendingIncomingRequest',
                 'RaisedRequests',
                 'RaisedRequestsRequests',
-                'dailyAdditions',
-                'weeklyAdditions',
                 'currentStock',
-                'monthlyAdditions',
                 'categoryCounts',
                 'totalStock',
                 'incomingStockCounts',
