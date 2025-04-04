@@ -209,6 +209,9 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('reports')->group(function () {
             Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
             Route::get('/report_stock_filter', [StockReportController::class, 'report_stock_filter'])->name('report_stock_filter');
+            Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
+            Route::get('/stockPdfDownload', [StockReportController::class, 'stockPdfDownload'])->name('report_stockPdfDownload');
+            Route::get('/stockExcelDownload', [StockReportController::class, 'stockExcelDownload'])->name('report_stockExcelDownload');
             Route::get('/request', [RequestReportController::class, 'index'])->name('request_report.index');
         });
     });

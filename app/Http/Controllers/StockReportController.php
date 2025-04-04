@@ -10,6 +10,8 @@ use App\Models\Stock;
 use App\Models\Edp;
 use App\Models\User;
 use App\Models\RigUser;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
@@ -28,32 +30,26 @@ class StockReportController extends Controller
         $moduleName = "Stock Reports";
         $userId = Auth::id();
         $rig_id = Auth::user()->rig_id;
-
-    /*    $data = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
-            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            //->where('requesters.supplier_id', $userId)
-            ->where('requesters.requester_rig_id', $rig_id)
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code')
-            ->orderBy('requesters.created_at', 'desc')
-            ->get();
-
-        $datarig = User::where('user_type', '!=', 'admin')
-            ->where('rig_id', $rig_id)
-            ->pluck('id')
-            ->toArray();
-        $stocks = Stock::select('id')->where('rig_id', $rig_id)->distinct()->get();
-        $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
-*/
-        //return view('reports.stock_reports', compact('data', 'moduleName', 'datarig', 'edps'));
         return view('reports.stock.stock_reports', compact('moduleName',));
     }
 
     public function report_stock_filter(Request $request)
     {
         $moduleName = "Report Stock";
-        $rig_id = Auth::user()->rig_id;
+
+        $data = array(
+            'report_type' => $request->report_type,
+            'from_date' => $request->form_date,
+            'to_date' => $request->to_date,
+        );
+
+        $response = $this->stock_common_filter($data);
+
+       // dd($response);
+
+      /*  $rig_id = Auth::user()->rig_id;
+
+        stock_common_filter($request->form_date,$request->to_date);
         if ($request->ajax()) {
 
             $data = Stock::query()
@@ -69,12 +65,100 @@ class StockReportController extends Controller
             ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
             ->where('rig_id', $rig_id)
             ->get();
-
-            return response()->json(['data' => $data]);
-        }
-
-      //  $data = Stock::all();
-     //   $stockData = Stock::select('edp_code')->distinct()->get();
-       // return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData'));
+        } */
+        return response()->json(['data' => $response]);
     }
+
+    private function stock_common_filter($data){
+
+        $rig_id = Auth::user()->rig_id;
+        $query = Stock::query();
+
+        if (!empty($data['from_date']) || !empty($data['to_date'])) {
+            $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
+          // $query->whereDate('stocks.created_at', '>=', $data['from_date']->startOfDay());
+        }
+     /*   if(empty($data['to_date'])){
+            $query->whereDate('stocks.created_at', '<=', $data['to_date']->endOfDay());
+        } */
+
+        $get_data = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
+        ->where('rig_id', $rig_id)
+        ->get();
+        return $get_data;
+
+        dd($get_data);
+
+    }
+
+    public function stockPdfDownload(Request $request)
+    {
+        $moduleName = "Download Stock Report";
+
+        $data = array(
+            'report_type' => $request->report_type,
+            'from_date' => $request->form_date,
+            'to_date' => $request->to_date,
+        );
+
+       $stockData = $this->stock_common_filter($data);
+
+        // Generate PDF with retrieved data
+        $pdf = PDF::loadView('pdf.report.stock.stock_report', compact('stockData'));
+
+        return $pdf->download('Stock_Report.pdf');
+    }
+
+    public function stockExcelDownload(Request $request)
+    {
+        $data = array(
+            'report_type' => $request->report_type,
+            'from_date' => $request->form_date,
+            'to_date' => $request->to_date,
+        );
+        $spreadsheet = new Spreadsheet();
+
+        // Get the active sheet
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set the title of the spreadsheet
+        $sheet->setTitle('Stock Overview Report');
+
+        // Set headers for the spreadsheet
+        $sheet->setCellValue('A1', 'Sr.No');
+        $sheet->setCellValue('B1', 'EDP Code');
+        $sheet->setCellValue('C1', 'Section');
+        $sheet->setCellValue('D1', 'Description');
+        $sheet->setCellValue('E1', 'Total Qty');
+        $sheet->setCellValue('F1', 'Available Qty');
+        $sheet->setCellValue('G1', 'Date');
+        $stockDatas = $this->stock_common_filter($data);
+
+        $row = 2; // Start from the second row to leave space for headers
+        $i=1;
+        foreach ($stockDatas as $stockData) {
+            $sheet->setCellValue('A' . $row, $i);
+            $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
+            $sheet->setCellValue('C' . $row, $stockData->section);
+            $sheet->setCellValue('D' . $row, $stockData->description);
+            $sheet->setCellValue('E' . $row, $stockData->initial_qty);
+            $sheet->setCellValue('F' . $row, $stockData->qty);
+            $sheet->setCellValue('G' . $row, $stockData->created_at);
+            $row++;
+            $i++;
+        }
+        $writer = new Xlsx($spreadsheet);
+
+        // Set the correct headers for downloading an Excel file
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Stock_Report.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        // Write the Excel file to PHP output
+        $writer->save('php://output');
+       // dd($data);
+    }
+
 }
