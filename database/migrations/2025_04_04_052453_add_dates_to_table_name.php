@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('requesters', function (Blueprint $table) {
-            $table->dateTime('requested_date')->nullable();
+            $table->date('expected_date')->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('requesters', function (Blueprint $table) {
-            $table->dropColumn('requested_date');
+            $table->dropColumn('expected_date');
         });
     }
 };
