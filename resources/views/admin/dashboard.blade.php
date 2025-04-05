@@ -82,10 +82,6 @@
                                     </div>
                         
                                     @php
-                                        // Total number of all users (admin + non-admin)
-                                        
-                                        
-                                        // Ensure no division by zero
                                         $userPercentage = ($allUsers > 0) 
                                             ? round(($totalUser / $allUsers) * 100, 2) 
                                             : 0;
@@ -104,326 +100,214 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Rig Overview</h4>
-                            </div>
-
-                        </div>
-                        <div class="card-body">
-                            <div id="container" style="width: 100%; height: 400px;"></div> 
-                        </div>
-                    </div>
-                </div>  
-
-
-
-                <div class="col-lg-4 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">User Overview</h4>
-                            </div>
-
-                        </div>
-                        <div class="card-body">
-                            <div id="userChart" style="width:100%; height:400px;"></div>
-                        </div>
-                    </div>
-                </div>  
-
                 
+                <div class="col-lg-8 col-md-12 col-sm-12">
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header">
+                            <h4 class="card-title">Stock Movement Trends </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="btn-group mb-3">
+                                <button class="btn btn-sm btn-outline-primary time-period-btn active" data-period="weekly">Weekly</button>
+                                <button class="btn btn-sm btn-outline-primary time-period-btn" data-period="monthly">Monthly</button>
+                                <button class="btn btn-sm btn-outline-primary time-period-btn" data-period="yearly">Yearly</button>
+                            </div>
+                            <div id="stockMovementChart" style="width:100%; height:500px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="col-lg-4 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Stock Overview</h4>
-                            </div>
 
+                    <div class="card card-block card-stretch card-height">
+                        <div class="card-header">
+                            <h4 class="card-title">Overview Of Stock Inventory</h4>
                         </div>
-                        
                         <div class="card-body">
-                 
-                        <div id="stockChart" style="width:100%; height:400px;"></div>
+                            <div id="stockPieChart" style="width: 100%; height: 400px;"></div>
                         </div>
                     </div>
-                </div>  
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Request Overview</h4>
-                            </div>
+                </div>
 
-                        </div>
-                        
-                        <div class="card-body">
-                            <div id="rigRequestsChart" style="width:100%; height:400px;"></div>
-             
-                     
-                        </div>
-                    </div>
-                </div>  
-                {{-- <div class="col-lg-4 col-md-12 col-sm-12">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Master Overview</h4>
-                            </div>
 
-                        </div>
-                        
-                        <div class="card-body">
-                        <div id="requestDistributionChart" style="width:100%; height:400px;"></div>
-                        </div>
-                    </div>
-                </div>   --}}
-                {{-- <div class="col-lg-6">
-                    <div class="card card-block card-stretch card-height">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                            <div class="header-title">
-                                <h4 class="card-title">Revenue Vs Cost</h4>
-                            </div>
-                            <div class="card-header-toolbar d-flex align-items-center">
-                                <div class="dropdown">
-                                    <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton002"
-                                        data-toggle="dropdown">
-                                        This Month<i class="ri-arrow-down-s-line ml-1"></i>
-                                    </span>
-                                    <div class="dropdown-menu dropdown-menu-right shadow-none"
-                                        aria-labelledby="dropdownMenuButton002">
-                                        <a class="dropdown-item" href="#">Yearly</a>
-                                        <a class="dropdown-item" href="#">Monthly</a>
-                                        <a class="dropdown-item" href="#">Weekly</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="layout1-chart-2" style="min-height: 360px;"></div>
-                        </div>
-                    </div>
-                </div> --}}
+              
             </div>
             <!-- Page end  -->
         </div>
     </div>
     <script>
-        var ownStockRequests = @json($ownStockRequests);
-        var supplierStockRequests = @json($supplierStockRequests);
-    
-        Highcharts.chart('requestDistributionChart', {
-            chart: { type: 'pie' },
-            title: { text: 'Request Distribution: Own Stock vs Supplier Stock' },
-            series: [{
-                name: 'Requests',
-                data: [
-                    { name: 'Own Stock', y: ownStockRequests, color: '#4CAF50' },
-                    { name: 'Supplier Stock', y: supplierStockRequests, color: '#FF5733' }
-                ]
-            }]
-        });
-    </script>
-    <script>
-        var rigRequests = @json($rigRequests);
-        var incomingRequests = @json($incomingRequests);
-    
-        var rigNames = rigRequests.map(item => item.rig_name);
-    
-        var totalRequestsSent = rigNames.map(rig => {
-            let requestItem = rigRequests.find(item => item.rig_name === rig);
-            return requestItem ? Number(requestItem.total_requests_sent) : 0;
-        });
-    
-        var totalRequestsReceived = rigNames.map(rig => {
-            let receivedItem = incomingRequests.find(item => item.rig_name === rig);
-            return receivedItem ? Number(receivedItem.total_requests_received) : 0;
-        });
-    
-        Highcharts.chart('rigRequestsChart', {
-            chart: { type: 'column' }, // ✅ Changed to column (vertical bar)
-            title: { text: 'Rig Requests & Incoming Requests' },
-    
-            xAxis: {
-                categories: rigNames,
-                title: { text: 'Rigs' }
-            },
-            yAxis: { title: { text: 'Total Requests' } },
-    
-            series: [{
-                name: 'Requests Sent',
-                data: totalRequestsSent,
-                color: '#007bff'
-            }, {
-                name: 'Incoming Requests',
-                data: totalRequestsReceived,
-                color: '#ff5733'
-            }]
-        });
-    </script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Data from Laravel
+            const stockData = {
+                weekly: @json($weeklyStockData), 
+                monthly: @json($monthlyStockData),
+                yearly: @json($yearlyStockData)
+            };
 
-    <script>
-        var inventoryLevels = @json($inventoryLevels);
-        var stockRequests = @json($stockRequests);
-        var stockMovements = @json($stockMovements);
-    
-        Highcharts.chart('stockChart', {
-            chart: { type: 'column' },
-            title: { text: 'Inventory Levels' },
-    
-            xAxis: [{
-                categories: inventoryLevels.map(item => item.category),
-                title: { text: 'Categories' }
-            }, {
-                categories: stockMovements.map(item => item.month),
-                title: { text: '' },
-                opposite: false
-            }],
-    
-            yAxis: [{ 
-                title: { text: 'Total Stock (Qty)' }
-            }, { 
-                title: { text: '' }, 
-                opposite: false
-            }],
-    
-            series: [{
-                name: 'Total Stock',
-                type: 'column',
-                data: inventoryLevels.map(item => item.total_qty),
-                color: '#4CAF50'
-            }]
-        });
-    </script>
-    
-    <!-- HTML Containers for Charts -->
-  
-    
-
-</script>
-    <script> 
-        document.addEventListener("DOMContentLoaded", function () {  
-            var rigData = @json($rigOverview);
-        
-            var chartData = rigData.map(item => ({
-                name: `Location ${item.location_id} - ${item.name}`,
-                y: item.total_rigs
-            }));
-        
-            Highcharts.chart('container', {
+            console.log("Weekly data:", stockData.weekly);
+            console.log("Monthly data:", stockData.monthly);
+            console.log("Yearly data:", stockData.yearly);
+            
+            // Initialize chart
+            const chart = Highcharts.chart('stockMovementChart', {
                 chart: {
-                    type: 'pie'
+                    type: 'column'
                 },
                 title: {
-                    text: 'Rigs Overview by Location'
+                    text: 'Stock Movement by Category'
                 },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+             
+                xAxis: {
+                    type: 'category',
+                    title: {
+                        text: 'Time Period'
+                    },
+                    crosshair: true
                 },
-                accessibility: {
-                    point: {
-                        valueSuffix: '%'
-                    }
+                yAxis: {
+                    title: {
+                        text: 'Stock Quantity'
+                    },
+                    min: 0
                 },
                 plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
+                    column: {
+                        stacking: 'normal',
+                        pointPadding: 0.2,
+                        borderWidth: 0,
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                            formatter: function() {
+                                return this.y > 0 ? this.y : '';
+                            }
                         }
                     }
                 },
-                series: [{
-                    name: 'Rigs',
-                    data: chartData
-                }]
+                tooltip: {
+                    headerFormat: '<b>{series.name}</b><br/>',
+                    pointFormat: '{point.x}: <b>{point.y}</b> units'
+                },
+                series: [] // Will be populated dynamically
             });
+        
+            // Function to update chart based on selected period
+            function updateChart(period) {
+                // Remove existing series
+                while (chart.series.length > 0) {
+                    chart.series[0].remove(false);
+                }
+                
+                // Add new series for each category
+                Object.keys(stockData[period]).forEach(category => {
+                    chart.addSeries({
+                        name: category,
+                        data: stockData[period][category],
+                        color: getCategoryColor(category)
+                    }, false);
+                });
+                
+                // Update chart title and redraw
+                chart.setTitle({ text: `Stock Movement (${period.charAt(0).toUpperCase() + period.slice(1)})` });
+                chart.redraw();
+            }
+            
+            // Color mapping function
+            function getCategoryColor(category) {
+                const colors = {
+                    'Spares': '#7ee2ff',
+                    'Stores': '#ff9770',
+                    'Capital Item': '#90ed7d'
+                };
+                return colors[category] || Highcharts.getOptions().colors[0];
+            }
+            
+            // Time period selector
+            document.querySelectorAll('.time-period-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const period = this.dataset.period;
+                    console.log(period);
+                    
+                    // Update button states
+                    document.querySelectorAll('.time-period-btn').forEach(b => 
+                        b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update chart
+                    updateChart(period);
+                });
+            });
+            
+            // Initialize with weekly data
+            updateChart('weekly');
         });
         </script>
-<style>
-    
-</style>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var edpsData = @json($edpsSeries);
-        var categoriesData = @json($categoriesSeries);
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get data from Laravel
+        const totalStock = @json($totalStock);
+        const pendingRaisedRequests = @json($RaisedRequestsRequests);
 
-        var dates = edpsData.map(item => item.date);
-        var edpsCounts = edpsData.map(item => item.count);
-        var categoriesCounts = categoriesData.map(item => item.count);
+        // Calculate percentages
+        const availableStock = totalStock - pendingRaisedRequests;
+        const availablePercent = totalStock > 0 ? (availableStock / totalStock * 100).toFixed(1) : 0;
+        const pendingPercent = totalStock > 0 ? (pendingRaisedRequests / totalStock * 100).toFixed(1) : 0;
 
-        Highcharts.chart('edpsCategoriesChart', {
+        // Create the pie chart
+        Highcharts.chart('stockPieChart', {
             chart: {
-                type: 'column'
+                type: 'pie',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
             },
             title: {
-                text: 'Number of EDPs and Categories Added Over Time'
-            },
-            xAxis: {
-                categories: dates,
-                crosshair: true,
-                title: {
-                    text: 'Date'
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Count'
-                }
+                text: 'Stock  Inventory Status',
+                align: 'left'
             },
             tooltip: {
-                shared: true,
-                useHTML: true,
-                headerFormat: '<b>{point.key}</b><br>',
-                pointFormat: '{series.name}: {point.y}<br>'
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y} items)'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
             },
             plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                        distance: -50,
+                        filter: {
+                            property: 'percentage',
+                            operator: '>',
+                            value: 4
+                        }
+                    },
+                    showInLegend: true
                 }
             },
             series: [{
-                name: 'EDPs',
-                data: edpsCounts
-            }, {
-                name: 'Categories',
-                data: categoriesCounts
-            }]
-        });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var rigData = @json($rigData);
-
-        Highcharts.chart('userChart', {
-            chart: {
-                type: 'variablepie'
-            },
-            title: {
-                text: 'User Distribution by Rig'
-            },
-            tooltip: {
-                useHTML: true,
-                formatter: function() {
-                    var userList = this.point.userNames.join('<br/>');
-                    return '<b>' + this.point.name + '</b>: ' + this.y + ' users<br/><br/>' + userList;
-                }
-            },
-            series: [{
-                minPointSize: 10,
-                innerSize: '20%',
-                zMin: 0,
-                name: 'Rigs',
-                data: rigData
-            }]
+                name: 'Stock',
+                colorByPoint: true,
+                data: [{
+                    name: 'Own Inventory',
+                    y: availableStock,
+                    percentage: parseFloat(availablePercent),
+                    color: '#7ee2ff' // Green
+                }, {
+                    name: 'Suppliers Inventory',
+                    y: pendingRaisedRequests,
+                    percentage: parseFloat(pendingPercent),
+                    color: '#ff9770' // Orange
+                }]
+            }],
+            credits: {
+                enabled: true
+            }
         });
     });
 </script>
