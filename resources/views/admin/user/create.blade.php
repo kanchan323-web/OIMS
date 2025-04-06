@@ -18,18 +18,30 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="user_name">User Name</label>
                                     <input type="text" class="form-control" name="user_name" required>
+                                    @error('user_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control" name="email" required>
+                                    @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="cpf_no">CPF No</label>
                                     <input type="text" class="form-control" name="cpf_no" required>
+                                    @error('cpf_no')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="password">Password</label>
                                     <input type="password" class="form-control" name="password" required>
+                                    @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="user_status">User Status</label>
@@ -37,6 +49,9 @@
                                         <option value="1">Active</option>
                                         <option value="0">Inactive</option>
                                     </select>
+                                    @error('user_status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="user_type">User Type</label>
@@ -45,6 +60,10 @@
                                         {{-- <option value="admin">Admin</option> --}}
                                         <option value="user">User</option>
                                     </select>
+                                    @error('user_type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
+                                    
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="rig_id">Select Rigs</label>
@@ -54,6 +73,9 @@
                                             <option value="{{ $rigUser->id }}">{{ $rigUser->name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('rig_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                     @enderror
                                 </div>
                             </div>
                             <button class="btn btn-primary" type="submit">Submit</button>
