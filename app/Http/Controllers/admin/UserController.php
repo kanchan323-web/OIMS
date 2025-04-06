@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\RigUser;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\LogsUser;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -31,25 +32,44 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_name'  => 'required|string|max:255',
-            'email'      => 'required|email|unique:users',
-            'cpf_no'     => 'required|string|max:255',
-            'password'   => 'required|min:6',
-            'user_status' => 'required|integer',
-            'user_type'  => 'required|string|in:admin,user',
-            'rig_id'     => 'nullable|integer',
+            'user_name'    => 'required|string|max:255',
+            'email'        => 'required|email|unique:users',
+            'cpf_no'       => 'required|string|max:255',
+            'password'     => 'required|min:6',
+            'user_status'  => 'required|integer',
+            'user_type'    => 'required|string|in:admin,user',
+            'rig_id'       => 'nullable|integer',
         ]);
-
-        User::create([
-            'user_name'  => $request->user_name,
-            'email'      => $request->email,
-            'cpf_no'     => $request->cpf_no,
-            'password'   => Hash::make($request->password),
+    
+        // Create the user
+        $user = User::create([
+            'user_name'   => $request->user_name,
+            'email'       => $request->email,
+            'cpf_no'      => $request->cpf_no,
+            'password'    => Hash::make($request->password),
             'user_status' => $request->user_status,
-            'user_type'  => $request->user_type,
-            'rig_id'     => $request->rig_id,
+            'user_type'   => $request->user_type,
+            'rig_id'      => $request->rig_id,
         ]);
 
+        // dd( $user );
+    
+        // Log the creation without storing the password
+   
+            $data = LogsUser::create([
+                'user_name'     => $request->user_name,
+                'email'         => $request->email,
+                'cpf_no'        => $request->cpf_no,
+                'user_status' => $request->user_status,
+                'user_type'     => $request->user_type,
+                'rig_id'      => $request->rig_id,
+                'creater_id'    => auth()->id(),
+                'creater_type'  => auth()->user()->user_type,
+                'receiver_id'   => null,
+                'receiver_type' => null,
+                'message'       => "User {$request->user_name} has been created.",
+            ]);
+    
         return redirect()->route('admin.index')->with('success', 'User created successfully.');
     }
 
@@ -81,7 +101,7 @@ class UserController extends Controller
             'email'      => 'required|email|unique:users,email,' . $id,
             'cpf_no'     => 'required|string|max:255',
             'user_status' => 'required|integer',
-            'user_type'  => 'required|string|in:admin,user',
+            'user_type'  => 'required|integer|in:admin,user',
             'rig_id'     => 'required|integer',
         ]);
 
@@ -94,13 +114,45 @@ class UserController extends Controller
             'rig_id'     => $request->rig_id,
         ]);
 
+        LogsUser::create([
+            'user_name'     => $request->user_name,
+            'email'         => $request->email,
+            'cpf_no'        => $request->cpf_no,
+            'user_status' => $request->user_status,
+            'user_type'     => $request->user_type,
+            'rig_id'     => $request->rig_id,
+            'creater_id'    => auth()->id(),
+            'creater_type'  => auth()->user()->user_type,
+            'receiver_id'   => null,
+            'receiver_type' => null,
+            'message'       => "User '{$request->user_name}' has been updated.",
+        ]);
+
         return redirect()->route('admin.index')->with('success', 'User updated successfully.');
     }
 
     // Delete a user
     public function destroy($id)
     {
-        User::destroy($id);
+        $user = User::find($id);
+
+        if ($user) {
+            // Log before deletion
+            LogsUser::create([
+                'user_name'     => $user->user_name,
+                'email'         => $user->email,
+                'cpf_no'        => $user->cpf_no,
+                'user_type'     => $user->user_type,
+                'rig_id'      => $user->rig_id,
+                'creater_id'    => auth()->id(),
+                'creater_type'  => auth()->user()->user_type,
+                'receiver_id'   => null,
+                'receiver_type' => null,
+                'message'       => "User '{$user->user_name}' has been deleted.",
+            ]);
+            // Delete the user
+            $user->delete();
+        }
         return redirect()->route('admin.index')->with('success', 'User deleted successfully.');
     }
 }

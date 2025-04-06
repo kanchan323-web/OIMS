@@ -13,7 +13,7 @@
                         </div>
                         <div class="card-body">
                             <form class="needs-validation" novalidate method="POST" id="addStockForm"
-                                action="{{ route('stockSubmit') }}">
+                                action="{{ route('admin.stockSubmit') }}">
                                 @csrf
                                 <input type="hidden" name="id" id="id">
 

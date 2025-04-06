@@ -10,6 +10,7 @@ use App\Rules\ReCaptcha;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
+use App\Models\LogsStocks;
 use App\Models\Edp;
 use App\Models\User;
 use App\Models\rig_users;
@@ -158,6 +159,34 @@ class AdminStockController extends Controller
         $stock->user_id = $user->id;
         $stock->rig_id = $user->rig_id;
         $stock->save();
+
+        // LogsStocks::create([
+        //     'stock_id'        => $stock->id,
+        //     'location_id'     => $stock->location_id,
+        //     'location_name'   => $stock->location_name,
+        //     'edp_code'        => $stock->edp_code,
+        //     'category'        => $stock->category,
+        //     'description'     => $stock->description,
+        //     'section'         => $stock->section,
+        //     'qty'             => $stock->qty,
+        //     'initial_qty'     => $stock->qty,
+        //     'measurement'     => $stock->measurement,
+        //     'new_spareable'   => $stock->new_spareable,
+        //     'used_spareable'  => $stock->used_spareable,
+        //     'remarks'         => $stock->remarks,
+        //     'user_id'         => $stock->user_id,
+        //     'rig_id'          => $stock->rig_id,
+        //     'req_status'      => null,
+        //     'created_at'      => now(),
+        //     'updated_at'      => now(),
+        //     'creater_id'      => auth()->id(),
+        //     'creater_type'    => auth()->user()->user_type,
+        //     'receiver_id'     => null,
+        //     'receiver_type'   => null,
+        //     'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
+        //     'action'          => "created",
+        // ]);
+        
         Session::flash('success', 'Stock submitted successfully!');
 
         return redirect()->route('admin.stock_list');

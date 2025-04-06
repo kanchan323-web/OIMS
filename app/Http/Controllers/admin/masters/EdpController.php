@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Edp;
 use App\Models\UnitOfMeasurement;
 use App\Models\Category;
+use App\Models\LogsEdps;
 use Illuminate\Support\Facades\Response;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
@@ -56,6 +57,19 @@ class EdpController extends Controller
         $edp->measurement = $request->measurement;
         $edp->save();
 
+        LogsEdps::create([
+            'edp_code' => $request->edp_code,
+            'category' => $request->Category_Name,
+            'description' => $request->description,
+            'section' => $request->section,
+            'measurement' => $request->measurement,
+            'creater_id' => auth()->id(),
+            'creater_type' => auth()->user()->user_type,
+            'receiver_id' => null,
+            'receiver_type' => null,
+            'message'       => "EDP '{$request->edp_code}' has been Created.",
+        ]);
+
         return redirect()->back()->with('success', 'EDP created successfully!');
     }
 
@@ -76,15 +90,36 @@ class EdpController extends Controller
             'description' => 'required',
         ]);
 
-        Edp::where('id',$request->edp_id)->update(
-            [
-                'edp_code' =>  $request->edp_code,
-                'category' =>$request->Category_Name,
-                'description' =>$request->description,
-                'section' =>$request->section,
-                'measurement' =>$request->measurement,
-            ]
-        );
+        $edp = Edp::find($request->edp_id);
+
+        if ($edp) {
+            $oldData = $edp->toArray(); // If you want to log old values
+
+            $edp->update([
+                'edp_code'     => $request->edp_code,
+                'category'     => $request->Category_Name,
+                'description'  => $request->description,
+                'section'      => $request->section,
+                'measurement'  => $request->measurement,
+            ]);
+
+            // Optional logging
+            LogsEdps::create([
+                'edp_code'      => $request->edp_code,
+                'category'      => $request->Category_Name,
+                'description'   => $request->description,
+                'section'       => $request->section,
+                'measurement'   => $request->measurement,
+                'creater_id'    => auth()->id(),
+                'creater_type'  => auth()->user()->user_type,
+                'receiver_id'   => null,
+                'receiver_type' => null,
+                'message'       => "EDP '{$oldData['edp_code']}' has been updated.",
+            ]);
+        } else {
+            // Optional error handling
+            return response()->json(['error' => 'EDP not found.'], 404);
+        }
         return redirect()->route('admin.edp.index')
         ->with('success', 'EDP Updated successfully.');  
     }
@@ -92,7 +127,27 @@ class EdpController extends Controller
     public function destroy(Request $request){
 
 
-        Edp::where('id',$request->delete_id)->delete();
+        $edp = Edp::find($request->delete_id);
+
+        if ($edp) {
+            $edp->delete();
+
+            // Optional: log the deletion
+            LogsEdps::create([
+                'edp_code'      => $edp->edp_code,
+                'category'      => $edp->category,
+                'description'   => $edp->description,
+                'section'       => $edp->section,
+                'measurement'   => $edp->measurement,
+                'creater_id'    => auth()->id(),
+                'creater_type'  => auth()->user()->user_type,
+                'receiver_id'   => null,
+                'receiver_type' => null,
+                'message'       => "EDP '{$edp->edp_code}' has been deleted.",
+            ]);
+        } else {
+            return response()->json(['error' => 'EDP not found'], 404);
+        }
         
         return redirect()->route('admin.edp.index')
         ->with('success', 'EDP Deleted successfully.');  
@@ -173,15 +228,31 @@ class EdpController extends Controller
             foreach (array_slice($rows, 1) as $row) {
                 if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
     
-                Edp::updateOrCreate(
+                $edp = Edp::updateOrCreate(
                     ['edp_code' => trim($row[0])],
                     [
                         'description' => trim($row[1]),
                         'measurement' => strtoupper(trim($row[2])),
-                        'section' => trim($row[3]),
-                        'category' => trim($row[4])
+                        'section'     => trim($row[3]),
+                        'category'    => trim($row[4]),
                     ]
                 );
+                
+                // Optional: log the action
+                LogsEdps::create([
+                    'edp_code'      => $edp->edp_code,
+                    'category'      => $edp->category,
+                    'description'   => $edp->description,
+                    'section'       => $edp->section,
+                    'measurement'   => $edp->measurement,
+                    'creater_id'    => auth()->id(),
+                    'creater_type'  => auth()->user()->user_type,
+                    'receiver_id'   => null,
+                    'receiver_type' => null,
+                    'message'       => $edp->wasRecentlyCreated
+                        ? "EDP {$edp->edp_code} has been created via import."
+                        : "EDP {$edp->edp_code} has been updated via import.",
+                ]);
             }
     
             Storage::delete($filePath);
