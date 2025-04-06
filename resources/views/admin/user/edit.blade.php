@@ -12,9 +12,10 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('admin.update', $user->id) }}" method="POST" class="needs-validation" novalidate>
+                        <form action="{{ route('admin.update', $user->id) }}" method="POST" class="needs-validation">
                             @csrf
                             @method('PUT')
+                      
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="user_name">User Name</label>
@@ -57,8 +58,8 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="user_type">User Type</label>
-                                    <input type="text" class="form-control" name="user" value="{{$user->user_type}}" readonly>
-                                    @error('user')
+                                    <input type="text" class="form-control" name="user_type" value="{{ $user->user_type }}" readonly>
+                                    @error('user_type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>

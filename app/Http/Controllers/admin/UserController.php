@@ -95,14 +95,19 @@ class UserController extends Controller
     // Update user details
     public function update(Request $request, $id)
     {
+
+       
         $user = User::findOrFail((int) $id);
+
+        
         $request->validate([
             'user_name'  => 'required|string|max:255',
             'email'      => 'required|email|unique:users,email,' . $id,
             'cpf_no'     => 'required|string|max:255',
             'user_status' => 'required|integer',
-            'user_type'  => 'required|integer|in:admin,user',
+            'user_type' => 'required|string|in:admin,user',
             'rig_id'     => 'required|integer',
+            
         ]);
 
         $user->update([
