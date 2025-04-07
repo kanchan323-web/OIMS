@@ -194,7 +194,7 @@
                                     response.data.forEach((item, index) => {
                                         rows += `<tr>
                                                             <td>${index + 1}</td>
-                                                            <td>${item.request_id ?? '-'}</td>
+                                                            <td>${item.request_id ?? '-'}</td>    
                                                             <td>${item.requested_stock_item ?? '-'}</td>
                                                             <td>${item.requester_stock_item ?? '-'}</td>
                                                             <td>${item.initial_stock ?? '-'}</td>

@@ -194,7 +194,7 @@ class RequestReportController extends Controller
                 'requester_stock_item' => optional($item->requesterStock)->description ?? 'N/A',
                 'initial_stock' => $item->initial_stock,
                 'received_stock' => $item->received_stock ?? 0,
-                'used_stock' => $item->used_stock ?? 0,
+                'used_stock' => $item->used_stock ?? 0, 
                 'remaining_stock' => $item->remaining_stock ?? 0,
             ];
         });
