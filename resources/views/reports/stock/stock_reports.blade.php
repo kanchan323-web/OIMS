@@ -37,6 +37,15 @@
                                                 <option value="4">Stock Replenishment</option>
                                         </select>
                                     </div>
+                            <!--    <div class="col-md-2 mb-2" id="movement_type_div">
+                                        <label for="edp_code">Movements Type</label>
+                                        <select class="form-control" name="report_type" id="movement_type">
+                                            <option disabled selected>Select Movement Type...</option>
+                                                <option value="additions">Stock additions</option>
+                                                <option value="removals">Stock removals</option>
+                                                <option value="adjustments ">Stock adjustments</option>
+                                        </select>
+                                    </div>  -->
 
                                     <div class="col-md-2 mb-2">
                                         <label for="form_date">From Date</label>
@@ -103,6 +112,8 @@
                         <tbody class="ligth-body" id="reportTable">
                         </tbody>
                     </table>
+
+                    <div id="stock_remove"></div>
                 </div>
             </div>
 
@@ -119,12 +130,14 @@
                     url: "{{ route('report_stock_filter') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
-                         console.log("AJAX Response:", response.data);
+                         console.log("AJAX Response:", response.data.stock_addition);
                         let tableBody = $("#reportTable");
                         let tableHeaders = $("#tableHeaders");
 
                         tableBody.empty();
                         tableHeaders.empty();
+                        $('#tbl_stockRemoval').remove();
+                        $('.label_remove').remove();
 
                         if (!response.data) {
                             console.warn("No data received.");
@@ -135,6 +148,7 @@
                         let reportType = $("#report_type").val();
                         let headers = "";
                         let rows = "";
+                        let table2 = "";
 
                         switch (reportType) {
                             case "1":
@@ -158,92 +172,84 @@
                                 break;
 
                             case "2":
-                            if (response.data && response.data.length > 0) {
-                                headers = "<th>Sr.No</th><th>Edp Code</th><th>Addition Qty</th><th>Supplier Rig</th><th>Date</th>";
-                                $.each(response.data, function (index, stockdata) {
+                            if (response.data.stock_addition || response.data.stock_removal) {
+                                console.log("AJAX Responsexcx:", response.data);
+                                if(response.data.stock_addition && response.data.stock_addition.length > 0){
+                                    console.log('aaaa');
+                                   // let headers = "";
+                                   // let rows = "";
+                                headers = "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Addition Qty</th><th>Supplier Rig</th><th>Date</th>";
+                                $.each(response.data.stock_addition, function (index, stockdata) {
                                 rows += `<tr>
                                                <td>${index + 1}</td>
                                                 <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.name}</td>
+                                                <td>${stockdata.description}</td>
                                                 <td>${stockdata.requested_qty}</td>
+                                                <td>${stockdata.name}</td>
                                                 <td>${stockdata.created_at}</td>
                                             </tr>`;
                                         });
                                     }
+
+                                    if(response.data.stock_removal && response.data.stock_removal.length > 0){
+                                        console.log('rrrr');
+                                        let table2 ='<table class="data-tables table mb-0 tbl-server-info dataTable" id="tbl_stockRemoval">';
+                                            table2 +='<h6 class="mb-3 label_remove">Stock Removal</h6><thead class="bg-white text-uppercase">';
+                                            table2 +='<tr class="ligth ligth-data" id="tableHeaders"><th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Substraction Qty</th><th>Requestor Rig</th><th>Date</th></tr></thead>';
+                                            table2 +='<tbody class="ligth-body" id="reportTable">';
+
+                                        $.each(response.data.stock_removal, function (index, stockdata) {
+                                            table2 += `<tr>
+                                                <td>${index + 1}</td>
+                                                <td>${stockdata.EDP_Code}</td>
+                                                <td>${stockdata.description}</td>
+                                                 <td>${stockdata.requested_qty}</td>
+                                                <td>${stockdata.name}</td>
+                                                <td>${stockdata.created_at}</td>
+                                            </tr></tbody></table>`;
+                                        });
+                                        $('#stock_remove').append(table2);
+                                    }
+                                }
                                 break;
 
                             case "3":
-                                headers = "<th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Rig Name</th><th>Created At</th>";
-
-                                if (Array.isArray(response.data)) {
-                                    response.data.forEach((item, index) => {
-                                        // Determine status label and color
-                                        let statusLabel, statusColor;
-                                        switch (item.status_id) {
-                                            case 1:
-                                                statusLabel = "Pending";
-                                                statusColor = "badge-warning"; // Yellow
-                                                break;
-                                            case 4:
-                                                statusLabel = "Approved";
-                                                statusColor = "badge-success"; // Green
-                                                break;
-                                            case 3:
-                                                statusLabel = "Received";
-                                                statusColor = "badge-primary"; // Blue
-                                                break;
-                                            case 6:
-                                                statusLabel = "MIT";
-                                                statusColor = "badge-purple"; // purple
-                                                break;
-                                            case 2:
-                                                statusLabel = "Query";
-                                                statusColor = "badge-info"; // Light blue
-                                                break;
-                                            case 5:
-                                                statusLabel = "Declined";
-                                                statusColor = "badge-danger"; // Red
-                                                break;
-                                            default:
-                                                statusLabel = "Unknown";
-                                                statusColor = "badge-secondary"; // Light Gray
-                                        }
-
-                                        rows += `<tr>
-                                                            <td>${index + 1}</td>
-                                                            <td>${item.supplier_qty ?? 0}</td>
-                                                            <td><span class="badge ${statusColor}">${statusLabel}</span></td>
-                                                            <td>${item.processed_by_name ?? '-'}</td>
-                                                            <td>${item.rig_name ?? '-'}</td>
-                                                            <td>${item.created_at ?? '-'}</td>
-                                                        </tr>`;
+                            if (response.data && response.data.length > 0) {
+                                headers = "<th>Sr.No</th><th>EDP Code</th><th>Description</th><th>Available Qty</th><th>Consume QTY</th><th>Consume Type</th><th>Date</th>";
+                                $.each(response.data, function (index, stockdata) {
+                                    var date = stockdata.created_at;
+                                    var dateObj = new Date(date);
+                                    var formattedDate = dateObj.toISOString().split('T')[0];
+                                rows += `<tr>
+                                                <td>${index + 1}</td>
+                                                <td>${stockdata.EDP_Code}</td>
+                                                <td>${stockdata.description}</td>
+                                                <td>${stockdata.avl_qty}</td>
+                                                <td>${stockdata.consume}</td>
+                                                <td>${stockdata.name}</td>
+                                                <td>${formattedDate}</td>
+                                            </tr>`;
                                     });
                                 }
-
 
                                 break;
 
                             case "4":
-                                headers = "<th>Sr.No</th><th>Request ID</th><th>Requested Stock</th><th>Requesters Stock</th><th>Status</th><th>Expected Delivery</th><th>Actual Delivery</th>";
-
-                                if (Array.isArray(response.data)) {
-                                    response.data.forEach((item, index) => {
-                                        // Determine status badge
-                                        let statusBadge = item.status === "Delivered"
-                                            ? `<span class="badge badge-success">Delivered</span>`
-                                            : `<span class="badge badge-danger">Not Delivered</span>`;
-
-                                        rows += `<tr>
-                                            <td>${index + 1}</td>
-                                            <td>${item.request_id ?? '-'}</td>
-                                            <td>${item.requested_stock_item ?? 'Nill'}</td>
-                                            <td>${item.requester_stock_item ?? 'Nill'}</td>
-                                            <td>${statusBadge}</td>
-                                            <td>${item.expected_delivery ?? '-'}</td>
-                                            <td>${item.actual_delivery ?? '-'}</td>
-                                        </tr>`;
+                                headers = "<th>Sr.No</th><th>EDP Code</th><th>Description</th><th>Available Qty</th><th>Replenishment  QTY</th><th>Status</th><th>Date</th>";
+                                $.each(response.data, function (index, stockdata) {
+                                    var date = stockdata.created_at;
+                                    var dateObj = new Date(date);
+                                    var formattedDate = dateObj.toISOString().split('T')[0];
+                                rows += `<tr>
+                                                <td>${index + 1}</td>
+                                                <td>${stockdata.EDP_Code}</td>
+                                                <td>${stockdata.description}</td>
+                                                <td>${stockdata.avl_qty}</td>
+                                                <td>${stockdata.replinish}</td>
+                                                <td>${stockdata.name}</td>
+                                                <td>${formattedDate}</td>
+                                            </tr>`;
                                     });
-                                }
                                 break;
                             default:
                                 tableBody.html('<tr><td colspan="5" class="text-center">Invalid Report Type</td></tr>');
