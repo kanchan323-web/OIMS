@@ -22,6 +22,7 @@ class DashboardController extends Controller
 
         $totalRequester = Requester::count();
         $totalStock = Stock::count();
+
         $PendingIncomingRequest = Requester::leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('mst_status.status_name', 'Pending')
             ->count();
@@ -64,7 +65,7 @@ class DashboardController extends Controller
                             'year' => $item->year
                         ];
                     })->toArray();
-
+                        
                 // Monthly data
                 $monthlyStockData[$category] = Stock::where('rig_id', $rig_id)
                     ->where('category', $category)
