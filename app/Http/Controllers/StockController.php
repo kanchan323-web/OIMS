@@ -10,6 +10,7 @@ use App\Rules\ReCaptcha;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
+use App\Models\LogsStocks;
 use App\Models\Edp;
 use App\Models\Notification;
 use App\Models\User;
@@ -169,6 +170,33 @@ class StockController extends Controller
         $user = Auth::user();
         $url = route('all_stock_list'); 
         $this->notifyAdmins("User '{$user->user_name}' has created stock '{$stock->description}'.", $url);
+
+        LogsStocks::create([
+            'stock_id'        => $stock->id,
+            'location_id'     => $stock->location_id,
+            'location_name'   => $stock->location_name,
+            'edp_code'        => $stock->edp_code,
+            'category'        => $stock->category,
+            'description'     => $stock->description,
+            'section'         => $stock->section,
+            'qty'             => $stock->qty,
+            'initial_qty'     => $stock->qty,
+            'measurement'     => $stock->measurement,
+            'new_spareable'   => $stock->new_spareable,
+            'used_spareable'  => $stock->used_spareable,
+            'remarks'         => $stock->remarks,
+            'user_id'         => $stock->user_id,
+            'rig_id'          => $stock->rig_id,
+            'req_status'      => "Inactive",
+            'created_at'      => now(),
+            'updated_at'      => now(),
+            'creater_id'      => auth()->id(),
+            'creater_type'    => auth()->user()->user_type,
+            'receiver_id'     => null,
+            'receiver_type'   => null,
+            'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
+            'action'          => "ADD",
+        ]);
 
         Session::flash('success', 'Stock submitted successfully!');
 
@@ -350,8 +378,10 @@ class StockController extends Controller
         if (!$stock) {
             return redirect()->route('stock_list')->with('error', 'Stock not found.');
         }
+       
+        $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
 
-        $unit = UnitOfMeasurement::where('unit_name', $request->measurement)->first();
+        
 
         $rules = [
             'edp_code' => 'required|integer',
@@ -364,6 +394,7 @@ class StockController extends Controller
         ];
 
         if ($unit) {
+
             if ($unit->type == 'integer') {
                 $rules['new_spareable'] = 'required|integer';
                 $rules['used_spareable'] = 'required|integer';
@@ -376,6 +407,38 @@ class StockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
+
+        Stock::where('id', $dataid)->update([
+            'new_spareable' => $request->new_spareable,
+            'used_spareable' => $request->used_spareable,
+            'remarks' => $request->remarks,
+        ]);
+        LogsStocks::create([
+            'stock_id'        => $stock->id,
+            'location_id'     => $request->location_id,
+            'location_name'   => $request->location_name,
+            'edp_code'        => $request->edp_code, 
+            'category'        => $request->category,
+            'description'     => $request->description,
+            'section'         => $request->section,
+            'qty'             => $request->qty,
+            'initial_qty'     => $stock->qty,
+            'measurement'     => $request->measurement,
+            'new_spareable'   => $stock->new_spareable,
+            'used_spareable'  => $stock->used_spareable,
+            'remarks'         => $request->remarks,
+            'user_id'         => $stock->user_id,
+            'rig_id'          => $stock->rig_id,
+            'req_status'      => "Inactive",
+            'created_at'      => now(),
+            'updated_at'      => now(),
+            'creater_id'      => auth()->id(),
+            'creater_type'    => auth()->user()->user_type,
+            'receiver_id'     => null,
+            'receiver_type'   => null,
+            'message'         => "Stock Updated for EDP Code: {$request->edp_code}.",
+            'action'          => "Update",
+        ]);
 
         $validatedData = $request->validate($rules);
 

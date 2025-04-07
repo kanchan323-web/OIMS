@@ -160,33 +160,36 @@ class AdminStockController extends Controller
         $stock->rig_id = $user->rig_id;
         $stock->save();
 
-        // LogsStocks::create([
-        //     'stock_id'        => $stock->id,
-        //     'location_id'     => $stock->location_id,
-        //     'location_name'   => $stock->location_name,
-        //     'edp_code'        => $stock->edp_code,
-        //     'category'        => $stock->category,
-        //     'description'     => $stock->description,
-        //     'section'         => $stock->section,
-        //     'qty'             => $stock->qty,
-        //     'initial_qty'     => $stock->qty,
-        //     'measurement'     => $stock->measurement,
-        //     'new_spareable'   => $stock->new_spareable,
-        //     'used_spareable'  => $stock->used_spareable,
-        //     'remarks'         => $stock->remarks,
-        //     'user_id'         => $stock->user_id,
-        //     'rig_id'          => $stock->rig_id,
-        //     'req_status'      => null,
-        //     'created_at'      => now(),
-        //     'updated_at'      => now(),
-        //     'creater_id'      => auth()->id(),
-        //     'creater_type'    => auth()->user()->user_type,
-        //     'receiver_id'     => null,
-        //     'receiver_type'   => null,
-        //     'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
-        //     'action'          => "created",
-        // ]);
+      
         
+         LogsStocks::create([
+            'stock_id'        => $stock->id,
+            'location_id'     => $stock->location_id,
+            'location_name'   => $stock->location_name,
+            'edp_code'        => $stock->edp_code,
+            'category'        => $stock->category,
+            'description'     => $stock->description,
+            'section'         => $stock->section,
+            'qty'             => $stock->qty,
+            'initial_qty'     => $stock->qty,
+            'measurement'     => $stock->measurement,
+            'new_spareable'   => $stock->new_spareable,
+            'used_spareable'  => $stock->used_spareable,
+            'remarks'         => $stock->remarks,
+            'user_id'         => $stock->user_id,
+            'rig_id'          => $stock->rig_id,
+            'req_status'      => "Inactive",
+            'created_at'      => now(),
+            'updated_at'      => now(),
+            'creater_id'      => auth()->id(),
+            'creater_type'    => auth()->user()->user_type,
+            'receiver_id'     => null,
+            'receiver_type'   => null,
+            'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
+            'action'          => "ADD",
+        ]);
+  
+      
         Session::flash('success', 'Stock submitted successfully!');
 
         return redirect()->route('admin.stock_list');
@@ -306,6 +309,9 @@ class AdminStockController extends Controller
                         'remarks'       => 'nill',
                         'user_id'       => $user->id,
                     ]);
+
+
+                    
                 }
             }
 
@@ -353,9 +359,11 @@ class AdminStockController extends Controller
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
+    
         $user = Auth::user();
     
         $stock = Stock::find($dataid);
+   
         if (!$stock) {
             return redirect()->route('admin.stock_list')->with('error', 'Stock not found.');
         }
@@ -387,6 +395,33 @@ class AdminStockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
+
+        LogsStocks::create([
+            'stock_id'        => $stock->id,
+            'location_id'     => $request->location_id,
+            'location_name'   => $request->location_name,
+            'edp_code'        => $request->edp_code,
+            'category'        => $request->category,
+            'description'     => $request->description,
+            'section'         => $request->section,
+            'qty'             => $request->qty,
+            'initial_qty'     => $stock->qty,
+            'measurement'     => $request->measurement,
+            'new_spareable'   => $stock->new_spareable,
+            'used_spareable'  => $stock->used_spareable,
+            'remarks'         => $request->remarks,
+            'user_id'         => $stock->user_id,
+            'rig_id'          => $stock->rig_id,
+            'req_status'      => "Inactive",
+            'created_at'      => now(),
+            'updated_at'      => now(),
+            'creater_id'      => auth()->id(),
+            'creater_type'    => auth()->user()->user_type,
+            'receiver_id'     => null,
+            'receiver_type'   => null,
+            'message'         => "Stock Updated for EDP Code: {$request->edp_code}.",
+            'action'          => "Update",
+        ]);
     
         $validatedData = $request->validate($rules);
     
@@ -401,7 +436,7 @@ class AdminStockController extends Controller
     public function DeleteStock(Request $request)
     {
         $deleteId = $request->delete_id;
-        $UData = Stock::where('id', $deleteId)->delete();
+         Stock::where('id', $deleteId)->delete();
         return redirect()->route('admin.stock_list');
     }
 
