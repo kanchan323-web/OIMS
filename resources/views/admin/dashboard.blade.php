@@ -145,9 +145,7 @@
                 yearly: @json($yearlyStockData)
             };
 
-            console.log("Weekly data:", stockData.weekly);
-            console.log("Monthly data:", stockData.monthly);
-            console.log("Yearly data:", stockData.yearly);
+      
             
             // Initialize chart
             const chart = Highcharts.chart('stockMovementChart', {
@@ -191,7 +189,6 @@
                 series: [] // Will be populated dynamically
             });
         
-            // Function to update chart based on selected period
             function updateChart(period) {
                 // Remove existing series
                 while (chart.series.length > 0) {
