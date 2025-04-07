@@ -182,7 +182,7 @@ class RequestReportController extends Controller
         }
 
         return $query->select(
-            'logs_requesters.id as request_id',
+            'logs_requesters.RID as request_id',
             'logs_requesters.available_qty as initial_stock',
             'request_status.supplier_qty as received_stock',
             'request_status.supplier_used_spareable as used_stock',
@@ -194,7 +194,7 @@ class RequestReportController extends Controller
                 'requester_stock_item' => optional($item->requesterStock)->description ?? 'N/A',
                 'initial_stock' => $item->initial_stock,
                 'received_stock' => $item->received_stock ?? 0,
-                'used_stock' => $item->used_stock ?? 0,
+                'used_stock' => $item->used_stock ?? 0, 
                 'remaining_stock' => $item->remaining_stock ?? 0,
             ];
         });
