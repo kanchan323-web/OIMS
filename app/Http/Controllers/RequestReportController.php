@@ -182,7 +182,7 @@ class RequestReportController extends Controller
         }
 
         return $query->select(
-            'logs_requesters.id as request_id',
+            'logs_requesters.RID as request_id',
             'logs_requesters.available_qty as initial_stock',
             'request_status.supplier_qty as received_stock',
             'request_status.supplier_used_spareable as used_stock',
