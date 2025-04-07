@@ -910,7 +910,7 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            window.location.href = "{{ route('incoming_request_list') }}";
+                            window.location.href = "{{ route('admin.incoming_request_list') }}";
                         }
                     },
                     error: function (xhr) {
@@ -931,7 +931,7 @@
                 let declineMsg = $("#decline_reason").val();
 
                 $.ajax({
-                    url: "{{ route('request.decline') }}",
+                    url: "{{ route('admin.request.decline') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -1054,7 +1054,7 @@
 
         function ViewRequestStatus(request_id) {
             $.ajax({
-                url: "{{ route('get.request.status') }}",
+                url: "{{ route('admin.get.request.status') }}",
                 type: "GET",
                 data: { request_id: request_id },
                 success: function (response) {
@@ -1224,7 +1224,7 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        window.location.href = "{{ route('incoming_request_list') }}"; 
+                        window.location.href = "{{ route('admin.incoming_request_list') }}"; 
                     } else {
                         $('#edit_error_message').text(response.message);
                     }
