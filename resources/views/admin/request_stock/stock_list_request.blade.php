@@ -171,7 +171,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <form action="{{route('Delete_stock')}}" method="post">
+                <form action="{{route('admin.Delete_stock')}}" method="post">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Are you sure?</h5>
@@ -343,7 +343,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="card-body">
-                        <form class="needs-validation" novalidate method="POST" action="{{route('request_stock_add.post')}}"
+                        <form class="needs-validation" novalidate method="POST" action="{{route('admin.request_stock_add.post')}}"
                             id="AddRequestStock">
                             @csrf
                             <div class="form-row">
@@ -438,7 +438,7 @@
                                 </div>
                             </div>
                             <button class="btn btn-primary" id="AddRequestStock" type="submit">Submit Request</button>
-                            <a href="{{route('stock_list.get')}}" class="btn btn-light">Go Back</a>
+                            <a href="{{route('admin.stock_list.get')}}" class="btn btn-light">Go Back</a>
                         </form>
                     </div>
                 </div>
@@ -481,7 +481,7 @@
             });
             $.ajax({
                 type: "GET",
-                url: "{{route('stock_list_view')}}",
+                url: "{{route('admin.stock_list_view')}}",
                 data: {
                     data: id
                 },
@@ -541,7 +541,7 @@
             });
             $.ajax({
                 type: "GET",
-                url: "{{route('stock_list_view')}}",
+                url: "{{route('admin.stock_list_view')}}",
                 data: {
                     data: id
                 },
@@ -588,7 +588,7 @@
             $("#filterButton").click(function () {
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('request_stock_filter.get') }}",
+                    url: "{{ route('admin.request_stock_filter.get') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
                         let tableBody = $("#stockTable");
