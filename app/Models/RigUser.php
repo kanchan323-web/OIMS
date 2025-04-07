@@ -11,7 +11,7 @@ class RigUser extends Model
 
     protected $table = 'rig_users';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name','location_id'];
 
     
     public function users()
