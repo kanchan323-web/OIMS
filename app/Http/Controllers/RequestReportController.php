@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogRequester;
 use App\Models\Requester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -170,26 +171,27 @@ class RequestReportController extends Controller
 
     private function requestConsumptionDetails($request)
     {
-        $query = Requester::query()
-            ->leftJoin('request_status', 'requesters.id', '=', 'request_status.request_id')
-            ->where('requesters.requester_rig_id', auth()->user()->rig_id)
-            ->orWhere('requesters.supplier_rig_id', auth()->user()->rig_id);
+        $query = LogRequester::query()
+            ->with(['latestStatus', 'requestedStock', 'requesterStock'])
+            ->leftJoin('request_status', 'logs_requesters.id', '=', 'request_status.request_id')
+            ->where('logs_requesters.requester_rig_id', auth()->user()->rig_id)
+            ->orWhere('logs_requesters.supplier_rig_id', auth()->user()->rig_id);
 
         if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('requesters.created_at', [$request->from_date, $request->to_date]);
+            $query->whereBetween('logs_requesters.created_at', [$request->from_date, $request->to_date]);
         }
 
         return $query->select(
-            'requesters.id as request_id',
-            'requesters.stock_items',
-            'requesters.available_qty as initial_stock',
+            'logs_requesters.id as request_id',
+            'logs_requesters.available_qty as initial_stock',
             'request_status.supplier_qty as received_stock',
             'request_status.supplier_used_spareable as used_stock',
             'request_status.supplier_new_spareable as remaining_stock'
         )->get()->map(function ($item) {
             return [
                 'request_id' => $item->request_id,
-                'stock_items' => $item->stock_items,
+                'requested_stock_item' => optional($item->requestedStock)->description ?? 'N/A',
+                'requester_stock_item' => optional($item->requesterStock)->description ?? 'N/A',
                 'initial_stock' => $item->initial_stock,
                 'received_stock' => $item->received_stock ?? 0,
                 'used_stock' => $item->used_stock ?? 0,
