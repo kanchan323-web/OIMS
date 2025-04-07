@@ -30,26 +30,35 @@ class NotificationController extends Controller
                 ->get();
         }
 
+        $formatNotification = function ($notification) use ($user) {
+            $data = json_decode($notification->data);
+            $relativeUrl = $data->url ?? null;
+
+            $prefix = $user->user_type === 'admin' ? 'admin' : 'user';
+
+            // Ensure leading slash and prefix
+            if ($relativeUrl) {
+                $relativeUrl = ltrim($relativeUrl, '/'); // remove any leading slash
+                $finalUrl = url("OIMS/{$prefix}/{$relativeUrl}");
+            } else {
+                $finalUrl = null;
+            }
+
+            return [
+                'id' => $notification->id,
+                'message' => $data->message ?? 'No message',
+                'url' => $finalUrl,
+                'created_at' => $notification->created_at->diffForHumans(),
+            ];
+        };
+
         return response()->json([
             'unread_count' => $dropdownNotifications->count(),
-            'dropdown_notifications' => $dropdownNotifications->map(function ($notification) {
-                return [
-                    'id' => $notification->id,
-                    'message' => json_decode($notification->data)->message ?? 'No message',
-                    'url' => json_decode($notification->data)->url ?? null,
-                    'created_at' => $notification->created_at->diffForHumans(),
-                ];
-            }),
-            'modal_notifications' => $modalNotifications->map(function ($notification) {
-                return [
-                    'id' => $notification->id,
-                    'message' => json_decode($notification->data)->message ?? 'No message',
-                    'url' => json_decode($notification->data)->url ?? null,
-                    'created_at' => $notification->created_at->diffForHumans(),
-                ];
-            }),
+            'dropdown_notifications' => $dropdownNotifications->map($formatNotification),
+            'modal_notifications' => $modalNotifications->map($formatNotification),
         ]);
     }
+
 
 
 
