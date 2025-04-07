@@ -193,11 +193,15 @@
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
                                         rows += `<tr>
-                                                            <td>${index + 1}</td>
-                                                            <td>${item.request_id ?? '-'}</td>
-                                                            <td>${item.consumed ?? 0}</td>
-                                                            <td>${item.remaining_stock ?? 0}</td>
-                                                        </tr>`;
+                                                    <td>${index + 1}</td>
+                                                    <td>${item.request_id ?? '-'}</td>    
+                                                    <td>${item.requested_stock_item ?? '-'}</td>
+                                                    <td>${item.requester_stock_item ?? '-'}</td>
+                                                    <td>${item.initial_stock ?? '-'}</td>
+                                                    <td>${item.received_stock ?? '-'}</td>
+                                                    <td>${item.used_stock ?? 0}</td>
+                                                    <td>${item.remaining_stock ?? 0}</td>
+                                                </tr>`;
                                     });
                                 }
                                 break;

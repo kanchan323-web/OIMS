@@ -15,7 +15,9 @@ class UserController extends Controller
     {
         $users = User::paginate(10);
         $moduleName = "Users";
-        return view('admin.user.index', compact('users', 'moduleName'));
+        $rigUsers = RigUser::pluck('name', 'id'); 
+
+        return view('admin.user.index', compact('users', 'moduleName','rigUsers'));
     }
 
     // Show form for creating a new user

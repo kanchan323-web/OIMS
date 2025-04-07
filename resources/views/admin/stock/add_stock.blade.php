@@ -169,7 +169,7 @@
 
                     $.ajax({
                         type: "GET",
-                        url: "{{ route('get_edp_details') }}",
+                        url: "{{ route('admin.get_edp_details') }}",
                         data: { edp_code: edpCode },
                         success: function (response) {
                             // console.log("EDP & Stock Data:", response);
@@ -184,14 +184,14 @@
 
                                 if (response.stock) {
                                     //console.log(response.stock);
-                                    $("#addStockForm").attr("action", "{{ route('update_stock') }}");
+                                    $("#addStockForm").attr("action", "{{ route('admin.update_stock') }}");
                                     $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);
                                     $("#new_spareable").val(response.stock.new_spareable);
                                     $("#used_spareable").val(response.stock.used_spareable);
                                     $("#remarks").val(response.stock.remarks);
                                 } else {
-                                    $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
+                                    $("#addStockForm").attr("action", "{{ route('admin.stockSubmit') }}");
                                     $("#id").val('');
                                     $("#qty").val('');
                                     $("#new_spareable").val('');
