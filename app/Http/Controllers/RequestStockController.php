@@ -294,6 +294,10 @@ class RequestStockController extends Controller
                 'supplier_rig_id' => $request->supplier_rig_id,
                 'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
             ];
+
+            $url = route('stock_list.get'); 
+            $this->notifyAdmins("User '{$user->user_name}' has requested stock '{$stock_data->description}' for the rig '{$rigUser->name}'.", $url);
+    
             try {
                 if ($supplierData) {
                     $supplierEmail = $supplierData->email;
@@ -491,6 +495,10 @@ class RequestStockController extends Controller
                 return response()->json(['success' => false, 'message' => 'User not found.'], 404);
             }
 
+            $user = Auth::user();
+            $url = route('incoming_request_list'); 
+            $this->notifyAdmins("User '{$user->user_name}' has accepted the request'{$requester->RID}'.", $url);
+
             $receiverEmail = $requester_user->email;
 
             $mailData = [
@@ -573,6 +581,10 @@ class RequestStockController extends Controller
 
             Stock::where('id', $requester->stock_id)->update(['req_status' => 'inactive']);
 
+            $user = Auth::user();
+            $url = route('incoming_request_list'); 
+            $this->notifyAdmins("User '{$user->user_name}' has declined the request'{$requester->RID}'.", $url);
+
             // Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
 
             session()->flash('success', 'Request declined successfully.');
@@ -635,6 +647,10 @@ class RequestStockController extends Controller
             // Mail::to($receiverEmail)->send(new RequestQueryMail($mailData));
 
             session()->flash('success', 'Query raised successfully.');
+
+            $user = Auth::user();
+            $url = route('incoming_request_list'); 
+            $this->notifyAdmins("User '{$user->user_name}' has raised a query for the request'{$requester->RID}'.", $url);
 
             return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
         } catch (\Exception $e) {
@@ -845,6 +861,10 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
+            $user = Auth::user();
+            $url = route('raised_requests.index'); 
+            $this->notifyAdmins("User '{$user->user_name}' has acknowledged the receival of the request '{$requester->RID}'.", $url);
+
             DB::commit();
 
             return response()->json([
@@ -914,6 +934,10 @@ class RequestStockController extends Controller
 
             // Mail::to($requester_user->email)->send(new RequestQueryMail($mailData));
 
+            $user = Auth::user();
+            $url = route('raised_requests.index'); 
+            $this->notifyAdmins("User '{$user->user_name}' has raised the query for the request '{$requester->RID}'.", $url);
+
             return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
         } catch (\Exception $e) {
             return response()->json([
@@ -979,6 +1003,10 @@ class RequestStockController extends Controller
 
             session()->flash('success', 'Request Accept successfully.');
 
+            $user = Auth::user();
+            $url = route('raised_requests.index'); 
+            $this->notifyAdmins("User '{$user->user_name}' has accepted the request '{$requester->RID}'.", $url);
+
             return response()->json(['success' => true, 'message' => 'Request Accept successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
@@ -1037,6 +1065,10 @@ class RequestStockController extends Controller
             // Send email
             // Mail::to($requester_user->email)->send(new RequestDeclinedMail($mailData));
 
+            $user = Auth::user();
+            $url = route('raised_requests.index'); 
+            $this->notifyAdmins("User '{$user->user_name}' has declined the request '{$requester->RID}'.", $url);
+
             return response()->json(['success' => true, 'message' => 'Request declined successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'An error occurred while processing the request.'], 500);
@@ -1092,6 +1124,11 @@ class RequestStockController extends Controller
         $requestStatus->save();
 
         session()->flash('success', 'Request status updated successfully.');
+
+        $user = Auth::user();
+        $requester = Requester::find($requestStatus->request_id);
+        $url = route('raised_requests.index'); 
+        $this->notifyAdmins("User '{$user->user_name}' has changed the for the request '{$requester->RID}'.", $url);
 
         return response()->json(['success' => true]);
     }
