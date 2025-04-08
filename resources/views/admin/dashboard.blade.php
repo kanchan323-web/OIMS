@@ -10,13 +10,29 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Pending Transaction</p>
+                                            <p class="mb-2">Total Request</p>
+                                            <h4>{{$totalRequester}}</h4>
+                                        </div>
+                                    </div>
+                                    <div class="iq-progress-bar mt-2">
+                                        <span class="bg-info iq-progress progress-1" data-percent="89">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3">
+                            <div class="card card-block card-stretch card-height">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-4 card-total-sale">
+                                        <div>
+                                            <p class="mb-2">Pending Request</p>
                                             <h4>{{ $PendingTranstion }}</h4>
                                         </div>
                                     </div>
                                     @php
-                                        $totalCountRequest = max($totalRequester - $PendingTranstion, 0);
-                                        $getDataforRequest = ($totalRequester > 0) ? round(($totalCountRequest / $totalRequester) * 100, 2) : 0;
+                                      
+                                        $getDataforRequest = ($totalRequester > 0) ? round(($PendingTranstion / $totalRequester) * 100, 2) : 0;
                                     @endphp
                                         <div class="iq-progress-bar mt-2">
                                             <span class="bg-warning iq-progress progress-1" data-percent="{{ $getDataforRequest }}" 
@@ -27,22 +43,33 @@
                                 
                             </div>
                         </div>
+
                         <div class="col-lg-3 col-md-3">
                             <div class="card card-block card-stretch card-height">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Total Request</p>
-                                            <h4>{{$totalRequester}}</h4>
+                                            <p class="mb-2">Completed request</p>
+                                            <h4>{{ $CompletedRequest }}</h4>
                                         </div>
                                     </div>
+                        
+                                    @php
+                                        $userPercentage = ($allUsers > 0) 
+                                            ? round(($totalUser / $allUsers) * 100, 2) 
+                                            : 0;
+                                    @endphp
+                        
                                     <div class="iq-progress-bar mt-2">
-                                        <span class="bg-info iq-progress progress-1" data-percent="85">
+                                        <span class="bg-gray iq-progress progress-1" data-percent="{{ $userPercentage }}" 
+                                            >
                                         </span>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
+                       
                         <div class="col-lg-3 col-md-3">
                             <div class="card card-block card-stretch card-height">
                                 <div class="card-body">
@@ -69,31 +96,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-lg-3 col-md-3">
-                            <div class="card card-block card-stretch card-height">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center mb-4 card-total-sale">
-                                        <div>
-                                            <p class="mb-2">Received Stock</p>
-                                            <h4>{{ $totalUser }}</h4>
-                                        </div>
-                                    </div>
-                        
-                                    @php
-                                        $userPercentage = ($allUsers > 0) 
-                                            ? round(($totalUser / $allUsers) * 100, 2) 
-                                            : 0;
-                                    @endphp
-                        
-                                    <div class="iq-progress-bar mt-2">
-                                        <span class="bg-gray iq-progress progress-1" data-percent="{{ $userPercentage }}" 
-                                            >
-                                        </span>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </div>
+                
                         
                     </div>
                 </div>

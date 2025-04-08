@@ -14,9 +14,9 @@ class DashboardController extends Controller
     {
         if (Auth::check()) {
             $rig_id = Auth::user()->rig_id;
-
             //   Top-Card-data
             $countIncomingRequest = Requester::where('supplier_rig_id', $rig_id)->count();
+    
             $PendingIncomingRequest = Requester::leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
                 ->where('requesters.supplier_rig_id', $rig_id)
                 ->where('mst_status.status_name', 'Pending')
@@ -138,8 +138,14 @@ class DashboardController extends Controller
 
             $newStock = $countUsedAndNewStock->sum('new_spareable');
             $usedStock = $countUsedAndNewStock->sum('used_spareable');
-            $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
-            $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
+            if($newStock ||$usedStock != 0){
+                $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
+                $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
+            }else{
+                $newPercent = 0;
+                $usedPercent = 0; 
+            }
+          
 
 
 
