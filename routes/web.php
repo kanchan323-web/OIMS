@@ -240,3 +240,5 @@ Route::post('/reset-password', [LoginController::class, 'updatePassword'])->name
 Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
 Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
 Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+Route::post('/notifications/mark-read-admin', [NotificationController::class, 'markAsReadAdmin'])->name('notifications.markReadAdmin');
+Route::post('/notifications/mark-all-read-admin', [NotificationController::class, 'markAllReadAdmin'])->name('notifications.markAllReadAdmin');

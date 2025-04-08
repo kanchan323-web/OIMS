@@ -280,7 +280,7 @@
             let notificationUrl = clickedElement.attr("data-url");
 
             $.ajax({
-                url: "{{ route('notifications.markRead') }}",
+                url: "{{ route('notifications.markReadAdmin') }}",
                 method: "POST",
                 data: { id: notificationId, _token: "{{ csrf_token() }}" },
                 success: function () {
@@ -299,7 +299,7 @@
         // Mark All as Read
         $("#mark-all-read").click(function () {
             $.ajax({
-                url: "{{ route('notifications.markAllRead') }}",
+                url: "{{ route('notifications.markAllReadAdmin') }}",
                 method: "POST",
                 data: { _token: "{{ csrf_token() }}" },
                 success: function () {
