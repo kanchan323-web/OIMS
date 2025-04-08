@@ -222,7 +222,7 @@ class RequestStockController extends Controller
             ['rig_id', $rigUser->id]
         ])->pluck('id')->first();
         $user_type = User::where('id', $request->supplier_id)->value('user_type');
-     
+
         if (!$requester_stockID) {
             $stock_data = Stock::create([
                 'edp_code'      => $request->req_edp_id,
@@ -248,10 +248,10 @@ class RequestStockController extends Controller
             $nextId = $lastRequest ? $lastRequest->id + 1 : 1;
             $RID = 'RS' . str_pad($nextId, 8, '0', STR_PAD_LEFT);
 
-            if(empty($request->expected_date)){
+            if (empty($request->expected_date)) {
                 $curr_date = Carbon::now();
                 $expected_date = $curr_date->addDays(15);
-            }else{
+            } else {
                 $expected_date = $request->expected_date;
             }
 
@@ -270,22 +270,22 @@ class RequestStockController extends Controller
                 'expected_date' => $expected_date,
             ]);
             LogsRequesters::create([
-                'request_id'=>$request->requester_id,
-                'status'=>1,
-                'RID'=>$RID,
-                'available_qty'=> $request->available_qty,
+                'request_id' => $request->requester_id,
+                'status' => 1,
+                'RID' => $RID,
+                'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
-                'stock_id'=> $request->stock_id,
+                'stock_id' => $request->stock_id,
                 'requester_stock_id' => $requester_stockID,
                 'requester_id' => $request->requester_id,
                 'requester_rig_id' => $request->requester_rig_id,
-                'supplier_id'=> $request->supplier_id,
-                'supplier_rig_id'=> $request->supplier_location_id,
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'supplier_id' => $request->supplier_id,
+                'supplier_rig_id' => $request->supplier_location_id,
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id'      => auth()->id(),
                 'creater_type'    => auth()->user()->user_type,
-                'receiver_id'     =>$request->supplier_id,
+                'receiver_id'     => $request->supplier_id,
                 'receiver_type'   => $user_type,
                 'message' => sprintf(
                     'Request sent by %s to %s for %d units of stock %s',
@@ -324,9 +324,9 @@ class RequestStockController extends Controller
                 'created_at' => Carbon::now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A'),
             ];
 
-            $url = route('stock_list.get'); 
+            $url = route('stock_list.get');
             $this->notifyAdmins("User '{$user->user_name}' has requested stock '{$stock_data->description}' for the rig '{$rigUser->name}'.", $url);
-    
+
             try {
                 if ($supplierData) {
                     $supplierEmail = $supplierData->email;
@@ -430,8 +430,11 @@ class RequestStockController extends Controller
 
         $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.supplier_rig_id', $rig_id)
             ->select('edps.edp_code')
             ->get();
+
+
         $moduleName = "Incoming Request List";
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
@@ -457,7 +460,7 @@ class RequestStockController extends Controller
                 ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
                 ->join('edps', 'stocks.edp_code', '=', 'edps.id')
                 ->when($request->edp_code, function ($query, $edp_code) {
-                    return $query->where('stocks.edp_code', $edp_code);
+                    return $query->where('edps.edp_code', $edp_code);
                 })
                 ->when($request->description, function ($query, $description) {
                     return $query->where('stocks.description', 'LIKE', "%{$description}%");
@@ -471,9 +474,6 @@ class RequestStockController extends Controller
                 ->where('requesters.supplier_rig_id', $rig_id)
                 ->orderBy('requesters.created_at', 'desc')
                 ->get();
-
-
-
 
             return response()->json(['data' => $data]);
         }
@@ -516,7 +516,7 @@ class RequestStockController extends Controller
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
-           
+
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
 
@@ -525,7 +525,7 @@ class RequestStockController extends Controller
             }
 
             $user = Auth::user();
-            $url = route('incoming_request_list'); 
+            $url = route('incoming_request_list');
             $this->notifyAdmins("User '{$user->user_name}' has accepted the request'{$requester->RID}'.", $url);
 
             $receiverEmail = $requester_user->email;
@@ -611,7 +611,7 @@ class RequestStockController extends Controller
             Stock::where('id', $requester->stock_id)->update(['req_status' => 'inactive']);
 
             $user = Auth::user();
-            $url = route('incoming_request_list'); 
+            $url = route('incoming_request_list');
             $this->notifyAdmins("User '{$user->user_name}' has declined the request'{$requester->RID}'.", $url);
 
             // Mail::to($receiverEmail)->send(new RequestDeclinedMail($mailData));
@@ -678,7 +678,7 @@ class RequestStockController extends Controller
             session()->flash('success', 'Query raised successfully.');
 
             $user = Auth::user();
-            $url = route('incoming_request_list'); 
+            $url = route('incoming_request_list');
             $this->notifyAdmins("User '{$user->user_name}' has raised a query for the request'{$requester->RID}'.", $url);
 
             return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
@@ -758,9 +758,14 @@ class RequestStockController extends Controller
             ->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
-        $stocks = Stock::select('id')->where('rig_id', $rig_id)->distinct()->get();
-        $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
 
+        $stocks = Stock::select('id')->where('rig_id', $rig_id)->distinct()->get();
+
+        $edps = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.requester_rig_id', $rig_id)
+            ->select('edps.edp_code', 'edps.id')
+            ->get();
         return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig', 'edps'));
     }
 
@@ -771,11 +776,10 @@ class RequestStockController extends Controller
         $query = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->where('requesters.supplier_id', $userId)
             ->where('requesters.requester_rig_id', Auth::user()->rig_id)
             ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code')
-            ->when($request->edp_id, function ($query, $edp_id) {
-                return $query->where('stocks.edp_code', $edp_id);
+            ->when($request->edp_code, function ($query, $edp_code) {
+                return $query->where('stocks.edp_code', $edp_code);
             })
             ->when($request->location_name, function ($query, $location_name) {
                 return $query->whereRaw('LOWER(stocks.location_name) LIKE LOWER(?)', ["%{$location_name}%"]);
@@ -891,7 +895,7 @@ class RequestStockController extends Controller
             ]);
 
             $user = Auth::user();
-            $url = route('raised_requests.index'); 
+            $url = route('raised_requests.index');
             $this->notifyAdmins("User '{$user->user_name}' has acknowledged the receival of the request '{$requester->RID}'.", $url);
 
             DB::commit();
@@ -964,7 +968,7 @@ class RequestStockController extends Controller
             // Mail::to($requester_user->email)->send(new RequestQueryMail($mailData));
 
             $user = Auth::user();
-            $url = route('raised_requests.index'); 
+            $url = route('raised_requests.index');
             $this->notifyAdmins("User '{$user->user_name}' has raised the query for the request '{$requester->RID}'.", $url);
 
             return response()->json(['success' => true, 'message' => 'Query raised successfully.']);
@@ -1033,7 +1037,7 @@ class RequestStockController extends Controller
             session()->flash('success', 'Request Accept successfully.');
 
             $user = Auth::user();
-            $url = route('raised_requests.index'); 
+            $url = route('raised_requests.index');
             $this->notifyAdmins("User '{$user->user_name}' has accepted the request '{$requester->RID}'.", $url);
 
             return response()->json(['success' => true, 'message' => 'Request Accept successfully.']);
@@ -1095,7 +1099,7 @@ class RequestStockController extends Controller
             // Mail::to($requester_user->email)->send(new RequestDeclinedMail($mailData));
 
             $user = Auth::user();
-            $url = route('raised_requests.index'); 
+            $url = route('raised_requests.index');
             $this->notifyAdmins("User '{$user->user_name}' has declined the request '{$requester->RID}'.", $url);
 
             return response()->json(['success' => true, 'message' => 'Request declined successfully.']);
@@ -1156,11 +1160,12 @@ class RequestStockController extends Controller
 
         $user = Auth::user();
         $requester = Requester::find($requestStatus->request_id);
-        $url = route('raised_requests.index'); 
+        $url = route('raised_requests.index');
         $this->notifyAdmins("User '{$user->user_name}' has changed the for the request '{$requester->RID}'.", $url);
 
         return response()->json(['success' => true]);
     }
+
 
     private function notifyAdmins($message, $url = null)
     {

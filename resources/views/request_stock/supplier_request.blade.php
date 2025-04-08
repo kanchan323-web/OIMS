@@ -26,49 +26,45 @@
                     <div class="row justify-content-between">
                         <div class="col-md-9">
                             <div id="user_list_datatable_info" class="dataTables_filter">
-                                <form action="{{ route('request_stock_filter') }}" method="post"
-                                    class="mr-3 position-relative">
-                                    <form id="filterForm" class="mr-3 position-relative">
-                                        @csrf
-                                        <div class="row">
-                                            <div class="col-md-2 mb-2">
-                                                <label for="edp_code">EDP Code</label>
-                                                <select class="form-control filter-input" name="edp_code" id="edp_code">
-                                                    <option disabled selected>Select EDP Code...</option>
-                                                    @foreach ($edps as $edp)
-                                                        <option value="{{ $edp->edp_id }}">{{ $edp->edp_code }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-2 mb-2">
-                                                <label for="location_name">Location Name</label>
-                                                <input type="text" class="form-control filter-input"
-                                                    placeholder="Location Name" name="location_name" id="location_name"
-                                                    value="{{ request('location_name') }}">
-                                            </div>
-
-                                            <div class="col-md-2 mb-2">
-                                                <label for="form_date">From Date</label>
-                                                <input type="date" class="form-control filter-input" name="form_date"
-                                                    id="form_date" value="{{ request('form_date') }}">
-                                            </div>
-
-                                            <div class="col-md-2 mb-2">
-                                                <label for="to_date">To Date</label>
-                                                <input type="date" class="form-control filter-input" name="to_date"
-                                                    id="to_date" value="{{ request('to_date') }}">
-                                            </div>
-
-                                            <div class="col-md-4 mb-2 d-flex align-items-end">
-                                                <button type="button" id="filterButton"
-                                                    class="btn btn-primary mr-2">Search</button>
-                                                <button type="button" id="resetButton"
-                                                    class="btn btn-secondary">Reset</button>
-                                            </div>
+                                <form id="filterForm" action="{{ route('request_stock_filter') }}" method="post" class="mr-3 position-relative">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-md-2 mb-2">
+                                            <label for="edp_code">EDP Code</label>
+                                            <select class="form-control filter-input" name="edp_code" id="edp_code">
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($edps as $edp)
+                                                    <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                    </form>
+                                
+                                        <div class="col-md-2 mb-2">
+                                            <label for="location_name">Location Name</label>
+                                            <input type="text" class="form-control filter-input"
+                                                placeholder="Location Name" name="location_name" id="location_name"
+                                                value="{{ request('location_name') }}">
+                                        </div>
+                                
+                                        <div class="col-md-2 mb-2">
+                                            <label for="form_date">From Date</label>
+                                            <input type="date" class="form-control filter-input" name="form_date"
+                                                id="form_date" value="{{ request('form_date') }}">
+                                        </div>
+                                
+                                        <div class="col-md-2 mb-2">
+                                            <label for="to_date">To Date</label>
+                                            <input type="date" class="form-control filter-input" name="to_date"
+                                                id="to_date" value="{{ request('to_date') }}">
+                                        </div>
+                                
+                                        <div class="col-md-4 mb-2 d-flex align-items-end">
+                                            <button type="button" id="filterButton" class="btn btn-primary mr-2">Search</button>
+                                            <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
+                                        </div>
+                                    </div>
                                 </form>
+                                
                             </div>
                         </div>
 
