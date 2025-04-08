@@ -1132,6 +1132,7 @@ class RequestStockController extends Controller
 
         return response()->json(['success' => true]);
     }
+    
 
     private function notifyAdmins($message, $url = null)
     {
