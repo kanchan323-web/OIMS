@@ -168,7 +168,7 @@ class StockController extends Controller
         $stock->save();
 
         $user = Auth::user();
-        $url = route('all_stock_list'); 
+        $url = route('stock_list'); 
         $this->notifyAdmins("User '{$user->user_name}' has created stock '{$stock->description}'.", $url);
         $edpCode = Edp::where('id', $request->edp_code)->value('edp_code');
       
@@ -325,7 +325,7 @@ class StockController extends Controller
             }
 
             $user = Auth::user();
-            $url = route('all_stock_list'); 
+            $url = route('stock_list'); 
             $this->notifyAdmins("User '{$user->user_name}' has imported bulk stock for rig '{$rigUser->name}'.", $url);
 
             session()->flash('success', 'Excel file imported successfully!');
@@ -450,7 +450,7 @@ class StockController extends Controller
         $stock->update($validatedData);
 
         $user = Auth::user();
-        $url = route('all_stock_list'); 
+        $url = route('stock_list'); 
         $this->notifyAdmins("User '{$user->user_name}' has edited bulk stock '{$stock->description}'.", $url);
 
         return redirect()->route('stock_list')->with('success', 'Stock updated successfully!');
