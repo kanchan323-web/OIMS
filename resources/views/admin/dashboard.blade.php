@@ -10,21 +10,19 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Total Stock</p>
-                                            <h4>{{ $totalStock }}</h4>
+                                            <p class="mb-2">Pending Transaction</p>
+                                            <h4>{{ $PendingTranstion }}</h4>
                                         </div>
                                     </div>
-                                
                                     @php
-                                        $StockDataLevel = max($totalEDP - $totalStock, 0);
-                                        $GetStockLevelData = ($totalEDP > 0) ? round(($StockDataLevel / $totalEDP) * 100, 2) : 0;
+                                        $totalCountRequest = max($totalRequester - $PendingTranstion, 0);
+                                        $getDataforRequest = ($totalRequester > 0) ? round(($totalCountRequest / $totalRequester) * 100, 2) : 0;
                                     @endphp
                                         <div class="iq-progress-bar mt-2">
-                                            <span class="bg-warning iq-progress progress-1" data-percent="{{ $GetStockLevelData }}" 
+                                            <span class="bg-warning iq-progress progress-1" data-percent="{{ $getDataforRequest }}" 
                                                 >
                                             </span>
                                         </div>
-                                    
                                 </div>
                                 
                             </div>
@@ -76,7 +74,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
-                                            <p class="mb-2">Total Users</p>
+                                            <p class="mb-2">Received Stock</p>
                                             <h4>{{ $totalUser }}</h4>
                                         </div>
                                     </div>
@@ -118,19 +116,40 @@
                 </div>
 
 
+                
                 <div class="col-lg-4 col-md-12 col-sm-12">
-
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header">
                             <h4 class="card-title">Overview Of Stock Inventory</h4>
                         </div>
                         <div class="card-body">
                             <div id="stockPieChart" style="width: 100%; height: 400px;"></div>
+                            
+                            <!-- Stock Summary Table -->
+                            <div class="mt-3">
+                                <table class="table table-sm table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge" style="background-color: #ff9770">&nbsp;&nbsp;</span> Used Stock</td>
+                                            <td class="text-end">@json($usedStock) items</td>
+                                            <td class="text-end">@json($usedPercent)%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge" style="background-color: #7ee2ff">&nbsp;&nbsp;</span> New Stock</td>
+                                            <td class="text-end">@json($newStock) items</td>
+                                            <td class="text-end">@json($newPercent)%</td>
+                                        </tr>
+                                        <tr class="table-light">
+                                            <td><strong>Total Inventory</strong></td>
+                                            <td class="text-end"><strong>@json($newStock + $usedStock) items</strong></td>
+                                            <td class="text-end"><strong>100%</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-
               
             </div>
             <!-- Page end  -->
@@ -239,7 +258,7 @@
             updateChart('weekly');
         });
         </script>
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Get data from Laravel
         const totalStock = @json($totalStock);
@@ -308,6 +327,76 @@
         });
     });
 </script>
+     --}}
+
+     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get data from Laravel
+            const newStock = @json($newStock);
+            const usedStock = @json($usedStock);
+            const totalStock = newStock + usedStock;
     
+            // Calculate percentages
+            const newPercent = totalStock > 0 ? (newStock / totalStock * 100).toFixed(1) : 0;
+            const usedPercent = totalStock > 0 ? (usedStock / totalStock * 100).toFixed(1) : 0;
+    
+            // Create the pie chart
+            Highcharts.chart('stockPieChart', {
+                chart: {
+                    type: 'pie',
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false
+                },
+                title: {
+                    text: 'New vs Used Stock Inventory',
+                    align: 'left'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y} items)'
+                },
+                accessibility: {
+                    point: {
+                        valueSuffix: '%'
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            distance: -50,
+                            filter: {
+                                property: 'percentage',
+                                operator: '>',
+                                value: 4
+                            }
+                        },
+                        showInLegend: true
+                    }
+                },
+                series: [{
+                    name: 'Stock',
+                    colorByPoint: true,
+                    data: [{
+                        name: 'Used Stock',
+                        y: usedStock,
+                        percentage: parseFloat(usedPercent),
+                        color: '#ff9770' // Orange for used
+                    },{
+                        name: 'New Stock',
+                        y: newStock,
+                        percentage: parseFloat(newPercent),
+                        color: '#7ee2ff' // Blue for new
+                    } ]
+                }],
+                credits: {
+                    enabled: true
+                }
+            });
+        });
+    </script>
     
 @endsection
