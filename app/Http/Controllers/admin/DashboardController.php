@@ -21,6 +21,9 @@ class DashboardController extends Controller
 
 
         $totalRequester = Requester::count();
+        // dd( $totalRequester);
+        $PendingTranstion = Requester::where('status','=',1)->count();
+        
         $totalStock = Stock::count();
 
         $PendingIncomingRequest = Requester::leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
@@ -44,8 +47,7 @@ class DashboardController extends Controller
 
             foreach ($categories as $category) {
                 // Weekly data
-                $weeklyStockData[$category] = Stock::where('rig_id', $rig_id)
-                    ->where('category', $category)
+                $weeklyStockData[$category] = Stock::where('category', $category)
                     ->selectRaw('YEAR(created_at) as year, 
                     WEEK(created_at) as week, 
                     MONTH(created_at) as month, 
@@ -67,8 +69,7 @@ class DashboardController extends Controller
                     })->toArray();
                         
                 // Monthly data
-                $monthlyStockData[$category] = Stock::where('rig_id', $rig_id)
-                    ->where('category', $category)
+                $monthlyStockData[$category] = Stock::where('category', $category)
                     ->selectRaw("
                     YEAR(created_at) as year,
                     MONTH(created_at) as month,
@@ -97,8 +98,7 @@ class DashboardController extends Controller
                     ->toArray();
 
                 // Yearly data
-                $yearlyStockData[$category] = Stock::where('rig_id', $rig_id)
-                    ->where('category', $category)
+                $yearlyStockData[$category] = Stock::where('category', $category)
                     ->selectRaw("YEAR(created_at) as period, SUM(qty) as quantity")
                     ->groupBy('period')
                     ->orderBy('period')
@@ -106,6 +106,14 @@ class DashboardController extends Controller
                     ->map(function ($item) {
                         return [(string) $item->period, (int) $item->quantity];
                     })->toArray();
+                    $countUsedAndNewStock = Stock::select('new_spareable', 'used_spareable')->get();
+
+                    $newStock = $countUsedAndNewStock->sum('new_spareable');
+                    $usedStock = $countUsedAndNewStock->sum('used_spareable');
+                    $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
+                    $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
+                   
+                    
             }
 
         return view('admin.dashboard', compact(
@@ -118,7 +126,12 @@ class DashboardController extends Controller
         'allUsers',
         'weeklyStockData',
         'monthlyStockData',
-        'yearlyStockData'
+        'yearlyStockData',
+        'PendingTranstion',
+        'newStock',
+        'usedStock',
+          'newPercent', 
+                  'usedPercent'
         ));
     }
 

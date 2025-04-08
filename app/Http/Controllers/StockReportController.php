@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Response;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\Requester;
 
 class StockReportController extends Controller
 {
@@ -52,26 +53,74 @@ class StockReportController extends Controller
 
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
+        $query1 = Stock::query();
 
         if($data['report_type']==2){
 
             if (!empty($data['from_date']) || !empty($data['to_date'])) {
                 $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
+                $query1->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
             }
-            $get_data = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
+
+            $stock_addition = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
             ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-            ->select('edps.edp_code AS EDP_Code','rig_users.name','requesters.requested_qty','request_status.created_at')
-            ->where('rig_users.id', $rig_id)
+            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','requesters.requested_qty','request_status.created_at')
+            ->where('requesters.requester_rig_id', $rig_id)
+            ->where('request_status.status_id', 3)
+            ->get();
+
+//return $stock_addition;
+         $stock_removal = $query1 ->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','requesters.requested_qty','request_status.created_at','request_status.supplier_new_spareable','request_status.supplier_used_spareable')
+            ->where('requesters.supplier_rig_id', $rig_id)
+            ->where('request_status.status_id', 3)
+            ->get();
+
+
+            $get_data = array('stock_addition'=>$stock_addition,'stock_removal'=>$stock_removal);
+
+      /*       $stock_adjustments  = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->select('stocks.qty', 'edps.edp_code AS EDP_Code','rig_users.name','stocks.updated_at')
+            ->where('rig_id', $rig_id)
+            ->get();
+*/
+            return  $get_data;
+        }elseif($data['report_type']==3){
+
+            if (!empty($data['from_date']) || !empty($data['to_date'])) {
+                $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
+                $query1->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
+            }
+
+            $get_data = $query ->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','requesters.requested_qty as consume','stocks.qty as avl_qty','request_status.created_at',
+                    'request_status.supplier_new_spareable','request_status.supplier_used_spareable')
+            ->where('requesters.supplier_rig_id', $rig_id)
             ->where('request_status.status_id', 3)
             ->get();
 
             return  $get_data;
-        }elseif($data['report_type']==3){
-
         }elseif($data['report_type']==4){
 
+            $get_data = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty as avl_qty','request_status.created_at','requesters.requested_qty as replinish')
+            ->where('requesters.requester_rig_id', $rig_id)
+            ->where('request_status.status_id', 3)
+            ->get();
+
+            return  $get_data;
         }else{
 
             if (!empty($data['from_date']) || !empty($data['to_date'])) {

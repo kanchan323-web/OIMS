@@ -170,12 +170,14 @@ class StockController extends Controller
         $user = Auth::user();
         $url = route('all_stock_list'); 
         $this->notifyAdmins("User '{$user->user_name}' has created stock '{$stock->description}'.", $url);
+        $edpCode = Edp::where('id', $request->edp_code)->value('edp_code');
+      
 
         LogsStocks::create([
             'stock_id'        => $stock->id,
             'location_id'     => $stock->location_id,
             'location_name'   => $stock->location_name,
-            'edp_code'        => $stock->edp_code,
+            'edp_code'        => $edpCode,
             'category'        => $stock->category,
             'description'     => $stock->description,
             'section'         => $stock->section,
@@ -194,7 +196,7 @@ class StockController extends Controller
             'creater_type'    => auth()->user()->user_type,
             'receiver_id'     => null,
             'receiver_type'   => null,
-            'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
+            'message'         => "Stock created for EDP Code: {$edpCode}.",
             'action'          => "ADD",
         ]);
 
@@ -373,7 +375,7 @@ class StockController extends Controller
     {
         $dataid = $request->id;
         $user = Auth::user();
-
+        $edpCode = Edp::where('id', $request->edp_code)->value('edp_code');
         $stock = Stock::find($dataid);
         if (!$stock) {
             return redirect()->route('stock_list')->with('error', 'Stock not found.');
@@ -412,11 +414,13 @@ class StockController extends Controller
             'used_spareable' => $request->used_spareable,
             'remarks' => $request->remarks,
         ]);
+
+
         LogsStocks::create([
             'stock_id'        => $stock->id,
             'location_id'     => $request->location_id,
             'location_name'   => $request->location_name,
-            'edp_code'        => $request->edp_code, 
+            'edp_code'        => $edpCode, 
             'category'        => $request->category,
             'description'     => $request->description,
             'section'         => $request->section,
@@ -435,7 +439,7 @@ class StockController extends Controller
             'creater_type'    => auth()->user()->user_type,
             'receiver_id'     => null,
             'receiver_type'   => null,
-            'message'         => "Stock Updated for EDP Code: {$request->edp_code}.",
+            'message'         => "Stock Updated for EDP Code: {$edpCode}.",
             'action'          => "Update",
         ]);
 

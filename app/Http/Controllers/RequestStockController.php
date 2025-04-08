@@ -10,6 +10,8 @@ use App\Models\RequestStatus;
 use App\Notifications\NewRequestNotification;
 use Illuminate\Http\Request;
 use App\Models\RequestStock;
+use App\Models\LogsRequesters;
+use App\Models\LogsRequestStatus;
 use Illuminate\Support\Facades\DB;
 use App\Models\Stock;
 use Carbon\Carbon;
@@ -211,7 +213,6 @@ class RequestStockController extends Controller
             'supplier_id' => 'required',
             'supplier_rig_id' => 'required',
         ]);
-
         $user = Auth::user();
         $rigUser = RigUser::find($user->rig_id);
         $edp_data = Edp::find($request->req_edp_id);
@@ -220,7 +221,8 @@ class RequestStockController extends Controller
             ['user_id', $user->id],
             ['rig_id', $rigUser->id]
         ])->pluck('id')->first();
-
+        $user_type = User::where('id', $request->supplier_id)->value('user_type');
+     
         if (!$requester_stockID) {
             $stock_data = Stock::create([
                 'edp_code'      => $request->req_edp_id,
@@ -266,6 +268,33 @@ class RequestStockController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
                 'expected_date' => $expected_date,
+            ]);
+            LogsRequesters::create([
+                'request_id'=>$request->requester_id,
+                'status'=>1,
+                'RID'=>$RID,
+                'available_qty'=> $request->available_qty,
+                'requested_qty' => $request->requested_qty,
+                'stock_id'=> $request->stock_id,
+                'requester_stock_id' => $requester_stockID,
+                'requester_id' => $request->requester_id,
+                'requester_rig_id' => $request->requester_rig_id,
+                'supplier_id'=> $request->supplier_id,
+                'supplier_rig_id'=> $request->supplier_location_id,
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id'      => auth()->id(),
+                'creater_type'    => auth()->user()->user_type,
+                'receiver_id'     =>$request->supplier_id,
+                'receiver_type'   => $user_type,
+                'message' => sprintf(
+                    'Request sent by %s to %s for %d units of stock %s',
+                    $request->requester_id,
+                    $request->supplier_id,
+                    $request->requested_qty,
+                    $request->stock_id
+                ),
+                'action' => 'Request Sent',
             ]);
 
             $updated_stock_status =  Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
@@ -487,7 +516,7 @@ class RequestStockController extends Controller
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
-
+           
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
 
