@@ -52,7 +52,7 @@ class LoginController extends Controller
 
         if ($user && Auth::attempt(['email' => $user->email, 'password' => $request->password])) {
 
-            $this->notifyAdmins("User '{$user->user_name}' has logged in.");
+            // $this->notifyAdmins("User '{$user->user_name}' has logged in.");
 
             return redirect()->route('user.dashboard');
         }
@@ -65,9 +65,9 @@ class LoginController extends Controller
         $user = Auth::user();
         Auth::logout();
         
-        if ($user) {
-            $this->notifyAdmins("User '{$user->user_name}' has logged out.");
-        }
+        // if ($user) {
+        //     $this->notifyAdmins("User '{$user->user_name}' has logged out.");
+        // }
 
         return redirect()->route('user.login');
     }
@@ -205,7 +205,7 @@ class LoginController extends Controller
 
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
-        $this->notifyAdmins("User '{$user->user_name}' has changed their password.");
+        // $this->notifyAdmins("User '{$user->user_name}' has changed their password.");
 
         if ($user->user_type === 'admin') {
             return redirect()->route('admin.login')->with('success', 'Password has been reset successfully!');
@@ -215,20 +215,20 @@ class LoginController extends Controller
     }
 
 
-    private function notifyAdmins($message)
-    {
-        $admins = User::where('user_type', 'admin')->get();
+    // private function notifyAdmins($message)
+    // {
+    //     $admins = User::where('user_type', 'admin')->get();
         
-        foreach ($admins as $admin) {
-            Notification::create([
-                'type'            => NewRequestNotification::class,
-                'notifiable_type' => User::class,
-                'notifiable_id'   => $admin->id,
-                'user_id'         => $admin->id, 
-                'data'            => json_encode(['message' => $message, 'url' => null]),
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ]);
-        }
-    }
+    //     foreach ($admins as $admin) {
+    //         Notification::create([
+    //             'type'            => NewRequestNotification::class,
+    //             'notifiable_type' => User::class,
+    //             'notifiable_id'   => $admin->id,
+    //             'user_id'         => $admin->id, 
+    //             'data'            => json_encode(['message' => $message, 'url' => null]),
+    //             'created_at'      => now(),
+    //             'updated_at'      => now(),
+    //         ]);
+    //     }
+    // }
 }

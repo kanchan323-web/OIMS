@@ -24,7 +24,6 @@ class NotificationController extends Controller
                 ->latest()
                 ->get();
 
-            dd($modalNotifications);
         } else {
             $dropdownNotifications = Notification::where('user_id', $user->id)
                 ->whereNull('read_at')
@@ -46,11 +45,11 @@ class NotificationController extends Controller
             $routeOnly = null;
     
             if ($fullUrl && filter_var($fullUrl, FILTER_VALIDATE_URL)) {
-                $parsedUrl = parse_url($fullUrl, PHP_URL_PATH); // e.g., /OIMS/user/all_stock_list
-                $routeOnly = preg_replace('#^/(admin|user)/#', '', $parsedUrl); // Remove prefix
+                $parsedUrl = parse_url($fullUrl, PHP_URL_PATH); // e.g., /OIMS/user/stock_list
+                $routeOnly = preg_replace('#^/OIMS/(admin|user)/#', '', $parsedUrl); // Remove prefix
             }
     
-            $finalUrl = $routeOnly ? url("OIMS/{$prefix}/{$routeOnly}") : null;
+            $finalUrl = $routeOnly ? url("{$prefix}/{$routeOnly}") : null;
     
             return [
                 'id' => $notification->id,
@@ -84,7 +83,7 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
 
-        Notification::where('notifiable_id', $user->id)
+        Notification::where('user_id', $user->id)
             ->where('notifiable_type', get_class($user))
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
@@ -109,7 +108,6 @@ class NotificationController extends Controller
 
         Notification::where('notifiable_id', $user->id)
             ->where('notifiable_type', get_class($user))
-            ->whereNull('read_at')
             ->update(['is_admin_read' => true ]);
 
         return response()->json(['message' => 'All notifications marked as read']);
