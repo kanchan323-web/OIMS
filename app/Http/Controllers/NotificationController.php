@@ -11,39 +11,46 @@ class NotificationController extends Controller
     public function fetchNotifications()
     {
         $user = Auth::user();
-
+    
         if ($user->user_type === 'admin') {
-            $dropdownNotifications = Notification::whereNull('read_at')->latest()->take(5)->get();
-            $modalNotifications = Notification::whereNull('read_at')->latest()->get();
-        } else {
             $dropdownNotifications = Notification::where('notifiable_id', $user->id)
-                ->where('notifiable_type', get_class($user))
+                ->where('is_admin_read', false)
+                ->latest()
+                ->take(5)
+                ->get();
+    
+            $modalNotifications = Notification::where('notifiable_id', $user->id)
+                ->where('is_admin_read', false)
+                ->latest()
+                ->get();
+
+        } else {
+            $dropdownNotifications = Notification::where('user_id', $user->id)
                 ->whereNull('read_at')
                 ->latest()
                 ->take(5)
                 ->get();
-
-            $modalNotifications = Notification::where('notifiable_id', $user->id)
-                ->where('notifiable_type', get_class($user))
+    
+            $modalNotifications = Notification::where('user_id', $user->id)
                 ->whereNull('read_at')
                 ->latest()
                 ->get();
         }
-
+    
         $formatNotification = function ($notification) use ($user) {
             $data = json_decode($notification->data);
-            $relativeUrl = $data->url ?? null;
-
+            $fullUrl = $data->url ?? null;
+    
             $prefix = $user->user_type === 'admin' ? 'admin' : 'user';
-
-            // Ensure leading slash and prefix
-            if ($relativeUrl) {
-                $relativeUrl = ltrim($relativeUrl, '/'); // remove any leading slash
-                $finalUrl = url("OIMS/{$prefix}/{$relativeUrl}");
-            } else {
-                $finalUrl = null;
+            $routeOnly = null;
+    
+            if ($fullUrl && filter_var($fullUrl, FILTER_VALIDATE_URL)) {
+                $parsedUrl = parse_url($fullUrl, PHP_URL_PATH); // e.g., /OIMS/user/all_stock_list
+                $routeOnly = preg_replace('#^/OIMS/(admin|user)/#', '', $parsedUrl); // Remove prefix
             }
-
+    
+            $finalUrl = $routeOnly ? url("OIMS/{$prefix}/{$routeOnly}") : null;
+    
             return [
                 'id' => $notification->id,
                 'message' => $data->message ?? 'No message',
@@ -51,32 +58,57 @@ class NotificationController extends Controller
                 'created_at' => $notification->created_at->diffForHumans(),
             ];
         };
-
+    
         return response()->json([
             'unread_count' => $dropdownNotifications->count(),
             'dropdown_notifications' => $dropdownNotifications->map($formatNotification),
             'modal_notifications' => $modalNotifications->map($formatNotification),
         ]);
     }
-
+    
 
 
 
     public function markAsRead(Request $request)
     {
-        Notification::where('id', $request->id)->update(['read_at' => now()]);
+        Notification::where('id', $request->id)->update([
+            'read_at' => now()
+        ]);
+    
         return response()->json(['success' => true]);
     }
-
+    
 
     public function markAllRead()
     {
         $user = Auth::user();
 
-        Notification::where('notifiable_id', $user->id)
+        Notification::where('user_id', $user->id)
             ->where('notifiable_type', get_class($user))
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
+
+        return response()->json(['message' => 'All notifications marked as read']);
+    }
+
+
+    public function markAsReadAdmin(Request $request)
+    {
+        Notification::where('id', $request->id)->update([
+            'is_admin_read' => true
+        ]);
+    
+        return response()->json(['success' => true]);
+    }
+    
+
+    public function markAllReadAdmin()
+    {
+        $user = Auth::user();
+
+        Notification::where('notifiable_id', $user->id)
+            ->where('notifiable_type', get_class($user))
+            ->update(['is_admin_read' => true ]);
 
         return response()->json(['message' => 'All notifications marked as read']);
     }

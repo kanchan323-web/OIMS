@@ -20,15 +20,17 @@ class DashboardController extends Controller
         $rig_id = Auth::user()->rig_id;
 
 
-        $totalRequester = Requester::count();
-        // dd( $totalRequester);
-        $PendingTranstion = Requester::where('status','=',1)->count();
+        $totalRequester = Requester::whereIn('status', [1, 2, 4, 5, 6])->count();
         
+        $PendingTranstion = Requester::where('status','=',1)->count();
         $totalStock = Stock::count();
+        $CompletedRequest = Requester::where('status', '=',3)->count();
+       
 
         $PendingIncomingRequest = Requester::leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('mst_status.status_name', 'Pending')
             ->count();
+
         $totalUser = User::where('user_type', '!=', 'admin')->count();
         $totalEDP = Edp::count();
         $allUsers = User::count();
@@ -131,7 +133,8 @@ class DashboardController extends Controller
         'newStock',
         'usedStock',
           'newPercent', 
-                  'usedPercent'
+                  'usedPercent',
+                  'CompletedRequest'
         ));
     }
 

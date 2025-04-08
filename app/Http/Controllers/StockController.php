@@ -383,7 +383,6 @@ class StockController extends Controller
        
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
 
-        
 
         $rules = [
             'edp_code' => 'required|integer',

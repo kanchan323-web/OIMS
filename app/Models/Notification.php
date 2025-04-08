@@ -20,5 +20,6 @@ class Notification extends Model
         "data",
         "user_id",
         "read_at",
+        "is_admin_read"
     ];
 }
