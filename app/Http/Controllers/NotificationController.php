@@ -45,11 +45,11 @@ class NotificationController extends Controller
             $routeOnly = null;
     
             if ($fullUrl && filter_var($fullUrl, FILTER_VALIDATE_URL)) {
-                $parsedUrl = parse_url($fullUrl, PHP_URL_PATH); // e.g., /OIMS/user/all_stock_list
+                $parsedUrl = parse_url($fullUrl, PHP_URL_PATH); // e.g., /OIMS/user/stock_list
                 $routeOnly = preg_replace('#^/OIMS/(admin|user)/#', '', $parsedUrl); // Remove prefix
             }
     
-            $finalUrl = $routeOnly ? url("OIMS/{$prefix}/{$routeOnly}") : null;
+            $finalUrl = $routeOnly ? url("{$prefix}/{$routeOnly}") : null;
     
             return [
                 'id' => $notification->id,
