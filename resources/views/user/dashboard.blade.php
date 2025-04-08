@@ -80,19 +80,14 @@
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
                                         <div>
                                             <p class="mb-2">Received Stock</p>
-                                            <h4>{{$RaisedRequestsRequests}}</h4>
+                                            <h4>{{$ReceivedStock}}</h4>
                                         </div>
                                     </div>
-                                    @php
-
-                                        $pendingRaisedPercentage = ($RaisedRequests > 0)
-                                            ? round(($RaisedRequestsRequests / $RaisedRequests) * 100, 2)
-                                            : 0;
-                                    @endphp
+                           
                                     <div class="iq-progress-bar mt-2">
                                         <span class="bg-success iq-progress progress-1"
-                                            data-percent="{{ $pendingRaisedPercentage }}"
-                                            style="width: {{ $pendingRaisedPercentage }}%;">
+                                            data-percent="85"
+                                            style="width: %;">
                                         </span>
                                     </div>
                                 </div>

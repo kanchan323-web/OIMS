@@ -14,6 +14,11 @@ class DashboardController extends Controller
     {
         if (Auth::check()) {
             $rig_id = Auth::user()->rig_id;
+            $ReceivedStock = Requester::where('supplier_rig_id', $rig_id)
+                                        ->where('status', 3)
+                                        ->sum('requested_qty');
+                                            
+
             //   Top-Card-data
             $countIncomingRequest = Requester::where('supplier_rig_id', $rig_id)->count();
     
@@ -165,7 +170,8 @@ class DashboardController extends Controller
                   'newStock',
                   'usedStock',
                   'newPercent', 
-                  'usedPercent'
+                  'usedPercent',
+                  'ReceivedStock'
             ));
         } else {
             return redirect()->route('user.login');
