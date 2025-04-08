@@ -130,6 +130,10 @@ Route::middleware(['admin.auth'])->group(function () {
         //request stocks reports
         Route::get('/request-report', [RequestReportController::class, 'index'])->name('admin.request_report');
         Route::get('/request-report/fetch', [RequestReportController::class, 'fetchReport'])->name('report.fetch');
+
+        //Notifications
+        Route::post('/notifications/mark-read-admin', [NotificationController::class, 'markAsReadAdmin'])->name('notifications.markReadAdmin');
+        Route::post('/notifications/mark-all-read-admin', [NotificationController::class, 'markAllReadAdmin'])->name('notifications.markAllReadAdmin');
     });
 });
 
@@ -224,6 +228,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/request-report', [RequestReportController::class, 'index'])->name('request_report');
         Route::get('/request-report/fetch', [RequestReportController::class, 'fetchReport'])->name('report.fetch');
 
+        //Notifications
+        Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
+        Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     });
 });
 
@@ -238,7 +245,3 @@ Route::post('/reset-password', [LoginController::class, 'updatePassword'])->name
 
 //Notifications
 Route::get('/notifications/fetch', [NotificationController::class, 'fetchNotifications'])->name('notifications.fetch');
-Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
-Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
-Route::post('/notifications/mark-read-admin', [NotificationController::class, 'markAsReadAdmin'])->name('notifications.markReadAdmin');
-Route::post('/notifications/mark-all-read-admin', [NotificationController::class, 'markAllReadAdmin'])->name('notifications.markAllReadAdmin');
