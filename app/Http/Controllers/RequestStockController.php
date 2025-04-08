@@ -517,6 +517,27 @@ class RequestStockController extends Controller
                 'sent_from'  => Auth::id()
             ]);
 
+            LogsRequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 6,
+                'decline_msg' => null,
+                'query_msg' => null,
+                'supplier_qty' => $supplier_total_qty,
+                'supplier_new_spareable' => $request->supplier_new_spareable,
+                'supplier_used_spareable' => $request->supplier_used_spareable,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to'     => $sent_to,
+                'sent_from'  => Auth::id(),
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id' => auth()->id(),
+                'creater_type'=> auth()->user()->user_type,
+                'receiver_id'=>null,
+                'receiver_type'=>null,
+                'message' => "Request has been accepted for quantity {$supplier_total_qty} by user " . Auth::user()->user_name
+            ]);
+
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
 
@@ -585,6 +606,7 @@ class RequestStockController extends Controller
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
+            
 
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
