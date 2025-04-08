@@ -25,7 +25,7 @@ class Authenticate extends Middleware
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        if (!Auth::check() || Auth::user()->user_type !== 'user') {
+        if (!Auth::check() || Auth::user()->user_type !== 'user' && Auth::user()->user_status !== 0) {
             Auth::logout();
             return redirect()->route('user.login')->with('error', 'Unauthorized access.');
         }
