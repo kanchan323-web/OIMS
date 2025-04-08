@@ -77,7 +77,7 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::any('/add_stock', [AdminStockController::class, 'add_stock'])->name('admin.add_stock');
         Route::post('/stockSubmit', [AdminStockController::class, 'stockSubmit'])->name('admin.stockSubmit');
         Route::any('/all_stock_list', [AdminStockController::class, 'all_stock_list'])->name('admin.all_stock_list');
-        Route::get('/import', [AdminStockController::class, 'showImportForm'])->name('admin.import_stock');
+        Route::get('/import', [AdminStockController::class, 'showImportForm'])->name('admin.import_stock');;
         Route::post('/import_bulk', [AdminStockController::class, 'import'])->name('admin.stock.import');
         Route::get('/get_edp_details', [AdminStockController::class, 'get_edp_details'])->name('admin.get_edp_details');
         Route::get('/sample-download', [AdminStockController::class, 'downloadSample'])->name('admin.stock.downloadSample');
