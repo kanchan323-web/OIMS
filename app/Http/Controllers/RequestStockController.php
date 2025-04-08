@@ -11,6 +11,7 @@ use App\Notifications\NewRequestNotification;
 use Illuminate\Http\Request;
 use App\Models\RequestStock;
 use App\Models\LogsRequesters;
+use App\Models\LogsRequestStatus;
 use Illuminate\Support\Facades\DB;
 use App\Models\Stock;
 use Carbon\Carbon;
@@ -515,9 +516,7 @@ class RequestStockController extends Controller
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
-
-            
-
+           
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
 

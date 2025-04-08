@@ -134,6 +134,13 @@ class DashboardController extends Controller
                     })->toArray();
             }
 
+            $countUsedAndNewStock = Stock::where('rig_id', $rig_id)->select('new_spareable', 'used_spareable')->get();
+
+            $newStock = $countUsedAndNewStock->sum('new_spareable');
+            $usedStock = $countUsedAndNewStock->sum('used_spareable');
+            $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
+            $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
+
 
 
             return view('user.dashboard', compact(
@@ -148,7 +155,11 @@ class DashboardController extends Controller
                 'raisedStockCounts',
                 'weeklyStockData',
                 'monthlyStockData',
-                'yearlyStockData'
+                'yearlyStockData',
+                  'newStock',
+                  'usedStock',
+                  'newPercent', 
+                  'usedPercent'
             ));
         } else {
             return redirect()->route('user.login');
