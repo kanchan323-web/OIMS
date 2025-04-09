@@ -13,9 +13,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::where('user_name', '!=', 'admin')->paginate(10);
         $moduleName = "Users";
-        $rigUsers = RigUser::pluck('name', 'id'); 
+        $rigUsers = RigUser::pluck('name', 'id');
 
         return view('admin.user.index', compact('users', 'moduleName','rigUsers'));
     }
@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         $rigUsers = RigUser::where('name', '!=', 'Admin')
             ->where('name', '!=', 'admin')
-            ->get(); 
+            ->get();
             $moduleName = "Create Users";
         return view('admin.user.create', compact('rigUsers', 'moduleName'));
     }
@@ -42,7 +42,7 @@ class UserController extends Controller
             'user_type'    => 'required|string|in:admin,user',
             'rig_id'       => 'nullable|integer',
         ]);
-    
+
         // Create the user
         $user = User::create([
             'user_name'   => $request->user_name,
@@ -55,9 +55,9 @@ class UserController extends Controller
         ]);
 
         // dd( $user );
-    
+
         // Log the creation without storing the password
-   
+
             $data = LogsUser::create([
                 'user_name'     => $request->user_name,
                 'email'         => $request->email,
@@ -71,7 +71,7 @@ class UserController extends Controller
                 'receiver_type' => null,
                 'message'       => "User {$request->user_name} has been created.",
             ]);
-    
+
         return redirect()->route('admin.index')->with('success', 'User created successfully.');
     }
 
@@ -98,10 +98,10 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
 
-       
+
         $user = User::findOrFail((int) $id);
 
-        
+
         $request->validate([
             'user_name'  => 'required|string|max:255',
             'email'      => 'required|email|unique:users,email,' . $id,
@@ -109,7 +109,7 @@ class UserController extends Controller
             'user_status' => 'required|integer',
             'user_type' => 'required|string|in:admin,user',
             'rig_id'     => 'required|integer',
-            
+
         ]);
 
         $user->update([
