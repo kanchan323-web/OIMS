@@ -203,7 +203,7 @@
                                 break;
 
                             case "consumption_details":
-                                headers = "<th>Sr.No</th><th>Request ID</th><th>Consumed</th><th>Remaining Stock</th>";
+                                headers = "<th>Sr.No</th><th>Request ID</th><th>Requested Stock Item</th><th>Requester Stock Item</th><th>Initial Stock</th><th>Received Stock</th><th>Used Stock</th><th>Remaining Stock</th>";
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
                                         rows += `<tr>

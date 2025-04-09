@@ -117,7 +117,7 @@
             </tbody>
         </table>
      @break
-  <!--   @case('fulfillment_status')
+     @case('fulfillment_status')
      <h2>Request Stock Fulfillment Status Report</h2>
          <table>
              <thead>
@@ -130,14 +130,14 @@
                      </tr>
                  @else
                      @foreach($data as $index => $stock)
-                     {{$data}}
                          <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $stock->request_id }}</td>
-                            <td>{{ $stock->requested_stock_item }}</td>
-                            <td>{{ $stock->status }}</td>
-                            <td>{{ $stock->expected_delivery }}</td>
-                            <td>{{ $stock->actual_delivery }}</td>
+                            <td>{{ $stock['request_id'] }}</td>
+                            <td>{{ $stock['requested_stock_item'] }}</td>
+                            <td>{{ $stock['requester_stock_item'] }}</td>
+                            <td>{{ $stock['status'] }}</td>
+                            <td>{{ $stock['expected_delivery'] }}</td>
+                            <td>{{ $stock['actual_delivery'] }}</td>
                          </tr>
                      @endforeach
                  @endif
@@ -159,19 +159,19 @@
                     @foreach($data as $index => $stock)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $stock->request_id }}</td>
-                            <td>{{ $stock->requested_stock_item }}</td>
-                            <td>{{ $stock->requester_stock_item }}</td>
-                            <td>{{ $stock->initial_stock }}</td>
-                            <td>{{ $stock->received_stock }}</td>
-                            <td>{{ $stock->used_stock }}</td>
-                            <td>{{ $stock->remaining_stock }}</td>
+                            <td>{{ $stock['request_id'] }}</td>
+                            <td>{{ $stock['requested_stock_item'] }}</td>
+                            <td>{{ $stock['requester_stock_item'] }}</td>
+                            <td>{{ $stock['initial_stock'] }}</td>
+                            <td>{{ $stock['received_stock'] }}</td>
+                            <td>{{ $stock['used_stock'] }}</td>
+                            <td>{{ $stock['remaining_stock'] }}</td>
                         </tr>
                     @endforeach
                 @endif
             </tbody>
         </table>
-    @break -->
+    @break
     @default
          <table>
             <thead><tr><td>No Data Found</td></tr></thead>
