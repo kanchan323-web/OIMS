@@ -41,7 +41,7 @@ class RequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $Stock_Table_Data = Stock::select('stocks.id','stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->where('stocks.rig_id', '!=', $rig_id)
@@ -49,6 +49,8 @@ class RequestStockController extends Controller
             ->where('stocks.qty', '!=', 0)
             ->orderBy('stocks.id', 'desc')
             ->get();
+
+           
 
 
         $moduleName = "Request Stock List";
