@@ -57,7 +57,7 @@
                                     <label for="user_type">User Type</label>
                                     <select class="form-control" name="user_type" required>
                                         <option value="select user type" selected>Select User type</option>
-                                        {{-- <option value="admin">Admin</option> --}}
+                                        <option value="admin">Admin</option> 
                                         <option value="user">User</option>
                                     </select>
                                     @error('user_type')
