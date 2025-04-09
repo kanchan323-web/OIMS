@@ -214,19 +214,22 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/mapusergetdata', [LoginController::class, 'mapuserdataget'])->name('map_all_user_data.post');
         Route::post('/mapspecificuserdata', [LoginController::class, 'mapspecificuserdata'])->name('map_user_data_specific.post');
 
-        //Reports
+        //Stocks Reports
         Route::prefix('reports')->group(function () {
             Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
             Route::get('/report_stock_filter', [StockReportController::class, 'report_stock_filter'])->name('report_stock_filter');
             Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
             Route::get('/stockPdfDownload', [StockReportController::class, 'stockPdfDownload'])->name('report_stockPdfDownload');
             Route::get('/stockExcelDownload', [StockReportController::class, 'stockExcelDownload'])->name('report_stockExcelDownload');
-            Route::get('/request', [RequestReportController::class, 'index'])->name('request_report.index');
+
         });
 
         //Request stocks Reports
         Route::get('/request-report', [RequestReportController::class, 'index'])->name('request_report');
         Route::get('/request-report/fetch', [RequestReportController::class, 'fetchReport'])->name('report.fetch');
+        Route::get('/request', [RequestReportController::class, 'index'])->name('request_report.index');
+        Route::get('/requestPdfDownload', [RequestReportController::class, 'requestPdfDownload'])->name('report_requestPdfDownload');
+        Route::get('/requestExcelDownload', [RequestReportController::class, 'requestExcelDownload'])->name('report_requestExcelDownload');
 
         //Notifications
         Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');

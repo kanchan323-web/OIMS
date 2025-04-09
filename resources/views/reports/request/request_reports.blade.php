@@ -38,6 +38,20 @@
                                 </div>
                             </form>
                         </div>
+                        <div class="col-sm-6 col-md-3">
+                            <div class="user-list-files d-flex">
+                                <a href="{{ route('report_stockPdfDownload') }}"
+                                    class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
+                                    id="downloadPdf" target="_blank">
+                                    <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                </a>
+                                <a href="{{ route('report_stockExcelDownload') }}"
+                                    class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
+                                    id="downloadexcel" target="_blank">
+                                    <i class="fas fa-file-excel mr-1"></i> Export Excel
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -194,7 +208,7 @@
                                     response.data.forEach((item, index) => {
                                         rows += `<tr>
                                                     <td>${index + 1}</td>
-                                                    <td>${item.request_id ?? '-'}</td>    
+                                                    <td>${item.request_id ?? '-'}</td>
                                                     <td>${item.requested_stock_item ?? '-'}</td>
                                                     <td>${item.requester_stock_item ?? '-'}</td>
                                                     <td>${item.initial_stock ?? '-'}</td>
@@ -225,6 +239,35 @@
             $("#filterButton").click(fetchReport);
             $("#report_type").change(fetchReport);
         });
+
+
+        $(document).ready(function () {
+            $("#downloadPdf").click(function (e) {
+                    e.preventDefault();
+                    let baseUrl = "{{ route('report_requestPdfDownload') }}";
+                    let formData = $("#filterForm").serializeArray();
+                    let filteredParams = formData
+                        .filter(item => item.value.trim() !== "")
+                        .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                        .join("&");
+                    let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                    window.open(finalUrl, '_blank');
+                });
+             });
+
+            $(document).ready(function () {
+                $("#downloadexcel").click(function (e) {
+                        e.preventDefault();
+                        let baseUrl = "{{ route('report_requestExcelDownload') }}";
+                        let formData = $("#filterForm").serializeArray();
+                        let filteredParams = formData
+                            .filter(item => item.value.trim() !== "")
+                            .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                            .join("&");
+                        let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                        window.open(finalUrl, '_blank');
+                });
+            });
     </script>
 
 @endsection
