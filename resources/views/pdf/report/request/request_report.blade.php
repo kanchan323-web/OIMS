@@ -148,7 +148,7 @@
         <h2>Request Stock Consumptions Report</h2>
         <table>
             <thead>
-                <tr><th>Sr.No</th><th>Request ID</th><th>Consumed</th><th>Remaining Stock</th></tr>
+                <tr><th>Sr.No</th><th>Request ID</th><th>Requested Stock Item</th><th>Requester Stock Item</th><th>Initial Stock</th><th>Received Stock</th><th>Used Stock</th><th>Remaining Stock</th></tr>
             </thead>
             <tbody>
                 @if($data->isEmpty())
