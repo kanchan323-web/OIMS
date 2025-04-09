@@ -104,7 +104,10 @@
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
-                                            <td>{{ $stockdata->qty }}</td>
+                                            <td>
+                                                {{ $stockdata->qty }}
+                                                <span class="text-muted small">{{ $stockdata->measurement }}</span>
+                                            </td>
                                             <td>
                                                 <div class="d-flex align-items-center list-action">
                                                     <!-- View Button (Always Visible) -->
@@ -362,7 +365,11 @@
                                     <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
-                                    <td>${stockdata.qty}</td>
+                                    
+                                    <td>${stockdata.qty} 
+                                        <span class="text-muted small">${stockdata.measurement}</span>
+                                    </td>
+
                                     <td>
                                         <a class="badge badge-info mr-2" data-toggle="modal"
                                             onclick="viewstockdata(${stockdata.id})" data-target=".bd-example-modal-xl"

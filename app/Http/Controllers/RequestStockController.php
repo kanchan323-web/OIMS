@@ -41,7 +41,7 @@ class RequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $Stock_Table_Data = Stock::select('stocks.id','stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->where('stocks.rig_id', '!=', $rig_id)
@@ -49,6 +49,8 @@ class RequestStockController extends Controller
             ->where('stocks.qty', '!=', 0)
             ->orderBy('stocks.id', 'desc')
             ->get();
+
+           
 
 
         $moduleName = "Request Stock List";
@@ -60,6 +62,7 @@ class RequestStockController extends Controller
 
     public function RequestStockFilter(Request $request)
     {
+        
         $rig_id = Auth::user()->rig_id;
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
@@ -582,6 +585,8 @@ class RequestStockController extends Controller
     {
         try {
             $requester = Requester::find($request->request_id);
+
+            
             if (!$requester) {
                 return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
             }
@@ -606,6 +611,28 @@ class RequestStockController extends Controller
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
             ]);
+
+            LogsRequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 5,
+                'decline_msg' => $request->decline_msg,
+                'query_msg' => null,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to'     => $sent_to,
+                'sent_from'  => Auth::id(),
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id' => auth()->id(),
+                'creater_type'=> auth()->user()->user_type,
+                'receiver_id'=>null,
+                'receiver_type'=>null,
+                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+            ]);
+
             
 
             $requester_user = User::find($requester->requester_id);
@@ -676,6 +703,27 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id()
+            ]);
+
+            LogsRequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 2,
+                'decline_msg' => null,
+                'query_msg' => $request->query_msg,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to'     => $sent_to,
+                'sent_from'  => Auth::id(),
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id' => auth()->id(),
+                'creater_type'=> auth()->user()->user_type,
+                'receiver_id'=>null,
+                'receiver_type'=>null,
+                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -916,6 +964,27 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
+            LogsRequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 3,
+                'decline_msg' => null,
+                'query_msg' => null,
+                'supplier_qty' => $requestStatus->supplier_qty,
+                'supplier_new_spareable' => $requestStatus->supplier_new_spareable,
+                'supplier_used_spareable' => $requestStatus->supplier_used_spareable,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id(),
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id' => auth()->id(),
+                'creater_type'=> auth()->user()->user_type,
+                'receiver_id'=>null,
+                'receiver_type'=>null,
+                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+            ]);
+
             $user = Auth::user();
             $url = route('raised_requests.index');
             $this->notifyAdmins("User '{$user->user_name}' has acknowledged the receival of the request '{$requester->RID}'.", $url);
@@ -964,6 +1033,28 @@ class RequestStockController extends Controller
                 'sent_to' => $sent_to,
                 'sent_from' => Auth::id()
             ]);
+
+            LogsRequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 2,
+                'decline_msg' => null,
+                'query_msg' => $request->query_msg,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id(),
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id' => auth()->id(),
+                'creater_type'=> auth()->user()->user_type,
+                'receiver_id'=>null,
+                'receiver_type'=>null,
+                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+            ]);
+            
 
             // Fetch requester and supplier details
             $requester_user = User::find($requester->requester_id);
@@ -1033,6 +1124,26 @@ class RequestStockController extends Controller
                 'sent_from'  => Auth::id()
             ]);
 
+            LogsRequestStatus::create([
+                'request_id' => $request->request_id,
+                'status_id' => 4,
+                'query_msg' => null,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to'     => $sent_to,
+                'sent_from'  => Auth::id(),
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id' => auth()->id(),
+                'creater_type'=> auth()->user()->user_type,
+                'receiver_id'=>null,
+                'receiver_type'=>null,
+                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+            ]);
+
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
 
@@ -1096,6 +1207,27 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
+            LogsRequestStatus::create([
+               'request_id' => $request->request_id,
+                'status_id' => 5,
+                'decline_msg' => $request->decline_msg,
+                'query_msg' => null,
+                'supplier_qty' => null,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id(),
+                'created_at'=> now(),
+                'updated_at'=> now(),
+                'creater_id' => auth()->id(),
+                'creater_type'=> auth()->user()->user_type,
+                'receiver_id'=>null,
+                'receiver_type'=>null,
+                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+            ]);
+                
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
 

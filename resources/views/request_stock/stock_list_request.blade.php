@@ -44,7 +44,7 @@
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($EDP_Code_ID as $edp_code_id)
-                                                    <option value="{{ $edp_code_id->id }}">{{ $edp_code_id->EDP_Code }}</option>
+                                                    <option value="{{ $edp_code_id->edp_code }}">{{ $edp_code_id->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -122,7 +122,10 @@
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
-                                            <td>{{ $stockdata->qty }}</td>
+                                            <td>
+                                                {{ $stockdata->qty }}
+                                                <span class="text-muted small">{{ $stockdata->measurement }}</span>
+                                            </td>
                                             <td>
                                                 <div class="d-flex align-items-center list-action">
                                                     <!-- View Button (Always Visible) -->
@@ -266,14 +269,6 @@
                                     Please select a Section
                                 </div>
                             </div>
-
-
-
-
-
-
-
-
                             <div class="col-md-6 mb-3">
                                 <label for="">Available Quantity</label>
                                 <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
@@ -618,7 +613,9 @@
                                         <td>${stockdata.EDP_Code}</td>
                                         <td>${stockdata.section}</td>
                                         <td>${stockdata.description}</td>
-                                        <td>${stockdata.qty}</td>
+                                        <td>${stockdata.qty}
+                                            <span class="text-muted small">${stockdata.measurement}</span>
+                                            </td>
                                         <td>
 
 
