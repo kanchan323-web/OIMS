@@ -49,16 +49,16 @@ class StockController extends Controller
 
 
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-        ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-        ->where('rig_id',$rig_id)
-        ->distinct()
-        ->get();
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+            ->where('rig_id', $rig_id)
+            ->distinct()
+            ->get();
 
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->select('stocks.*', 'edps.edp_code','rig_users.name')
-            ->where('rig_id',$rig_id)
+            ->select('stocks.*', 'edps.edp_code', 'rig_users.name')
+            ->where('rig_id', $rig_id)
             ->orderBy('stocks.id', 'desc')
             ->get();
 
@@ -91,10 +91,10 @@ class StockController extends Controller
                 });
 
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
-            ->where('rig_id', $rig_id)
-            ->get();
+                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+                ->select('stocks.*', 'edps.edp_code AS EDP_Code', 'rig_users.name')
+                ->where('rig_id', $rig_id)
+                ->get();
 
             $datarig = User::where('user_type', '!=', 'admin')
                 ->where('rig_id', $rig_id)
@@ -141,7 +141,7 @@ class StockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
-       
+
         // Validate request
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -170,10 +170,10 @@ class StockController extends Controller
         $stock->save();
 
         $user = Auth::user();
-        $url = route('stock_list'); 
+        $url = route('stock_list');
         $this->notifyAdmins("User '{$user->user_name}' has created stock '{$stock->description}'.", $url);
         $edpCode = Edp::where('id', $request->edp_code)->value('edp_code');
-      
+
 
         LogsStocks::create([
             'stock_id'        => $stock->id,
@@ -265,7 +265,7 @@ class StockController extends Controller
 
                 // Validate EDP code (Column Index 0)
                 if (!isset($row[0]) || !preg_match('/^[A-Za-z0-9]{9}$/', $row[0])) {
-                  //  preg_match('/^\d{9}$/');
+                    //  preg_match('/^\d{9}$/');
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
@@ -286,7 +286,7 @@ class StockController extends Controller
                 }
 
                 // Check if stock already exists
-                $stock = Stock::where('edp_code', $edp->id)->where('rig_id',$rigUser->id)
+                $stock = Stock::where('edp_code', $edp->id)->where('rig_id', $rigUser->id)
                     ->first();
 
 
@@ -327,7 +327,7 @@ class StockController extends Controller
             }
 
             $user = Auth::user();
-            $url = route('stock_list'); 
+            $url = route('stock_list');
             $this->notifyAdmins("User '{$user->user_name}' has imported bulk stock for rig '{$rigUser->name}'.", $url);
 
             session()->flash('success', 'Excel file imported successfully!');
@@ -344,17 +344,17 @@ class StockController extends Controller
     {
         Log::info('AJAX request received.', ['data' => $request->all()]);
         $id = $request->data;
-        $viewdata =   Stock::select('stocks.*','rig_users.name','rig_users.location_id','edps.*')
-             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-             ->where('stocks.id',$id)
-             ->get()->first();
+        $viewdata =   Stock::select('stocks.*', 'rig_users.name', 'rig_users.location_id', 'edps.*')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->where('stocks.id', $id)
+            ->get()->first();
 
-        $viewdatarequest =   Stock::select('stocks.*','rig_users.name','rig_users.location_id','edps.id AS EDPID')
-             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-             ->where('stocks.id',$id)
-             ->get()->first();
+        $viewdatarequest =   Stock::select('stocks.*', 'rig_users.name', 'rig_users.location_id', 'edps.id AS EDPID')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->where('stocks.id', $id)
+            ->get()->first();
 
         return response()->json(
             [
@@ -382,7 +382,7 @@ class StockController extends Controller
         if (!$stock) {
             return redirect()->route('stock_list')->with('error', 'Stock not found.');
         }
-       
+
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
 
 
@@ -422,7 +422,7 @@ class StockController extends Controller
             'stock_id'        => $stock->id,
             'location_id'     => $request->location_id,
             'location_name'   => $request->location_name,
-            'edp_code'        => $edpCode, 
+            'edp_code'        => $edpCode,
             'category'        => $request->category,
             'description'     => $request->description,
             'section'         => $request->section,
@@ -452,7 +452,7 @@ class StockController extends Controller
         $stock->update($validatedData);
 
         $user = Auth::user();
-        $url = route('stock_list'); 
+        $url = route('stock_list');
         $this->notifyAdmins("User '{$user->user_name}' has edited bulk stock '{$stock->description}'.", $url);
 
         return redirect()->route('stock_list')->with('success', 'Stock updated successfully!');
@@ -483,7 +483,7 @@ class StockController extends Controller
         $rig_id = Auth::user()->rig_id;
 
         $stock = Stock::where('edp_code', $edpCode)
-                 ->where('rig_id', $rig_id)->first();
+            ->where('rig_id', $rig_id)->first();
 
         return response()->json([
             'success' => true,
@@ -551,7 +551,7 @@ class StockController extends Controller
     {
         $admins = User::where('user_type', 'admin')->get();
         $user = Auth::user();
-    
+
         foreach ($admins as $admin) {
             Notification::create([
                 'type'            => NewRequestNotification::class,
@@ -562,10 +562,10 @@ class StockController extends Controller
                     'message' => $message,
                     'url'     => $url
                 ]),
+                'rig_id' => $user->rig_id,
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
         }
     }
-    
 }
