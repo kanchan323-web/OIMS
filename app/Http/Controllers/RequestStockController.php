@@ -60,6 +60,7 @@ class RequestStockController extends Controller
 
     public function RequestStockFilter(Request $request)
     {
+        
         $rig_id = Auth::user()->rig_id;
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
