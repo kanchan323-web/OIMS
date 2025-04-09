@@ -112,8 +112,14 @@ class DashboardController extends Controller
 
                     $newStock = $countUsedAndNewStock->sum('new_spareable');
                     $usedStock = $countUsedAndNewStock->sum('used_spareable');
-                    $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
-                    $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
+                    if($newStock ||$usedStock != 0){
+                        $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
+                        $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
+                    }else{
+                        $newPercent = 0;
+                        $usedPercent = 0; 
+                    }
+                  
                    
                     
             }

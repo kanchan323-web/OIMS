@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\AdminRequestStockController;
 use App\Http\Controllers\Admin\Masters\RigUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User;
+use App\Http\Controllers\LogsController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\RequestStockController;
 use App\Http\Controllers\LoginController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\admin\RequestReportController as AdminRequestReportCont
 //Authentication
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
+Route::get('/log',[LogsController::class,'index'])->name('get.logs');
 
 Route::middleware(['admin.auth'])->group(function () {
 
