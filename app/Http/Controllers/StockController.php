@@ -62,6 +62,8 @@ class StockController extends Controller
             ->orderBy('stocks.id', 'desc')
             ->get();
 
+            
+
         $moduleName = "Stock List";
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
