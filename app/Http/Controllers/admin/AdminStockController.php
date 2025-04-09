@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\UnitOfMeasurement;
+use App\Notifications\NewRequestNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Rules\ReCaptcha;
@@ -12,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\Stock;
 use App\Models\LogsStocks;
 use App\Models\Edp;
+use App\Models\Notification;
 use App\Models\User;
 use App\Models\rig_users;
 use App\Models\RigUser;
@@ -160,13 +162,16 @@ class AdminStockController extends Controller
         $stock->rig_id = $user->rig_id;
         $stock->save();
 
-      
+        $user = Auth::user();
+        $url = route('stock_list'); 
+        $this->notifyAdmins("User '{$user->user_name}' has created stock '{$stock->description}'.", $url);
+        $edpCode = Edp::where('id', $request->edp_code)->value('edp_code');
         
-         LogsStocks::create([
+        LogsStocks::create([
             'stock_id'        => $stock->id,
             'location_id'     => $stock->location_id,
             'location_name'   => $stock->location_name,
-            'edp_code'        => $stock->edp_code,
+            'edp_code'        => $edpCode,
             'category'        => $stock->category,
             'description'     => $stock->description,
             'section'         => $stock->section,
@@ -322,6 +327,10 @@ class AdminStockController extends Controller
                 return redirect()->back();
             }
 
+            $user = Auth::user();
+            $url = route('stock_list'); 
+            $this->notifyAdmins("User '{$user->user_name}' has imported bulk stocks.", $url);
+
             session()->flash('success', 'Excel file imported successfully!');
             return redirect()->route('admin.stock_list');
         } catch (\Exception $e) {
@@ -428,6 +437,10 @@ class AdminStockController extends Controller
         $validatedData['rig_id'] = $user->rig_id;
     
         $stock->update($validatedData);
+
+        $user = Auth::user();
+        $url = route('stock_list'); 
+        $this->notifyAdmins("User '{$user->user_name}' has edited bulk stock '{$stock->description}'.", $url);
     
         return redirect()->route('admin.stock_list')->with('success', 'Stock updated successfully!');
     }
@@ -517,6 +530,28 @@ class AdminStockController extends Controller
             ]);
         } else {
             return response()->json(['exists' => false]);
+        }
+    }
+
+
+    private function notifyAdmins($message, $url = null)
+    {
+        $admins = Auth::user();
+    
+        foreach ($admins as $admin) {
+            Notification::create([
+                'type'            => NewRequestNotification::class,
+                'notifiable_type' => User::class,
+                'notifiable_id'   => $admin->id,
+                'user_id'         => $admin->id,
+                'data'            => json_encode([
+                    'message' => $message,
+                    'url'     => $url
+                ]),
+                'rig_id' => $admins->rig_id,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
         }
     }
 }

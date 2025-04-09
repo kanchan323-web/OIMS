@@ -44,7 +44,7 @@
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($EDP_Code_ID as $edp_code_id)
-                                                    <option value="{{ $edp_code_id->id }}">{{ $edp_code_id->EDP_Code }}</option>
+                                                    <option value="{{ $edp_code_id->edp_code }}">{{ $edp_code_id->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
