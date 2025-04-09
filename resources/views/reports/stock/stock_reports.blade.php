@@ -4,30 +4,12 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                @if (Session::get('success'))
-                    <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
-                        <strong>Success:</strong> {{ Session::get('success') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                @if (Session::get('error'))
-                    <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
-                        <strong>Error:</strong> {{ Session::get('error') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
                 <div class="row justify-content-between">
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
                             <form id="filterForm" class="mr-3 position-relative">
                                 <div class="row">
-                                    <div class="col-md-2 mb-2">
+                                    <div class="col-md-3 mb-2">
                                         <label for="edp_code">Report Type</label>
                                         <select class="form-control" name="report_type" id="report_type">
                                             <option disabled selected>Select Report Type...</option>
@@ -55,22 +37,6 @@
                                         <a href="{{ route('admin.stock_list') }}"
                                             class="btn btn-secondary ml-2">Reset</a>
                                     </div>
-
-                           <!--         <div class="col-md-4 mb-2 d-flex align-items-end">
-                                        <div class="user-list-files d-flex">
-                                            <a href="{{ route('report_stockPdfDownload') }}"
-                                                class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
-                                                id="downloadPdf" target="_blank">
-                                                <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                            </a>
-                                            <a href="{{ route('report_stockExcelDownload') }}"
-                                                class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
-                                                id="downloadexcel" target="_blank">
-                                                <i class="fas fa-file-excel mr-1"></i> Export Excel
-                                            </a>
-                                        </div>
-                                    </div>  -->
-
                                 </div>
                             </form>
                         </div>
