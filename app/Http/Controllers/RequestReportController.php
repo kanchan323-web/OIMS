@@ -226,12 +226,9 @@ class RequestReportController extends Controller
                 $data = json(['error' => 'Invalid report type'], 400);
         }
       // return $data;
-
       // return view('pdf.report.request.request_report', compact('data','request'));
-
         // Generate PDF with retrieved data
         $pdf = PDF::loadView('pdf.report.request.request_report', compact('data','request'));
-
         return $pdf->download('RequestStock_Report.pdf');
     }
 
