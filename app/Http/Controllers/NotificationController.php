@@ -14,24 +14,24 @@ class NotificationController extends Controller
         $rigId = $user->rig_id;
 
         if ($user->user_type === 'admin') {
-            $dropdownNotifications = Notification::where('rig_id', $rigId)
-                ->where('is_admin_read', false)
-                ->latest()
-                ->take(5)
-                ->get();
-
-            $modalNotifications = Notification::where('rig_id', $rigId)
-                ->where('is_admin_read', false)
-                ->latest()
-                ->get();
-        } else {
             $dropdownNotifications = Notification::where('id', $user->id)
-                ->whereNull('read_at')
+                ->where('is_admin_read', false)
                 ->latest()
                 ->take(5)
                 ->get();
 
             $modalNotifications = Notification::where('id', $user->id)
+                ->where('is_admin_read', false)
+                ->latest()
+                ->get();
+        } else {
+            $dropdownNotifications = Notification::where('rig_id', $rigId)
+                ->whereNull('read_at')
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $modalNotifications = Notification::where('rig_id', $rigId)
                 ->whereNull('read_at')
                 ->latest()
                 ->get();
