@@ -218,14 +218,13 @@ class StockReportController extends Controller
                     }
             break;
             case '2':
-                $sheet->setTitle('Stock Overview Report');
+                    $sheet->setTitle('Stock Additions Report');
                     $sheet->setCellValue('A1', 'Sr.No');
                     $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Section');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Total Qty');
-                    $sheet->setCellValue('F1', 'Available Qty');
-                    $sheet->setCellValue('G1', 'Date');
+                    $sheet->setCellValue('C1', 'Description');
+                    $sheet->setCellValue('D1', 'Add');
+                    $sheet->setCellValue('E1', 'Supplier Rig');
+                    $sheet->setCellValue('F1', 'Date');
                     $stockDatas = $this->stock_common_filter($data);
 
                     $row = 2; // Start from the second row to leave space for headers
@@ -233,24 +232,22 @@ class StockReportController extends Controller
                     foreach ($stockDatas as $stockData) {
                         $sheet->setCellValue('A' . $row, $i);
                         $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->section);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->initial_qty);
-                        $sheet->setCellValue('F' . $row, $stockData->qty);
-                        $sheet->setCellValue('G' . $row, $stockData->created_at);
+                        $sheet->setCellValue('C' . $row, $stockData->description);
+                        $sheet->setCellValue('D' . $row, $stockData->requested_qty);
+                        $sheet->setCellValue('E' . $row, $stockData->name);
+                        $sheet->setCellValue('F' . $row, $stockData->created_at);
                         $row++;
                         $i++;
                     }
                 break;
             case '3':
-                $sheet->setTitle('Stock Overview Report');
+                    $sheet->setTitle('Stock Removals Report');
                     $sheet->setCellValue('A1', 'Sr.No');
                     $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Section');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Total Qty');
-                    $sheet->setCellValue('F1', 'Available Qty');
-                    $sheet->setCellValue('G1', 'Date');
+                    $sheet->setCellValue('C1', 'Description');
+                    $sheet->setCellValue('D1', 'Remove');
+                    $sheet->setCellValue('E1', 'Supplier Rig');
+                    $sheet->setCellValue('F1', 'Date');
                     $stockDatas = $this->stock_common_filter($data);
 
                     $row = 2; // Start from the second row to leave space for headers
@@ -258,24 +255,22 @@ class StockReportController extends Controller
                     foreach ($stockDatas as $stockData) {
                         $sheet->setCellValue('A' . $row, $i);
                         $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->section);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->initial_qty);
-                        $sheet->setCellValue('F' . $row, $stockData->qty);
-                        $sheet->setCellValue('G' . $row, $stockData->created_at);
+                        $sheet->setCellValue('C' . $row, $stockData->description);
+                        $sheet->setCellValue('D' . $row, $stockData->requested_qty);
+                        $sheet->setCellValue('E' . $row, $stockData->name);
+                        $sheet->setCellValue('F' . $row, $stockData->created_at);
                         $row++;
                         $i++;
                     }
                 break;
             case '4':
-                $sheet->setTitle('Stock Overview Report');
+                    $sheet->setTitle('Stock Adjustments Report');
                     $sheet->setCellValue('A1', 'Sr.No');
                     $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Section');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Total Qty');
-                    $sheet->setCellValue('F1', 'Available Qty');
-                    $sheet->setCellValue('G1', 'Date');
+                    $sheet->setCellValue('C1', 'Description');
+                    $sheet->setCellValue('D1', 'Adjustments');
+                    $sheet->setCellValue('E1', 'Rig');
+                    $sheet->setCellValue('F1', 'Date');
                     $stockDatas = $this->stock_common_filter($data);
 
                     $row = 2; // Start from the second row to leave space for headers
@@ -283,24 +278,22 @@ class StockReportController extends Controller
                     foreach ($stockDatas as $stockData) {
                         $sheet->setCellValue('A' . $row, $i);
                         $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->section);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->initial_qty);
-                        $sheet->setCellValue('F' . $row, $stockData->qty);
-                        $sheet->setCellValue('G' . $row, $stockData->created_at);
+                        $sheet->setCellValue('C' . $row, $stockData->description);
+                        $sheet->setCellValue('D' . $row, $stockData->requested_qty);
+                        $sheet->setCellValue('E' . $row, $stockData->name);
+                        $sheet->setCellValue('F' . $row, $stockData->created_at);
                         $row++;
                         $i++;
                     }
                 break;
             case '5':
-                $sheet->setTitle('Stock Overview Report');
+                    $sheet->setTitle('Stock Consumptions Report');
                     $sheet->setCellValue('A1', 'Sr.No');
                     $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Section');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Total Qty');
-                    $sheet->setCellValue('F1', 'Available Qty');
-                    $sheet->setCellValue('G1', 'Date');
+                    $sheet->setCellValue('C1', 'Description');
+                    $sheet->setCellValue('D1', 'Consumed');
+                    $sheet->setCellValue('E1', 'Consumed Type');
+                    $sheet->setCellValue('F1', 'Date');
                     $stockDatas = $this->stock_common_filter($data);
 
                     $row = 2; // Start from the second row to leave space for headers
@@ -308,11 +301,10 @@ class StockReportController extends Controller
                     foreach ($stockDatas as $stockData) {
                         $sheet->setCellValue('A' . $row, $i);
                         $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->section);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->initial_qty);
-                        $sheet->setCellValue('F' . $row, $stockData->qty);
-                        $sheet->setCellValue('G' . $row, $stockData->created_at);
+                        $sheet->setCellValue('C' . $row, $stockData->description);
+                        $sheet->setCellValue('D' . $row, $stockData->avl_qty);
+                        $sheet->setCellValue('E' . $row, $stockData->name);
+                        $sheet->setCellValue('F' . $row, $stockData->created_at);
                         $row++;
                         $i++;
                     }
@@ -321,11 +313,10 @@ class StockReportController extends Controller
                 $sheet->setTitle('Stock Overview Report');
                 $sheet->setCellValue('A1', 'Sr.No');
                 $sheet->setCellValue('B1', 'EDP Code');
-                $sheet->setCellValue('C1', 'Section');
-                $sheet->setCellValue('D1', 'Description');
-                $sheet->setCellValue('E1', 'Total Qty');
-                $sheet->setCellValue('F1', 'Available Qty');
-                $sheet->setCellValue('G1', 'Date');
+                $sheet->setCellValue('C1', 'Description');
+                $sheet->setCellValue('D1', 'Replenishment');
+                $sheet->setCellValue('E1', 'Status');
+                $sheet->setCellValue('F1', 'Date');
                 $stockDatas = $this->stock_common_filter($data);
 
                 $row = 2; // Start from the second row to leave space for headers
@@ -333,11 +324,10 @@ class StockReportController extends Controller
                 foreach ($stockDatas as $stockData) {
                     $sheet->setCellValue('A' . $row, $i);
                     $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                    $sheet->setCellValue('C' . $row, $stockData->section);
-                    $sheet->setCellValue('D' . $row, $stockData->description);
-                    $sheet->setCellValue('E' . $row, $stockData->initial_qty);
-                    $sheet->setCellValue('F' . $row, $stockData->qty);
-                    $sheet->setCellValue('G' . $row, $stockData->created_at);
+                    $sheet->setCellValue('C' . $row, $stockData->description);
+                    $sheet->setCellValue('D' . $row, $stockData->replinish);
+                    $sheet->setCellValue('E' . $row, $stockData->name);
+                    $sheet->setCellValue('F' . $row, $stockData->created_at);
                     $row++;
                     $i++;
                 }
