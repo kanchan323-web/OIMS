@@ -12,6 +12,8 @@ use App\Models\Stock;
 use App\Models\Edp;
 use App\Models\User;
 use App\Models\RigUser;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
@@ -233,45 +235,116 @@ class RequestReportController extends Controller
     }
 
     public function requestExcelDownload(Request $request){
-        $data = array(
-            'report_type' => $request->report_type,
-            'from_date' => $request->form_date,
-            'to_date' => $request->to_date,
-        );
-        return 'No data for excel';
+        $reportType = $request->input('report_type');
+        if (!$reportType) {
+            return response()->json(['error' => 'Missing report type'], 400);
+        }
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $reportType = $data['report_type'];
         switch ($reportType) {
-            case '1':
-                    $sheet->setTitle('Stock Overview Report');
+            case 'summary':
+                    $data = $this->requestSummary($request);
+                    $sheet->setTitle('Summary Report');
                     $sheet->setCellValue('A1', 'Sr.No');
-                    $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Section');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Total Qty');
-                    $sheet->setCellValue('F1', 'Available Qty');
-                    $sheet->setCellValue('G1', 'Date');
-                    $stockDatas = $this->stock_common_filter($data);
-
-                    $row = 2; // Start from the second row to leave space for headers
+                    $sheet->setCellValue('B1', 'Total Requests');
+                    $sheet->setCellValue('C1', 'Approved');
+                    $sheet->setCellValue('D1', 'Declined');
+                    $sheet->setCellValue('E1', 'Pending');
+                    $sheet->setCellValue('A2', 1);
+                    $sheet->setCellValue('B2', $data['total_requests']);
+                    $sheet->setCellValue('C2', $data['approved']);
+                    $sheet->setCellValue('D2',$data['declined']);
+                    $sheet->setCellValue('E2', $data['pending']);
+                break;
+            case 'approval_rates':
+                    $data = $this->approvalDeclineRates($request);
+                    $sheet->setTitle('Approval Rates');
+                    $sheet->setCellValue('A1', 'Sr.No');
+                    $sheet->setCellValue('B1', 'Approval Rate (%)');
+                    $sheet->setCellValue('C1', 'Decline Rate (%)');
+                    $sheet->setCellValue('D1', 'Pending (%)');
+                    $sheet->setCellValue('A2', 1);
+                    $sheet->setCellValue('B2', $data['approval_rate']);
+                    $sheet->setCellValue('C2', $data['decline_rate']);
+                    $sheet->setCellValue('D2',$data['pending_rate']);
+                break;
+            case 'transaction_history':
+                    $stockDatas = $this->transactionHistory($request);
+                    $sheet->setTitle('Transaction History');
+                    $sheet->setCellValue('A1', 'Sr.No');
+                    $sheet->setCellValue('B1', 'Quantity');
+                    $sheet->setCellValue('C1', 'Status');
+                    $sheet->setCellValue('D1', 'Processed By');
+                    $sheet->setCellValue('E1', 'Rig Name');
+                    $sheet->setCellValue('F1', 'Created At');
+                    $row = 2;
                     $i=1;
                     foreach ($stockDatas as $stockData) {
                         $sheet->setCellValue('A' . $row, $i);
-                        $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->section);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->initial_qty);
-                        $sheet->setCellValue('F' . $row, $stockData->qty);
-                        $sheet->setCellValue('G' . $row, $stockData->created_at);
+                        $sheet->setCellValue('B' . $row, $stockData->supplier_qty);
+                        $sheet->setCellValue('C' . $row, $stockData->status_id);
+                        $sheet->setCellValue('D' . $row, $stockData->processed_by_name);
+                        $sheet->setCellValue('E' . $row, $stockData->rig_name);
+                        $sheet->setCellValue('F' . $row, $stockData->created_at);
                         $row++;
                         $i++;
                     }
-            break;
+                break;
+            case 'fulfillment_status':
+                    $data = $this->requestFulfillmentStatus($request);
+                    $sheet->setTitle('Fulfillment Status');
+                    $sheet->setCellValue('A1', 'Sr.No');
+                    $sheet->setCellValue('B1', 'Request ID');
+                    $sheet->setCellValue('C1', 'Requested Stock');
+                    $sheet->setCellValue('D1', 'Requesters Stock');
+                    $sheet->setCellValue('E1', 'Status');
+                    $sheet->setCellValue('F1', 'Created At');
+                    $row = 2;
+                    $i=1;
+                    foreach ($data as $stockData) {
+                    $sheet->setCellValue('A' . $row, $i);
+                    $sheet->setCellValue('B' . $row, $stockData['request_id']);
+                    $sheet->setCellValue('C' . $row, $stockData['requested_stock_item']);
+                    $sheet->setCellValue('D' . $row, $stockData['requester_stock_item']);
+                    $sheet->setCellValue('E' . $row, $stockData['status']);
+                    $sheet->setCellValue('F' . $row, $stockData['expected_delivery']);
+                    $sheet->setCellValue('F' . $row, $stockData['actual_delivery']);
+                    $row++;
+                    $i++;
+                }
+                break;
+            case 'consumption_details':
+                $data = $this->requestConsumptionDetails($request);
+                    $sheet->setTitle('Consumption Details');
+                    $sheet->setCellValue('A1', 'Sr.No');
+                    $sheet->setCellValue('B1', 'Request ID');
+                    $sheet->setCellValue('C1', 'Requested Stock Item');
+                    $sheet->setCellValue('D1', 'Requester Stock Item');
+                    $sheet->setCellValue('E1', 'Initial Stock');
+                    $sheet->setCellValue('F1', 'Received Stock At');
+                    $sheet->setCellValue('G1', 'Used Stock');
+                    $sheet->setCellValue('H1', 'Remaining Stock');
+                    $row = 2;
+                    $i=1;
+                    foreach ($data as $stockData) {
+                    $sheet->setCellValue('A' . $row, $i);
+                    $sheet->setCellValue('B' . $row, $stockData['request_id']);
+                    $sheet->setCellValue('C' . $row, $stockData['requested_stock_item']);
+                    $sheet->setCellValue('D' . $row, $stockData['requester_stock_item']);
+                    $sheet->setCellValue('E' . $row, $stockData['initial_stock']);
+                    $sheet->setCellValue('F' . $row, $stockData['received_stock']);
+                    $sheet->setCellValue('G' . $row, $stockData['used_stock']);
+                    $sheet->setCellValue('H' . $row, $stockData['used_stock']);
+                    $row++;
+                    $i++;
+                }
+                break;
             default:
-                return response()->json(['error' => 'Invalid report type'], 400);
+                $data = json(['error' => 'Invalid report type'], 400);
         }
+
         $writer = new Xlsx($spreadsheet);
 
         // Set the correct headers for downloading an Excel file
