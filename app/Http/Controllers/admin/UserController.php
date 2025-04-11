@@ -13,8 +13,10 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('user_name', '!=', 'admin')->paginate(10);
-        $moduleName = "Users";
+        $users = User::where('user_name', '!=', 'admin')
+                 ->join('rig_users', 'users.rig_id', '=', 'rig_users.id')
+                 ->paginate(10);
+        $moduleName = "Users List";
         $rigUsers = RigUser::pluck('name', 'id');
 
         return view('admin.user.index', compact('users', 'moduleName','rigUsers'));
