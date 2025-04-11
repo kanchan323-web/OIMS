@@ -17,10 +17,10 @@ class EdpController extends Controller
 {
     public function index()
     {
-      //  $edp = Edp::where('name', '!=', 'admin')->get();
+        //  $edp = Edp::where('name', '!=', 'admin')->get();
         $moduleName = "EDP List";
         $edp_list = Edp::orderBy('id', 'desc')->get();
-        return view('admin.edp.index', compact('moduleName','edp_list'));
+        return view('admin.edp.index', compact('moduleName', 'edp_list'));
     }
 
     public function create()
@@ -28,10 +28,9 @@ class EdpController extends Controller
         $category_list = Category::get();
         $moduleName = "Create EDP";
         $UoM = UnitOfMeasurement::get();
-        
 
-        return view('admin.edp.create', compact('moduleName','category_list','UoM'));
-     
+
+        return view('admin.edp.create', compact('moduleName', 'category_list', 'UoM'));
     }
     public function store(Request $request)
     {
@@ -73,16 +72,18 @@ class EdpController extends Controller
         return redirect()->back()->with('success', 'EDP created successfully!');
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $moduleName = "Edit EDP";
         $category_list = Category::all();
         $editData = Edp::findOrFail($id);
         $UoM = UnitOfMeasurement::get();
 
-        return view('admin.edp.edit',compact('category_list','editData','moduleName','UoM'));
+        return view('admin.edp.edit', compact('category_list', 'editData', 'moduleName', 'UoM'));
     }
 
-    public function update(Request $request){
+    public function update(Request $request)
+    {
         $validate = $request->validate([
             'edp_code' => ['required', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
             'section'  => 'required|string',
@@ -121,10 +122,11 @@ class EdpController extends Controller
             return response()->json(['error' => 'EDP not found.'], 404);
         }
         return redirect()->route('admin.edp.index')
-        ->with('success', 'EDP Updated successfully.');  
+            ->with('success', 'EDP Updated successfully.');
     }
 
-    public function destroy(Request $request){
+    public function destroy(Request $request)
+    {
 
 
         $edp = Edp::find($request->delete_id);
@@ -148,10 +150,9 @@ class EdpController extends Controller
         } else {
             return response()->json(['error' => 'EDP not found'], 404);
         }
-        
+
         return redirect()->route('admin.edp.index')
-        ->with('success', 'EDP Deleted successfully.');  
-         
+            ->with('success', 'EDP Deleted successfully.');
     }
     public function showImportForm()
     {
@@ -169,76 +170,97 @@ class EdpController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
-    
+
         try {
             $file = $request->file('file');
             $filePath = $file->storeAs('temp', $file->getClientOriginalName());
             $spreadsheet = IOFactory::load(storage_path('app/' . $filePath));
             $sheet = $spreadsheet->getActiveSheet();
             $rows = $sheet->toArray();
-    
+
             // Expected headers
-            $expectedHeaders = ['Material', 'Material Description', 'UoM', 'Section', 'Material Group'];
-            $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
-    
+            $expectedHeaders = ['Material', 'Material Description', 'UoM'];
+            $actualHeaders = array_map(fn($header) => trim((string) $header), array_slice($rows[0], 0, 3));
+
             // Check headers
             if ($actualHeaders !== $expectedHeaders) {
                 Storage::delete($filePath);
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
                 return redirect()->back();
             }
-    
+
             $errors = [];
             $seenEdpCodes = [];
             $allowedUoM = ['EA', 'FT', 'GAL', 'KG', 'KIT', 'KL', 'L', 'LB', 'M', 'M3', 'MT', 'NO', 'PAA', 'PAC', 'ROL', 'ST'];
-    
-            // **Step 1: Validate all rows first**
+
+            // Step 1: Validate all rows first
             foreach (array_slice($rows, 1) as $index => $row) {
                 if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
-    
+
                 $edpCode = trim($row[0] ?? '');
                 $uom = strtoupper(trim($row[2] ?? ''));
-    
-                // Validate EDP code (must be exactly 9 digits)
-                if (!preg_match('/^\d{9}$/', $edpCode)) {
-                    $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
+
+                // Validate EDP code (must be exactly 9 characters — assuming digits/alphabets possible)
+                if (!preg_match('/^[0-9A-Z]{9}$/', $edpCode)) {
+                    $errors[] = "Row " . ($index + 2) . ": EDP code must be 9 characters.";
                 }
-    
+
                 // Validate UoM
                 if (!in_array($uom, $allowedUoM)) {
                     $errors[] = "Row " . ($index + 2) . ": Invalid UoM value '{$uom}'.";
                 }
-    
-                // **Check for duplicate EDP codes within the file**
+
+                // Check for duplicate EDP codes within the file
                 if (isset($seenEdpCodes[$edpCode])) {
                     $errors[] = "Row " . ($index + 2) . ": Duplicate EDP code '{$edpCode}' found.";
                 } else {
                     $seenEdpCodes[$edpCode] = true;
                 }
             }
-    
-            // **Step 2: If any row is invalid or duplicate, terminate the operation**
+
+            // Step 2: If any row is invalid, terminate
             if (!empty($errors)) {
                 Storage::delete($filePath);
                 session()->flash('error', ['Uploaded file not validated.', ...$errors]);
                 return redirect()->back();
             }
-    
-            // **Step 3: Process the validated data**
+
+            // Step 3: Process the validated data
             foreach (array_slice($rows, 1) as $row) {
                 if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
-    
+
+                $edpCode = trim($row[0]);
+                $description = trim($row[1]);
+                $measurement = strtoupper(trim($row[2]));
+
+                $materialGroup = strtoupper(substr($edpCode, 0, 2));
+
+                // Determine section
+                if ($materialGroup === '0C') {
+                    $section = 'capital';
+                } elseif (ctype_digit($materialGroup)) {
+                    $groupNum = intval($materialGroup);
+                    if ($groupNum >= 1 && $groupNum <= 20) {
+                        $section = 'store';
+                    } elseif ($groupNum >= 21 && $groupNum <= 42) {
+                        $section = 'spares';
+                    } else {
+                        $section = 'unknown';
+                    }
+                } else {
+                    $section = 'unknown';
+                }
+
                 $edp = Edp::updateOrCreate(
-                    ['edp_code' => trim($row[0])],
+                    ['edp_code' => $edpCode],
                     [
-                        'description' => trim($row[1]),
-                        'measurement' => strtoupper(trim($row[2])),
-                        'section'     => trim($row[3]),
-                        'category'    => trim($row[4]),
+                        'description' => $description,
+                        'measurement' => $measurement,
+                        'section'     => $section,
+                        'category'    => $materialGroup,
                     ]
                 );
-                
-                // Optional: log the action
+
                 LogsEdps::create([
                     'edp_code'      => $edp->edp_code,
                     'category'      => $edp->category,
@@ -254,18 +276,14 @@ class EdpController extends Controller
                         : "EDP {$edp->edp_code} has been updated via import.",
                 ]);
             }
-    
+
             Storage::delete($filePath);
             session()->flash('success', 'Excel file imported successfully!');
             return redirect()->route('admin.edp.index');
-    
         } catch (\Exception $e) {
             Storage::delete($filePath);
             session()->flash('error', 'Error importing file: ' . $e->getMessage());
             return redirect()->back();
         }
     }
-
-
-   
 }
