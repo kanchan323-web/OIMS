@@ -241,151 +241,37 @@
                     </ul>
                 </li>
 
-              
-       <!--         <li class="{{ Route::is('stocks') || Route::is('requests') ? 'active' : '' }}">
-                    <a href="#report" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                        <svg class="svg-icon" id="p-dash7" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        <span class="ml-4">Report</span>
-                        <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="10 15 15 20 20 15"></polyline>
-                            <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                        </svg>
-                    </a>
-                    <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="">
-                            <a href="{{route('stock_reports.index')}}">
-                                <i class="las la-minus"></i><span>Stocks </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="{{route('request_reports.index')}}">
-                                <i class="las la-minus"></i><span>Request</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li> -->
-
-             <li class="{{ Route::is('stocks') || Route::is('requests') ? 'active' : '' }}">
-                <a href="#reportmasterpage" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                    <svg class="svg-icon" id="p-dash7" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                    <span class="ml-4">Report</span>
-                    <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="10 15 15 20 20 15"></polyline>
-                        <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                    </svg>
-                </a>
-
-
-                <ul id="reportmasterpage" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                    <li class="{{ Route::is('stocks') || Route::is('requests') ? 'active' : '' }}">
-                        <a href="#stock_report" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                            <svg class="svg-icon" id="p-dash10" width="20" height="20"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="8.5" cy="7" r="4"></circle>
-                                <polyline points="17 11 19 13 23 9"></polyline>
+                <li class="{{ Route::is('stocks') || Route::is('requests') ? 'active' : '' }}">
+                        <a href="#report" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                            <svg class="svg-icon" id="p-dash7" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>
                             </svg>
-                            <span class="ml-4">Stock Report</span>
+                            <span class="ml-4">Report</span>
                             <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="10 15 15 20 20 15"></polyline>
                                 <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
                             </svg>
                         </a>
-                        <ul id="stock_report" class="iq-submenu collapse" data-parent="#reportmasterpage">
+                        <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                             <li class="">
                                 <a href="{{route('stock_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Stock Overview</span>
+                                    <i class="las la-minus"></i><span>Stocks </span>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="{{route('stock_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Stock Movements</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{{route('stock_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Stock Consumptions</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{{route('stock_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Stock Replenishment</span>
+                                <a href="{{route('request_reports.index')}}">
+                                    <i class="las la-minus"></i><span>Request</span>
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                </li>
 
-                    <li class=" {{ Route::is('admin.category.create') || Route::is('admin.category.index') ? 'active' : '' }} ">
-                        <a href="#request_report" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                            <svg class="svg-icon" id="p-dash12" width="20" height="20"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                            <span class="ml-4">Request Report</span>
-                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <polyline points="10 15 15 20 20 15"></polyline>
-                                <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                            </svg>
-                        </a>
-                        <ul id="request_report" class="iq-submenu collapse" data-parent="#reportmasterpage">
-                            <li class="">
-                                <a href="{{route('request_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Request Summary</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{{route('request_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Approval and Decline Rates</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{{route('request_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Transaction History</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{{route('request_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Request Fulfilment Status</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{{route('request_reports.index')}}">
-                                    <i class="las la-minus"></i><span>Request Consumption Details</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    
-
-                    
-                </ul>
                 <li class="">
                     <a href="#logReport" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                        <svg class="svg-icon" id="log-folder" width="20" height="20" xmlns="http://www.w3.org/2000/svg" 
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                        <svg class="svg-icon" id="log-folder" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2z"></path>
                             <path d="M8 10h8v6H8z" fill="none"></path>
@@ -409,6 +295,7 @@
                         </li>
                     </ul>
                 </li>
+
             </ul>
         </nav>
     </div>
