@@ -49,7 +49,7 @@ class RequestReportController extends Controller
         $edps = Edp::select('edp_code', 'id as edp_id')->whereIn('id', $stocks)->distinct()->get();
 */
         //return view('reports.stock_reports', compact('data', 'moduleName', 'datarig', 'edps'));
-        return view('admin.reports.request_reports', compact('moduleName',));
+        return view('admin.reports.request.request_reports', compact('moduleName',));
     }
 
     public function fetchReport(Request $request)
