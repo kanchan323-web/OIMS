@@ -179,8 +179,8 @@ class EdpController extends Controller
             $rows = $sheet->toArray();
 
             // Expected headers
-            $expectedHeaders = ['Material', 'Material Description', 'UoM'];
-            $actualHeaders = array_map(fn($header) => trim((string) $header), array_slice($rows[0], 0, 3));
+            $expectedHeaders = ['Material', 'Material Description', 'UoM', 'Section'];
+            $actualHeaders = array_map(fn($header) => trim((string) $header), array_slice($rows[0], 0, 4));
 
             // Check headers
             if ($actualHeaders !== $expectedHeaders) {
@@ -200,7 +200,7 @@ class EdpController extends Controller
                 $edpCode = trim($row[0] ?? '');
                 $uom = strtoupper(trim($row[2] ?? ''));
 
-                // Validate EDP code (must be exactly 9 characters — assuming digits/alphabets possible)
+                // Validate EDP code (must be exactly 9 characters — digits or uppercase letters)
                 if (!preg_match('/^[0-9A-Z]{9}$/', $edpCode)) {
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be 9 characters.";
                 }
@@ -229,26 +229,26 @@ class EdpController extends Controller
             foreach (array_slice($rows, 1) as $row) {
                 if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
 
-                $edpCode = trim($row[0]);
+                $edpCode     = trim($row[0]);
                 $description = trim($row[1]);
                 $measurement = strtoupper(trim($row[2]));
-
+                $section     = trim($row[3]);
                 $materialGroup = strtoupper(substr($edpCode, 0, 2));
 
-                // Determine section
+                // Determine category based on material group
                 if ($materialGroup === '0C') {
-                    $section = 'capital';
+                    $category = 'capital';
                 } elseif (ctype_digit($materialGroup)) {
                     $groupNum = intval($materialGroup);
                     if ($groupNum >= 1 && $groupNum <= 20) {
-                        $section = 'store';
+                        $category = 'store';
                     } elseif ($groupNum >= 21 && $groupNum <= 42) {
-                        $section = 'spares';
+                        $category = 'spares';
                     } else {
-                        $section = 'unknown';
+                        $category = 'unknown';
                     }
                 } else {
-                    $section = 'unknown';
+                    $category = 'unknown';
                 }
 
                 $edp = Edp::updateOrCreate(
@@ -257,7 +257,7 @@ class EdpController extends Controller
                         'description' => $description,
                         'measurement' => $measurement,
                         'section'     => $section,
-                        'category'    => $materialGroup,
+                        'category'    => $category,
                     ]
                 );
 
