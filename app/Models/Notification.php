@@ -9,8 +9,8 @@ class Notification extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id'; 
-    public $incrementing = true;  
+    protected $primaryKey = 'id';
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [
@@ -23,4 +23,11 @@ class Notification extends Model
         "is_admin_read",
         "rig_id"
     ];
+
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'notification_user', 'notification_id', 'user_id')
+            ->withTimestamps();
+    }
 }

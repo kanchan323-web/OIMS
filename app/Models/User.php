@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Notification;
 
 class User extends Authenticatable
 {
@@ -55,5 +56,13 @@ class User extends Authenticatable
     public function rig()
     {
         return $this->belongsTo(RigUser::class, 'rig_id');
+    }
+
+
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class)
+            ->withPivot('read_at')
+            ->withTimestamps();
     }
 }
