@@ -94,11 +94,6 @@
                                     <i class="las la-minus"></i><span>Incoming Request</span>
                                 </a>
                             </li>
-                            <!-- <li class="">
-                                <a href="{{route('request_stock_add')}}">
-                                    <i class="las la-minus"></i><span>Add Request</span>
-                                </a>
-                            </li> -->
                             <li class="">
                                 <a href="{{route('raised_requests.index')}}">
                                     <i class="las la-minus"></i><span>Raised Request</span>
