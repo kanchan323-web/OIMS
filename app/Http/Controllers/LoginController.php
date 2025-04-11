@@ -18,6 +18,11 @@ use App\Models\RigUser;
 
 class LoginController extends Controller
 {
+    public function oims_index()
+    {
+        return view('home');
+    }
+
     public function index()
     {
         return view('user.login');
@@ -64,7 +69,7 @@ class LoginController extends Controller
     {
         $user = Auth::user();
         Auth::logout();
-        
+
         // if ($user) {
         //     $this->notifyAdmins("User '{$user->user_name}' has logged out.");
         // }
@@ -218,13 +223,13 @@ class LoginController extends Controller
     // private function notifyAdmins($message)
     // {
     //     $admins = User::where('user_type', 'admin')->get();
-        
+
     //     foreach ($admins as $admin) {
     //         Notification::create([
     //             'type'            => NewRequestNotification::class,
     //             'notifiable_type' => User::class,
     //             'notifiable_id'   => $admin->id,
-    //             'user_id'         => $admin->id, 
+    //             'user_id'         => $admin->id,
     //             'data'            => json_encode(['message' => $message, 'url' => null]),
     //             'created_at'      => now(),
     //             'updated_at'      => now(),
