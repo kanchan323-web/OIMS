@@ -43,6 +43,7 @@
                                             </th>
                                             <th>#</th>
                                             <th>User Name</th>
+                                            <th>Rig Name</th>
                                             <th>Email</th>
                                             <th>CPF No</th>
                                             <th>User Type</th>
@@ -68,6 +69,7 @@
                                                     </div>
                                                 </td>
                                                 <td>{{ $user->user_name }}</td>
+                                                <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->cpf_no }}</td>
                                                 <td>{{ ucfirst($user->user_type) }}</td>
@@ -78,7 +80,7 @@
                                                         data-target="#userViewModal" onclick="viewtoclick({{$user}})">
                                                         <i class="ri-eye-line mr-0"></i>
                                                      </a>
-                                                
+
                                                         <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit"
                                                             href="{{ route('admin.edit', $user->id) }}">
                                                             <i class="ri-pencil-line mr-0"></i>
@@ -110,7 +112,7 @@
     </div>
     <!-- Button trigger modal -->
 
-  
+
   <!-- Modal -->
   <div class="modal fade" id="userViewModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -127,23 +129,23 @@
                         <div class="col-md-6 mb-3">
                             <label for="user_name">User Name</label>
                             <input type="text" class="form-control" id="UserName" value="" readonly>
-                         
+
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="email">Email</label>
                             <input type="email" class="form-control" id="Email" value="" readonly>
-                     
+
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="cpf_no">CPF No</label>
                             <input type="text" class="form-control" id="CpfNo"  readonly>
-                       
+
                         </div>
-                
+
                         <div class="col-md-6 mb-3">
                             <label for="user_status">User Status</label>
                             <input type="text" class="form-control" id="UserStatus"  readonly>
-                    
+
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="user_type">User Type</label>
@@ -153,7 +155,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="rig_id">Rigs Name</label>
                             <input type="text" class="form-control" id="RigName" value="" readonly>
-                       
+
                         </div>
                     </div>
             </div>
@@ -172,7 +174,7 @@
                 $(".alert").fadeOut("slow");
             }, 3000);
         });
-       
+
     function viewtoclick(data){
         document.getElementById("UserName").value = data.user_name;
         document.getElementById("Email").value = data.email;

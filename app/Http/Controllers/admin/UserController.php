@@ -13,8 +13,10 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('user_name', '!=', 'admin')->paginate(10);
-        $moduleName = "Users";
+        $users = User::where('user_name', '!=', 'admin')
+                 ->join('rig_users', 'users.rig_id', '=', 'rig_users.id')
+                 ->paginate(10);
+        $moduleName = "Users List";
         $rigUsers = RigUser::pluck('name', 'id');
 
         return view('admin.user.index', compact('users', 'moduleName','rigUsers'));
@@ -97,11 +99,7 @@ class UserController extends Controller
     // Update user details
     public function update(Request $request, $id)
     {
-
-
         $user = User::findOrFail((int) $id);
-
-
         $request->validate([
             'user_name'  => 'required|string|max:255',
             'email'      => 'required|email|unique:users,email,' . $id,
@@ -120,6 +118,10 @@ class UserController extends Controller
             'user_type'  => $request->user_type,
             'rig_id'     => $request->rig_id,
         ]);
+
+        if(isset($request->password)){
+            $user->update(['password' => Hash::make($request->password)]);
+        }
 
         LogsUser::create([
             'user_name'     => $request->user_name,
