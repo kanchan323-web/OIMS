@@ -99,11 +99,7 @@ class UserController extends Controller
     // Update user details
     public function update(Request $request, $id)
     {
-
-
         $user = User::findOrFail((int) $id);
-
-
         $request->validate([
             'user_name'  => 'required|string|max:255',
             'email'      => 'required|email|unique:users,email,' . $id,
@@ -122,6 +118,10 @@ class UserController extends Controller
             'user_type'  => $request->user_type,
             'rig_id'     => $request->rig_id,
         ]);
+
+        if(isset($request->password)){
+            $user->update(['password' => Hash::make($request->password)]);
+        }
 
         LogsUser::create([
             'user_name'     => $request->user_name,
