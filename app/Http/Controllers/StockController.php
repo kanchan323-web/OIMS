@@ -547,25 +547,34 @@ class StockController extends Controller
     }
 
 
-    private function notifyAdmins($message, $url = null)
+    private function notifyAdmins($message, $url = null, $notifyRigUsers = false)
     {
-        $admins = User::where('user_type', 'admin')->get();
         $user = Auth::user();
-
+    
+        $admins = User::where('user_type', 'admin')->get();
+    
         foreach ($admins as $admin) {
-            Notification::create([
+            $notification = Notification::create([
                 'type'            => NewRequestNotification::class,
                 'notifiable_type' => User::class,
-                'notifiable_id'   => $admin->id,
-                'user_id'         => $user->id,
+                'notifiable_id'   => $admin->id, 
+                'user_id'         => $user->id,  
                 'data'            => json_encode([
                     'message' => $message,
-                    'url'     => $url
+                    'url'     => $url ?? route('admin.dashboard')
                 ]),
-                'rig_id' => $user->rig_id,
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
+    
+            if ($notifyRigUsers) {
+                $rigUsers = User::where('rig_id', $user->rig_id)->where('user_type', 'user')->get();
+    
+                foreach ($rigUsers as $rigUser) {
+                    $notification->users()->attach($rigUser->id);
+                }
+            }
         }
     }
+    
 }

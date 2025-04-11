@@ -41,7 +41,7 @@ class RequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-        $Stock_Table_Data = Stock::select('stocks.id','stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->where('stocks.rig_id', '!=', $rig_id)
@@ -50,7 +50,7 @@ class RequestStockController extends Controller
             ->orderBy('stocks.id', 'desc')
             ->get();
 
-           
+
 
 
         $moduleName = "Request Stock List";
@@ -62,7 +62,7 @@ class RequestStockController extends Controller
 
     public function RequestStockFilter(Request $request)
     {
-        
+
         $rig_id = Auth::user()->rig_id;
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
@@ -532,12 +532,12 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id(),
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id' => auth()->id(),
-                'creater_type'=> auth()->user()->user_type,
-                'receiver_id'=>null,
-                'receiver_type'=>null,
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
                 'message' => "Request has been accepted for quantity {$supplier_total_qty} by user " . Auth::user()->user_name
             ]);
 
@@ -586,7 +586,7 @@ class RequestStockController extends Controller
         try {
             $requester = Requester::find($request->request_id);
 
-            
+
             if (!$requester) {
                 return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
             }
@@ -624,16 +624,16 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id(),
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id' => auth()->id(),
-                'creater_type'=> auth()->user()->user_type,
-                'receiver_id'=>null,
-                'receiver_type'=>null,
-                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
             ]);
 
-            
+
 
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
@@ -717,13 +717,13 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id(),
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id' => auth()->id(),
-                'creater_type'=> auth()->user()->user_type,
-                'receiver_id'=>null,
-                'receiver_type'=>null,
-                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -976,13 +976,13 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to' => $sent_to,
                 'sent_from' => Auth::id(),
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id' => auth()->id(),
-                'creater_type'=> auth()->user()->user_type,
-                'receiver_id'=>null,
-                'receiver_type'=>null,
-                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
             ]);
 
             $user = Auth::user();
@@ -1046,15 +1046,15 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to' => $sent_to,
                 'sent_from' => Auth::id(),
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id' => auth()->id(),
-                'creater_type'=> auth()->user()->user_type,
-                'receiver_id'=>null,
-                'receiver_type'=>null,
-                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
             ]);
-            
+
 
             // Fetch requester and supplier details
             $requester_user = User::find($requester->requester_id);
@@ -1135,13 +1135,13 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to'     => $sent_to,
                 'sent_from'  => Auth::id(),
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id' => auth()->id(),
-                'creater_type'=> auth()->user()->user_type,
-                'receiver_id'=>null,
-                'receiver_type'=>null,
-                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
             ]);
 
             $requester_user = User::find($requester->requester_id);
@@ -1208,7 +1208,7 @@ class RequestStockController extends Controller
             ]);
 
             LogsRequestStatus::create([
-               'request_id' => $request->request_id,
+                'request_id' => $request->request_id,
                 'status_id' => 5,
                 'decline_msg' => $request->decline_msg,
                 'query_msg' => null,
@@ -1219,15 +1219,15 @@ class RequestStockController extends Controller
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to' => $sent_to,
                 'sent_from' => Auth::id(),
-                'created_at'=> now(),
-                'updated_at'=> now(),
+                'created_at' => now(),
+                'updated_at' => now(),
                 'creater_id' => auth()->id(),
-                'creater_type'=> auth()->user()->user_type,
-                'receiver_id'=>null,
-                'receiver_type'=>null,
-                'message' => "Request id ".$request->request_id." has been Decline  by user " . Auth::user()->user_name
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
             ]);
-                
+
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
 
@@ -1321,13 +1321,13 @@ class RequestStockController extends Controller
     }
 
 
-    private function notifyAdmins($message, $url = null)
+    private function notifyAdmins($message, $url = null, $notifyRigUsers = false)
     {
-        $admins = User::where('user_type', 'admin')->get();
         $user = Auth::user();
+        $admins = User::where('user_type', 'admin')->get();
 
         foreach ($admins as $admin) {
-            Notification::create([
+            $notification = Notification::create([
                 'type'            => NewRequestNotification::class,
                 'notifiable_type' => User::class,
                 'notifiable_id'   => $admin->id,
@@ -1339,6 +1339,15 @@ class RequestStockController extends Controller
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
+
+            if ($notifyRigUsers) {
+                $rigUsers = User::where('rig_id', $user->rig_id)
+                    ->where('user_type', 'user')
+                    ->pluck('id');
+
+                // Attach rig users to the notification
+                $notification->users()->attach($rigUsers);
+            }
         }
     }
 }
