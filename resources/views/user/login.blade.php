@@ -70,7 +70,7 @@
                                             <label for="password">Password</label>
                                         </div>
                                     </div>
-                                    <div class="form-group text-center">
+                                    {{-- <div class="form-group text-center">
                                         <label for="captcha">CAPTCHA</label>
                                         <div class="d-flex justify-content-center align-items-center">
                                             <input type="text" name="captcha" id="captcha"
@@ -85,7 +85,7 @@
                                         @error('captcha')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-12">
                                         <div class="d-grid">

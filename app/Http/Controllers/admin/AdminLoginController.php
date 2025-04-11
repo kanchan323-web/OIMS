@@ -22,13 +22,13 @@ class AdminLoginController extends Controller
         $validated = $request->validate([
             'login'    => 'required|string',
             'password' => 'required|min:3',
-            'captcha'  => ['required', 'captcha'],
+            // 'captcha'  => ['required', 'captcha'],
         ], [
             'login.required'    => 'Please enter your email or username.',
             'password.required' => 'Please enter your password.',
             'password.min'      => 'Password must be at least 3 characters long.',
-            'captcha.required'  => 'Please enter the CAPTCHA.',
-            'captcha.captcha'   => 'Incorrect CAPTCHA! Try again.',
+            // 'captcha.required'  => 'Please enter the CAPTCHA.',
+            // 'captcha.captcha'   => 'Incorrect CAPTCHA! Try again.',
         ]);
 
         $fieldType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
