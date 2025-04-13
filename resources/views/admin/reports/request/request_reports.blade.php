@@ -1,4 +1,4 @@
-@extends('layouts.frontend.layout')
+@extends('layouts.frontend.admin_layout')
 
 @section('page-content')
     <div class="content-page">
@@ -74,7 +74,7 @@
 
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             function fetchReport() {
                 let formData = $("#filterForm").serialize();
                 // console.log("Form Data Sent:", formData); // Debugging
@@ -84,10 +84,10 @@
                     url: "{{ route('report.fetch') }}",
                     data: formData,
                     dataType: "json",
-                    beforeSend: function () {
+                    beforeSend: function() {
                         // console.log("Sending AJAX request...");
                     },
-                    success: function (response) {
+                    success: function(response) {
                         // console.log("AJAX Response:", response);
                         let tableBody = $("#reportTable");
                         let tableHeaders = $("#tableHeaders");
@@ -97,7 +97,9 @@
 
                         if (!response.data) {
                             console.warn("No data received.");
-                            tableBody.html('<tr><td colspan="6" class="text-center">No records found</td></tr>');
+                            tableBody.html(
+                                '<tr><td colspan="6" class="text-center">No records found</td></tr>'
+                            );
                             return;
                         }
 
@@ -107,7 +109,8 @@
 
                         switch (reportType) {
                             case "summary":
-                                headers = "<th>Sr.No</th><th>Total Requests</th><th>Approved</th><th>Declined</th><th>Pending</th>";
+                                headers =
+                                    "<th>Sr.No</th><th>Total Requests</th><th>Approved</th><th>Declined</th><th>Pending</th>";
                                 rows += `<tr>
                                                 <td>1</td>
                                                 <td class="text-purple"><strong>${response.data.total_requests ?? 0}</strong></td>
@@ -118,7 +121,8 @@
                                 break;
 
                             case "approval_rates":
-                                headers = "<th>Sr.No</th><th>Approval Rate (%)</th><th>Decline Rate (%)</th><th>Pending (%)</th>";
+                                headers =
+                                    "<th>Sr.No</th><th>Approval Rate (%)</th><th>Decline Rate (%)</th><th>Pending (%)</th>";
                                 rows += `<tr>
                                                 <td>1</td>
                                                 <td class="text-success"><strong>${response.data.approval_rate ?? 0}%</strong></td>
@@ -129,7 +133,8 @@
 
 
                             case "transaction_history":
-                                headers = "<th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Rig Name</th><th>Created At</th>";
+                                headers =
+                                    "<th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Rig Name</th><th>Created At</th>";
 
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
@@ -180,14 +185,15 @@
                                 break;
 
                             case "fulfillment_status":
-                                headers = "<th>Sr.No</th><th>Request ID</th><th>Requested Stock</th><th>Requesters Stock</th><th>Status</th><th>Expected Delivery</th><th>Actual Delivery</th>";
+                                headers =
+                                    "<th>Sr.No</th><th>Request ID</th><th>Requested Stock</th><th>Requesters Stock</th><th>Status</th><th>Expected Delivery</th><th>Actual Delivery</th>";
 
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
                                         // Determine status badge
-                                        let statusBadge = item.status === "Delivered"
-                                            ? `<span class="badge badge-success">Delivered</span>`
-                                            : `<span class="badge badge-danger">Not Delivered</span>`;
+                                        let statusBadge = item.status === "Delivered" ?
+                                            `<span class="badge badge-success">Delivered</span>` :
+                                            `<span class="badge badge-danger">Not Delivered</span>`;
 
                                         rows += `<tr>
                                             <td>${index + 1}</td>
@@ -203,7 +209,8 @@
                                 break;
 
                             case "consumption_details":
-                                headers = "<th>Sr.No</th><th>Request ID</th><th>Requested Stock Item</th><th>Requester Stock Item</th><th>Initial Stock</th><th>Received Stock</th><th>Used Stock</th><th>Remaining Stock</th>";
+                                headers =
+                                    "<th>Sr.No</th><th>Request ID</th><th>Requested Stock Item</th><th>Requester Stock Item</th><th>Initial Stock</th><th>Received Stock</th><th>Used Stock</th><th>Remaining Stock</th>";
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
                                         rows += `<tr>
@@ -221,14 +228,17 @@
                                 break;
 
                             default:
-                                tableBody.html('<tr><td colspan="5" class="text-center">Invalid Report Type</td></tr>');
+                                tableBody.html(
+                                    '<tr><td colspan="5" class="text-center">Invalid Report Type</td></tr>'
+                                );
                                 return;
                         }
 
                         tableHeaders.html(headers);
-                        tableBody.html(rows || '<tr><td colspan="6" class="text-center">No records found</td></tr>');
+                        tableBody.html(rows ||
+                            '<tr><td colspan="6" class="text-center">No records found</td></tr>');
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         console.error("Error fetching data:", error);
                         console.log("Full Response:", xhr.responseText);
                         alert("An error occurred. Check console for details.");
@@ -241,33 +251,32 @@
         });
 
 
-        $(document).ready(function () {
-            $("#downloadPdf").click(function (e) {
-                    e.preventDefault();
-                    let baseUrl = "{{ route('report_requestPdfDownload') }}";
-                    let formData = $("#filterForm").serializeArray();
-                    let filteredParams = formData
-                        .filter(item => item.value.trim() !== "")
-                        .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
-                        .join("&");
-                    let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
-                    window.open(finalUrl, '_blank');
-                });
-             });
-
-            $(document).ready(function () {
-                $("#downloadexcel").click(function (e) {
-                        e.preventDefault();
-                        let baseUrl = "{{ route('report_requestExcelDownload') }}";
-                        let formData = $("#filterForm").serializeArray();
-                        let filteredParams = formData
-                            .filter(item => item.value.trim() !== "")
-                            .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
-                            .join("&");
-                        let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
-                        window.open(finalUrl, '_blank');
-                });
+        $(document).ready(function() {
+            $("#downloadPdf").click(function(e) {
+                e.preventDefault();
+                let baseUrl = "{{ route('report_requestPdfDownload') }}";
+                let formData = $("#filterForm").serializeArray();
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
             });
-    </script>
+        });
 
+        $(document).ready(function() {
+            $("#downloadexcel").click(function(e) {
+                e.preventDefault();
+                let baseUrl = "{{ route('report_requestExcelDownload') }}";
+                let formData = $("#filterForm").serializeArray();
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
+    </script>
 @endsection
