@@ -13,12 +13,11 @@
                                             <label for="edp_code">Report Type</label>
                                             <select class="form-control" name="report_type" id="report_type">
                                                 <option disabled selected>Select Report Type...</option>
-                                                <option value="1">Stock Overview</option>
-                                                <option value="2">Stock Additions</option>
-                                                <option value="3">Stock Removals</option>
-                                                <option value="4">Stock Adjustments </option>
-                                                <option value="5">Stock Consumptions</option>
-                                                <option value="6">Stock Replenishment</option>
+                                                <option value="summary">Stock Summary</option>
+                                                <option value="additions">Stock Additions</option>
+                                                <option value="removals">Stock Removals</option>
+                                                <option value="adjustments">Stock Adjustments </option>
+                                                <option value="consumptions">Stock Consumptions</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
@@ -79,14 +78,16 @@
 
     <script>
         $(document).ready(function() {
-            // Filter Stock Data on Button Click
-            $("#filterButton").click(function() {
+            // Filter Stock Data onchange and Button Click
+            function fetchReport() {
+                let formData = $("#filterForm").serialize();
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('report_stock_filter') }}",
-                    data: $("#filterForm").serialize(),
+                    url: "{{ route('admin.report_stock_filter') }}",
+                    data: formData,
+                    dataType: "json",
                     success: function(response) {
-                        console.log("AJAX Response:", response.data.stock_addition);
+                        console.log("AJAX Responsexc:", response.data);
                         let tableBody = $("#reportTable");
                         let tableHeaders = $("#tableHeaders");
 
@@ -106,10 +107,10 @@
                         let rows = "";
 
                         switch (reportType) {
-                            case "1":
+                            case "summary":
                                 if (response.data && response.data.length > 0) {
                                     headers =
-                                        "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total QTY</th><th>Available QTY</th><th>Date</th>";
+                                        "<th>Sr.No</th><th>Rig Name</th><th>EDP Code</th><th>Category</th><th>Total QTY</th><th>Available QTY</th><th>Date</th>";
                                     $.each(response.data, function(index, stockdata) {
                                         var date = stockdata.created_at;
                                         var dateObj = new Date(date);
@@ -117,8 +118,8 @@
                                             'T')[0];
                                         rows += `<tr>
                                                 <td>${index + 1}</td>
+                                                <td>${stockdata.location_name}</td>
                                                 <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.section}</td>
                                                 <td>${stockdata.description}</td>
                                                 <td>${stockdata.initial_qty}</td>
                                                 <td>${stockdata.qty}</td>
@@ -128,17 +129,16 @@
                                 }
                                 break;
 
-                            case "2":
-                                //  if (response.data.stock_addition || response.data.stock_removal) {
-                                //  console.log("AJAX Responsexcx:", response.data);
+                            case "additions":
                                 if (response.data && response.data.length > 0) {
                                     headers =
-                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Addition </th><th>Supplier Rig</th><th>Purchase Date</th>";
+                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Requester Rig</th><th>Add Stock </th><th>Supplier Rig</th><th> Date</th>";
                                     $.each(response.data, function(index, stockdata) {
                                         rows += `<tr>
                                                <td>${index + 1}</td>
                                                 <td>${stockdata.EDP_Code}</td>
                                                 <td>${stockdata.description}</td>
+                                                 <td>${stockdata.location_name}</td>
                                                 <td>${stockdata.requested_qty}</td>
                                                 <td>${stockdata.name}</td>
                                                 <td>${stockdata.created_at}</td>
@@ -148,15 +148,16 @@
                                 //}
                                 break;
 
-                            case "3":
+                            case "removals":
                                 if (response.data && response.data.length > 0) {
                                     headers =
-                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Remove </th><th>Requestor Rig</th><th>Sell Date</th>";
+                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>From Rig</th><th>Remove </th><th>Requestor Rig</th><th>Date</th>";
                                     $.each(response.data, function(index, stockdata) {
                                         rows += `<tr>
                                                 <td>${index + 1}</td>
                                                     <td>${stockdata.EDP_Code}</td>
                                                     <td>${stockdata.description}</td>
+                                                    <td>${stockdata.location_name}</td>
                                                     <td>${stockdata.requested_qty}</td>
                                                     <td>${stockdata.name}</td>
                                                     <td>${stockdata.created_at}</td>
@@ -165,24 +166,26 @@
                                 }
                                 break;
 
-                            case "4":
+                            case "adjustments":
                                 if (response.data && response.data.length > 0) {
                                     headers =
-                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Adjustments</th><th>Supplier Rig</th><th>Date</th>";
+                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Req Rig</th><th>Req QTY</th><th>Supplier Rig</th><th>Supplier QTY</th><th>Date</th>";
                                     $.each(response.data, function(index, stockdata) {
                                         rows += `<tr>
                                             <td>${index + 1}</td>
                                                 <td>${stockdata.EDP_Code}</td>
                                                 <td>${stockdata.description}</td>
-                                                <td>${stockdata.qty}</td>
-                                                <td>${stockdata.name}</td>
-                                                <td>${stockdata.created_at}</td>
+                                                <td>${stockdata.req_name}</td>
+                                                <td>${stockdata.req_qty}</td>
+                                                <td>${stockdata.sup_name}</td>
+                                                 <td>${stockdata.sup_qty}</td>
+                                                <td>${stockdata.updated_at}</td>
                                             </tr>`;
                                     });
                                 }
                                 break;
 
-                            case "5":
+                            case "consumptions":
                                 if (response.data && response.data.length > 0) {
                                     headers =
                                         "<th>Sr.No</th><th>EDP Code</th><th>Description</th><th>Total</th><th>Consumed</th><th>Consumed Type</th><th>Date</th>";
@@ -197,27 +200,6 @@
                                                 <td>${stockdata.description}</td>
                                                 <td>${stockdata.avl_qty}</td>
                                                 <td>${stockdata.consume}</td>
-                                                <td>${stockdata.name}</td>
-                                                <td>${formattedDate}</td>
-                                            </tr>`;
-                                    });
-                                }
-                                break;
-
-                            case "6":
-                                if (response.data && response.data.length > 0) {
-                                    headers =
-                                        "<th>Sr.No</th><th>EDP Code</th><th>Description</th><th>Replenishment  </th><th>Status</th><th>Date</th>";
-                                    $.each(response.data, function(index, stockdata) {
-                                        var date = stockdata.created_at;
-                                        var dateObj = new Date(date);
-                                        var formattedDate = dateObj.toISOString().split(
-                                            'T')[0];
-                                        rows += `<tr>
-                                                <td>${index + 1}</td>
-                                                <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.description}</td>
-                                                <td>${stockdata.replinish}</td>
                                                 <td>${stockdata.name}</td>
                                                 <td>${formattedDate}</td>
                                             </tr>`;
@@ -240,7 +222,10 @@
                         console.error("Error fetching data:", error);
                     }
                 });
-            });
+            }
+
+            $("#filterButton").click(fetchReport);
+            $("#report_type").change(fetchReport);
         });
 
         $(document).ready(function() {

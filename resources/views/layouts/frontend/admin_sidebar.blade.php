@@ -212,11 +212,6 @@
                                 <i class="las la-minus"></i><span>User Activity Report </span>
                             </a>
                         </li>
-                        <li class="">
-                            <a href="{{ route('request_reports.index') }}">
-                                <i class="las la-minus"></i><span>Stock Tracking Report</span>
-                            </a>
-                        </li>
                     </ul>
                 </li>
 

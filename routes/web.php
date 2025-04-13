@@ -128,11 +128,11 @@ Route::middleware(['admin.auth'])->group(function () {
         //Reports
         Route::prefix('reports')->group(function () {
             Route::get('/stocks', [AdminStockReportController::class, 'index'])->name('stock_reports.index');
-            Route::get('/requests', [AdminRequestReportController::class, 'index'])->name('request_reports.index');
+            Route::get('/report_stock_filter', [AdminStockReportController::class, 'report_stock_filter'])->name('admin.report_stock_filter');
         });
 
         //request stocks reports
-        Route::get('/request-report', [RequestReportController::class, 'index'])->name('admin.request_report');
+        Route::get('/requests', [AdminRequestReportController::class, 'index'])->name('request_reports.index');
         Route::get('/request-report/fetch', [RequestReportController::class, 'fetchReport'])->name('report.fetch');
 
         //Notifications
@@ -222,7 +222,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('reports')->group(function () {
             Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
             Route::get('/report_stock_filter', [StockReportController::class, 'report_stock_filter'])->name('report_stock_filter');
-            Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
+          //  Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
             Route::get('/stockPdfDownload', [StockReportController::class, 'stockPdfDownload'])->name('report_stockPdfDownload');
             Route::get('/stockExcelDownload', [StockReportController::class, 'stockExcelDownload'])->name('report_stockExcelDownload');
 
