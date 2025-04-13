@@ -21,14 +21,16 @@ use App\Http\Controllers\RequestReportController;
 use App\Http\Controllers\admin\StockReportController as AdminStockReportController;
 use App\Http\Controllers\admin\RequestReportController as AdminRequestReportController;
 
-//Admin Portal Section
+//call index page
+Route::get('/', function () {
+    return view('home'); // This looks for resources/views/welcome.blade.php
+});
 
+//Admin Portal Section
 //Authentication
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 Route::get('/log',[LogsController::class,'index'])->name('get.logs');
-
-//Route::get('/oims', [LoginController::class, 'oims_index'])->name('oims');
 
 Route::middleware(['admin.auth'])->group(function () {
 
