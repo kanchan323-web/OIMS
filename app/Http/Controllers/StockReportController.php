@@ -29,8 +29,6 @@ class StockReportController extends Controller
     public function index(Request $request)
     {
         $moduleName = "Stock Reports";
-        $userId = Auth::id();
-        $rig_id = Auth::user()->rig_id;
         return view('reports.stock.stock_reports', compact('moduleName',));
     }
 

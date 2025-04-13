@@ -28,6 +28,8 @@ Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 Route::get('/log',[LogsController::class,'index'])->name('get.logs');
 
+//Route::get('/oims', [LoginController::class, 'oims_index'])->name('oims');
+
 Route::middleware(['admin.auth'])->group(function () {
 
     Route::prefix('/admin')->group(function () {
