@@ -14,12 +14,13 @@ class UserController extends Controller
     public function index()
     {
         $users = User::where('user_name', '!=', 'admin')
-                 ->join('rig_users', 'users.rig_id', '=', 'rig_users.id')
-                 ->paginate(10);
+            ->leftJoin('rig_users', 'users.rig_id', '=', 'rig_users.id')
+            ->select('users.*', 'rig_users.name as rig_name') // select all user fields and rig name
+            ->orderBy('users.id', 'desc')
+            ->paginate(10);
         $moduleName = "Users List";
         $rigUsers = RigUser::pluck('name', 'id');
-
-        return view('admin.user.index', compact('users', 'moduleName','rigUsers'));
+        return view('admin.user.index', compact('users', 'moduleName', 'rigUsers'));
     }
 
     // Show form for creating a new user
@@ -28,7 +29,7 @@ class UserController extends Controller
         $rigUsers = RigUser::where('name', '!=', 'Admin')
             ->where('name', '!=', 'admin')
             ->get();
-            $moduleName = "Create Users";
+        $moduleName = "Create Users";
         return view('admin.user.create', compact('rigUsers', 'moduleName'));
     }
 
@@ -45,6 +46,7 @@ class UserController extends Controller
             'rig_id'       => 'nullable|integer',
         ]);
 
+        $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
         // Create the user
         $user = User::create([
             'user_name'   => $request->user_name,
@@ -53,26 +55,25 @@ class UserController extends Controller
             'password'    => Hash::make($request->password),
             'user_status' => $request->user_status,
             'user_type'   => $request->user_type,
-            'rig_id'      => $request->rig_id,
+            'rig_id'      => $rigId,
         ]);
 
-        // dd( $user );
 
         // Log the creation without storing the password
 
-            $data = LogsUser::create([
-                'user_name'     => $request->user_name,
-                'email'         => $request->email,
-                'cpf_no'        => $request->cpf_no,
-                'user_status' => $request->user_status,
-                'user_type'     => $request->user_type,
-                'rig_id'      => $request->rig_id,
-                'creater_id'    => auth()->id(),
-                'creater_type'  => auth()->user()->user_type,
-                'receiver_id'   => null,
-                'receiver_type' => null,
-                'message'       => "User {$request->user_name} has been created.",
-            ]);
+        $data = LogsUser::create([
+            'user_name'     => $request->user_name,
+            'email'         => $request->email,
+            'cpf_no'        => $request->cpf_no,
+            'user_status' => $request->user_status,
+            'user_type'     => $request->user_type,
+            'rig_id'      => $request->rig_id,
+            'creater_id'    => auth()->id(),
+            'creater_type'  => auth()->user()->user_type,
+            'receiver_id'   => null,
+            'receiver_type' => null,
+            'message'       => "User {$request->user_name} has been created.",
+        ]);
 
         return redirect()->route('admin.index')->with('success', 'User created successfully.');
     }
@@ -82,7 +83,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $moduleName = "View Users";
-        return view('admin.user.show', compact('user','moduleName'));
+        return view('admin.user.show', compact('user', 'moduleName'));
     }
 
     // Show form for editing a user
@@ -100,26 +101,28 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail((int) $id);
-        $request->validate([
-            'user_name'  => 'required|string|max:255',
-            'email'      => 'required|email|unique:users,email,' . $id,
-            'cpf_no'     => 'required|string|max:255',
-            'user_status' => 'required|integer',
-            'user_type' => 'required|string|in:admin,user',
-            'rig_id'     => 'required|integer',
 
+        $request->validate([
+            'user_name'   => 'required|string|max:255',
+            'email'       => 'required|email|unique:users,email,' . $id,
+            'cpf_no'      => 'required|string|max:255',
+            'user_status' => 'required|integer',
+            'user_type'   => 'required|string|in:admin,user',
+            'rig_id'      => 'nullable|integer',
         ]);
+
+        $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
 
         $user->update([
-            'user_name'  => $request->user_name,
-            'email'      => $request->email,
-            'cpf_no'     => $request->cpf_no,
+            'user_name'   => $request->user_name,
+            'email'       => $request->email,
+            'cpf_no'      => $request->cpf_no,
             'user_status' => $request->user_status,
-            'user_type'  => $request->user_type,
-            'rig_id'     => $request->rig_id,
+            'user_type'   => $request->user_type,
+            'rig_id'      => $rigId,
         ]);
 
-        if(isset($request->password)){
+        if (isset($request->password)) {
             $user->update(['password' => Hash::make($request->password)]);
         }
 
@@ -127,9 +130,9 @@ class UserController extends Controller
             'user_name'     => $request->user_name,
             'email'         => $request->email,
             'cpf_no'        => $request->cpf_no,
-            'user_status' => $request->user_status,
+            'user_status'   => $request->user_status,
             'user_type'     => $request->user_type,
-            'rig_id'     => $request->rig_id,
+            'rig_id'        => $rigId,
             'creater_id'    => auth()->id(),
             'creater_type'  => auth()->user()->user_type,
             'receiver_id'   => null,
@@ -137,8 +140,14 @@ class UserController extends Controller
             'message'       => "User '{$request->user_name}' has been updated.",
         ]);
 
+        if (auth()->id() == $user->id) {
+            auth()->logout();
+            return redirect()->route('login')->with('message', 'Role updated. Please log in again.');
+        }
+
         return redirect()->route('admin.index')->with('success', 'User updated successfully.');
     }
+
 
     // Delete a user
     public function destroy($id)

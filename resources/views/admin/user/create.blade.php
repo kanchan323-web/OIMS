@@ -55,19 +55,18 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="user_type">User Type</label>
-                                    <select class="form-control" name="user_type" required>
-                                        <option value="select user type" selected>Select User type</option>
+                                    <select class="form-control" name="user_type" id="user_type" required>
+                                        <option value="" selected disabled>Select User type</option>
                                         <option value="admin">Admin</option> 
                                         <option value="user">User</option>
                                     </select>
                                     @error('user_type')
                                     <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
-                                    
+                                    @enderror
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3" id="rig_section">
                                     <label for="rig_id">Select Rigs</label>
-                                    <select class="form-control" name="rig_id">
+                                    <select class="form-control" name="rig_id" id="rig_id">
                                         <option value="" disabled selected>Select Rig User...</option>
                                         @foreach($rigUsers as $rigUser)
                                             <option value="{{ $rigUser->id }}">{{ $rigUser->name }}</option>
@@ -75,7 +74,7 @@
                                     </select>
                                     @error('rig_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
-                                     @enderror
+                                    @enderror
                                 </div>
                             </div>
                             <button class="btn btn-primary" type="submit">Submit</button>
@@ -87,5 +86,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const userTypeSelect = document.getElementById('user_type');
+        const rigSection = document.getElementById('rig_section');
+
+        function toggleRigSection() {
+            if (userTypeSelect.value === 'admin') {
+                rigSection.style.display = 'none';
+            } else {
+                rigSection.style.display = 'block';
+            }
+        }
+
+        toggleRigSection();
+
+        // Listen for changes
+        userTypeSelect.addEventListener('change', toggleRigSection);
+    });
+</script>
 
 @endsection
