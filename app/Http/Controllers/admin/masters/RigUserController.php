@@ -14,13 +14,14 @@ class RigUserController extends Controller
     public function index()
     {
         $rigUsers = RigUser::where('name', '!=', 'admin')->get();
+        
         $moduleName = "Rigs";
         return view('admin.rig_users.index', compact('rigUsers', 'moduleName'));
     }
 
     public function create()
     {
-        $moduleName = "Create Rigs";
+        $moduleName = "Create Rigs"; 
         return view('admin.rig_users.create', compact('moduleName'));
     }
 
