@@ -69,7 +69,9 @@ class EdpController extends Controller
             'message'       => "EDP '{$request->edp_code}' has been Created.",
         ]);
 
-        return redirect()->back()->with('success', 'EDP created successfully!');
+       // return redirect()->back()->with('success', 'EDP created successfully!');
+        return redirect()->route('admin.edp.index')
+            ->with('success', 'EDP created successfully.');
     }
 
     public function edit($id)
