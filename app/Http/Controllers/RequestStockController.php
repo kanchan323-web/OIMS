@@ -1321,33 +1321,47 @@ class RequestStockController extends Controller
     }
 
 
-    private function notifyAdmins($message, $url = null, $notifyRigUsers = false)
+    private function notifyAdmins($message, $url = null)
     {
         $user = Auth::user();
+    
         $admins = User::where('user_type', 'admin')->get();
-
+    
         foreach ($admins as $admin) {
             $notification = Notification::create([
                 'type'            => NewRequestNotification::class,
                 'notifiable_type' => User::class,
-                'notifiable_id'   => $admin->id,
+                'notifiable_id'   => $admin->id, 
                 'user_id'         => $user->id,
                 'data'            => json_encode([
                     'message' => $message,
-                    'url'     => $url ?? route('admin.dashboard')
+                    'url'     => $url ?? route('dashboard'),
                 ]),
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
-
-            if ($notifyRigUsers) {
-                $rigUsers = User::where('rig_id', $user->rig_id)
-                    ->where('user_type', 'user')
-                    ->pluck('id');
-
-                // Attach rig users to the notification
-                $notification->users()->attach($rigUsers);
+    
+            // Notify all rig users of the same rig
+            $rigUsers = User::where('rig_id', $user->rig_id)
+                            ->where('user_type', 'user')
+                            ->get();
+    
+            foreach ($rigUsers as $rigUser) {
+                DB::table('notification_user')->insert([
+                    'user_id'         => $rigUser->id,
+                    'notification_id' => $notification->id,
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
             }
+    
+            // Also notify the admin
+            DB::table('notification_user')->insert([
+                'user_id'         => $admin->id,
+                'notification_id' => $notification->id,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
         }
     }
 }

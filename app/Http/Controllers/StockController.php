@@ -62,7 +62,7 @@ class StockController extends Controller
             ->orderBy('stocks.id', 'desc')
             ->get();
 
-            
+
 
         $moduleName = "Stock List";
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
@@ -547,7 +547,7 @@ class StockController extends Controller
     }
 
 
-    private function notifyAdmins($message, $url = null, $notifyRigUsers = false)
+    private function notifyAdmins($message, $url = null)
     {
         $user = Auth::user();
     
@@ -558,22 +558,34 @@ class StockController extends Controller
                 'type'            => NewRequestNotification::class,
                 'notifiable_type' => User::class,
                 'notifiable_id'   => $admin->id, 
-                'user_id'         => $user->id,  
+                'user_id'         => $user->id,
                 'data'            => json_encode([
                     'message' => $message,
-                    'url'     => $url ?? route('admin.dashboard')
+                    'url'     => $url ?? route('dashboard'),
                 ]),
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
     
-            if ($notifyRigUsers) {
-                $rigUsers = User::where('rig_id', $user->rig_id)->where('user_type', 'user')->get();
+            $rigUsers = User::where('rig_id', $user->rig_id)
+                            ->where('user_type', 'user')
+                            ->get();
     
-                foreach ($rigUsers as $rigUser) {
-                    $notification->users()->attach($rigUser->id);
-                }
+            foreach ($rigUsers as $rigUser) {
+                DB::table('notification_user')->insert([
+                    'user_id'         => $rigUser->id,
+                    'notification_id' => $notification->id,
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
             }
+    
+            DB::table('notification_user')->insert([
+                'user_id'         => $admin->id,
+                'notification_id' => $notification->id,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
         }
     }
     
