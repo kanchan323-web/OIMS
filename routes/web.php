@@ -135,7 +135,7 @@ Route::middleware(['admin.auth'])->group(function () {
 
         //request stocks reports
         Route::get('/requests', [AdminRequestReportController::class, 'index'])->name('request_reports.index');
-        Route::get('/request-report/fetch', [RequestReportController::class, 'fetchReport'])->name('admin.report.fetch');
+        Route::get('/request-report/fetch', [AdminRequestReportController::class, 'fetchReport'])->name('admin.report.fetch');
 
         //Notifications
         Route::post('/notifications/mark-read-admin', [NotificationController::class, 'markAsReadAdmin'])->name('notifications.markReadAdmin');

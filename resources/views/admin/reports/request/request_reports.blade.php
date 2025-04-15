@@ -76,8 +76,6 @@
         $(document).ready(function() {
             function fetchReport() {
                 let formData = $("#filterForm").serialize();
-                // console.log("Form Data Sent:", formData); // Debugging
-
                 $.ajax({
                     type: "GET",
                     url: "{{ route('admin.report.fetch') }}",

@@ -34,8 +34,6 @@ class RequestReportController extends Controller
     public function fetchReport(Request $request)
     {
         $reportType = $request->input('report_type');
-        dd($reportType);
-
         if (!$reportType) {
             return response()->json(['error' => 'Missing report type'], 400);
         }
@@ -61,13 +59,18 @@ class RequestReportController extends Controller
     }
 
     private function pendingRequest($request){
-        $query = Requester::whereBetween('created_at', [$request->from_date, $request->to_date]);
-        return [
-            'total_requests' => $query->count(),
-            'approved' => $query->where('status', 'Approved')->count(),
-            'declined' => $query->where('status', 'Declined')->count(),
-            'pending' => $query->where('status', 'Pending')->count(),
-        ];
+        $query = Requester::query();
+        if(!empty($request->from_date) || !empty($request->to_date)) {
+            $query = Requester::whereBetween('created_at', [$request->from_date, $request->to_date]);
+        }
+        $pendding = $query->join('stocks', 'requesters.requester_stock_id', '=', 'stocks.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->select('requesters.RID','requesters.requested_qty','requesters.created_at', 'edps.edp_code AS EDP_Code','edps.description','rig_users.name')
+            ->whereBetween('requesters.status', [1,2,6])
+            ->orderBy('requesters.id', 'desc')->get();
+        return $pendding;
     }
 
     private function approvedRequest($request){
