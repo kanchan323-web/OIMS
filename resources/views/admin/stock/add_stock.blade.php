@@ -135,18 +135,21 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
-                                        <label for="rig_id">Select Rig</label>
-                                        <select class="form-control select2" name="rig_id" id="rig_id" required>
-                                            <option value="" disabled selected>Select Rig</option>
-                                            @foreach ($rigs as $rig)
-                                                <option value="{{ $rig->id }}">{{ $rig->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('rig_id')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>                                    
+                                    @if (!isset($LocationName))
+                                        <div class="col-md-6 mb-3">
+                                            <label for="rig_id">Select Rig</label>
+                                            <select class="form-control select2" name="rig_id" id="rig_id" required>
+                                                <option value="" disabled selected>Select Rig</option>
+                                                @foreach ($rigs as $rig)
+                                                    <option value="{{ $rig->id }}">{{ $rig->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @if ($errors->has('rig_id'))
+                                                <div class="text-danger">{{ $errors->first('rig_id') }}</div>
+                                            @endif
+                                        </div>
+                                    @endif
+
                                 </div>
 
                                 <button class="btn btn-primary" type="submit">Submit Form</button>
