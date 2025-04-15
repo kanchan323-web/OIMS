@@ -52,7 +52,7 @@
                                         name="edp_code" value="{{$editData->edp_code}}" required>
                                         <input type="hidden" class="form-control @error('edp_code') is-invalid @enderror"
                                         name="edp_id" value="{{$editData->id}}" required>
-                                    <div class="text-danger" id="edpError" style="display: none;"></div> 
+                                    <div class="text-danger" id="edpError" style="display: none;"></div>
                                     @error('edp_code')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -63,16 +63,16 @@
                                     <select class="form-control" name="Category_Name" required>
                                         <option value="" {{ empty($editData->category) ? 'selected' : '' }}>Select
                                             Category...</option>
-                                        <option value="Spares" {{ $editData->category == 'Spares' ? 'selected' : '' }}>
+                                        <option value="spares" {{ $editData->category == 'spares' ? 'selected' : '' }}>
                                             Spares</option>
-                                        <option value="Stores" {{ $editData->category == 'Stores' ? 'selected' : '' }}>
+                                        <option value="store" {{ $editData->category == 'store' ? 'selected' : '' }}>
                                             Stores</option>
-                                        <option value="Capital Item"
-                                            {{ $editData->category == 'Capital Item' ? 'selected' : '' }}>Capital Item
+                                        <option value="capital"
+                                            {{ $editData->category == 'capital' ? 'selected' : '' }}>Capital Item
                                         </option>
                                     </select>
                                 </div>
-                              
+
 
 
                                 <div class="col-md-6 mb-3">
@@ -102,17 +102,17 @@
                                 </div>
 
 
-                              
 
-                           
+
+
 
                                 <div class="col-md-6 mb-3">
                                     <label for="measurement">Measurement</label>
                                     <select class="form-control" name="measurement" required>
-                                        <option value="">Select Measurement</option> 
-                                        
+                                        <option value="">Select Measurement</option>
+
                                         @foreach ($UoM as $unit)
-                                            <option value="{{ $unit->abbreviation }}" 
+                                            <option value="{{ $unit->abbreviation }}"
                                                 {{ $editData->measurement == $unit->abbreviation ? 'selected' : '' }}>
                                                 {{ $unit->abbreviation }} - {{ $unit->unit_name }}
                                             </option>
@@ -138,7 +138,7 @@ $(document).ready(function () {
             $("form").on("submit", function (e) {
                 let edpCode = $("input[name='edp_code']").val();
                 let regex = /^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/; // 9 digits OR 2-3 letters + 6-7 digits
-                
+
                 if (!regex.test(edpCode)) {
                     e.preventDefault(); // Stop form submission
                     $("#edpError").text("EDP Code must be 9 digits OR start with 2-3 letters followed by 6-7 digits.").show();

@@ -13,11 +13,10 @@
                                         <label for="report_type">Report Type</label>
                                         <select class="form-control" name="report_type" id="report_type">
                                             <option disabled selected>Select Report Type...</option>
-                                            <option value="summary">Request Summary</option>
-                                            <option value="approval_rates">Approval & Decline Rates</option>
-                                            <option value="transaction_history">Transaction History</option>
-                                            <option value="fulfillment_status">Request Fulfillment Status</option>
-                                            <option value="consumption_details">Request Consumption Details</option>
+                                            <option value="pending">Pending Request</option>
+                                            <option value="approved">Approval Request</option>
+                                            <option value="rejected">Rejected Request</option>
+                                            <option value="escalated ">Escalated Request</option>
                                         </select>
                                     </div>
 
@@ -77,18 +76,16 @@
         $(document).ready(function() {
             function fetchReport() {
                 let formData = $("#filterForm").serialize();
-                // console.log("Form Data Sent:", formData); // Debugging
-
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('report.fetch') }}",
+                    url: "{{ route('admin.report.fetch') }}",
                     data: formData,
                     dataType: "json",
                     beforeSend: function() {
                         // console.log("Sending AJAX request...");
                     },
                     success: function(response) {
-                        // console.log("AJAX Response:", response);
+                         console.log("AJAX Response:", response);
                         let tableBody = $("#reportTable");
                         let tableHeaders = $("#tableHeaders");
 
@@ -108,7 +105,7 @@
                         let rows = "";
 
                         switch (reportType) {
-                            case "summary":
+                            case "pending":
                                 headers =
                                     "<th>Sr.No</th><th>Total Requests</th><th>Approved</th><th>Declined</th><th>Pending</th>";
                                 rows += `<tr>
@@ -120,7 +117,7 @@
                                             </tr>`;
                                 break;
 
-                            case "approval_rates":
+                            case "approved":
                                 headers =
                                     "<th>Sr.No</th><th>Approval Rate (%)</th><th>Decline Rate (%)</th><th>Pending (%)</th>";
                                 rows += `<tr>
@@ -132,7 +129,7 @@
                                 break;
 
 
-                            case "transaction_history":
+                            case "rejected":
                                 headers =
                                     "<th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Rig Name</th><th>Created At</th>";
 
@@ -184,7 +181,7 @@
 
                                 break;
 
-                            case "fulfillment_status":
+                            case "escalated":
                                 headers =
                                     "<th>Sr.No</th><th>Request ID</th><th>Requested Stock</th><th>Requesters Stock</th><th>Status</th><th>Expected Delivery</th><th>Actual Delivery</th>";
 
@@ -207,26 +204,6 @@
                                     });
                                 }
                                 break;
-
-                            case "consumption_details":
-                                headers =
-                                    "<th>Sr.No</th><th>Request ID</th><th>Requested Stock Item</th><th>Requester Stock Item</th><th>Initial Stock</th><th>Received Stock</th><th>Used Stock</th><th>Remaining Stock</th>";
-                                if (Array.isArray(response.data)) {
-                                    response.data.forEach((item, index) => {
-                                        rows += `<tr>
-                                                    <td>${index + 1}</td>
-                                                    <td>${item.request_id ?? '-'}</td>
-                                                    <td>${item.requested_stock_item ?? '-'}</td>
-                                                    <td>${item.requester_stock_item ?? '-'}</td>
-                                                    <td>${item.initial_stock ?? '-'}</td>
-                                                    <td>${item.received_stock ?? '-'}</td>
-                                                    <td>${item.used_stock ?? 0}</td>
-                                                    <td>${item.remaining_stock ?? 0}</td>
-                                                </tr>`;
-                                    });
-                                }
-                                break;
-
                             default:
                                 tableBody.html(
                                     '<tr><td colspan="5" class="text-center">Invalid Report Type</td></tr>'
