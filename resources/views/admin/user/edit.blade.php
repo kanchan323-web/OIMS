@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="user_type">User Type</label>
-                                        <select class="form-control" name="user_type" required>
+                                        <select class="form-control" name="user_type" id="user_type" required>
                                             <option value="" disabled {{ $user->user_type == '' ? 'selected' : '' }}>Select
                                                 User type</option>
                                             <option value="admin" {{ $user->user_type == 'admin' ? 'selected' : '' }}>Admin
@@ -75,7 +75,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6 mb-3" id="rig_section">
                                         <label for="rig_id">Select Rigs</label>
                                         <select class="form-control" name="rig_id">
                                             <option value="" disabled>Select Rig User...</option>
@@ -88,7 +88,7 @@
                                         @error('rig_id')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                    </div>
+                                    </div>                                    
                                 </div>
                                 <button class="btn btn-primary" type="submit">Update</button>
                                 <a href="{{ route('admin.index') }}" class="btn btn-light">Go Back</a>
@@ -99,5 +99,27 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleRigField() {
+            const userType = document.getElementById('user_type').value;
+            const rigSection = document.getElementById('rig_section');
+    
+            if (userType === 'admin') {
+                rigSection.style.display = 'none';
+            } else {
+                rigSection.style.display = 'block';
+            }
+        }
+    
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleRigField(); 
+    
+            document.getElementById('user_type').addEventListener('change', function () {
+                toggleRigField();
+            });
+        });
+    </script>
+    
 
 @endsection
