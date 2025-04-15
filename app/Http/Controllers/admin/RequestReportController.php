@@ -34,42 +34,33 @@ class RequestReportController extends Controller
     public function fetchReport(Request $request)
     {
         $reportType = $request->input('report_type');
+        dd($reportType);
 
         if (!$reportType) {
             return response()->json(['error' => 'Missing report type'], 400);
         }
 
-        // try {
         switch ($reportType) {
-            case 'summary':
-                $data = $this->requestSummary($request);
+            case 'pending':
+                $data = $this->pendingRequest($request);
                 break;
-            case 'approval_rates':
-                $data = $this->approvalDeclineRates($request);
+            case 'approved':
+                $data = $this->approvedRequest($request);
                 break;
-            case 'transaction_history':
-                $data = $this->transactionHistory($request);
+            case 'rejected':
+                $data = $this->rejectedRequest($request);
                 break;
-            case 'fulfillment_status':
-                $data = $this->requestFulfillmentStatus($request);
-                break;
-            case 'consumption_details':
-                $data = $this->requestConsumptionDetails($request);
+            case 'escalated':
+                $data = $this->escalatedRequest($request);
                 break;
             default:
                 return response()->json(['error' => 'Invalid report type'], 400);
         }
-
         // Ensure response is structured correctly
         return response()->json(['data' => $data ?? []]);
-
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => 'Something went wrong!'], 500);
-        // }
     }
 
-    private function requestSummary($request)
-    {
+    private function pendingRequest($request){
         $query = Requester::whereBetween('created_at', [$request->from_date, $request->to_date]);
         return [
             'total_requests' => $query->count(),
@@ -79,8 +70,7 @@ class RequestReportController extends Controller
         ];
     }
 
-    private function approvalDeclineRates($request)
-    {
+    private function approvedRequest($request){
         $query = Requester::whereBetween('created_at', [$request->from_date, $request->to_date]);
         $total = $query->count();
         return [
@@ -90,8 +80,13 @@ class RequestReportController extends Controller
         ];
     }
 
-    private function transactionHistory($request)
-    {
+    private function rejectedRequest($request){
+        return Requester::whereBetween('created_at', [$request->from_date, $request->to_date])
+            ->select('id as request_id', 'stock_items', 'quantity', 'status', 'created_at')
+            ->get();
+    }
+
+    private function escalatedRequest($request){
         return Requester::whereBetween('created_at', [$request->from_date, $request->to_date])
             ->select('id as request_id', 'stock_items', 'quantity', 'status', 'created_at')
             ->get();
