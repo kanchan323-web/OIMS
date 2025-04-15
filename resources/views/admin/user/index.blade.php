@@ -69,7 +69,7 @@
                                                     </div>
                                                 </td>
                                                 <td>{{ $user->user_name }}</td>
-                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->rig_name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->cpf_no }}</td>
                                                 <td>{{ ucfirst($user->user_type) }}</td>
