@@ -88,12 +88,19 @@
                                     </div> --}}
 
                                     <div class="col-12">
-                                        <div class="d-grid">
+                                        <div class="d-grid col-12">
                                             <button class="btn bsb-btn-xl btn-primary py-3" type="submit">Log in
                                                 now</button>
                                         </div>
-                                        <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot
-                                            Password</a>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <a href="{{ route('forgotpassword') }}" class="btn btn-default">Forgot
+                                                Password</a>
+                                            </div>
+                                            <div class="col-6" style="text-align: right;">
+                                                 <a href="{{ route('home') }}" class="btn btn-default">Go Back</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
