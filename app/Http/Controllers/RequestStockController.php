@@ -272,6 +272,10 @@ class RequestStockController extends Controller
                 'updated_at' => now(),
                 'expected_date' => $expected_date,
             ]);
+            $requesterid = User::where('id', $request->requester_id)->value('user_name');
+            $supplierid = User::where('id', $request->supplier_id)->value('user_name');
+            $requesterRigid = RigUser::where('id', $request->requester_rig_id)->value('location_id');
+            $supplierRigid = RigUser::where('id', $request->supplier_location_id)->value('location_id');
             LogsRequesters::create([
                 'request_id' => $request->requester_id,
                 'status' => 1,
@@ -292,8 +296,8 @@ class RequestStockController extends Controller
                 'receiver_type'   => $user_type,
                 'message' => sprintf(
                     'Request sent by %s to %s for %d units of stock %s',
-                    $request->requester_id,
-                    $request->supplier_id,
+                    $requesterid,
+                    $supplierid,
                     $request->requested_qty,
                     $request->stock_id
                 ),
