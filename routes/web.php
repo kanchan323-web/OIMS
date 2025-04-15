@@ -31,6 +31,8 @@ Route::get('/', function () {
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 Route::get('/log',[LogsController::class,'index'])->name('get.logs');
+Route::get('/logfilter',[LogsController::class,'filterdata'])->name('get.logs.filter');
+
 
 Route::middleware(['admin.auth'])->group(function () {
 
