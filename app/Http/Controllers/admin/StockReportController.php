@@ -110,6 +110,8 @@ class StockReportController extends Controller
         ->get();
         return $stock_adjustments;
     }
+
+    
     private function stockConsumptions($request){
         $query = Stock::query();
         if(!empty($request->from_date) || !empty($request->to_date)) {
