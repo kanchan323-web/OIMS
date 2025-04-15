@@ -30,8 +30,7 @@ Route::get('/', function () {
 //Authentication
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
-Route::get('/log',[LogsController::class,'index'])->name('get.logs');
-Route::get('/logfilter',[LogsController::class,'filterdata'])->name('get.logs.filter');
+
 
 
 Route::middleware(['admin.auth'])->group(function () {
@@ -39,6 +38,9 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::prefix('/admin')->group(function () {
         Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
         Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+
+        Route::get('/log',[LogsController::class,'index'])->name('get.logs');
+        Route::get('/logfilter',[LogsController::class,'filterdata'])->name('get.logs.filter');
 
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');

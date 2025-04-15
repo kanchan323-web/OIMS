@@ -76,11 +76,37 @@ class RigUserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string',
+                    'location_id' => [
+                'required',
+                'string',
+                'size:4', 
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4}$/' 
+            ],
         ]);
 
+    
+      
+
         $rigUser = RigUser::findOrFail($id);
-        $rigUser->update(['name' => $request->name]);
+       
+        $rigUser->update(['name' => $request->name,
+            'location_id' => $request->location_id,
+            ]);
+
+
+       
+            LogsRigUsers::create([
+                'location_id' => $request->location_id,
+                'name' => $request->name,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'creater_id' => auth()->id(),
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message'      => " Rig Updated: {$request->name} ({$request->location_id})",
+            ]);
 
         return redirect()->route('admin.rig_users.index')->with('success', 'Rig User updated successfully.');
     }
