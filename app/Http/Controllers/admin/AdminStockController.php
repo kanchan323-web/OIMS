@@ -59,7 +59,7 @@ class AdminStockController extends Controller
             ->get();
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.*')
+            ->select('stocks.*', 'edps.edp_code','edps.section','edps.description')
             ->get();
 
 
@@ -275,6 +275,14 @@ class AdminStockController extends Controller
                     continue;
                 }
 
+                $rig = RigUser::where('name', $row[1])->first();
+                if (!$rig) {
+                    $errors[] = "Row " . ($index + 2) . ": Rig {$row[1]} not found in the Rig table.";
+                    continue;
+                }
+
+                //dd($rig);
+
                 // Validate required fields
                 $requiredFields = range(0, 5);
                 foreach ($requiredFields as $fieldIndex) {
@@ -305,7 +313,7 @@ class AdminStockController extends Controller
                     // Insert new stock entry
                     Stock::create([
                         'edp_code'      => $edp->id,
-                        'rig_id'        => $user->rig_id,
+                        'rig_id'        => $rig->id,
                         'location_id'   => $locationId,
                         'location_name' => $locationName,
                         'description'   => $edp->description,
@@ -362,11 +370,10 @@ class AdminStockController extends Controller
         $editData = Stock::where('id', $id)->first();
         $edpCodes = Edp::where('id', $editData->edp_code)->first();
         $moduleName = "Edit Stock";
-        $rigs = RigUser::all(); 
-    
+        $rigs = RigUser::all();
         return view('admin.stock.edit_stock', compact('editData', 'edpCodes', 'moduleName', 'rigs'));
     }
-    
+
 
 
     public function UpdateStock(Request $request)
@@ -450,7 +457,7 @@ class AdminStockController extends Controller
             $url,
             ['rig_id' => $request->rig_id]
         );
-        
+
         return redirect()->route('admin.stock_list')->with('success', 'Stock updated successfully!');
     }
 
