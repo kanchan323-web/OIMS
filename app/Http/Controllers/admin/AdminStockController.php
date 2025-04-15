@@ -33,11 +33,15 @@ class AdminStockController extends Controller
     public function add_stock()
     {
         $moduleName = "Add Stock";
-        $rigId =  Auth::user()->rig_id;
+        $rigId = Auth::user()->rig_id;
+
         $edpCodes = Edp::all();
+        $rigs = RigUser::all(); // Fetch all rigs
         $LocationName = RigUser::where('id', $rigId)->first();
-        return view('admin.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes'));
+
+        return view('admin.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes', 'rigs'));
     }
+
 
 
     public function stock_list(Request $request)
@@ -50,15 +54,15 @@ class AdminStockController extends Controller
 
         // $stockData = Stock::select('edp_code')->distinct()->get();
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-        ->select('stocks.*', 'edps.edp_code AS EDP_Code')  
-        ->distinct()
-        ->get();
+            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
+            ->distinct()
+            ->get();
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.*')
             ->get();
-    
-       
+
+
         $moduleName = "Stock";
         return view('admin.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
@@ -84,9 +88,9 @@ class AdminStockController extends Controller
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
 
-            
-                $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
-                ->select('stocks.*', 'edps.edp_code AS EDP_Code') 
+
+            $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->select('stocks.*', 'edps.edp_code AS EDP_Code')
                 ->get();
 
             $rig_id = Auth::user()->rig_id;
@@ -108,7 +112,7 @@ class AdminStockController extends Controller
     public function stockSubmit(Request $request)
     {
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
-    
+
         $rules = [
             'location_id' => 'required',
             'location_name' => 'required',
@@ -118,9 +122,10 @@ class AdminStockController extends Controller
             'section' => 'required',
             'qty' => 'required|numeric',
             'measurement' => 'required',
-            'remarks' => 'required'
+            'remarks' => 'required',
+            'rig_id' => 'required'
         ];
-    
+
         if ($unit) {
             if ($unit->type == 'integer') {
                 $rules['new_spareable'] = 'required|integer';
@@ -134,9 +139,9 @@ class AdminStockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
-    
+
         $validator = Validator::make($request->all(), $rules);
-    
+
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -158,14 +163,14 @@ class AdminStockController extends Controller
         $stock->used_spareable = $request->used_spareable;
         $stock->remarks = $request->remarks;
         $stock->user_id = $user->id;
-        $stock->rig_id = $user->rig_id;
+        $stock->rig_id = $request->rig_id;
         $stock->save();
 
         $user = Auth::user();
-        $url = route('stock_list'); 
-        $this->notifyAdmins("User '{$user->user_name}' has created stock '{$stock->description}'.", $url);
+        $url = route('stock_list');
+        $this->notifyAdmins("User '{$user->user_name}' has created stock '{$stock->description}'.", $url, ['rig_id' => $request->rig_id]);
         $edpCode = Edp::where('id', $request->edp_code)->value('edp_code');
-        
+
         LogsStocks::create([
             'stock_id'        => $stock->id,
             'location_id'     => $stock->location_id,
@@ -192,8 +197,8 @@ class AdminStockController extends Controller
             'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
             'action'          => "ADD",
         ]);
-  
-      
+
+
         Session::flash('success', 'Stock submitted successfully!');
 
         return redirect()->route('admin.stock_list');
@@ -313,9 +318,6 @@ class AdminStockController extends Controller
                         'remarks'       => 'nill',
                         'user_id'       => $user->id,
                     ]);
-
-
-                    
                 }
             }
 
@@ -327,7 +329,7 @@ class AdminStockController extends Controller
             }
 
             $user = Auth::user();
-            $url = route('stock_list'); 
+            $url = route('stock_list');
             $this->notifyAdmins("User '{$user->user_name}' has imported bulk stocks.", $url);
 
             session()->flash('success', 'Excel file imported successfully!');
@@ -357,27 +359,30 @@ class AdminStockController extends Controller
 
     public function EditStock(Request $request, $id)
     {
-        $editData = Stock::where('id', $id)->get()->first();
+        $editData = Stock::where('id', $id)->first();
         $edpCodes = Edp::where('id', $editData->edp_code)->first();
         $moduleName = "Edit Stock";
-        return view('admin.stock.edit_stock', ['editData' => $editData, 'moduleName' => $moduleName, 'edpCodes' => $edpCodes]);
-    }
-
+        $rigs = RigUser::all(); 
     
+        return view('admin.stock.edit_stock', compact('editData', 'edpCodes', 'moduleName', 'rigs'));
+    }
+    
+
+
     public function UpdateStock(Request $request)
     {
         $dataid = $request->id;
-    
+
         $user = Auth::user();
-    
+
         $stock = Stock::find($dataid);
-   
+
         if (!$stock) {
             return redirect()->route('admin.stock_list')->with('error', 'Stock not found.');
         }
-    
+
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
-    
+
         $rules = [
             'location_id' => 'required',
             'location_name' => 'required',
@@ -387,9 +392,10 @@ class AdminStockController extends Controller
             'section' => 'required',
             'qty' => 'required|numeric',
             'measurement' => 'required',
-            'remarks' => 'required'
+            'remarks' => 'required',
+            'rig_id' => 'required'
         ];
-    
+
         if ($unit) {
             if ($unit->type == 'integer') {
                 $rules['new_spareable'] = 'required|integer';
@@ -419,7 +425,7 @@ class AdminStockController extends Controller
             'used_spareable'  => $stock->used_spareable,
             'remarks'         => $request->remarks,
             'user_id'         => $stock->user_id,
-            'rig_id'          => $stock->rig_id,
+            'rig_id'          => $request->rig_id,
             'req_status'      => "Inactive",
             'created_at'      => now(),
             'updated_at'      => now(),
@@ -430,25 +436,29 @@ class AdminStockController extends Controller
             'message'         => "Stock Updated for EDP Code: {$request->edp_code}.",
             'action'          => "Update",
         ]);
-    
+
         $validatedData = $request->validate($rules);
-    
-        $validatedData['rig_id'] = $user->rig_id;
-    
+
+        $validatedData['rig_id'] = $request->rig_id;
+
         $stock->update($validatedData);
 
         $user = Auth::user();
-        $url = route('stock_list'); 
-        $this->notifyAdmins("User '{$user->user_name}' has edited bulk stock '{$stock->description}'.", $url);
-    
+        $url = route('stock_list');
+        $this->notifyAdmins(
+            "User '{$user->user_name}' has edited bulk stock '{$stock->description}'.",
+            $url,
+            ['rig_id' => $request->rig_id]
+        );
+        
         return redirect()->route('admin.stock_list')->with('success', 'Stock updated successfully!');
     }
-    
+
 
     public function DeleteStock(Request $request)
     {
         $deleteId = $request->delete_id;
-         Stock::where('id', $deleteId)->delete();
+        Stock::where('id', $deleteId)->delete();
         return redirect()->route('admin.stock_list');
     }
 
@@ -533,21 +543,40 @@ class AdminStockController extends Controller
     }
 
 
-    private function notifyAdmins($message, $url = null)
+    private function notifyAdmins($message, $url = null, $rigId = null)
     {
-        $admins = Auth::user();
-    
+        $admins = User::where('user_type', 'admin')->get();
+
         foreach ($admins as $admin) {
-            Notification::create([
+            $notification = Notification::create([
                 'type'            => NewRequestNotification::class,
                 'notifiable_type' => User::class,
                 'notifiable_id'   => $admin->id,
                 'user_id'         => $admin->id,
                 'data'            => json_encode([
                     'message' => $message,
-                    'url'     => $url
+                    'url'     => $url ?? route('dashboard'),
                 ]),
-                'rig_id' => $admins->rig_id,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
+
+            $rigUsers = User::where('rig_id', $rigId)
+                ->where('user_type', 'user')
+                ->get();
+
+            foreach ($rigUsers as $rigUser) {
+                DB::table('notification_user')->insert([
+                    'user_id'         => $rigUser->id,
+                    'notification_id' => $notification->id,
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
+            }
+
+            DB::table('notification_user')->insert([
+                'user_id'         => $admin->id,
+                'notification_id' => $notification->id,
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
