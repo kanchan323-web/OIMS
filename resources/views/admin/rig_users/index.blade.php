@@ -37,39 +37,21 @@
                             <table class="data-tables table mb-0 tbl-server-info">
                                 <thead class="bg-white text-uppercase">
                                     <tr class="ligth ligth-data">
-                                        <th>
-                                            <div class="checkbox d-inline-block">
-                                                <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                                <label for="checkbox1" class="mb-0"></label>
-                                            </div>
-                                        </th>
-                                        <th>#</th> 
+                                        <th>#</th>
                                         <th>Name</th>
                                         <th>Created At</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="ligth-body">
-                                    @foreach ($rigUsers as $index => $user)
+                                    @foreach ($rigUsers as $user)
                                     <tr>
-                                        <td>
-                                            <div class="checkbox d-inline-block">
-                                                <input type="checkbox" class="checkbox-input" id="checkbox{{ $user->id }}">
-                                                <label for="checkbox{{ $user->id }}" class="mb-0"></label>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div>
-                                                    {{ $loop->iteration }}
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->created_at }}</td>
                                         <td>
                                             <div class="d-flex align-items-center list-action">
-                                                <a class="badge badge-info mr-2" data-toggle="tooltip" title="View" href="{{ route('admin.rig_users.show', $user->id)}}">
+                                                <a class="badge badge-info mr-2" title="View" data-toggle="modal" data-target="#exampleModal" onclick="viewrig({{ $user }})">
                                                     <i class="ri-eye-line mr-0"></i>
                                                 </a>
                                                 <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit" href="{{ route('admin.rig_users.edit', $user->id) }}">
@@ -89,12 +71,66 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">View Rig</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         
 
+                <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name">Rig Name</label>
+                        <input type="text" id="rigName" class="form-control @error('name') is-invalid @enderror" name="name" value="" readonly required>
+                        {{-- Validation Error Message Below the Field --}}
+                        @error('name')
+                        <small class="text-danger d-block mt-1">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="location_id">Location ID</label>
+                        <input 
+                            type="text" 
+                            id="location_id" 
+                            name="location_id" 
+                            class="form-control"
+                            placeholder="e.g. RN05"
+                            readonly
+                        >
+                        <small class="text-danger error-message" style="display: none;">
+                            Must be 4 characters with at least 1 letter and 1 number
+                        </small>
+                    </div>
+                </div>
+      
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function viewrig(rig){
+            let riglocation_id = rig['location_id'];
+            let rigname = rig['name'];
+
+            $("#rigName").val(rigname);
+            $("#location_id").val(riglocation_id);
+    }
+  </script>
 @endsection

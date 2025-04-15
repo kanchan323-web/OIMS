@@ -48,7 +48,6 @@
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name">Rig Name</label>
-                                    
                                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                                     {{-- Validation Error Message Below the Field --}}
                                     @error('name')
@@ -65,9 +64,9 @@
                                         placeholder="e.g. RN05"
                                     >
                                     <small class="text-danger error-message" style="display: none;">
-                                        Must be 4 characters with at least 1 letter and 1 number 
+                                        Must be 4 characters with at least 1 letter and 1 number
                                     </small>
-                                </div> 
+                                </div>
                             </div>
                             <button class="btn btn-primary" type="submit">Submit</button>
                             <a href="{{ route('admin.rig_users.index') }}" class="btn btn-light">Go Back</a>
