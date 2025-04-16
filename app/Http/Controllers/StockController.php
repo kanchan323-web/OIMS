@@ -495,24 +495,29 @@ class StockController extends Controller
 
     public function downloadPdf(Request $request)
     {
-        $query = Stock::query();
+        $query = Stock::query()
+            ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code')
+            ->orderBy('stocks.id', 'desc');
 
         $filtersApplied = false;
 
-        if ($request->has('category') && $request->category) {
-            $query->where('category', $request->category);
-            $filtersApplied = true;
-        }
-        if ($request->has('location_name') && $request->location_name) {
-            $query->where('location_name', 'LIKE', '%' . $request->location_name . '%');
-            $filtersApplied = true;
-        }
-        if ($request->has('form_date') && $request->has('to_date')) {
-            $query->whereBetween('created_at', [$request->form_date, $request->to_date]);
+        if ($request->has('edp_code') && $request->category) {
+            $query->where('stocks.edp_code', $request->category);
             $filtersApplied = true;
         }
 
-        $stockData = $filtersApplied ? $query->get() : Stock::all();
+        if ($request->has('description') && $request->location_name) {
+            $query->where('stocks.description', 'LIKE', '%' . $request->location_name . '%');
+            $filtersApplied = true;
+        }
+
+        if ($request->has('form_date') && $request->has('to_date')) {
+            $query->whereBetween('stocks.created_at', [$request->form_date, $request->to_date]);
+            $filtersApplied = true;
+        }
+
+        $stockData = $query->orderBy('stocks.created_at', 'desc')->get();
 
         // Generate PDF with retrieved data
         $pdf = PDF::loadView('pdf.stock_report', compact('stockData'));
@@ -550,14 +555,14 @@ class StockController extends Controller
     private function notifyAdmins($message, $url = null)
     {
         $user = Auth::user();
-    
+
         $admins = User::where('user_type', 'admin')->get();
-    
+
         foreach ($admins as $admin) {
             $notification = Notification::create([
                 'type'            => NewRequestNotification::class,
                 'notifiable_type' => User::class,
-                'notifiable_id'   => $admin->id, 
+                'notifiable_id'   => $admin->id,
                 'user_id'         => $user->id,
                 'data'            => json_encode([
                     'message' => $message,
@@ -566,11 +571,11 @@ class StockController extends Controller
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
-    
+
             $rigUsers = User::where('rig_id', $user->rig_id)
-                            ->where('user_type', 'user')
-                            ->get();
-    
+                ->where('user_type', 'user')
+                ->get();
+
             foreach ($rigUsers as $rigUser) {
                 DB::table('notification_user')->insert([
                     'user_id'         => $rigUser->id,
@@ -579,7 +584,7 @@ class StockController extends Controller
                     'updated_at'      => now(),
                 ]);
             }
-    
+
             DB::table('notification_user')->insert([
                 'user_id'         => $admin->id,
                 'notification_id' => $notification->id,
@@ -588,5 +593,4 @@ class StockController extends Controller
             ]);
         }
     }
-    
 }

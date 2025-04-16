@@ -196,7 +196,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('get_edp_details') }}",
+                    url: "{{ route('admin.get_edp_details') }}",
                     data: { edp_code: edpCode },
                     success: function (response) {
                         console.log("EDP Data for Edit:", response);

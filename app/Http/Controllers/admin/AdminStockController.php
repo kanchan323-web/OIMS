@@ -467,7 +467,7 @@ class AdminStockController extends Controller
 
         $validatedData = $request->validate($rules);
         $validatedData['location_id'] = $rigUser->location_id;
-        $validatedData['location_name'] = $rigUser->location_name;
+        $validatedData['location_name'] = $rigUser->name;
         $validatedData['rig_id'] = $request->rig_id;
 
         $stock->update($validatedData);
