@@ -46,8 +46,22 @@
                                         @enderror
                                     </div>
 
-
                                     <div class="col-md-6 mb-3">
+                                        <label for="rig_id">Select Rig</label>
+                                        <select class="form-control select2" name="rig_id" id="rig_id" required readonly>
+                                            <option value="" disabled>Select Rig</option>
+                                            @foreach ($rigs as $rig)
+                                                <option value="{{ $rig->id }}" {{ old('rig_id', $editData->rig_id) == $rig->id ? 'selected' : '' }}>
+                                                    {{ $rig->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('rig_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>    
+
+                                    {{-- <div class="col-md-6 mb-3">
                                         <label for="">Location ID</label>
                                         <input type="text" class="form-control @error('location_id') is-invalid @enderror"
                                             name="location_id" value="{{ old('location_id', $editData->location_id) }}"
@@ -65,7 +79,7 @@
                                         @error('location_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-md-6 mb-3">
                                         <label for="">Category</label>
@@ -158,20 +172,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
-                                        <label for="rig_id">Select Rig</label>
-                                        <select class="form-control select2" name="rig_id" id="rig_id" required>
-                                            <option value="" disabled>Select Rig</option>
-                                            @foreach ($rigs as $rig)
-                                                <option value="{{ $rig->id }}" {{ old('rig_id', $editData->rig_id) == $rig->id ? 'selected' : '' }}>
-                                                    {{ $rig->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('rig_id')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>                                    
+                                                                   
                                 </div>
 
                                 <button class="btn btn-primary" type="submit">Update Stock</button>
