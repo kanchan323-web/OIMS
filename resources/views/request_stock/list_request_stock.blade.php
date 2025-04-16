@@ -29,7 +29,7 @@
                                     <div class="row">
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">EDP Code</label>
-                                            <select class="form-control" name="edp_code" id="edp_code">
+                                            <select class="form-control select2" name="edp_code" id="edp_code" required>
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($data as $edp_code_data)
                                                     <option value="{{ $edp_code_data->edp_code }}">
@@ -38,6 +38,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        
                                         <div class="col-md-2 mb-2">
                                             <label for="Description">Description</label>
                                             <input type="text" class="form-control" placeholder="Description"
@@ -1238,5 +1239,16 @@
 
 
     </script>
+    <script>
+        $(document).ready(function () {
+            $('#edp_code').select2({
+                theme: 'bootstrap4',
+                placeholder: "Select EDP Code...",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+    
 
 @endsection

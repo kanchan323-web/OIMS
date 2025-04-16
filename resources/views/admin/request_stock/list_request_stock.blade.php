@@ -1239,4 +1239,15 @@
 
     </script>
 
+<script>
+    $(document).ready(function () {
+        $('#edp_code').select2({
+            theme: 'bootstrap4', // applies Bootstrap styling
+            placeholder: "Select EDP Code...",
+            allowClear: true,
+            width: '100%' // makes it match Bootstrap .form-control width
+        });
+    });
+</script>
+
 @endsection

@@ -31,6 +31,7 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    
 
                                     <div class="col-md-6 mb-3">
                                         <label for="location_ids">Location Id</label>
@@ -321,6 +322,17 @@
 
 
     </script>
+    <script>
+        $(document).ready(function () {
+            $('#edp_code_id').select2({
+                theme: 'bootstrap4', // Optional, for Bootstrap look
+                placeholder: "Select EDP Code",
+                allowClear: true,
+                width: '100%' // Matches form-control width
+            });
+        });
+    </script>
+    
 
 
 
