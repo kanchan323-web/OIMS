@@ -57,13 +57,10 @@
                                                 <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit" href="{{ route('admin.rig_users.edit', $user->id) }}">
                                                     <i class="ri-pencil-line mr-0"></i>
                                                 </a>
-                                                <form action="{{ route('admin.rig_users.destroy', $user->id) }}" method="POST" class="d-inline-block">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="badge bg-warning mr-2 border-0" onclick="return confirm('Are you sure?')" data-toggle="tooltip" title="Delete">
-                                                        <i class="ri-delete-bin-line mr-0"></i>
-                                                    </button>
-                                                </form>
+                                                <a class="badge bg-warning mr-2 border-0 mr-2" title="View" data-toggle="modal" data-target="#DeleteModal" >
+                                                    <i class="ri-delete-bin-line mr-0"></i>
+                                                </a>
+
                                             </div>
                                         </td>
                                     </tr>
@@ -77,6 +74,32 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{{ route('admin.rig_users.destroy', $user->id) }}" method="POST" class="d-inline-block">
+                    @csrf
+                    @method('DELETE')
+                    
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -133,4 +156,5 @@
             $("#location_id").val(riglocation_id);
     }
   </script>
+  
 @endsection
