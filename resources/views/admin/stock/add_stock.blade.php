@@ -19,9 +19,22 @@
 
                                 <div class="form-row">
 
-                                    <div class="col-md-6 mb-3">
+                                    {{-- <div class="col-md-6 mb-3">
                                         <label for="edp_code_id">EDP Code</label>
                                         <select class="form-control select2" name="edp_code" id="edp_code_id" required>
+                                            <option value="" disabled selected>Select EDP Code</option>
+                                            @foreach ($edpCodes as $edp)
+                                                <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('edp_code')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div> --}}
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="edp_code_id">EDP Code</label>
+                                        <select class="form-control " name="edp_code" id="edp_code_id" required>
                                             <option value="" disabled selected>Select EDP Code</option>
                                             @foreach ($edpCodes as $edp)
                                                 <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
@@ -350,6 +363,17 @@
 
 
     </script>
+    <script>
+        $(document).ready(function() {
+            $('#edp_code_id').select2({
+    theme: 'bootstrap4', // Match Bootstrap theme
+    placeholder: "Select EDP Code",
+    allowClear: true,
+    width: '100%' // Important for layout
+});
+        });
+    </script>
+    
 
 
 

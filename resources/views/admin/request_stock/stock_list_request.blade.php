@@ -38,16 +38,15 @@
                                 <form id="filterForm" class="mr-3 position-relative">
                                     <div class="row">
                                         <div class="col-md-2 mb-2">
-
-
                                             <label for="edp_code">EDP Code</label>
-                                            <select class="form-control" name="edp_code" id="edp_code">
+                                            <select class="form-control select2" name="edp_code" id="edp_code" required>
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($EDP_Code_ID as $edp_code_id)
                                                     <option value="{{ $edp_code_id->edp_code }}">{{ $edp_code_id->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
+                                        
 
 
                                         <div class="col-md-2 mb-2">
@@ -709,6 +708,16 @@
             }, 3000);
         });
     </script>
+<script>
+    $(document).ready(function () {
+        $('#edp_code').select2({
+            theme: 'bootstrap4', // applies Bootstrap styling
+            placeholder: "Select EDP Code...",
+            allowClear: true,
+            width: '100%' // makes it match Bootstrap .form-control width
+        });
+    });
+</script>
 
 
 

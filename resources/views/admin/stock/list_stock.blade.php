@@ -28,7 +28,7 @@
                             <div id="user_list_datatable_info" class="dataTables_filter">
                                 <form id="filterForm" class="mr-3 position-relative">
                                     <div class="row">
-                                        <div class="col-md-2 mb-2">
+                                        {{-- <div class="col-md-2 mb-2">
                                             <label for="edp_code">EDP Code</label>
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
@@ -36,7 +36,18 @@
                                                     <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
+                                        </div> --}}
+
+                                        <div class="col-md-2 mb-2">
+                                            <label for="edp_code">EDP Code</label>
+                                            <select class="form-control select2" name="edp_code" id="edp_code" required>
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($stockData as $stock)
+                                                    <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
+                                        
 
                                         <div class="col-md-2 mb-2">
                                             <label for="Description">Description</label>
@@ -436,6 +447,16 @@
             }, 3000);
         });
     </script>
+<script>
+    $(document).ready(function () {
+        $('#edp_code').select2({
+            theme: 'bootstrap4', // match Bootstrap styling
+            placeholder: "Select EDP Code...",
+            allowClear: true,
+            width: '100%' // ensures it matches .form-control width
+        });
+    });
+</script>
 
 
 
