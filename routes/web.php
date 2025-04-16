@@ -4,7 +4,8 @@ use App\Http\Controllers\admin\AdminRequestStockController;
 use App\Http\Controllers\Admin\Masters\RigUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User;
-use App\Http\Controllers\LogsController;
+use App\Http\Controllers\LogsController as AdminLogsController;
+use App\Http\Controllers\UserLogsController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\RequestStockController;
 use App\Http\Controllers\LoginController;
@@ -31,16 +32,15 @@ Route::get('/', function () {
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 
-
-
 Route::middleware(['admin.auth'])->group(function () {
 
     Route::prefix('/admin')->group(function () {
         Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
         Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
 
-        Route::get('/log',[LogsController::class,'index'])->name('get.logs');
-        Route::get('/logfilter',[LogsController::class,'filterdata'])->name('get.logs.filter');
+        //admin Logs
+        Route::get('/log',[AdminLogsController::class,'index'])->name('get.logs');
+        Route::get('/logfilter',[AdminLogsController::class,'filterdata'])->name('get.logs.filter');
 
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
@@ -160,6 +160,11 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/user')->group(function () {
         Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
         Route::get('/profile', [LoginController::class, 'profile'])->name('user.profile');
+
+         //user Logs
+         Route::get('/user_log',[UserLogsController::class,'index'])->name('user.get.logs');
+         Route::get('/user_logfilter',[UserLogsController::class,'filterdata'])->name('user.get.logs.filter');
+
         //Registration of users
         Route::get('/register', [LoginController::class, 'register'])->name('user.register');
         Route::post('/registration', [LoginController::class, 'registerSubmit'])->name('user.registerSubmit');
