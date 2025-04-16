@@ -16,6 +16,7 @@ use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\masters\EdpController;
 use App\Http\Controllers\admin\masters\CategoryController;
+use App\Http\Controllers\admin\masters\SectionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StockReportController;
 use App\Http\Controllers\RequestReportController;
@@ -81,6 +82,14 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/category/{id}/edit', [CategoryController::class, 'edit'])->name('admin.category.edit');
         Route::post('/category/update', [CategoryController::class, 'update'])->name('admin.category.update');
         Route::post('/category/delete', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
+
+         //Section master
+         Route::get('/section', [SectionController::class, 'index'])->name('admin.section.index');
+         Route::get('/section/create', [SectionController::class, 'create'])->name('admin.section.create');
+         Route::post('/section', [SectionController::class, 'store'])->name('admin.section.store');
+         Route::get('/section/{id}/edit', [SectionController::class, 'edit'])->name('admin.section.edit');
+         Route::post('/section/update', [SectionController::class, 'update'])->name('admin.section.update');
+         Route::post('/section/delete', [SectionController::class, 'destroy'])->name('admin.section.destroy');
 
 
         //Stocks

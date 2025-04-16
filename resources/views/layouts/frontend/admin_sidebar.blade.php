@@ -38,36 +38,6 @@
                     </a>
                 </li>
 
-                <!--       <li class="{{ Route::is('admin.rig_users.index') || Route::is('admin.rig_users.create') ? 'active' : '' }}">
-                    <a href="#rig" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                        <svg class="svg-icon" id="p-dash8" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 21c-4.97-4.97-8-8.92-8-13a8 8 0 1 1 16 0c0 4.08-3.03 8.03-8 13z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <span class="ml-4">Rigs</span>
-                        <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="10 15 15 20 20 15"></polyline>
-                            <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                        </svg>
-                    </a>
-                    <ul id="rig" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class=" ">
-                            <a href="{{ route('admin.rig_users.index') }}">
-                                <i class="las la-minus"></i><span>All Rig</span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="{{ route('admin.rig_users.create') }}">
-                                <i class="las la-minus"></i><span>Add Rig</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>  -->
-
                 <li class="{{ Route::is('admin.index') ? 'active' : '' }}">
                     <a href="{{ route('admin.index') }}" class="svg-icon">
                         <svg class="svg-icon" id="p-dash8" width="20" height="20"
@@ -82,37 +52,14 @@
                     </a>
                 </li>
 
-                <!--        <li class=" {{ Route::is('admin.index') || Route::is('admin.create') ? 'active' : '' }}">
-                    <a href="#users" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                        <svg class="svg-icon" id="p-dash8" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                <li class="{{ Route::is('admin.edp.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.section.index') }}" class="svg-icon">
+                        <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
-                        <span class="ml-4">Users</span>
-                        <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="10 15 15 20 20 15"></polyline>
-                            <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                        </svg>
+                        <span class="ml-4">Section</span>
                     </a>
-                    <ul id="users" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="">
-                            <a href="{{ route('admin.index') }}">
-                                <i class="las la-minus"></i><span>All User</span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="{{ route('admin.create') }}">
-                                <i class="las la-minus"></i><span>Add User</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li> -->
+                </li>
 
                 <li class="{{ Route::is('admin.edp.index') ? 'active' : '' }}">
                     <a href="{{ route('admin.edp.index') }}" class="svg-icon">
