@@ -35,21 +35,36 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="rig_id">Select Rig</label>
-                                        <select class="form-control select2" name="rig_id" id="rig_id" required>
-                                            <option value="" disabled {{ old('rig_id', $LocationName->rig_id ?? $stock->rig_id ?? '') == '' ? 'selected' : '' }}>
-                                                Select Rig
-                                            </option>
+                                    
+                                        @php
+                                            $selectedRigId = old('rig_id', $LocationName->rig_id ?? $stock->rig_id ?? '');
+                                            $isDisabled = !empty($selectedRigId);
+                                        @endphp
+                                    
+                                        <select class="form-control select2" name="rig_id_display" id="rig_id" {{ $isDisabled ? 'disabled' : '' }} required>
+                                            <option value="" disabled {{ $selectedRigId == '' ? 'selected' : '' }}>Select Rig</option>
                                             @foreach ($rigs as $rig)
-                                                <option value="{{ $rig->id }}"
-                                                    {{ old('rig_id', $LocationName->rig_id ?? $stock->rig_id ?? '') == $rig->id ? 'selected' : '' }}>
+                                                <option value="{{ $rig->id }}" {{ $selectedRigId == $rig->id ? 'selected' : '' }}>
                                                     {{ $rig->name }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                    
+                                        {{-- Hidden field to submit actual value if select is disabled --}}
+                                        @if ($isDisabled)
+                                            <input type="hidden" name="rig_id" value="{{ $selectedRigId }}">
+                                        @else
+                                            {{-- Name must be rig_id if not disabled so it submits normally --}}
+                                            <script>
+                                                document.getElementById('rig_id').setAttribute('name', 'rig_id');
+                                            </script>
+                                        @endif
+                                    
                                         @if ($errors->has('rig_id'))
                                             <div class="text-danger">{{ $errors->first('rig_id') }}</div>
                                         @endif
                                     </div>
+                                    
 
                                     {{-- <div class="col-md-6 mb-3">
                                         <label for="location_ids">Location Id</label>
