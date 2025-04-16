@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\LogsUser;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -37,17 +38,54 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_name'    => 'required|string|max:255',
-            'email'        => 'required|email|unique:users',
-            'cpf_no'       => 'required|string|max:255',
-            'password'     => 'required|min:6',
+            'user_name'    => [
+                'required',
+                'string',
+                'max:255',
+                'unique:users,user_name',
+                'regex:/^[A-Za-z\s]+$/',
+            ],
+            'email'        => 'required|email|unique:users,email',
+            'cpf_no'       => 'required|string|max:255|unique:users,cpf_no',
+            'password'     => [
+                'required',
+                'min:8',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
+            ],
             'user_status'  => 'required|integer',
             'user_type'    => 'required|string|in:admin,user',
             'rig_id'       => 'nullable|integer',
+        ], [
+            'user_name.required' => 'The user name is required.',
+            'user_name.string'   => 'The user name must be a valid string.',
+            'user_name.max'      => 'The user name may not be greater than 255 characters.',
+            'user_name.unique'   => 'This user name is already taken.',
+            'user_name.regex'    => 'The user name may only contain letters and spaces.',
+
+            'email.required'     => 'The email address is required.',
+            'email.email'        => 'Please enter a valid email address.',
+            'email.unique'       => 'This email address is already registered.',
+
+            'cpf_no.required'    => 'The CPF number is required.',
+            'cpf_no.unique'      => 'This CPF number is already registered.',
+            'cpf_no.string'      => 'The CPF number must be a valid string.',
+            'cpf_no.max'         => 'The CPF number may not exceed 255 characters.',
+
+            'password.required'  => 'A password is required.',
+            'password.min'       => 'The password must be at least 8 characters.',
+            'password.regex'     => 'Password must include at least one letter, one number, and one special character.',
+
+            'user_status.required' => 'Please select a user status.',
+            'user_status.integer'  => 'Invalid user status selected.',
+
+            'user_type.required' => 'Please select a user type.',
+            'user_type.in'       => 'User type must be either Admin or User.',
+
+            'rig_id.integer'     => 'Invalid rig selection.',
         ]);
 
         $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
-        // Create the user
+
         $user = User::create([
             'user_name'   => $request->user_name,
             'email'       => $request->email,
@@ -58,16 +96,13 @@ class UserController extends Controller
             'rig_id'      => $rigId,
         ]);
 
-
-        // Log the creation without storing the password
-
-        $data = LogsUser::create([
+        LogsUser::create([
             'user_name'     => $request->user_name,
             'email'         => $request->email,
             'cpf_no'        => $request->cpf_no,
-            'user_status' => $request->user_status,
+            'user_status'   => $request->user_status,
             'user_type'     => $request->user_type,
-            'rig_id'      => $request->rig_id,
+            'rig_id'        => $rigId,
             'creater_id'    => auth()->id(),
             'creater_type'  => auth()->user()->user_type,
             'receiver_id'   => null,
@@ -77,6 +112,7 @@ class UserController extends Controller
 
         return redirect()->route('admin.index')->with('success', 'User created successfully.');
     }
+
 
     // Show a specific user
     public function show($id)
@@ -101,18 +137,60 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail((int) $id);
-
-        $request->validate([
-            'user_name'   => 'required|string|max:255',
-            'email'       => 'required|email|unique:users,email,' . $id,
-            'cpf_no'      => 'required|string|max:255',
+    
+        $rules = [
+            'user_name'   => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[A-Za-z\s]+$/',
+            ],
+            'email'       => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($id),
+            ],
+            'cpf_no'      => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users')->ignore($id),
+            ],
             'user_status' => 'required|integer',
             'user_type'   => 'required|string|in:admin,user',
             'rig_id'      => 'nullable|integer',
+        ];
+    
+        // Add password rules only if password is being changed
+        if (!empty($request->password)) {
+            $rules['password'] = [
+                'min:8',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
+            ];
+        }
+    
+        $request->validate($rules, [
+            'user_name.required' => 'The user name is required.',
+            'user_name.regex'    => 'The user name must only contain letters and spaces.',
+    
+            'email.required'     => 'The email address is required.',
+            'email.email'        => 'Please provide a valid email address.',
+            'email.unique'       => 'This email is already taken.',
+    
+            'cpf_no.required'    => 'The CPF number is required.',
+            'cpf_no.unique'      => 'This CPF number is already in use.',
+    
+            'password.min'       => 'The password must be at least 8 characters.',
+            'password.regex'     => 'Password must include at least one letter, one number, and one special character.',
+    
+            'user_status.required' => 'User status is required.',
+            'user_type.required'   => 'User type is required.',
+            'user_type.in'         => 'Invalid user type selected.',
+            'rig_id.integer'       => 'Rig ID must be a number.',
         ]);
-
+    
         $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
-
+    
         $user->update([
             'user_name'   => $request->user_name,
             'email'       => $request->email,
@@ -121,11 +199,11 @@ class UserController extends Controller
             'user_type'   => $request->user_type,
             'rig_id'      => $rigId,
         ]);
-
-        if (isset($request->password)) {
+    
+        if (!empty($request->password)) {
             $user->update(['password' => Hash::make($request->password)]);
         }
-
+    
         LogsUser::create([
             'user_name'     => $request->user_name,
             'email'         => $request->email,
@@ -139,16 +217,16 @@ class UserController extends Controller
             'receiver_type' => null,
             'message'       => "User '{$request->user_name}' has been updated.",
         ]);
-
+    
         if (auth()->id() == $user->id) {
             auth()->logout();
             return redirect()->route('login')->with('message', 'Role updated. Please log in again.');
         }
-
+    
         return redirect()->route('admin.index')->with('success', 'User updated successfully.');
     }
 
-
+    
     // Delete a user
     public function destroy($id)
     {

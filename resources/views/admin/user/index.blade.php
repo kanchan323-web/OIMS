@@ -77,24 +77,20 @@
                                                 <td>
                                                     <div class="d-flex align-items-center list-action">
                                                         <a class="badge badge-info mr-2" data-toggle="modal" title="View"
-                                                        data-target="#userViewModal" onclick="viewtoclick({{$user}})">
-                                                        <i class="ri-eye-line mr-0"></i>
-                                                     </a>
+                                                            data-target="#userViewModal" onclick="viewtoclick({{$user}})">
+                                                            <i class="ri-eye-line mr-0"></i>
+                                                        </a>
 
                                                         <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit"
                                                             href="{{ route('admin.edit', $user->id) }}">
                                                             <i class="ri-pencil-line mr-0"></i>
                                                         </a>
-                                                        <form action="{{ route('admin.destroy', $user->id) }}" method="POST"
-                                                            class="d-inline-block">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="badge bg-warning mr-2 border-0"
-                                                                onclick="return confirm('Are you sure?')" data-toggle="tooltip"
-                                                                title="Delete">
-                                                                <i class="ri-delete-bin-line mr-0"></i>
-                                                            </button>
-                                                        </form>
+                                                        <a href="javascript:void(0);"
+                                                            class="badge bg-warning mr-2 border-0 delete-btn"
+                                                            data-toggle="tooltip" title="Delete" data-id="{{ $user->id }}"
+                                                            data-action="{{ route('admin.destroy', $user->id) }}">
+                                                            <i class="ri-delete-bin-line mr-0"></i>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -113,59 +109,87 @@
     <!-- Button trigger modal -->
 
 
-  <!-- Modal -->
-  <div class="modal fade" id="userViewModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">View User </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <div class="card-body">
-                    <div class="form-row">
-                        <div class="col-md-6 mb-3">
-                            <label for="user_name">User Name</label>
-                            <input type="text" class="form-control" id="UserName" value="" readonly>
+    <!-- Modal -->
+    <div class="modal fade" id="userViewModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">View User </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <label for="user_name">User Name</label>
+                                <input type="text" class="form-control" id="UserName" value="" readonly>
 
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="Email" value="" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="Email" value="" readonly>
 
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="cpf_no">CPF No</label>
-                            <input type="text" class="form-control" id="CpfNo"  readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cpf_no">CPF No</label>
+                                <input type="text" class="form-control" id="CpfNo" readonly>
 
-                        </div>
+                            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="user_status">User Status</label>
-                            <input type="text" class="form-control" id="UserStatus"  readonly>
+                            <div class="col-md-6 mb-3">
+                                <label for="user_status">User Status</label>
+                                <input type="text" class="form-control" id="UserStatus" readonly>
 
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="user_type">User Type</label>
-                            <input type="text" class="form-control" id="UserType" value="" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="user_type">User Type</label>
+                                <input type="text" class="form-control" id="UserType" value="" readonly>
 
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="rig_id">Rigs Name</label>
-                            <input type="text" class="form-control" id="RigName" value="" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="rig_id">Rigs Name</label>
+                                <input type="text" class="form-control" id="RigName" value="" readonly>
 
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this user? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="POST" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
 
         $(document).ready(function () {
@@ -176,28 +200,48 @@
         });
 
         function viewtoclick(data) {
-                // Get DOM elements
-                const rigNameInput = document.getElementById("RigName");
-                const rigNameLabel = document.querySelector('label[for="rig_id"]');
-                const rigname = {!! json_encode($rigUsers) !!}; // Assuming this is a PHP-to-JS variable
+            // Get DOM elements
+            const rigNameInput = document.getElementById("RigName");
+            const rigNameLabel = document.querySelector('label[for="rig_id"]');
+            const rigname = {!! json_encode($rigUsers) !!}; // Assuming this is a PHP-to-JS variable
 
-                // Admin: Hide RigName | Non-admin: Show RigName (read-only)
-                if (data.user_type === "admin") {
-                    rigNameInput.style.display = "none";
-                    rigNameLabel.style.display = "none";
-                } else {
-                    rigNameInput.style.display = "block"; // or "" to reset to default
-                    rigNameLabel.style.display = "block"; // or "" to reset to default
-                    rigNameInput.value = data.rig_name || ""; // Set value if not admin
-                }
-
-                // Set other field values
-                document.getElementById("UserName").value = data.user_name;
-                document.getElementById("Email").value = data.email;
-                document.getElementById("CpfNo").value = data.cpf_no;
-                document.getElementById("UserStatus").value = data.user_type;
-                document.getElementById("UserType").value = (data.user_status == 1) ? "Active" : "Inactive";
+            // Admin: Hide RigName | Non-admin: Show RigName (read-only)
+            if (data.user_type === "admin") {
+                rigNameInput.style.display = "none";
+                rigNameLabel.style.display = "none";
+            } else {
+                rigNameInput.style.display = "block"; // or "" to reset to default
+                rigNameLabel.style.display = "block"; // or "" to reset to default
+                rigNameInput.value = data.rig_name || ""; // Set value if not admin
             }
+
+            // Set other field values
+            document.getElementById("UserName").value = data.user_name;
+            document.getElementById("Email").value = data.email;
+            document.getElementById("CpfNo").value = data.cpf_no;
+            document.getElementById("UserStatus").value = data.user_type;
+            document.getElementById("UserType").value = (data.user_status == 1) ? "Active" : "Inactive";
+        }
+
+        $(document).ready(function () {
+            // Automatically fade out alerts after 3 seconds
+            setTimeout(function () {
+                $(".alert").fadeOut("slow");
+            }, 3000);
+
+            // Handle delete button click
+            $('.delete-btn').on('click', function () {
+                const userId = $(this).data('id');
+                const actionUrl = $(this).data('action');
+
+                // Set the action of the form to delete the user
+                $('#deleteForm').attr('action', actionUrl);
+
+                // Show the confirmation modal
+                $('#deleteConfirmationModal').modal('show');
+            });
+        });
+
     </script>
 
 

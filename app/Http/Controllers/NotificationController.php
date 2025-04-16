@@ -18,14 +18,12 @@ class NotificationController extends Controller
         if ($user->user_type === 'admin') {
             // Admins get notifications directly via notifiable_id
             $dropdownNotifications = Notification::where('notifiable_id', $user->id)
-                ->where('notifiable_type', User::class)
                 ->where('is_admin_read', 0)
                 ->latest()
                 ->take(5)
                 ->get();
 
             $modalNotifications = Notification::where('notifiable_id', $user->id)
-                ->where('notifiable_type', User::class)
                 ->where('is_admin_read', 0)
                 ->latest()
                 ->get();
