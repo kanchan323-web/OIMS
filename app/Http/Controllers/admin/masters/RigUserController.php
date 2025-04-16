@@ -13,7 +13,9 @@ class RigUserController extends Controller
 {
     public function index()
     {
-        $rigUsers = RigUser::where('name', '!=', 'admin')->get();
+        $rigUsers = RigUser::where('name', '!=', 'admin')
+        ->orderBy('id', 'desc')  // Sort by ID in descending order
+        ->get();
         
         $moduleName = "Rigs";
         return view('admin.rig_users.index', compact('rigUsers', 'moduleName'));
