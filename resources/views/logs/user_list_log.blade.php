@@ -13,8 +13,6 @@
                                             <label for="logs_type">Logs Type</label>
                                             <select class="form-control" name="logs_type" id="logs_type">
                                                 <option disabled selected>Select Logs Type...</option>
-                                                <option value="Rigs">Rigs Logs</option>
-                                                <option value="Users">Users Logs</option>
                                                 <option value="EDP">EDP Logs</option>
                                                 <option value="Stock">Stock Logs</option>
                                                 <option value="Request">Request Stock Logs</option>

@@ -41,7 +41,7 @@ class UserLogsController extends Controller
         // Build query
         $query = $model::query();
         
-        if ($from) $query->where('created_at', '>=', $from);
+        if ($from) $query->where('created_at', '>=', $from)->where('');
         if ($to) $query->where('created_at', '<=', $to);
     
         $data = $query->get();

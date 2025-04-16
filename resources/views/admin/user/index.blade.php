@@ -175,15 +175,31 @@
             }, 3000);
         });
 
-    function viewtoclick(data){
-        document.getElementById("UserName").value = data.user_name;
-        document.getElementById("Email").value = data.email;
-        document.getElementById("CpfNo").value = data.cpf_no;
-        document.getElementById("UserStatus").value = data.user_type;
-        document.getElementById("UserType").value = (data.user_status==1)? "Active": "Inactive";
-        var rigname = {!! json_encode($rigUsers) !!};
-        document.getElementById("RigName").value = rigname[data.id];
-        }
+        function viewtoclick(data) {
+                // Get DOM elements
+                const rigNameInput = document.getElementById("RigName");
+                const rigNameLabel = document.querySelector('label[for="rig_id"]');
+                const rigname = {!! json_encode($rigUsers) !!}; // Assuming this is a PHP-to-JS variable
+
+                // Admin: Hide RigName | Non-admin: Show RigName (read-only)
+                if (data.user_type === "admin") {
+                    rigNameInput.style.display = "none";
+                    rigNameLabel.style.display = "none";
+                } else {
+                    rigNameInput.style.display = "block"; // or "" to reset to default
+                    rigNameLabel.style.display = "block"; // or "" to reset to default
+                    rigNameInput.value = data.rig_name || ""; // Set value if not admin
+                }
+
+                // Set other field values
+                document.getElementById("UserName").value = data.user_name;
+                document.getElementById("Email").value = data.email;
+                document.getElementById("CpfNo").value = data.cpf_no;
+                document.getElementById("UserStatus").value = data.user_type;
+                document.getElementById("UserType").value = (data.user_status == 1) ? "Active" : "Inactive";
+            }
     </script>
+
+
 
 @endsection
