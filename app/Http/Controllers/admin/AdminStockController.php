@@ -36,7 +36,7 @@ class AdminStockController extends Controller
         $rigId = Auth::user()->rig_id;
 
         $edpCodes = Edp::all();
-        $rigs = RigUser::all(); // Fetch all rigs
+        $rigs = RigUser::all();
         $LocationName = RigUser::where('id', $rigId)->first();
 
         return view('admin.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes', 'rigs'));
@@ -46,26 +46,27 @@ class AdminStockController extends Controller
 
     public function stock_list(Request $request)
     {
-
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
 
-        // $stockData = Stock::select('edp_code')->distinct()->get();
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
             ->distinct()
+            ->orderBy('stocks.id', 'desc')
             ->get();
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code','edps.section','edps.description')
+            ->select('stocks.*', 'edps.edp_code', 'edps.section', 'edps.description')
+            ->orderBy('stocks.id', 'desc')
             ->get();
 
-
         $moduleName = "Stock";
+
         return view('admin.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
+
 
 
     public function stock_filter(Request $request)
@@ -114,8 +115,8 @@ class AdminStockController extends Controller
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
 
         $rules = [
-            'location_id' => 'required',
-            'location_name' => 'required',
+            // 'location_id' => 'required',
+            // 'location_name' => 'required',
             'edp_code' => 'required',
             'category' => 'required',
             'description' => 'required',
@@ -148,11 +149,17 @@ class AdminStockController extends Controller
                 ->withInput();
         }
 
+        $rigUser = RigUser::find($request->rig_id);
+        if (!$rigUser) {
+            return redirect()->back()
+                ->withErrors(['rig_id' => 'Invalid Rig selected.'])
+                ->withInput();
+        }
 
         $user = Auth::user();
         $stock = new Stock;
-        $stock->location_id = $request->location_id;
-        $stock->location_name = $request->location_name;
+        $stock->location_id = $rigUser->location_id;
+        $stock->location_name = $rigUser->name;
         $stock->edp_code = $request->edp_code;
         $stock->category = $request->category;
         $stock->description = $request->description;
@@ -173,8 +180,8 @@ class AdminStockController extends Controller
 
         LogsStocks::create([
             'stock_id'        => $stock->id,
-            'location_id'     => $stock->location_id,
-            'location_name'   => $stock->location_name,
+            'location_id'     => $rigUser->location_id,
+            'location_name'   => $rigUser->name,
             'edp_code'        => $edpCode,
             'category'        => $stock->category,
             'description'     => $stock->description,
@@ -352,10 +359,17 @@ class AdminStockController extends Controller
     public function stock_list_view(Request $request)
     {
         Log::info('AJAX request received.', ['data' => $request->all()]);
+
         $id = $request->data;
-        $viewdata = Stock::find($id);
+
+        $viewdata = Stock::leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code')
+            ->where('stocks.id', $id)
+            ->first();
+
         $rig_id = User::where('id', $viewdata->user_id)->value('rig_id');
         $rigdata = RigUser::where('id', $rig_id)->first();
+
         return response()->json(
             [
                 'viewdata' => $viewdata,
@@ -391,8 +405,8 @@ class AdminStockController extends Controller
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
 
         $rules = [
-            'location_id' => 'required',
-            'location_name' => 'required',
+            // 'location_id' => 'required',
+            // 'location_name' => 'required',
             'edp_code' => 'required|integer',
             'category' => 'required',
             'description' => 'required',
@@ -417,10 +431,17 @@ class AdminStockController extends Controller
                 ->withInput();
         }
 
+        $rigUser = RigUser::find($request->rig_id);
+        if (!$rigUser) {
+            return redirect()->back()
+                ->withErrors(['rig_id' => 'Invalid Rig selected.'])
+                ->withInput();
+        }
+
         LogsStocks::create([
             'stock_id'        => $stock->id,
-            'location_id'     => $request->location_id,
-            'location_name'   => $request->location_name,
+            'location_id'     => $rigUser->location_id,
+            'location_name'   => $rigUser->name,
             'edp_code'        => $request->edp_code,
             'category'        => $request->category,
             'description'     => $request->description,
@@ -445,7 +466,8 @@ class AdminStockController extends Controller
         ]);
 
         $validatedData = $request->validate($rules);
-
+        $validatedData['location_id'] = $rigUser->location_id;
+        $validatedData['location_name'] = $rigUser->location_name;
         $validatedData['rig_id'] = $request->rig_id;
 
         $stock->update($validatedData);
@@ -490,8 +512,20 @@ class AdminStockController extends Controller
 
         return response()->json([
             'success' => true,
-            'edp' => $edp,
-            'stock' => $stock
+            'edp' => [
+                'category' => $edp->category,
+                'description' => $edp->description,
+                'measurement' => $edp->measurement,
+                'section' => $edp->section,
+            ],
+            'stock' => $stock ? [
+                'id' => $stock->id,
+                'qty' => $stock->qty,
+                'new_spareable' => $stock->new_spareable,
+                'used_spareable' => $stock->used_spareable,
+                'remarks' => $stock->remarks,
+                'rig_id' => $stock->rig_id,
+            ] : null
         ]);
     }
 

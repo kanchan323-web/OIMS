@@ -74,7 +74,7 @@
                         <div class="col-sm-6 col-md-3">
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Add Stock</a>
+                                        class="las la-plus mr-3"></i>Add/Edit Stock</a>
                                 <a href="{{ route('admin.import_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Bulk Stocks </a>
                             </div>
@@ -202,8 +202,8 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">EDP Code</label>
-                                <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code"
-                                    id="edp_code" readonly>
+                                <input type="text" class="form-control" name="edp_code1" placeholder=" EDP Code"
+                                    id="edp_code1" readonly>
                                 <div class="invalid-feedback">
                                     Enter EDP Code
                                 </div>
@@ -312,10 +312,11 @@
                     data: id
                 },
                 success: function (response) {
-                    // console.log(response.viewdata['category']);
+                
+                    console.log(response.viewdata['edp_code']);
                     $("#location_id").val(response.viewdata['location_id']);
                     $("#location_name").val(response.viewdata['location_name']);
-                    $("#edp_code").val(response.viewdata['edp_code']);
+                    $("#edp_code1").val(response.viewdata['edp_code']);
 
 
                     var sectionValue = response.viewdata['section'];

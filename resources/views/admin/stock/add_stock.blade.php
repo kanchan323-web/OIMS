@@ -32,7 +32,26 @@
                                         @enderror
                                     </div>
 
+
                                     <div class="col-md-6 mb-3">
+                                        <label for="rig_id">Select Rig</label>
+                                        <select class="form-control select2" name="rig_id" id="rig_id" required>
+                                            <option value="" disabled {{ old('rig_id', $LocationName->rig_id ?? $stock->rig_id ?? '') == '' ? 'selected' : '' }}>
+                                                Select Rig
+                                            </option>
+                                            @foreach ($rigs as $rig)
+                                                <option value="{{ $rig->id }}"
+                                                    {{ old('rig_id', $LocationName->rig_id ?? $stock->rig_id ?? '') == $rig->id ? 'selected' : '' }}>
+                                                    {{ $rig->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('rig_id'))
+                                            <div class="text-danger">{{ $errors->first('rig_id') }}</div>
+                                        @endif
+                                    </div>
+
+                                    {{-- <div class="col-md-6 mb-3">
                                         <label for="location_ids">Location Id</label>
                                         <input type="text" class="form-control" name="location_id" placeholder="Location Id"
                                             value="{{ old('location_id', $LocationName?->location_id) }}" id="location_ids"
@@ -50,18 +69,18 @@
                                         @error('location_name')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="category_id">Category</label>
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="category" id="category_id" required>
-                                                                        <option selected disabled value="">Select Category...</option>
-                                                                        <option value="Spares">Spares</option>
-                                                                        <option value="Stores">Stores</option>
-                                                                        <option value="Capital items">Capital items</option>
-                                                                    </select> -->
+                                                                            <option selected disabled value="">Select Category...</option>
+                                                                            <option value="Spares">Spares</option>
+                                                                            <option value="Stores">Stores</option>
+                                                                            <option value="Capital items">Capital items</option>
+                                                                        </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -82,10 +101,10 @@
                                         <input type="text" class="form-control" name="section" id="section_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="section" id="section_id" required>
-                                                                        <option selected disabled value="">Select Section...</option>
-                                                                        <option value="ENGG">ENGG</option>
-                                                                        <option value="DRILL">DRILL</option>
-                                                                    </select> -->
+                                                                            <option selected disabled value="">Select Section...</option>
+                                                                            <option value="ENGG">ENGG</option>
+                                                                            <option value="DRILL">DRILL</option>
+                                                                        </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
@@ -135,20 +154,8 @@
                                         @enderror
                                     </div>
 
-                                    @if (!isset($LocationName))
-                                        <div class="col-md-6 mb-3">
-                                            <label for="rig_id">Select Rig</label>
-                                            <select class="form-control select2" name="rig_id" id="rig_id" required>
-                                                <option value="" disabled selected>Select Rig</option>
-                                                @foreach ($rigs as $rig)
-                                                    <option value="{{ $rig->id }}">{{ $rig->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @if ($errors->has('rig_id'))
-                                                <div class="text-danger">{{ $errors->first('rig_id') }}</div>
-                                            @endif
-                                        </div>
-                                    @endif
+                                   
+
 
                                 </div>
 
@@ -199,13 +206,16 @@
                                 $("#section_hidden").val(response.edp.section);
 
                                 if (response.stock) {
-                                    //console.log(response.stock);
                                     $("#addStockForm").attr("action", "{{ route('admin.update_stock') }}");
                                     $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);
                                     $("#new_spareable").val(response.stock.new_spareable);
                                     $("#used_spareable").val(response.stock.used_spareable);
                                     $("#remarks").val(response.stock.remarks);
+
+                                    if (response.stock.rig_id) {
+                                        $("#rig_id").val(response.stock.rig_id).trigger('change');
+                                    }
                                 } else {
                                     $("#addStockForm").attr("action", "{{ route('admin.stockSubmit') }}");
                                     $("#id").val('');
@@ -213,7 +223,10 @@
                                     $("#new_spareable").val('');
                                     $("#used_spareable").val('');
                                     $("#remarks").val('');
+
+                                    $("#rig_id").val('').trigger('change');
                                 }
+
                             } else {
                                 alert("EDP details not found!");
                             }
