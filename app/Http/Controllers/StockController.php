@@ -502,13 +502,13 @@ class StockController extends Controller
 
         $filtersApplied = false;
 
-        if ($request->has('edp_code') && $request->category) {
-            $query->where('stocks.edp_code', $request->category);
+        if ($request->has('edp_code') && $request->edp_code) {
+            $query->where('stocks.edp_code', $request->edp_code);
             $filtersApplied = true;
         }
 
-        if ($request->has('description') && $request->location_name) {
-            $query->where('stocks.description', 'LIKE', '%' . $request->location_name . '%');
+        if ($request->has('Description') && $request->Description) {
+            $query->where('stocks.description', 'LIKE', '%' . $request->Description . '%');
             $filtersApplied = true;
         }
 
