@@ -8,6 +8,7 @@ use App\Models\Edp;
 use App\Models\UnitOfMeasurement;
 use App\Models\Category;
 use App\Models\LogsEdps;
+use App\Models\Section;
 use Illuminate\Support\Facades\Response;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
@@ -15,28 +16,22 @@ use Illuminate\Support\Facades\Auth;
 
 class EdpController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         //  $edp = Edp::where('name', '!=', 'admin')->get();
         $moduleName = "EDP List";
         $edp_list = Edp::orderBy('id', 'desc')->get();
         return view('admin.edp.index', compact('moduleName', 'edp_list'));
     }
 
-    public function create()
-    {
+    public function create(){
         $category_list = Category::get();
         $moduleName = "Create EDP";
         $UoM = UnitOfMeasurement::get();
-
-
-        return view('admin.edp.create', compact('moduleName', 'category_list', 'UoM'));
+        $section_list = Section::get();
+        return view('admin.edp.create', compact('moduleName', 'category_list', 'UoM','section_list'));
     }
-    public function store(Request $request)
-    {
-
+    public function store(Request $request){
         $moduleName = "Create EDP";
-
         $validate = $request->validate([
             'edp_code' => ['required', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
             'section'  => 'required|string',
@@ -48,9 +43,26 @@ class EdpController extends Controller
             return redirect()->back()->with('error', 'EDP Code already exists!');
         }
 
+        $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
+        // Determine category based on material group
+        if ($materialGroup === '0C') {
+            $category = 'capital';
+        } elseif (ctype_digit($materialGroup)) {
+            $groupNum = intval($materialGroup);
+            if ($groupNum >= 1 && $groupNum <= 20) {
+                $category = 'store';
+            } elseif ($groupNum >= 21 && $groupNum <= 42) {
+                $category = 'spares';
+            } else {
+                $category = 'unknown';
+            }
+        } else {
+            $category = 'unknown';
+        }
+
         $edp = new Edp;
         $edp->edp_code = $request->edp_code;
-        $edp->category = $request->Category_Name;
+        $edp->category = $category;
         $edp->description = $request->description;
         $edp->section = $request->section;
         $edp->measurement = $request->measurement;
@@ -74,14 +86,13 @@ class EdpController extends Controller
             ->with('success', 'EDP created successfully.');
     }
 
-    public function edit($id)
-    {
+    public function edit($id){
         $moduleName = "Edit EDP";
         $category_list = Category::all();
         $editData = Edp::findOrFail($id);
         $UoM = UnitOfMeasurement::get();
-
-        return view('admin.edp.edit', compact('category_list', 'editData', 'moduleName', 'UoM'));
+        $section_list = Section::get();
+        return view('admin.edp.edit', compact('category_list', 'editData', 'moduleName', 'UoM','section_list'));
     }
 
     public function update(Request $request)
@@ -98,9 +109,25 @@ class EdpController extends Controller
         if ($edp) {
             $oldData = $edp->toArray(); // If you want to log old values
 
+                $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
+                // Determine category based on material group
+                if ($materialGroup === '0C') {
+                    $category = 'capital';
+                } elseif (ctype_digit($materialGroup)) {
+                    $groupNum = intval($materialGroup);
+                    if ($groupNum >= 1 && $groupNum <= 20) {
+                        $category = 'store';
+                    } elseif ($groupNum >= 21 && $groupNum <= 42) {
+                        $category = 'spares';
+                    } else {
+                        $category = 'unknown';
+                    }
+                } else {
+                    $category = 'unknown';
+                }
             $edp->update([
                 'edp_code'     => $request->edp_code,
-                'category'     => $request->Category_Name,
+                'category'     => $request->category,
                 'description'  => $request->description,
                 'section'      => $request->section,
                 'measurement'  => $request->measurement,
