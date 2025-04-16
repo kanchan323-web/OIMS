@@ -36,7 +36,11 @@ class AdminStockController extends Controller
         $rigId = Auth::user()->rig_id;
 
         $edpCodes = Edp::all();
-        $rigs = RigUser::all();
+        $rigs = RigUser::where(function ($query) {
+            $query->where('location_id', '!=', 'admin')
+                ->orWhere('name', '!=', 'admin');
+        })->get();
+
         $LocationName = RigUser::where('id', $rigId)->first();
 
         return view('admin.stock.add_stock', compact('moduleName', 'LocationName', 'edpCodes', 'rigs'));
@@ -384,7 +388,10 @@ class AdminStockController extends Controller
         $editData = Stock::where('id', $id)->first();
         $edpCodes = Edp::where('id', $editData->edp_code)->first();
         $moduleName = "Edit Stock";
-        $rigs = RigUser::all();
+        $rigs = RigUser::where(function ($query) {
+            $query->where('location_id', '!=', 'admin')
+                ->orWhere('name', '!=', 'admin');
+        })->get();
         return view('admin.stock.edit_stock', compact('editData', 'edpCodes', 'moduleName', 'rigs'));
     }
 

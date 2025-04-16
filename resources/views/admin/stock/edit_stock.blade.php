@@ -48,7 +48,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="rig_id">Select Rig</label>
-                                        <select class="form-control select2" name="rig_id" id="rig_id" required readonly>
+                                        <select class="form-control select2" disabled>
                                             <option value="" disabled>Select Rig</option>
                                             @foreach ($rigs as $rig)
                                                 <option value="{{ $rig->id }}" {{ old('rig_id', $editData->rig_id) == $rig->id ? 'selected' : '' }}>
@@ -56,10 +56,14 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <!-- Hidden input to retain value on form submission -->
+                                        <input type="hidden" name="rig_id" value="{{ old('rig_id', $editData->rig_id) }}">
+                                        
                                         @error('rig_id')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                    </div>    
+                                    </div>
+                                      
 
                                     {{-- <div class="col-md-6 mb-3">
                                         <label for="">Location ID</label>
