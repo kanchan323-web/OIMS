@@ -140,7 +140,7 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="">Available Quantity</label>
+                                        <label for="">Total Quantity</label>
                                         <input type="text" class="form-control" name="qty" id="qty"
                                             value="{{ $editData->qty }}" required readonly>
                                     </div>
