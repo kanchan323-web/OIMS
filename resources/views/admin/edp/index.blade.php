@@ -21,9 +21,9 @@
                         </div>
 
                         <div class="xl-offset-9 md-offset-4  sm-offset-4">
-                            <a href="{{ route('admin.edp.create') }}" class="btn btn-primary ">Add New</a>
+                            <a href="{{ route('admin.edp.create') }}" class="btn btn-primary">Add EDP</a>
                             <a href="{{route('admin.import_edp')}}" class="btn btn-primary "><i
-                                    class="las la-plus mr-3"></i>Bulk EDP </a>
+                                    class="las la-plus mr-3"></i> EDP Bulk Upload </a>
                         </div>
 
                     </div>
@@ -35,7 +35,8 @@
                                     <tr class="ligth ligth-data">
                                         <th>#</th>
                                         <th>EDP Code</th>
-                                        <th>Category Name</th>
+                                        <th>Category</th>
+                                        <th>Material Group</th>
                                         <th>Description</th>
                                         <th>Section</th>
                                         <th>Measurement</th>
@@ -49,6 +50,7 @@
                                             <td>{{$index + 1}}</td>
                                             <td>{{$list->edp_code}}</td>
                                             <td>{{$list->category}}</td>
+                                            <td>{{$list->material_group}}</td>
                                             <td>{{$list->description}}</td>
                                             <td>{{$list->section}}</td>
                                             <td>{{$list->measurement}}</td>

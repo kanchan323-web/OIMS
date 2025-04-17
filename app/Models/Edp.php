@@ -12,6 +12,7 @@ class Edp extends Model
     protected $fillable = [
         'edp_code',
         'category',
+        'material_group',
         'description',
         'section',
         'measurement',
