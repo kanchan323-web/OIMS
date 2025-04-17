@@ -23,6 +23,8 @@ use App\Http\Controllers\RequestReportController;
 use App\Http\Controllers\admin\StockReportController as AdminStockReportController;
 use App\Http\Controllers\admin\RequestReportController as AdminRequestReportController;
 
+
+
 //call index page
 Route::get('/', function () {
     return view('home'); // This looks for resources/views/welcome.blade.php
@@ -167,6 +169,8 @@ Route::post('/user/authenticate', [LoginController::class, 'authenticate'])->nam
 Route::middleware(['auth'])->group(function () {
 
     Route::prefix('/user')->group(function () {
+
+
         Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
         Route::get('/profile', [LoginController::class, 'profile'])->name('user.profile');
 

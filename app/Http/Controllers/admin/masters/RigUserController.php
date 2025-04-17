@@ -78,6 +78,13 @@ class RigUserController extends Controller
         return view('admin.rig_users.show', compact('rigUser', 'moduleName'));
     }
 
+    public function show2($id)
+{
+    $rig = RigUser::select('id', 'location_id', 'name')->find($id);
+    return response()->json($rig ?: ['error' => 'Rig not found'], $rig ? 200 : 404);
+}
+    
+
 
     public function edit($id)
     {
@@ -89,13 +96,23 @@ class RigUserController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string',
-                    'location_id' => [
+            'name' => [
                 'required',
                 'string',
-                'size:4', 
-                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4}$/' 
+                'max:60',
+                'unique:rig_users,name'
             ],
+            'location_id' => [
+                'required',
+                'string',
+                'size:4',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4}$/',
+                'unique:rig_users,location_id'
+            ],
+        ], [
+            'name.unique' => 'This rig name is already in use. Please choose a different name.',
+            'location_id.unique' => 'This location ID is already assigned to another rig. Location IDs must be unique.',
+          
         ]);
 
     

@@ -33,6 +33,9 @@
                                         placeholder="e.g. RN05"
                                         value="{{ $rigUser->location_id }}"
                                     >
+                                    @error('location_id')
+                                    <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                    @enderror
                                     <small class="text-danger error-message" style="display: none;">
                                         Must be 4 characters with at least 1 letter and 1 number
                                     </small>
