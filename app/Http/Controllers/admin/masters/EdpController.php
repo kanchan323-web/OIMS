@@ -191,7 +191,7 @@ class EdpController extends Controller
     public function downloadSample()
     {
         $filePath = public_path('sample-files/sample_edp_admin.xlsx');
-        return Response::download($filePath, 'Sample_Edp_File.xlsx');
+        return Response::download($filePath, 'Sample_Edp_File_Admin.xlsx');
     }
 
     public function import(Request $request)

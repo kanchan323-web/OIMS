@@ -211,8 +211,9 @@ class StockController extends Controller
 
     public function downloadSample()
     {
-        $filePath = public_path('sample-files/sample_stock.xlsx');
-        return Response::download($filePath, 'Sample_Stock_File.xlsx');
+        $filePath = public_path('sample-files/sample_stock_user.xlsx');
+        
+        return Response::download($filePath, 'Sample_Stock_File_User.xlsx');
     }
 
 
