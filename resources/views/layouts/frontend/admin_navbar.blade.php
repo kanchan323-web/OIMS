@@ -13,6 +13,8 @@
 
 
 
+          
+
             <div class="welcome-header ">
                 @if(auth()->check())
                     @php
@@ -24,16 +26,10 @@
                             <i class="fas fa-user-shield text-primary mr-1"></i>Welcome,
                         </span>
                         <span class="user-info">
-                            <span class="role-badge text-uppercase small bg-light-primary text-primary px-2 py-1 rounded mr-2">Admin</span>
+                            <span class="role-badge text-uppercase small bg-light-primary text-primary px-2 py-1 rounded mr-2">USER</span>
                             <strong class="username">{{ $user->user_name }}</strong>
                         </span>
-                        @if($user->rig)
-                            <span class="rig-info ml-3 pl-3 border-left">
-                                <i class="fas fa-hard-hat text-secondary mr-1"></i>
-                                <span class="font-weight-medium">{{ $user->rig->name }}</span>
-                                <span class="text-muted">(ID: {{ $user->rig->location_id }})</span>
-                            </span>
-                        @endif
+                       
                     </div>
                 @endif
             </div>

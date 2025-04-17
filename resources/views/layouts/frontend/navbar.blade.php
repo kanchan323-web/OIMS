@@ -27,8 +27,8 @@
                         @if($user->rig)
                             <span class="rig-info ml-3 pl-3 border-left">
                                 <i class="fas fa-hard-hat text-secondary mr-1"></i>
-                                <span class="font-weight-medium">{{ $user->rig->name }}</span>
-                                <span class="text-muted">(ID: {{ $user->rig->location_id }})</span>
+                                <span class="font-weight-medium">Rig Name: </span>
+                                <span class="text-muted">({{ $user->rig->name }})</span>
                             </span>
                         @endif
                     </div>
