@@ -78,13 +78,16 @@ class AdminStockController extends Controller
         $moduleName = "Stock";
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
-
+            
             $data = Stock::query()
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('stocks.edp_code', $edp_code);
                 })
                 ->when($request->Description, function ($query, $description) {
                     return $query->where('stocks.description', 'LIKE', "%{$description}%");
+                })
+                ->when($request->location_name, function ($query, $location_name) {
+                    return $query->where('stocks.location_name', 'LIKE', "%{$location_name}%");
                 });
                 // ->when($request->form_date, function ($query) use ($request) {
                 //     return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
