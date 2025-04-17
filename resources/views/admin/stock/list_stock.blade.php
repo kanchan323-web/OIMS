@@ -55,6 +55,12 @@
                                                 name="Description" id="Description">
                                         </div>
 
+                                        <div class="col-md-2 mb-2">
+                                            <label for="Location Name">Location Name</label>
+                                            <input type="text" class="form-control" placeholder="Location Name"
+                                                name="location_name" id="location_name">
+                                        </div>
+
                                         {{-- <div class="col-md-2 mb-2">
                                             <label for="form_date">From Date</label>
                                             <input type="date" class="form-control" name="form_date" id="form_date">
@@ -101,6 +107,7 @@
                                     <th>Sr.No</th>
                                     <th>Location Name</th>
                                     <th>EDP</th>
+                                    <th>Category</th>
                                     <th>Section</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
@@ -114,6 +121,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $stockdata->location_name }}</td>
                                             <td>{{ $stockdata->edp_code }}</td>
+                                            <td>{{ $stockdata->category }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
                                             <td>{{ $stockdata->qty }}
@@ -376,6 +384,7 @@
                                     <td>${index + 1}</td>
                                     <td>${stockdata.location_name}</td>
                                     <td>${stockdata.EDP_Code}</td>
+                                    <td>${stockdata.category}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
                                     <td>${stockdata.qty}
