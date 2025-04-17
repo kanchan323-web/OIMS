@@ -13,27 +13,46 @@
 
 
 
-            <div class="welcome-message mb-4">
+            <div class="welcome-header ">
                 @if(auth()->check())
-                                @php
-                                    $user = Auth::user()->load('rig');
-                                @endphp
-
-                                <div class="d-flex align-items-center">
-                                    <span class="badge badge-light mr-2 px-3 py-2">
-                                        <i class="fas fa-user-shield mr-1"></i> Welcome
-                                    </span>
-                                    <span class="badge badge-primary px-3 py-2 mr-2">
-                                        {{ $user->user_name }}
-                                    </span>
-                                    @if($user->rig)
-                                        <span class="badge badge-success px-3 py-2">
-                                            <i class="fas fa-rig mr-1"></i> {{ $user->rig->name }} ({{ $user->rig->location_id }})
-                                        </span>
-                                    @endif
-                                </div>
+                    @php
+                        $user = Auth::user()->load('rig');
+                    @endphp
+                    
+                    <div class="d-flex align-items-baseline">
+                        <span class="text-muted mr-2">
+                            <i class="fas fa-user-shield text-primary mr-1"></i>Welcome,
+                        </span>
+                        <span class="user-info">
+                            <span class="role-badge text-uppercase small bg-light-primary text-primary px-2 py-1 rounded mr-2">Admin</span>
+                            <strong class="username">{{ $user->user_name }}</strong>
+                        </span>
+                        @if($user->rig)
+                            <span class="rig-info ml-3 pl-3 border-left">
+                                <i class="fas fa-hard-hat text-secondary mr-1"></i>
+                                <span class="font-weight-medium">{{ $user->rig->name }}</span>
+                                <span class="text-muted">(ID: {{ $user->rig->location_id }})</span>
+                            </span>
+                        @endif
+                    </div>
                 @endif
             </div>
+            
+            <style>
+                .welcome-header {
+                    font-size: 1.05rem;
+                }
+                .role-badge {
+                    font-size: 0.75rem;
+                    letter-spacing: 0.5px;
+                }
+                .border-left {
+                    border-left: 1px solid #dee2e6;
+                }
+                .username {
+                    color: #2c3e50;
+                }
+            </style>
 
             <div class="d-flex align-items-center">
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
