@@ -39,7 +39,7 @@
                                     <tr class="ligth ligth-data">
                                         <th>No.</th>
                                         <th>Rig Name</th>
-                                        <th>Location ID</th>
+                                        <th>Rig ID</th>
                                         <th>Creation Date</th>
                                         <th>Operations</th>
                                     </tr>
