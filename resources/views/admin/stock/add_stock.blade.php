@@ -236,7 +236,6 @@
                             $("#section_hidden").val(response.edp.section);
 
                             if (response.stock) {
-                                console.log(response.stock);
                                 $("#addStockForm").attr("action", "{{ route('admin.update_stock') }}");
                                 $("#id").val(response.stock.id);
                                 $("#qty").val(response.stock.qty);
@@ -351,7 +350,6 @@
                             let decimalPart = value.includes(".") ? value.split(".")[1] : "";
                             isValid = decimalPart.length <= 10;
                             errorMsg = isValid ? "" : "Max 10 decimal places allowed!";
-                            console.log("Current Value:", value);
                         } else {
                             isValid = false;
                             errorMsg = "Invalid decimal format!";
