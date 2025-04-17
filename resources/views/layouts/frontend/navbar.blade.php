@@ -10,20 +10,30 @@
                 </a>
             </div>
 
-            @if (auth()->check())
-                        @php
-                            $user = Auth::user()->load('rig');
-                        @endphp
-
-                        <h5 class="mb-3">
-                            Welcome {{ $user->email }}
-                            @if($user->rig)
-                                to {{ $user->rig->name }}
-                            @else
-                                (No Rig Assigned)
-                            @endif
-                        </h5>
-            @endif
+            <div class="welcome-header ">
+                @if(auth()->check())
+                    @php
+                        $user = Auth::user()->load('rig');
+                    @endphp
+                    
+                    <div class="d-flex align-items-baseline">
+                        <span class="text-muted mr-2">
+                            <i class="fas fa-user text-primary mr-1"></i>Welcome,
+                        </span>
+                        <span class="user-info">
+                            <span class="role-badge text-uppercase small bg-light-primary text-primary px-2 py-1 rounded mr-2">USER</span>
+                            <strong class="username">{{ $user->user_name }}</strong>
+                        </span>
+                        @if($user->rig)
+                            <span class="rig-info ml-3 pl-3 border-left">
+                                <i class="fas fa-hard-hat text-secondary mr-1"></i>
+                                <span class="font-weight-medium">{{ $user->rig->name }}</span>
+                                <span class="text-muted">(ID: {{ $user->rig->location_id }})</span>
+                            </span>
+                        @endif
+                    </div>
+                @endif
+            </div>
 
 
             <div class="d-flex align-items-center">

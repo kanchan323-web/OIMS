@@ -55,7 +55,7 @@
                                                 name="Description" id="Description">
                                         </div>
 
-                                        <div class="col-md-2 mb-2">
+                                        {{-- <div class="col-md-2 mb-2">
                                             <label for="form_date">From Date</label>
                                             <input type="date" class="form-control" name="form_date" id="form_date">
                                         </div>
@@ -63,7 +63,7 @@
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"

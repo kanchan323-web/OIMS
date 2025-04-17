@@ -85,13 +85,13 @@ class AdminStockController extends Controller
                 })
                 ->when($request->Description, function ($query, $description) {
                     return $query->where('stocks.description', 'LIKE', "%{$description}%");
-                })
-                ->when($request->form_date, function ($query) use ($request) {
-                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-                })
-                ->when($request->to_date, function ($query) use ($request) {
-                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 });
+                // ->when($request->form_date, function ($query) use ($request) {
+                //     return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                // })
+                // ->when($request->to_date, function ($query) use ($request) {
+                //     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                // });
 
 
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
