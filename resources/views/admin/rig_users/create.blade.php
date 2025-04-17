@@ -66,6 +66,9 @@
                                     <small class="text-danger error-message" style="display: none;">
                                         Must be 4 characters with at least 1 letter and 1 number
                                     </small>
+                                    @error('location_id')
+                                    <small class="text-danger d-block mt-1">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
                             <button class="btn btn-primary" type="submit">Submit</button>
