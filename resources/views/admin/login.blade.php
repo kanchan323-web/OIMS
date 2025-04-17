@@ -49,7 +49,7 @@
                                             @error('login')
                                                 <p class="invalid-feedback">{{ $message }}</p>
                                             @enderror
-                                            <label for="login">Email or Username</label>
+                                            <label for="login">Email or Username or CPF No</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
