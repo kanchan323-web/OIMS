@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class LogsEdps extends Model
 {
     use HasFactory;
-    protected $table = 'logs_edps'; 
+    protected $table = 'logs_edps';
     protected $fillable = [
         'edp_code',
         'category',
+        'material_group',
         'description',
         'section',
         'measurement',

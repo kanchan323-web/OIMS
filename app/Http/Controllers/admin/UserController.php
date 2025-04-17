@@ -46,7 +46,14 @@ class UserController extends Controller
                 'regex:/^[A-Za-z\s]+$/',
             ],
             'email'        => 'required|email|unique:users,email',
-            'cpf_no'       => 'required|string|max:255|unique:users,cpf_no',
+            'cpf_no' => [
+                'required',
+                'string',
+                'min:5',
+                'max:6',
+                'regex:/^\d+$/',
+                'unique:users,cpf_no',
+            ],
             'password'     => [
                 'required',
                 'min:8',
@@ -66,10 +73,12 @@ class UserController extends Controller
             'email.email'        => 'Please enter a valid email address.',
             'email.unique'       => 'This email address is already registered.',
 
-            'cpf_no.required'    => 'The CPF number is required.',
-            'cpf_no.unique'      => 'This CPF number is already registered.',
-            'cpf_no.string'      => 'The CPF number must be a valid string.',
-            'cpf_no.max'         => 'The CPF number may not exceed 255 characters.',
+            'cpf_no.required' => 'The CPF number is required.',
+            'cpf_no.unique' => 'This CPF number is already registered.',
+            'cpf_no.string' => 'The CPF number must be a valid string.',
+            'cpf_no.min' => 'The CPF number must be at least 5 digits.',
+            'cpf_no.max' => 'The CPF number must not exceed 6 digits.',
+            'cpf_no.regex' => 'The CPF number must contain only digits.',
 
             'password.required'  => 'A password is required.',
             'password.min'       => 'The password must be at least 8 characters.',
@@ -137,7 +146,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail((int) $id);
-    
+
         $rules = [
             'user_name'   => [
                 'required',
@@ -150,17 +159,19 @@ class UserController extends Controller
                 'email',
                 Rule::unique('users')->ignore($id),
             ],
-            'cpf_no'      => [
+            'cpf_no' => [
                 'required',
                 'string',
-                'max:255',
+                'min:5',
+                'max:6',
+                'regex:/^\d+$/',
                 Rule::unique('users')->ignore($id),
             ],
             'user_status' => 'required|integer',
             'user_type'   => 'required|string|in:admin,user',
             'rig_id'      => 'nullable|integer',
         ];
-    
+
         // Add password rules only if password is being changed
         if (!empty($request->password)) {
             $rules['password'] = [
@@ -168,29 +179,34 @@ class UserController extends Controller
                 'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
             ];
         }
-    
+
         $request->validate($rules, [
             'user_name.required' => 'The user name is required.',
             'user_name.regex'    => 'The user name must only contain letters and spaces.',
-    
+
             'email.required'     => 'The email address is required.',
             'email.email'        => 'Please provide a valid email address.',
             'email.unique'       => 'This email is already taken.',
-    
-            'cpf_no.required'    => 'The CPF number is required.',
-            'cpf_no.unique'      => 'This CPF number is already in use.',
-    
+
+            'cpf_no.required' => 'The CPF number is required.',
+            'cpf_no.unique'   => 'This CPF number is already in use.',
+            'cpf_no.string'   => 'The CPF number must be a valid string.',
+            'cpf_no.min'      => 'The CPF number must be at least 5 digits.',
+            'cpf_no.max'      => 'The CPF number must not exceed 6 digits.',
+            'cpf_no.regex'    => 'The CPF number must contain only digits.',
+
+
             'password.min'       => 'The password must be at least 8 characters.',
             'password.regex'     => 'Password must include at least one letter, one number, and one special character.',
-    
+
             'user_status.required' => 'User status is required.',
             'user_type.required'   => 'User type is required.',
             'user_type.in'         => 'Invalid user type selected.',
             'rig_id.integer'       => 'Rig ID must be a number.',
         ]);
-    
+
         $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
-    
+
         $user->update([
             'user_name'   => $request->user_name,
             'email'       => $request->email,
@@ -199,11 +215,11 @@ class UserController extends Controller
             'user_type'   => $request->user_type,
             'rig_id'      => $rigId,
         ]);
-    
+
         if (!empty($request->password)) {
             $user->update(['password' => Hash::make($request->password)]);
         }
-    
+
         LogsUser::create([
             'user_name'     => $request->user_name,
             'email'         => $request->email,
@@ -217,16 +233,16 @@ class UserController extends Controller
             'receiver_type' => null,
             'message'       => "User '{$request->user_name}' has been updated.",
         ]);
-    
+
         if (auth()->id() == $user->id) {
             auth()->logout();
             return redirect()->route('login')->with('message', 'Role updated. Please log in again.');
         }
-    
+
         return redirect()->route('admin.index')->with('success', 'User updated successfully.');
     }
 
-    
+
     // Delete a user
     public function destroy($id)
     {

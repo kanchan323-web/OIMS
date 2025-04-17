@@ -14,10 +14,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
-class EdpController extends Controller
-{
+class EdpController extends Controller{
+
     public function index(){
-        //  $edp = Edp::where('name', '!=', 'admin')->get();
         $moduleName = "EDP List";
         $edp_list = Edp::orderBy('id', 'desc')->get();
         return view('admin.edp.index', compact('moduleName', 'edp_list'));
@@ -33,7 +32,7 @@ class EdpController extends Controller
     public function store(Request $request){
         $moduleName = "Create EDP";
         $validate = $request->validate([
-            'edp_code' => ['required', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
+            'edp_code' => ['required','unique:edps', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
             'section'  => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
@@ -63,6 +62,7 @@ class EdpController extends Controller
         $edp = new Edp;
         $edp->edp_code = $request->edp_code;
         $edp->category = $category;
+        $edp->material_group = $materialGroup;
         $edp->description = $request->description;
         $edp->section = $request->section;
         $edp->measurement = $request->measurement;
@@ -70,7 +70,8 @@ class EdpController extends Controller
 
         LogsEdps::create([
             'edp_code' => $request->edp_code,
-            'category' => $request->Category_Name,
+            'category' => $category,
+            'material_group' => $materialGroup,
             'description' => $request->description,
             'section' => $request->section,
             'measurement' => $request->measurement,
@@ -95,10 +96,9 @@ class EdpController extends Controller
         return view('admin.edp.edit', compact('category_list', 'editData', 'moduleName', 'UoM','section_list'));
     }
 
-    public function update(Request $request)
-    {
+    public function update(Request $request){
         $validate = $request->validate([
-            'edp_code' => ['required', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
+            'edp_code' => ['required','regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
             'section'  => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
@@ -126,8 +126,9 @@ class EdpController extends Controller
                     $category = 'unknown';
                 }
             $edp->update([
-                'edp_code'     => $request->edp_code,
-                'category'     => $request->category,
+                //'edp_code'     => $request->edp_code,
+                'category'     => $category,
+                'material_group' => $materialGroup,
                 'description'  => $request->description,
                 'section'      => $request->section,
                 'measurement'  => $request->measurement,
@@ -136,7 +137,8 @@ class EdpController extends Controller
             // Optional logging
             LogsEdps::create([
                 'edp_code'      => $request->edp_code,
-                'category'      => $request->Category_Name,
+                'category'      => $category,
+                'material_group' => $materialGroup,
                 'description'   => $request->description,
                 'section'       => $request->section,
                 'measurement'   => $request->measurement,
@@ -154,10 +156,7 @@ class EdpController extends Controller
             ->with('success', 'EDP Updated successfully.');
     }
 
-    public function destroy(Request $request)
-    {
-
-
+    public function destroy(Request $request){
         $edp = Edp::find($request->delete_id);
 
         if ($edp) {
@@ -183,19 +182,16 @@ class EdpController extends Controller
         return redirect()->route('admin.edp.index')
             ->with('success', 'EDP Deleted successfully.');
     }
-    public function showImportForm()
-    {
+    public function showImportForm(){
         $moduleName = "Import Bulk EDP";
         return view('admin.edp.import_bulk_edp', compact('moduleName'));
     }
-    public function downloadSample()
-    {
+    public function downloadSample(){
         $filePath = public_path('sample-files/sample_edp_admin.xlsx');
         return Response::download($filePath, 'Sample_Edp_File_Admin.xlsx');
     }
 
-    public function import(Request $request)
-    {
+    public function import(Request $request){
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
@@ -287,12 +283,14 @@ class EdpController extends Controller
                         'measurement' => $measurement,
                         'section'     => $section,
                         'category'    => $category,
+                        'material_group' => $materialGroup,
                     ]
                 );
 
                 LogsEdps::create([
                     'edp_code'      => $edp->edp_code,
                     'category'      => $edp->category,
+                    'material_group' => $materialGroup,
                     'description'   => $edp->description,
                     'section'       => $edp->section,
                     'measurement'   => $edp->measurement,
