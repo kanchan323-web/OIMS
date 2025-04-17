@@ -53,6 +53,7 @@ class LoginController extends Controller
 
         $user = User::where('email', $request->login)
             ->orWhere('user_name', $request->login)
+            ->orWhere('cpf_no', $request->login)
             ->first();
 
         if ($user && Auth::attempt(['email' => $user->email, 'password' => $request->password])) {
