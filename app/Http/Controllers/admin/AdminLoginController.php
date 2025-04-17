@@ -31,7 +31,11 @@ class AdminLoginController extends Controller
             // 'captcha.captcha'   => 'Incorrect CAPTCHA! Try again.',
         ]);
 
-        $fieldType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
+        //$fieldType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'user_name';
+
+        $fieldType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : (is_numeric($request->login) ? 'cpf_no' : 'user_name');
+
+        //dd($fieldType);
 
         $user = User::where($fieldType, $request->login)->first();
 

@@ -51,12 +51,12 @@
                                         <div class="form-floating mb-3">
                                             <input type="text"
                                                 class="form-control @error('login') is-invalid @enderror " name="login"
-                                                value="{{ old('login') }}" placeholder="Enter Email or Username"
+                                                value="{{ old('login') }}" placeholder="Enter Email or Username "
                                                 id="login">
                                             @error('login')
                                                 <p class="invalid-feedback">{{ $message }}</p>
                                             @enderror
-                                            <label for="login">Email or Username</label>
+                                            <label for="login">Email or Username or CPF No</label>
                                         </div>
                                     </div>
                                     <div class="col-12">
