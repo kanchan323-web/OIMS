@@ -26,7 +26,7 @@
                             <i class="fas fa-user-shield text-primary mr-1"></i>Welcome,
                         </span>
                         <span class="user-info">
-                            <span class="role-badge text-uppercase small bg-light-primary text-primary px-2 py-1 rounded mr-2">USER</span>
+                            <span class="role-badge text-uppercase small bg-light-primary text-primary px-2 py-1 rounded mr-2">ADMIN</span>
                             <strong class="username">{{ $user->user_name }}</strong>
                         </span>
                        
