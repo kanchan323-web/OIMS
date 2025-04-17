@@ -78,7 +78,7 @@ class AdminStockController extends Controller
         $moduleName = "Stock";
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
-            
+
             $data = Stock::query()
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('stocks.edp_code', $edp_code);
@@ -89,12 +89,12 @@ class AdminStockController extends Controller
                 ->when($request->location_name, function ($query, $location_name) {
                     return $query->where('stocks.location_name', 'LIKE', "%{$location_name}%");
                 });
-                // ->when($request->form_date, function ($query) use ($request) {
-                //     return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-                // })
-                // ->when($request->to_date, function ($query) use ($request) {
-                //     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-                // });
+            // ->when($request->form_date, function ($query) use ($request) {
+            //     return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+            // })
+            // ->when($request->to_date, function ($query) use ($request) {
+            //     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+            // });
 
 
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
@@ -163,6 +163,16 @@ class AdminStockController extends Controller
                 ->withInput();
         }
 
+        $existingStock = Stock::where('edp_code', $request->edp_code)
+            ->where('rig_id', $request->rig_id)
+            ->first();
+
+        if ($existingStock) {
+            return redirect()->back()
+                ->withErrors(['edp_code' => 'Stock with this EDP code already exists for the selected Rig.'])
+                ->withInput();
+        }
+
         $user = Auth::user();
         $stock = new Stock;
         $stock->location_id = $rigUser->location_id;
@@ -227,7 +237,7 @@ class AdminStockController extends Controller
     public function downloadSample()
     {
         $filePath = public_path('sample-files/sample_stock_admin.xlsx');
-        return Response::download($filePath, 'Sample_Stock_File.xlsx');
+        return Response::download($filePath, 'Sample_Stock_File_Admin.xlsx');
     }
 
 
@@ -413,7 +423,7 @@ class AdminStockController extends Controller
         }
 
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
-
+    
         $rules = [
             // 'location_id' => 'required',
             // 'location_name' => 'required',
@@ -447,7 +457,7 @@ class AdminStockController extends Controller
                 ->withErrors(['rig_id' => 'Invalid Rig selected.'])
                 ->withInput();
         }
-
+        
         LogsStocks::create([
             'stock_id'        => $stock->id,
             'location_id'     => $rigUser->location_id,
@@ -479,9 +489,11 @@ class AdminStockController extends Controller
         $validatedData['location_id'] = $rigUser->location_id;
         $validatedData['location_name'] = $rigUser->name;
         $validatedData['rig_id'] = $request->rig_id;
-
+        $validatedData['new_spareable'] = $request->new_spareable;
+        $validatedData['used_spareable'] = $request->used_spareable;
+        
         $stock->update($validatedData);
-
+        
         $user = Auth::user();
         $url = route('stock_list');
         $this->notifyAdmins(
@@ -506,7 +518,9 @@ class AdminStockController extends Controller
         if (!auth()->check()) {
             return response()->json(['success' => false, 'message' => 'User not authenticated'], 401);
         }
+
         $edpCode = $request->edp_code;
+        $rigId = $request->rig_id;
 
         if (!$edpCode) {
             return response()->json(['success' => false, 'error' => 'EDP Code is missing'], 400);
@@ -518,7 +532,12 @@ class AdminStockController extends Controller
             return response()->json(['success' => false, 'error' => 'EDP not found'], 404);
         }
 
-        $stock = Stock::where('edp_code', $edpCode)->first();
+        // Fetch stock based on both EDP code and Rig ID
+        $stockQuery = Stock::where('edp_code', $edpCode);
+        if (!empty($rigId)) {
+            $stockQuery->where('rig_id', $rigId);
+        }
+        $stock = $stockQuery->first();
 
         return response()->json([
             'success' => true,
@@ -538,6 +557,7 @@ class AdminStockController extends Controller
             ] : null
         ]);
     }
+
 
 
     // public function downloadPdf(Request $request)
