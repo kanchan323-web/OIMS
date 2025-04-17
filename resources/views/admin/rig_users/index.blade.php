@@ -28,7 +28,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Rigs</h4>
+                            <h4 class="card-title">Rigs List</h4>
                         </div>
                         <a href="{{ route('admin.rig_users.create') }}" class="btn btn-primary">Add New</a>
                     </div>
@@ -37,10 +37,11 @@
                             <table class="data-tables table mb-0 tbl-server-info">
                                 <thead class="bg-white text-uppercase">
                                     <tr class="ligth ligth-data">
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Created At</th>
-                                        <th>Actions</th>
+                                        <th>No.</th>
+                                        <th>Rig Name</th>
+                                        <th>Location ID</th>
+                                        <th>Creation Date</th>
+                                        <th>Operations</th>
                                     </tr>
                                 </thead>
                                 <tbody class="ligth-body">
@@ -48,7 +49,8 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $user->name }}</td>
-                                        <td>{{ $user->created_at }}</td>
+                                        <td>{{ $user->location_id }}</td>
+                                        <td>{{ $user->created_at->format('d-m-Y') }}</td>
                                         <td>
                                             <div class="d-flex align-items-center list-action">
                                                 <a class="badge badge-info mr-2" title="View" data-toggle="modal" data-target="#exampleModal" onclick="viewrig({{ $user }})">
@@ -57,7 +59,7 @@
                                                 <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit" href="{{ route('admin.rig_users.edit', $user->id) }}">
                                                     <i class="ri-pencil-line mr-0"></i>
                                                 </a>
-                                                <a class="badge bg-warning mr-2 border-0 mr-2" title="View" data-toggle="modal" data-target="#DeleteModal" >
+                                                <a class="badge bg-warning mr-2 border-0 mr-2" title="View" data-toggle="modal" data-target="#DeleteModal" onclick="deleterig({{ $user }})" >
                                                     <i class="ri-delete-bin-line mr-0"></i>
                                                 </a>
 
@@ -87,10 +89,11 @@
                 <p>Are you sure you want to delete this item? This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
-                <form action="{{ route('admin.rig_users.destroy', $user->id) }}" method="POST" class="d-inline-block">
+              
+                <form action="{{ route('admin.rig_users.destroy') }}" method="POST" class="d-inline-block">
                     @csrf
-                    @method('DELETE')
-                    
+                        <input type="hidden" value="" id="deleteID"  name="rig_delete_id">
+                        <input type="hidden" value="" id="deleteName"  name="rig_delete_name">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
@@ -154,6 +157,13 @@
 
             $("#rigName").val(rigname);
             $("#location_id").val(riglocation_id);
+    }
+    function deleterig(rig){
+            let riglocation_id = rig['location_id'];
+            let rigname = rig['name'];
+
+            $("#deleteName").val(rigname);
+            $("#deleteID").val(riglocation_id);
     }
   </script>
   

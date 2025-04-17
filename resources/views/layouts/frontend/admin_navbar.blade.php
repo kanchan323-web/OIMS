@@ -10,20 +10,30 @@
                 </a>
             </div>
 
-            @if (auth()->check())
-                        @php
-                            $user = Auth::user()->load('rig');
-                        @endphp
 
-                        <h5 class="mb-3">
-                            Welcome {{ $user->email }}
-                            @if($user->rig)
-                                to {{ $user->rig->name }}
-                            @else
-                                (No Rig Assigned)
-                            @endif
-                        </h5>
-            @endif
+
+
+            <div class="welcome-message mb-4">
+                @if(auth()->check())
+                                @php
+                                    $user = Auth::user()->load('rig');
+                                @endphp
+
+                                <div class="d-flex align-items-center">
+                                    <span class="badge badge-light mr-2 px-3 py-2">
+                                        <i class="fas fa-user-shield mr-1"></i> Welcome
+                                    </span>
+                                    <span class="badge badge-primary px-3 py-2 mr-2">
+                                        {{ $user->user_name }}
+                                    </span>
+                                    @if($user->rig)
+                                        <span class="badge badge-success px-3 py-2">
+                                            <i class="fas fa-rig mr-1"></i> {{ $user->rig->name }} ({{ $user->rig->location_id }})
+                                        </span>
+                                    @endif
+                                </div>
+                @endif
+            </div>
 
             <div class="d-flex align-items-center">
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -61,8 +71,7 @@
                                             <a href="#" class="iq-sub-card">
                                                 <div class="media align-items-center cust-card py-3 border-bottom">
                                                     <div class="">
-                                                        <img class="avatar-50 rounded-small"
-                                                            src="#" alt="01">
+                                                        <img class="avatar-50 rounded-small" src="#" alt="01">
                                                     </div>
                                                     <div class="media-body ml-3">
                                                         <div class="d-flex align-items-center justify-content-between">
@@ -76,8 +85,7 @@
                                             <a href="#" class="iq-sub-card">
                                                 <div class="media align-items-center cust-card py-3 border-bottom">
                                                     <div class="">
-                                                        <img class="avatar-50 rounded-small"
-                                                            src="#" alt="02">
+                                                        <img class="avatar-50 rounded-small" src="#" alt="02">
                                                     </div>
                                                     <div class="media-body ml-3">
                                                         <div class="d-flex align-items-center justify-content-between">
@@ -91,8 +99,7 @@
                                             <a href="#" class="iq-sub-card">
                                                 <div class="media align-items-center cust-card py-3">
                                                     <div class="">
-                                                        <img class="avatar-50 rounded-small"
-                                                            src="#" alt="03">
+                                                        <img class="avatar-50 rounded-small" src="#" alt="03">
                                                     </div>
                                                     <div class="media-body ml-3">
                                                         <div class="d-flex align-items-center justify-content-between">

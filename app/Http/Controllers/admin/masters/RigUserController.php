@@ -124,10 +124,10 @@ class RigUserController extends Controller
         return redirect()->route('admin.rig_users.index')->with('success', 'Rig User updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $rigUser = RigUser::findOrFail($id);
-        $rigUser->delete();
+        
+        $rigUser = RigUser::where('location_id',$request->rig_delete_id)->delete();
 
         return redirect()->route('admin.rig_users.index')->with('success', 'Rig User deleted successfully.');
     }
