@@ -13,8 +13,8 @@
       <link rel="stylesheet" href="{{ asset('resources/css/sweetalert2.min.css') }}">
       <link rel="stylesheet" href="{{ asset('resources/vendor/remixicon/fonts/remixicon.css') }}">  </head>
       <link rel="stylesheet" href="{{ asset('resources/css/select2-bootstrap4.min.css') }}">
-      <script src="{{ asset('resources/js/select2.min.js') }}"></script>
       <script src="{{ asset('resources/js/jquery-3.7.1.min.js') }}"></script>
+      <script src="{{ asset('resources/js/select2.min.js') }}"></script>
       <script src="{{ asset('resources/js/highcharts.js') }}"></script>
       <script src="{{ asset('resources/js/accessibility.js') }}"></script>
       <script src="{{ asset('resources/js/export-data.js') }}"></script>
