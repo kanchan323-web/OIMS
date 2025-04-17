@@ -46,7 +46,7 @@ class UserController extends Controller
                 'regex:/^[A-Za-z\s]+$/',
             ],
             'email'        => 'required|email|unique:users,email',
-            'cpf_no'       => 'required|string|max:255|unique:users,cpf_no',
+            'cpf_no'       => 'required|integer|min:5|max:6|unique:users,cpf_no',
             'password'     => [
                 'required',
                 'min:8',
@@ -152,8 +152,9 @@ class UserController extends Controller
             ],
             'cpf_no'      => [
                 'required',
-                'string',
-                'max:255',
+                'integer',
+                'min:5',
+                'max:6',
                 Rule::unique('users')->ignore($id),
             ],
             'user_status' => 'required|integer',
