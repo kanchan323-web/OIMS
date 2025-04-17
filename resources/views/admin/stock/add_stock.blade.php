@@ -24,11 +24,11 @@
                                         <select class="form-control select2" name="edp_code" id="edp_code_id" required>
                                             <option value="" disabled selected>Select EDP Code</option>
                                             @foreach ($edpCodes as $edp)
-                                                <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
+                                            <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
                                             @endforeach
                                         </select>
                                         @error('edp_code')
-                                            <div class="text-danger">{{ $message }}</div>
+                                        <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div> --}}
 
@@ -48,21 +48,22 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="rig_id">Select Rig</label>
-                                    
+
                                         @php
                                             $selectedRigId = old('rig_id', $LocationName->rig_id ?? $stock->rig_id ?? '');
                                             $isDisabled = !empty($selectedRigId);
                                         @endphp
-                                    
+
                                         <select class="form-control select2" name="rig_id_display" id="rig_id" {{ $isDisabled ? 'disabled' : '' }} required>
-                                            <option value="" disabled {{ $selectedRigId == '' ? 'selected' : '' }}>Select Rig</option>
+                                            <option value="" disabled {{ $selectedRigId == '' ? 'selected' : '' }}>Select Rig
+                                            </option>
                                             @foreach ($rigs as $rig)
                                                 <option value="{{ $rig->id }}" {{ $selectedRigId == $rig->id ? 'selected' : '' }}>
                                                     {{ $rig->name }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                    
+
                                         {{-- Hidden field to submit actual value if select is disabled --}}
                                         @if ($isDisabled)
                                             <input type="hidden" name="rig_id" value="{{ $selectedRigId }}">
@@ -72,12 +73,12 @@
                                                 document.getElementById('rig_id').setAttribute('name', 'rig_id');
                                             </script>
                                         @endif
-                                    
+
                                         @if ($errors->has('rig_id'))
                                             <div class="text-danger">{{ $errors->first('rig_id') }}</div>
                                         @endif
                                     </div>
-                                    
+
 
                                     {{-- <div class="col-md-6 mb-3">
                                         <label for="location_ids">Location Id</label>
@@ -85,7 +86,7 @@
                                             value="{{ old('location_id', $LocationName?->location_id) }}" id="location_ids"
                                             required readonly>
                                         @error('location_id')
-                                            <div class="text-danger">{{ $message }}</div>
+                                        <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
 
@@ -95,7 +96,7 @@
                                             name="location_name" id="location_name"
                                             value="{{ old('location_name', $LocationName?->name) }}" required readonly>
                                         @error('location_name')
-                                            <div class="text-danger">{{ $message }}</div>
+                                        <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div> --}}
 
@@ -104,11 +105,11 @@
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="category" id="category_id" required>
-                                                                            <option selected disabled value="">Select Category...</option>
-                                                                            <option value="Spares">Spares</option>
-                                                                            <option value="Stores">Stores</option>
-                                                                            <option value="Capital items">Capital items</option>
-                                                                        </select> -->
+                                                                                        <option selected disabled value="">Select Category...</option>
+                                                                                        <option value="Spares">Spares</option>
+                                                                                        <option value="Stores">Stores</option>
+                                                                                        <option value="Capital items">Capital items</option>
+                                                                                    </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -129,10 +130,10 @@
                                         <input type="text" class="form-control" name="section" id="section_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="section" id="section_id" required>
-                                                                            <option selected disabled value="">Select Section...</option>
-                                                                            <option value="ENGG">ENGG</option>
-                                                                            <option value="DRILL">DRILL</option>
-                                                                        </select> -->
+                                                                                        <option selected disabled value="">Select Section...</option>
+                                                                                        <option value="ENGG">ENGG</option>
+                                                                                        <option value="DRILL">DRILL</option>
+                                                                                    </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
@@ -182,14 +183,11 @@
                                         @enderror
                                     </div>
 
-                                   
-
-
                                 </div>
 
                                 <button class="btn btn-primary" type="submit">Submit Form</button>
-                                <a href="{{ route('add_stock') }}" class="btn btn-secondary">Reset</a>
-                                <a href="{{ url()->previous() ?: route('stock_list') }}" class="btn btn-light">Go Back</a>
+                                <a href="{{ route('admin.add_stock') }}" class="btn btn-secondary">Reset</a>
+                                <a href="{{ url()->previous() ?: route('admin.stock_list') }}" class="btn btn-light">Go Back</a>
                             </form>
                         </div>
                     </div>
@@ -208,69 +206,78 @@
                 }
             }
 
-            $('#edp_code_id').on('change', function () {
-                var edpCode = $(this).val();
+            function fetchEdpDetails() {
+                const edpCode = $('#edp_code_id').val();
+                const rigId = $('#rig_id').val();
 
-                if (edpCode) {
-                    toggleFields(true);
-
-                    $.ajaxSetup({
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
-                    });
-
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('admin.get_edp_details') }}",
-                        data: { edp_code: edpCode },
-                        success: function (response) {
-                            // console.log("EDP & Stock Data:", response);
-
-                            if (response.success) {
-                                $("#category_id").val(response.edp.category).prop('disabled', true);
-                                $("#category_hidden").val(response.edp.category);
-                                $("#description").val(response.edp.description).prop('readonly', true);
-                                $("#measurement").val(response.edp.measurement).prop('readonly', true);
-                                $("#section_id").val(response.edp.section).prop('disabled', true);
-                                $("#section_hidden").val(response.edp.section);
-
-                                if (response.stock) {
-                                    $("#addStockForm").attr("action", "{{ route('admin.update_stock') }}");
-                                    $("#id").val(response.stock.id);
-                                    $("#qty").val(response.stock.qty);
-                                    $("#new_spareable").val(response.stock.new_spareable);
-                                    $("#used_spareable").val(response.stock.used_spareable);
-                                    $("#remarks").val(response.stock.remarks);
-
-                                    if (response.stock.rig_id) {
-                                        $("#rig_id").val(response.stock.rig_id).trigger('change');
-                                    }
-                                } else {
-                                    $("#addStockForm").attr("action", "{{ route('admin.stockSubmit') }}");
-                                    $("#id").val('');
-                                    $("#qty").val('');
-                                    $("#new_spareable").val('');
-                                    $("#used_spareable").val('');
-                                    $("#remarks").val('');
-
-                                    $("#rig_id").val('').trigger('change');
-                                }
-
-                            } else {
-                                alert("EDP details not found!");
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("AJAX Error:", status, error);
-                        }
-                    });
-                } else {
+                if (!edpCode || !rigId) {
                     toggleFields(false);
+                    return;
                 }
+
+                $.ajaxSetup({
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('admin.get_edp_details') }}",
+                    data: {
+                        edp_code: edpCode,
+                        rig_id: rigId
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#category_id").val(response.edp.category).prop('disabled', true);
+                            $("#category_hidden").val(response.edp.category);
+                            $("#description").val(response.edp.description).prop('readonly', true);
+                            $("#measurement").val(response.edp.measurement).prop('readonly', true);
+                            $("#section_id").val(response.edp.section).prop('disabled', true);
+                            $("#section_hidden").val(response.edp.section);
+
+                            if (response.stock) {
+                                console.log(response.stock);
+                                $("#addStockForm").attr("action", "{{ route('admin.update_stock') }}");
+                                $("#id").val(response.stock.id);
+                                $("#qty").val(response.stock.qty);
+                                $("#new_spareable").val(response.stock.new_spareable);
+                                $("#used_spareable").val(response.stock.used_spareable);
+                                $("#remarks").val(response.stock.remarks);
+
+                                if (response.stock.rig_id) {
+                                    $("#rig_id").val(response.stock.rig_id); // do not trigger change
+                                }
+                            } else {
+                                $("#addStockForm").attr("action", "{{ route('admin.stockSubmit') }}");
+                                $("#id").val('');
+                                $("#qty").val('');
+                                $("#new_spareable").val('');
+                                $("#used_spareable").val('');
+                                $("#remarks").val('');
+                                // Keep current rig_id as-is
+                            }
+
+                            toggleFields(true);
+                        } else {
+                            alert("EDP details not found!");
+                            toggleFields(false);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", status, error);
+                        toggleFields(false);
+                    }
+                });
+            }
+
+            // Trigger fetch only when both inputs are selected
+            $('#edp_code_id, #rig_id').on('change', function () {
+                fetchEdpDetails();
             });
 
-            // Ensure fields remain hidden initially
-            toggleFields(false);
+            toggleFields(false); // Hide fields initially
         });
+
 
         $(document).ready(function () {
             /*    function validateStock() {
@@ -379,16 +386,16 @@
 
     </script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#edp_code_id').select2({
-    theme: 'bootstrap4', // Match Bootstrap theme
-    placeholder: "Select EDP Code",
-    allowClear: true,
-    width: '100%' // Important for layout
-});
+                theme: 'bootstrap4', // Match Bootstrap theme
+                placeholder: "Select EDP Code",
+                allowClear: true,
+                width: '100%' // Important for layout
+            });
         });
     </script>
-    
+
 
 
 
