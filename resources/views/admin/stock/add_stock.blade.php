@@ -149,7 +149,7 @@
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="qty">Available Quantity</label>
+                                        <label for="qty">Total Quantity</label>
                                         <input type="number" class="form-control" name="qty" id="qty" required readonly>
                                         @error('qty')
                                             <div class="text-danger">{{ $message }}</div>
