@@ -78,6 +78,13 @@ class RigUserController extends Controller
         return view('admin.rig_users.show', compact('rigUser', 'moduleName'));
     }
 
+    public function show2($id)
+{
+    $rig = RigUser::select('id', 'location_id', 'name')->find($id);
+    return response()->json($rig ?: ['error' => 'Rig not found'], $rig ? 200 : 404);
+}
+    
+
 
     public function edit($id)
     {
