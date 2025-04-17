@@ -30,19 +30,30 @@ class RigUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
-                    'location_id' => [
+            'name' => [
                 'required',
                 'string',
-                'size:4', 
-                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4}$/' 
+                'max:60',
+                'unique:rig_users,name'
             ],
+            'location_id' => [
+                'required',
+                'string',
+                'size:4',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4}$/',
+                'unique:rig_users,location_id'
+            ],
+        ], [
+            'name.unique' => 'This rig name is already in use. Please choose a different name.',
+            'location_id.unique' => 'This location ID is already assigned to another rig. Location IDs must be unique.',
+          
         ]);
 
         RigUser::create([
             'name' => $request->name,
             'location_id' => $request->location_id,
             ]);
+            
             LogsRigUsers::create([
                 'location_id' => $request->location_id,
                 'name' => $request->name,
@@ -113,10 +124,10 @@ class RigUserController extends Controller
         return redirect()->route('admin.rig_users.index')->with('success', 'Rig User updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $rigUser = RigUser::findOrFail($id);
-        $rigUser->delete();
+        
+        $rigUser = RigUser::where('location_id',$request->rig_delete_id)->delete();
 
         return redirect()->route('admin.rig_users.index')->with('success', 'Rig User deleted successfully.');
     }

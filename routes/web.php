@@ -62,7 +62,7 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/rig_users/{id}', [RigUserController::class, 'show'])->name('admin.rig_users.show');
         Route::get('/rig_users/{id}/edit', [RigUserController::class, 'edit'])->name('admin.rig_users.edit');
         Route::post('/rig_users/{id}', [RigUserController::class, 'update'])->name('admin.rig_users.update');
-        Route::delete('/rig_users/{id}', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
+        Route::post('/rig_users_destroy', [RigUserController::class, 'destroy'])->name('admin.rig_users.destroy');
 
         //EDP master
         Route::get('/edp', [EdpController::class, 'index'])->name('admin.edp.index');
