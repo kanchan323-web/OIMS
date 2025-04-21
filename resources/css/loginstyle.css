@@ -1,154 +1,154 @@
+:root {
+    --primary-color: #05b2e2;
+    --secondary-color: #e8faff; /* light background to match */
+    --accent-color: #63c7e2; /* main accent color */
+    --text-color: #3a3d42; /* darker text for contrast */
+}
 
-        :root {
-            --primary-color: #4e73df;
-            --secondary-color: #f8f9fc;
-            --accent-color: #2e59d9;
-            --text-color: #5a5c69;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f8f9fc 0%, #e2e8f0 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .login-card {
-            border: none;
-            border-radius: 1rem;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-        
-        .login-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .login-header {
-            background: var(--primary-color);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        .login-header h4 {
-            font-weight: 700;
-            font-size: 2rem;
-            margin: 0;
-            letter-spacing: 1px;
-        }
-        
-        .login-body {
-            padding: 2.5rem;
-            background-color: white;
-        }
-        
-        .form-floating label {
-            color: #6c757d;
-        }
-        
-        .form-control {
-            border-radius: 0.5rem;
-            padding: 1rem;
-            border: 1px solid #e3e6f0;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--accent-color);
-            transform: translateY(-2px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-        }
-        
-        .brand-logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-            border-radius: 50%;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            margin: 0 auto 1.5rem;
-        }
-        
-        .brand-logo i {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-        }
-        
-        .alert {
-            border-radius: 0.5rem;
-            border: none;
-        }
-        
-        .input-group-text {
-            background-color: transparent;
-            border-right: none;
-        }
-        
-        .password-toggle {
-            cursor: pointer;
-            background-color: transparent;
-            border-left: none;
-        }
-        
-        .forgot-link {
-            color: var(--primary-color);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .forgot-link:hover {
-            color: var(--accent-color);
-            text-decoration: underline;
-        }
-        
-        .back-link {
-            color: #6c757d;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .back-link:hover {
-            color: var(--text-color);
-            text-decoration: underline;
-        }
-        
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 1.5rem 0;
-            color: #d1d3e2;
-        }
-        
-        .divider::before, .divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid #e3e6f0;
-        }
-        
-        .divider-text {
-            padding: 0 1rem;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: #b7b9cc;
-        }
-        .alert {
+body {
+    background: linear-gradient(135deg, #f8f9fc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+}
+
+.login-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.login-header h4 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.login-body {
+    padding: 2.5rem;
+    background-color: white;
+}
+
+.form-floating label {
+    color: #6c757d;
+}
+
+.form-control {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid #e3e6f0;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.brand-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin: 0 auto 1.5rem;
+}
+
+.brand-logo i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+.alert {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.input-group-text {
+    background-color: transparent;
+    border-right: none;
+}
+
+.password-toggle {
+    cursor: pointer;
+    background-color: transparent;
+    border-left: none;
+}
+
+.forgot-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.back-link {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: var(--text-color);
+    text-decoration: underline;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    color: #d1d3e2;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.divider-text {
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #b7b9cc;
+}
+.alert {
     border-radius: 0.5rem;
     padding: 1rem;
     border-left: 4px solid transparent;
@@ -161,29 +161,31 @@
 }
 
 .alert-icon {
-    filter: brightness(0) saturate(100%) invert(64%) sepia(26%) saturate(1182%) hue-rotate(103deg) brightness(94%) contrast(85%);
-
+    filter: brightness(0) saturate(100%) invert(64%) sepia(26%) saturate(1182%)
+        hue-rotate(103deg) brightness(94%) contrast(85%);
 }
 .brand-logo-img {
-                width: 40px;
-                height: 40px;
-                color: var(--primary-color);
-                fill: currentColor; 
-            }
-            .forgot-link, .back-link {
+    width: 40px;
+    height: 40px;
+    color: var(--primary-color);
+    fill: currentColor;
+}
+.forgot-link,
+.back-link {
     font-size: 0.875rem;
     transition: color 0.2s ease;
     color: var(--primary-color);
 }
 
-.forgot-link:hover, .back-link:hover {
+.forgot-link:hover,
+.back-link:hover {
     color: var(--primary-dark);
     text-decoration: underline;
 }
 
 /* If you need to style the icons */
-.forgot-link img, .back-link img {
-    filter: brightness(0) saturate(100%) invert(39%) sepia(57%) saturate(1559%) hue-rotate(202deg) brightness(93%) contrast(89%);
-
+.forgot-link img,
+.back-link img {
+    filter: brightness(0) saturate(100%) invert(39%) sepia(57%) saturate(1559%)
+        hue-rotate(202deg) brightness(93%) contrast(89%);
 }
-
