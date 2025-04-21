@@ -269,8 +269,6 @@ class AdminStockController extends Controller
             ];
            
 
-           
-
             // Ensure the uploaded file matches the expected headers
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
             
