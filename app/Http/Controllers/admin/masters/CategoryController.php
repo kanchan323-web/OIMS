@@ -22,7 +22,7 @@ class CategoryController extends Controller
     
         return view('admin.category.index', compact('moduleName','categorty_list'));
     }
-
+//test
 
     public function store(Request $request)
     {
