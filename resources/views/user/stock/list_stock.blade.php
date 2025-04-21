@@ -313,7 +313,7 @@
                 success: function (response) {
                     console.log(response.viewdata);
                     $("#location_id").val(response.viewdata['location_id']);
-                    $("#location_name").val(response.viewdata['name']);
+                    $("#location_name").val(response.viewdata['location_name']);
                     $("#edp_code_id").val(response.viewdata['edp_code']);
                     var sectionValue = response.viewdata['section'];
                     $("#section").val(response.viewdata['section']);

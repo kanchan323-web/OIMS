@@ -213,8 +213,8 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Location Name</label>
-                                <input type="text" class="form-control" placeholder=" Location Name" name="location_name"
-                                    id="location_name" readonly>
+                                <input type="text" class="form-control" placeholder=" Location Name" name="location_name1"
+                                    id="location_name1" readonly>
                                 <div class="invalid-feedback">
                                     Enter Location Name
                                 </div>
@@ -334,7 +334,7 @@
                 
                     console.log(response.viewdata['edp_code']);
                     $("#location_id").val(response.viewdata['location_id']);
-                    $("#location_name").val(response.viewdata['location_name']);
+                    $("#location_name1").val(response.viewdata['location_name']);
                     $("#edp_code1").val(response.viewdata['edp_code']);
 
 

@@ -305,8 +305,6 @@ class AdminStockController extends Controller
                     continue;
                 }
 
-                //dd($rig);
-
                 // Validate required fields
                 $requiredFields = range(0, 5);
                 foreach ($requiredFields as $fieldIndex) {
@@ -375,7 +373,7 @@ class AdminStockController extends Controller
 
     public function stock_list_view(Request $request)
     {
-        Log::info('AJAX request received.', ['data' => $request->all()]);
+        //Log::info('AJAX request received.', ['data' => $request->all()]);
 
         $id = $request->data;
 
