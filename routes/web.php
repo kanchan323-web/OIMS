@@ -27,7 +27,7 @@ use App\Http\Controllers\admin\RequestReportController as AdminRequestReportCont
 
 //call index page
 Route::get('/', function () {
-    return view('home'); // This looks for resources/views/welcome.blade.php
+    return view('home'); 
 })->name('home');
 
 //Admin Portal Section
