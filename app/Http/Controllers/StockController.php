@@ -238,11 +238,9 @@ class StockController extends Controller
 
             $expectedHeaders = [
                 'EDP',
-                'Qty Total',
-                'New Spareable',
-                'Used Spareable',
+                'Qty New',
+                'Qty Used'
             ];
-
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
 
             if ($actualHeaders !== $expectedHeaders) {
@@ -250,7 +248,7 @@ class StockController extends Controller
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
                 return redirect()->back();
             }
-
+            
             $user = Auth::user();
             $rigUser = RigUser::find($user->rig_id);
             if (!$rigUser) {
@@ -270,15 +268,25 @@ class StockController extends Controller
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
+                
 
                 $edp = Edp::where('edp_code', $row[0])->first();
                 if (!$edp) {
                     $errors[] = "Row " . ($index + 2) . ": EDP code {$row[0]} not found in the Edp table.";
                     continue;
                 }
+                
+                  
+                     // Convert quantities to integers
+                        $qtyNew = (int)$row[1];
+                        $qtyUsed = (int)$row[2];
+                        $totalQty = $qtyNew + $qtyUsed;
+
+                      
+          
 
                 // Validate required fields
-                $requiredFields = range(0, 3);
+                $requiredFields = range(0, 2);
                 foreach ($requiredFields as $fieldIndex) {
                     if (!isset($row[$fieldIndex]) || trim($row[$fieldIndex]) === '') {
                         $errors[] = "Row " . ($index + 2) . ": Missing required field '" . $expectedHeaders[$fieldIndex] . "'.";
@@ -289,14 +297,13 @@ class StockController extends Controller
                 // Check if stock already exists
                 $stock = Stock::where('edp_code', $edp->id)->where('rig_id', $rigUser->id)
                     ->first();
-
-
+                   
                 if ($stock) {
                     // Update existing stock
                     $stock->update([
-                        'qty'           => (int) $row[1],
-                        'new_spareable' => (int) $row[2],
-                        'used_spareable' => (int) $row[3],
+                        'qty'           => $totalQty,
+                        'new_spareable' => $qtyNew,
+                        'used_spareable' => $qtyUsed,
                         'user_id'       => $user->id,
                     ]);
                 } else {
@@ -309,10 +316,10 @@ class StockController extends Controller
                         'description'   => $edp->description,
                         'section'       => $edp->section,
                         'category'      => $edp->category,
-                        'qty'           => (int) $row[1],
-                        'initial_qty'   => (int) $row[1],
-                        'new_spareable' => (int) $row[2],
-                        'used_spareable' => (int) $row[3],
+                        'qty'           => $totalQty,
+                        'initial_qty'   => $qtyNew,
+                        'new_spareable' => $qtyNew,
+                        'used_spareable' => $qtyUsed,
                         'measurement'   => $edp->measurement,
                         'remarks'       => 'nill',
                         'user_id'       => $user->id,
