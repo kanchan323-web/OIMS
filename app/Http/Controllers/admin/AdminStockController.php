@@ -334,6 +334,7 @@ class AdminStockController extends Controller
 
                 // Check if stock for the same EDP code already exists
                 $existingStock = Stock::where('edp_code', $edp->id)
+                    ->where('rig_id', $rig->id)
                     ->first();
 
                 if ($existingStock) {
@@ -436,7 +437,7 @@ class AdminStockController extends Controller
         }
 
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
-    
+
         $rules = [
             // 'location_id' => 'required',
             // 'location_name' => 'required',
@@ -470,7 +471,7 @@ class AdminStockController extends Controller
                 ->withErrors(['rig_id' => 'Invalid Rig selected.'])
                 ->withInput();
         }
-        
+
         LogsStocks::create([
             'stock_id'        => $stock->id,
             'location_id'     => $rigUser->location_id,
@@ -504,9 +505,9 @@ class AdminStockController extends Controller
         $validatedData['rig_id'] = $request->rig_id;
         $validatedData['new_spareable'] = $request->new_spareable;
         $validatedData['used_spareable'] = $request->used_spareable;
-        
+
         $stock->update($validatedData);
-        
+
         $user = Auth::user();
         $url = route('stock_list');
         $this->notifyAdmins(

@@ -93,7 +93,7 @@
                                 <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
                                         class="las la-plus mr-3"></i>Add/Edit Stock</a>
                                 <a href="{{ route('admin.import_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Bulk Stocks </a>
+                                        class="las la-plus mr-3"></i>Import Bulk Stocks </a>
                             </div>
                         </div>
                     </div>
