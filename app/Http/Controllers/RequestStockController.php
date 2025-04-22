@@ -1372,30 +1372,112 @@ class RequestStockController extends Controller
     public function pendding_request(Request $request){
         $moduleName = "Pendding Request Stock List";
         $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
-        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $data = Requester::select(
+            'rig_users.name as Location_Name',
+            'rig_users.location_id',
+            'requesters.*',
+            'mst_status.status_name',
+            'stocks.id as stock_id',
+            'stocks.id as stock_id',
+            'stocks.description',
+            'edps.edp_code',)->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->where('stocks.rig_id', '!=', $rig_id)
-            ->where('stocks.req_status', 'inactive')
-            ->where('stocks.qty', '!=', 0)
-            ->orderBy('stocks.id', 'desc')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->where('requesters.supplier_rig_id', $rig_id)
+            ->where('requesters.status', 1)
+            ->with('requestStatuses')
+            ->distinct()
+            ->orderBy('requesters.created_at', 'desc')
             ->get();
-        return view('request_stock.comman_request_view', compact('Stock_Table_Data', 'moduleName'));
+
+        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.supplier_rig_id', $rig_id)
+            ->where('requesters.status', 1)
+            ->select('edps.edp_code')
+            ->get();
+
+        $status_type = 'pendding_request.get';
+        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID','status_type'));
     }
 
     public function query_request(Request $request){
         $moduleName = "Query Request Stock List";
         $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+            ->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
-        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $data = Requester::select(
+            'rig_users.name as Location_Name',
+            'rig_users.location_id',
+            'requesters.*',
+            'mst_status.status_name',
+            'stocks.id as stock_id',
+            'stocks.id as stock_id',
+            'stocks.description',
+            'edps.edp_code',)->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->where('stocks.rig_id', '!=', $rig_id)
-            ->where('stocks.req_status', 'inactive')
-            ->where('stocks.qty', '!=', 0)
-            ->orderBy('stocks.id', 'desc')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->where('requesters.supplier_rig_id', $rig_id)
+            ->where('requesters.status', 2)
+            ->with('requestStatuses')
+            ->distinct()
+            ->orderBy('requesters.created_at', 'desc')
             ->get();
-        return view('request_stock.comman_request_view', compact('Stock_Table_Data', 'moduleName'));
+
+        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.supplier_rig_id', $rig_id)
+            ->where('requesters.status', 2)
+            ->select('edps.edp_code')
+            ->get();
+
+        $status_type = 'query_request.get';
+        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID','status_type'));
     }
+
+    public function CommanRequestStockFilter(Request $request){
+        $rig_id = Auth::user()->rig_id;
+        if ($request->ajax()) {
+            $data = Requester::select(
+                'rig_users.name as Location_Name',
+                'rig_users.location_id',
+                'requesters.*',
+                'mst_status.status_name',
+                'stocks.description',
+                'stocks.created_at as stock_created_at',
+                'edps.edp_code')->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->when($request->edp_code, function ($query, $edp_code) {
+                    return $query->where('edps.edp_code', $edp_code);
+                })
+                ->when($request->description, function ($query, $description) {
+                    return $query->where('stocks.description', 'LIKE', "%{$description}%");
+                })
+                ->when($request->form_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+                })
+                ->when($request->to_date, function ($query) use ($request) {
+                    return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+                })
+                ->where('requesters.supplier_rig_id', $rig_id)
+                ->orderBy('requesters.created_at', 'desc')
+                ->get();
+
+            return response()->json(['data' => $data]);
+        }
+        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig'));
+    }
+
 }

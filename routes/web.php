@@ -76,7 +76,7 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::get('/edp/import', [EdpController::class, 'showImportForm'])->name('admin.import_edp');
         Route::post('/edp/import_bulk', [EdpController::class, 'import'])->name('admin.edp.import');
         Route::get('/edp/sample-download', [EdpController::class, 'downloadSample'])->name('admin.edp.downloadSample');
-       
+
         //Category master
         Route::get('/category', [CategoryController::class, 'index'])->name('admin.category.index');
         Route::get('/category/create', [CategoryController::class, 'create'])->name('admin.category.create');
@@ -236,6 +236,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update-request-status/{id}', [RequestStockController::class, 'updateRequestStatus'])->name('request-status.update');
             Route::get('/pendding_request', [RequestStockController::class, 'pendding_request'])->name('pendding_request.get');
             Route::get('/query_request', [RequestStockController::class, 'query_request'])->name('query_request.get');
+            Route::get('/RequestStockListFilter', [RequestStockController::class, 'CommanRequestStockFilter'])->name('CommanRequestStockFilter.get');
         });
 
         //User mapping
