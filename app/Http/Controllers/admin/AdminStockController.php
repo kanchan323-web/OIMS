@@ -311,7 +311,7 @@ class AdminStockController extends Controller
                 }
                
 
-                $rig = RigUser::where('name', $locationName)->first();
+                $rig = RigUser::where('location_id', $locationId)->first();
                 if (!$rig) {
                     $errors[] = "Row " . ($index + 2) . ": Rig {$locationName} not found in the Rig table.";
                     continue;
@@ -327,9 +327,6 @@ class AdminStockController extends Controller
                 }
 
               
-
-                
-
                 // Check if stock for the same EDP code already exists
                 $existingStock = Stock::where('edp_code', $edp->id)
                     ->where('rig_id', $rig->id)

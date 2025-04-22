@@ -33,7 +33,7 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
 
                                     <div class="col-md-6 mb-3">
                                         <label for="location_ids">Location Id</label>
@@ -60,11 +60,11 @@
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="category" id="category_id" required>
-                                                                        <option selected disabled value="">Select Category...</option>
-                                                                        <option value="Spares">Spares</option>
-                                                                        <option value="Stores">Stores</option>
-                                                                        <option value="Capital items">Capital items</option>
-                                                                    </select> -->
+                                                                                                                                        <option selected disabled value="">Select Category...</option>
+                                                                                                                                        <option value="Spares">Spares</option>
+                                                                                                                                        <option value="Stores">Stores</option>
+                                                                                                                                        <option value="Capital items">Capital items</option>
+                                                                                                                                    </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -85,10 +85,10 @@
                                         <input type="text" class="form-control" name="section" id="section_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="section" id="section_id" required>
-                                                                        <option selected disabled value="">Select Section...</option>
-                                                                        <option value="ENGG">ENGG</option>
-                                                                        <option value="DRILL">DRILL</option>
-                                                                    </select> -->
+                                                                                                                                        <option selected disabled value="">Select Section...</option>
+                                                                                                                                        <option value="ENGG">ENGG</option>
+                                                                                                                                        <option value="DRILL">DRILL</option>
+                                                                                                                                    </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
@@ -151,6 +151,92 @@
     </div>
 
     <script>
+        // ✅ Define helper functions first
+        const unitTypes = {
+            'EA': 'integer', 'KIT': 'integer', 'PAA': 'integer', 'PAC': 'integer', 'ROL': 'integer', 'ST': 'integer',
+            'FT': 'decimal', 'GAL': 'decimal', 'KG': 'decimal', 'KL': 'decimal', 'L': 'decimal', 'LB': 'decimal',
+            'M': 'decimal', 'M3': 'decimal', 'MT': 'decimal', 'NO': 'integer'
+        };
+
+        function formatToIndianNumber(x) {
+            x = x.toString();
+            let parts = x.split(".");
+            let intPart = parts[0].replace(/,/g, '');
+            let decimalPart = parts[1] || "";
+
+            let lastThree = intPart.slice(-3);
+            let otherNumbers = intPart.slice(0, -3);
+
+            if (otherNumbers !== '') {
+                lastThree = ',' + lastThree;
+            }
+
+            let formattedInt = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return decimalPart ? formattedInt + "." + decimalPart : formattedInt;
+        }
+
+        function cleanNumber(numStr) {
+            return numStr.replace(/,/g, '');
+        }
+
+        function validateInput(field) {
+            let unit = $("#measurement").val()?.trim();
+            let formattedVal = $(field).val().trim();
+            let rawVal = formattedVal.replace(/,/g, '');
+
+            let isValid = true;
+            let errorMsg = "";
+
+            let rawVal1 = parseFloat($("#new_spareable").val().replace(/,/g, '') || 0);
+            let rawVal2 = parseFloat($("#used_spareable").val().replace(/,/g, '') || 0);
+            let total = rawVal1 + rawVal2;
+
+            if (unit && unitTypes[unit]) {
+                if (unitTypes[unit] === 'integer') {
+                    isValid = /^\d+$/.test(rawVal);
+                    if (!isValid) {
+                        errorMsg = "Only whole numbers allowed!";
+                    } else if (total > 10) {
+                        isValid = false;
+                        errorMsg = "Total spareable qty cannot exceed 10!";
+                    }
+                } else if (unitTypes[unit] === 'decimal') {
+                    if (/^\d+(\.\d+)?$/.test(rawVal)) {
+                        let decimalPart = rawVal.includes(".") ? rawVal.split(".")[1] : "";
+                        isValid = decimalPart.length <= 10;
+                        if (!isValid) {
+                            errorMsg = "Max 10 decimal places allowed!";
+                        }
+                    } else {
+                        isValid = false;
+                        errorMsg = "Invalid decimal format!";
+                    }
+                }
+            }
+
+            toggleError(field, isValid, errorMsg);
+            toggleSubmit();
+        }
+
+
+        function toggleError(field, isValid, message) {
+            $(field).toggleClass("is-invalid", !isValid).next(".invalid-feedback").remove();
+            if (!isValid) $(field).after(`<div class="invalid-feedback">${message}</div>`);
+        }
+
+        function toggleSubmit() {
+            $("button[type='submit']").prop("disabled", $(".is-invalid").length > 0);
+        }
+
+        function calculateSum() {
+            var value1 = parseFloat(cleanNumber($('#new_spareable').val())) || 0;
+            var value2 = parseFloat(cleanNumber($('#used_spareable').val())) || 0;
+            var sum = value1 + value2;
+            $('#qty').val(sum);
+            $('#qty_display').text(formatToIndianNumber(sum));
+            $('#qty').data('raw', sum); // Store raw value if needed
+        }
+
         $(document).ready(function () {
             function toggleFields(show) {
                 if (show) {
@@ -165,7 +251,6 @@
 
                 if (edpCode) {
                     toggleFields(true);
-
                     $.ajaxSetup({
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
                     });
@@ -175,8 +260,6 @@
                         url: "{{ route('get_edp_details') }}",
                         data: { edp_code: edpCode },
                         success: function (response) {
-                            // console.log("EDP & Stock Data:", response);
-
                             if (response.success) {
                                 $("#category_id").val(response.edp.category).prop('disabled', true);
                                 $("#category_hidden").val(response.edp.category);
@@ -186,7 +269,6 @@
                                 $("#section_hidden").val(response.edp.section);
 
                                 if (response.stock) {
-                                    //console.log(response.stock);
                                     $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                                     $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);
@@ -214,116 +296,38 @@
                 }
             });
 
-            // Ensure fields remain hidden initially
             toggleFields(false);
-        });
-
-        $(document).ready(function () {
-            /*    function validateStock() {
-                    let availableQty = $("#qty").val().trim() === "" ? 0 : parseInt($("#qty").val()) || 0;
-                    let newSpareable = $("#new_spareable").val().trim() === "" ? 0 : parseInt($("#new_spareable").val()) || 0;
-                    let usedSpareable = $("#used_spareable").val().trim() === "" ? 0 : parseInt($("#used_spareable").val()) || 0;
-                    let totalSpareable = newSpareable + usedSpareable;
-                    $("#new-error, #used-error").remove();
-
-                    if ($("#qty").val().trim() === "" && $("#new_spareable").val().trim() === "" && $("#used_spareable").val().trim() === "") {
-                        return true;
-                    }
-                    if (newSpareable > availableQty) {
-                        $("#new_spareable").after('<div id="new-error" class="text-danger">New Spareable cannot exceed Available Quantity.</div>');
-                        return false;
-                    }
-                    if (totalSpareable > availableQty) {
-                        if (newSpareable > usedSpareable) {
-                            $("#new_spareable").after('<div id="new-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
-                        } else {
-                            $("#used_spareable").after('<div id="used-error" class="text-danger">Total of New & Used Spareable should not exceed Available Quantity.</div>');
-                        }
-                        return false;
-                    }
-                    return true;
-                }
-                $("#qty, #new_spareable, #used_spareable").on("input", function () {
-                    validateStock();
-                });
-                */
-            function calculateSum() {
-                var value1 = parseFloat($('#new_spareable').val()) || 0; // Default to 0 if empty or invalid
-                var value2 = parseFloat($('#used_spareable').val()) || 0; // Default to 0 if empty or invalid
-                var sum = value1 + value2; // Calculate the sum
-                $('#qty').val(sum); // Display the sum in the 'sum' input field
-            }
-
-            // Attach the keyup event to both input fields
-            $('#new_spareable, #used_spareable').on('keyup', function () {
-                calculateSum(); // Call the calculateSum function when either input changes
-            });
-
-            /*      $("#addStockForm").on("submit", function (e) {
-                      if (!calculateSum()) {
-                          e.preventDefault();
-                      }
-                  });
-                  */
-        });
-
-
-        $(document).ready(function () {
-            let unitTypes = {
-                'EA': 'integer', 'KIT': 'integer', 'PAA': 'integer', 'PAC': 'integer', 'ROL': 'integer', 'ST': 'integer',
-                'FT': 'decimal', 'GAL': 'decimal', 'KG': 'decimal', 'KL': 'decimal', 'L': 'decimal', 'LB': 'decimal',
-                'M': 'decimal', 'M3': 'decimal', 'MT': 'decimal', 'NO': 'integer'
-            };
-
-            function validateInput(field) {
-                let unit = $("#measurement").val()?.trim();
-                let value = $(field).val().trim();
-                let isValid = true;
-                let errorMsg = "";
-
-                if (unit && unitTypes[unit]) {
-                    if (unitTypes[unit] === 'integer') {
-                        isValid = /^\d+$/.test(value);
-                        errorMsg = isValid ? "" : "Only whole numbers allowed!";
-                    } else if (unitTypes[unit] === 'decimal') {
-                        if (/^\d+(\.\d+)?$/.test(value)) {
-                            let decimalPart = value.includes(".") ? value.split(".")[1] : "";
-                            isValid = decimalPart.length <= 10;
-                            errorMsg = isValid ? "" : "Max 10 decimal places allowed!";
-                            console.log("Current Value:", value);
-                        } else {
-                            isValid = false;
-                            errorMsg = "Invalid decimal format!";
-                        }
-                    }
-                }
-
-                toggleError(field, isValid, errorMsg);
-                toggleSubmit();
-            }
-
-            function toggleError(field, isValid, message) {
-                $(field).toggleClass("is-invalid", !isValid).next(".invalid-feedback").remove();
-                if (!isValid) $(field).after(`<div class="invalid-feedback">${message}</div>`);
-            }
-
-            function toggleSubmit() {
-                $("button[type='submit']").prop("disabled", $(".is-invalid").length > 0);
-            }
 
             $("#new_spareable, #used_spareable").on("input", function () {
                 validateInput(this);
+                calculateSum();
+            });
+
+            // Add this for formatting when focus is lost
+            $("#new_spareable, #used_spareable").on("blur", function () {
+                let input = $(this);
+                let cleanVal = input.val().replace(/,/g, '');
+                if (!isNaN(cleanVal) && cleanVal !== '') {
+                    let formattedVal = formatToIndianNumber(cleanVal);
+                    input.val(formattedVal);
+                }
             });
 
             $("#measurement").on("change", function () {
                 $("#new_spareable, #used_spareable").trigger("input");
             });
 
+            $("#addStockForm").on("submit", function () {
+                $('#new_spareable').val(cleanNumber($('#new_spareable').val()));
+                $('#used_spareable').val(cleanNumber($('#used_spareable').val()));
+                $('#qty').val(cleanNumber($('#qty').val()));
+            });
+
+            // Trigger initial input validation
             $("#new_spareable, #used_spareable").trigger("input");
         });
-
-
     </script>
+
     <script>
         $(document).ready(function () {
             $('#edp_code_id').select2({
@@ -334,7 +338,7 @@
             });
         });
     </script>
-    
+
 
 
 
