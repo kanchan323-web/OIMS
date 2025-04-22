@@ -13,6 +13,7 @@
       <link rel="stylesheet" href="{{ asset('resources/css/sweetalert2.min.css') }}">
       <link rel="stylesheet" href="{{ asset('resources/vendor/remixicon/fonts/remixicon.css') }}">  </head>
       <link rel="stylesheet" href="{{ asset('resources/css/select2-bootstrap4.min.css') }}">
+
       <script src="{{ asset('resources/js/jquery-3.7.1.min.js') }}"></script>
       <script src="{{ asset('resources/js/select2.min.js') }}"></script>
       <script src="{{ asset('resources/js/highcharts.js') }}"></script>
@@ -20,6 +21,14 @@
       <script src="{{ asset('resources/js/export-data.js') }}"></script>
       <script src="{{ asset('resources/js/exporting.js') }}"></script>
       <script src="{{ asset('resources/js/variable-pie.js') }}"></script>
+
+        {{-- datatable --}}
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="{{ asset('resources/css/dataTables.bootstrap5.min.css') }}">
+    <!-- DataTables JS -->
+    <script src="{{ asset('resources/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('resources/js/dataTables.bootstrap5.min.js') }}"></script>
+    {{-- datatable --}}
       
       <meta name="csrf-token" content="{{ csrf_token() }}">
 
