@@ -1448,7 +1448,8 @@ class RequestStockController extends Controller
     public function CommanRequestStockFilter(Request $request){
         $rig_id = Auth::user()->rig_id;
         if ($request->ajax()) {
-            $data = Requester::select(
+            $data = Requester::query();
+            $data->select(
                 'rig_users.name as Location_Name',
                 'rig_users.location_id',
                 'requesters.*',
@@ -1462,7 +1463,7 @@ class RequestStockController extends Controller
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('edps.edp_code', $edp_code);
                 })
-                ->when($request->description, function ($query, $description) {
+                ->when($request->Description, function ($query, $description) {
                     return $query->where('stocks.description', 'LIKE', "%{$description}%");
                 })
                 ->when($request->form_date, function ($query) use ($request) {
@@ -1471,13 +1472,20 @@ class RequestStockController extends Controller
                 ->when($request->to_date, function ($query) use ($request) {
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 })
-                ->where('requesters.supplier_rig_id', $rig_id)
-                ->orderBy('requesters.created_at', 'desc')
-                ->get();
+                ->where('requesters.supplier_rig_id', $rig_id);
 
-            return response()->json(['data' => $data]);
+                if($request->type=='pendding_request.get'){
+                    $data->where('requesters.status', 1);
+                }
+                if($request->type=='query_request.get'){
+                    $data->where('requesters.status', 2);
+                }
+
+                $result = $data->orderBy('requesters.created_at', 'desc')->get();
+
+            return response()->json(['data' => $result]);
         }
-        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig'));
+        return view('request_stock.comman_request_view', compact('data'));
     }
 
 }
