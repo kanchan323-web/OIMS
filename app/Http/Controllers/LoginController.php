@@ -78,9 +78,9 @@ class LoginController extends Controller
         return redirect()->route('user.login');
     }
 
-    public function forgotpassword()
-    {
-        return view('forgotpassword');
+    public function forgotpassword(){
+       // return view('forgotpassword'); // through email
+       return view('forgotPassToAdmin'); // through admin
     }
 
 
