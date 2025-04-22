@@ -281,7 +281,6 @@ class StockController extends Controller
                         $qtyNew = (int)$row[1];
                         $qtyUsed = (int)$row[2];
                         $totalQty = $qtyNew + $qtyUsed;
-
                       
           
 
