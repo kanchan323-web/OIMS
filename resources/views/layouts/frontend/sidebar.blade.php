@@ -36,8 +36,8 @@
                             <span class="ml-4">Map User</span>
                         </a>
                     </li>
-                    <li class="{{ Route::is('stock_list') || Route::is('add_stock') ? 'active' : '' }}">
-                        <a href="#product" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                    <li class="{{ Route::is('stock_list') ? 'active' : '' }}">
+                        <a href="{{ route('stock_list') }}" class="svg-icon">
                             <svg class="svg-icon" id="p-dash2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
@@ -46,25 +46,7 @@
                                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                             </svg>
                             <span class="ml-4">Stock</span>
-                            <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="10 15 15 20 20 15"></polyline>
-                                <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                            </svg>
                         </a>
-                        <ul id="product" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                            <li class="">
-                                <a href="{{ route('stock_list') }}">
-                                    <i class="las la-minus"></i><span>Stock List</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{{ route('add_stock') }}">
-                                    <i class="las la-minus"></i><span>Add Stock</span>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
                     <li class="{{ Route::is('stock_list.get') || Route::is('request_stock_list')|| Route::is('request_generated_list') ? 'active' : '' }} ">
                         <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
@@ -130,7 +112,7 @@
                         </ul>
                     </li>
 
-                    
+
                 {{-- <li class="">
                     <a href="#logReport" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="log-folder" width="20" height="20"
