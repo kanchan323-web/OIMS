@@ -3,6 +3,7 @@
 
   <div class="content-page">
     <div class="container-fluid">
+      {{ Breadcrumbs::render('map_all_user_list') }}
     <div class="row">
 
       <div class="col-lg-12">

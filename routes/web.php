@@ -40,14 +40,11 @@ Route::middleware(['admin.auth'])->group(function () {
     Route::prefix('/admin')->group(function () {
         Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
         Route::get('/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
-
         //admin Logs
         Route::get('/log',[AdminLogsController::class,'index'])->name('get.logs');
         Route::get('/logfilter',[AdminLogsController::class,'filterdata'])->name('get.logs.filter');
-
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-
         //User Registration
         Route::get('/index', [UserController::class, 'index'])->name('admin.index');
         Route::get('/create', [UserController::class, 'create'])->name('admin.create');
