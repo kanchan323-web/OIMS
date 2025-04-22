@@ -1,8 +1,10 @@
 @extends('layouts.frontend.layout')
 @section('page-content')
 
+
     <div class="content-page">
      <div class="container-fluid">
+        {{ Breadcrumbs::render('map_user_stock_list') }}
         <div class="row">
 
 

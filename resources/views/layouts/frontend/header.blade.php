@@ -39,6 +39,14 @@
     max-width: 100%;
     margin: 1.5em auto;
 }
+.breadcrumb{
+    flex-wrap: wrap;
+    padding: .75rem 1rem;
+    margin-bottom: 1rem;
+    list-style: none;
+    background-color: transparent; /* Removes background color */
+    border-radius: 10px;
+}
 
 /* Data Table Styling */
 .highcharts-data-table table {
