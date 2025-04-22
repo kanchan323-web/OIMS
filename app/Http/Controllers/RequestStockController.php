@@ -1328,14 +1328,14 @@ class RequestStockController extends Controller
     private function notifyAdmins($message, $url = null)
     {
         $user = Auth::user();
-    
+
         $admins = User::where('user_type', 'admin')->get();
-    
+
         foreach ($admins as $admin) {
             $notification = Notification::create([
                 'type'            => NewRequestNotification::class,
                 'notifiable_type' => User::class,
-                'notifiable_id'   => $admin->id, 
+                'notifiable_id'   => $admin->id,
                 'user_id'         => $user->id,
                 'data'            => json_encode([
                     'message' => $message,
@@ -1344,12 +1344,12 @@ class RequestStockController extends Controller
                 'created_at'      => now(),
                 'updated_at'      => now(),
             ]);
-    
+
             // Notify all rig users of the same rig
             $rigUsers = User::where('rig_id', $user->rig_id)
                             ->where('user_type', 'user')
                             ->get();
-    
+
             foreach ($rigUsers as $rigUser) {
                 DB::table('notification_user')->insert([
                     'user_id'         => $rigUser->id,
@@ -1358,7 +1358,7 @@ class RequestStockController extends Controller
                     'updated_at'      => now(),
                 ]);
             }
-    
+
             // Also notify the admin
             DB::table('notification_user')->insert([
                 'user_id'         => $admin->id,
@@ -1367,5 +1367,35 @@ class RequestStockController extends Controller
                 'updated_at'      => now(),
             ]);
         }
+    }
+
+    public function pendding_request(Request $request){
+        $moduleName = "Pendding Request Stock List";
+        $rig_id = Auth::user()->rig_id;
+
+        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->where('stocks.rig_id', '!=', $rig_id)
+            ->where('stocks.req_status', 'inactive')
+            ->where('stocks.qty', '!=', 0)
+            ->orderBy('stocks.id', 'desc')
+            ->get();
+        return view('request_stock.comman_request_view', compact('Stock_Table_Data', 'moduleName'));
+    }
+
+    public function query_request(Request $request){
+        $moduleName = "Query Request Stock List";
+        $rig_id = Auth::user()->rig_id;
+
+        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement', 'stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->where('stocks.rig_id', '!=', $rig_id)
+            ->where('stocks.req_status', 'inactive')
+            ->where('stocks.qty', '!=', 0)
+            ->orderBy('stocks.id', 'desc')
+            ->get();
+        return view('request_stock.comman_request_view', compact('Stock_Table_Data', 'moduleName'));
     }
 }

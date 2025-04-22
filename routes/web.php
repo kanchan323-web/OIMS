@@ -27,7 +27,7 @@ use App\Http\Controllers\admin\RequestReportController as AdminRequestReportCont
 
 //call index page
 Route::get('/', function () {
-    return view('home'); 
+    return view('home');
 })->name('home');
 
 //Admin Portal Section
@@ -234,6 +234,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/decline-pending-request', [RequestStockController::class, 'declineforRaisedRequest'])->name('request.raisedrequestdecline');
             Route::get('/get-request-status/{id}', [RequestStockController::class, 'getRequestStatusforEdit'])->name('request-status.get');
             Route::post('/update-request-status/{id}', [RequestStockController::class, 'updateRequestStatus'])->name('request-status.update');
+            Route::get('/pendding_request', [RequestStockController::class, 'pendding_request'])->name('pendding_request.get');
+            Route::get('/query_request', [RequestStockController::class, 'query_request'])->name('query_request.get');
         });
 
         //User mapping

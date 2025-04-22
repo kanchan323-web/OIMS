@@ -15,7 +15,7 @@
                     @php
                         $user = Auth::user()->load('rig');
                     @endphp
-                    
+
                     <div class="d-flex align-items-baseline">
                         <span class="text-muted mr-2">
                             <i class="fas fa-user text-primary mr-1"></i>Welcome,
@@ -44,6 +44,12 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto navbar-list align-items-center">
+                        <li>
+                            <a href="{{route('pendding_request.get')}}" class="btn add-btn  btn-outline-warning mt-2 shadow-none mx-2 d-none d-md-block">Pendding Request</a>
+                        </li>
+                        <li>
+                            <a href="{{route('query_request.get')}}" class="btn add-btn  btn-outline-primary shadow-none mx-2 d-none d-md-block">Query Request</a>
+                        </li>
 
                         <li class="nav-item nav-icon dropdown">
                             <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton2"
