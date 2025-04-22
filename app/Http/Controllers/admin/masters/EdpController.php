@@ -13,14 +13,24 @@ use Illuminate\Support\Facades\Response;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use DataTables;
 
 class EdpController extends Controller{
 
-    public function index(){
-        $moduleName = "EDP List";
-        $edp_list = Edp::orderBy('id', 'desc')->get();
-        return view('admin.edp.index', compact('moduleName', 'edp_list'));
+    public function index(Request $request)
+{
+    $moduleName = "EDP List";
+    
+    if ($request->ajax()) {
+        $data = Edp::orderBy('id', 'desc')->get();
+        
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->make(true); 
     }
+    
+    return view('admin.edp.index', compact('moduleName'));
+}
 
     public function create(){
         $category_list = Category::get();
@@ -44,7 +54,7 @@ class EdpController extends Controller{
 
         $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
         // Determine category based on material group
-        if ($materialGroup === '0C') {
+        if ($materialGroup === 'OC') {
             $category = 'capital';
         } elseif (ctype_digit($materialGroup)) {
             $groupNum = intval($materialGroup);
@@ -111,7 +121,7 @@ class EdpController extends Controller{
 
                 $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
                 // Determine category based on material group
-                if ($materialGroup === '0C') {
+                if ($materialGroup === 'OC') {
                     $category = 'capital';
                 } elseif (ctype_digit($materialGroup)) {
                     $groupNum = intval($materialGroup);
@@ -126,7 +136,7 @@ class EdpController extends Controller{
                     $category = 'unknown';
                 }
             $edp->update([
-                //'edp_code'     => $request->edp_code,
+                'edp_code'     => $request->edp_code,
                 'category'     => $category,
                 'material_group' => $materialGroup,
                 'description'  => $request->description,
@@ -261,7 +271,7 @@ class EdpController extends Controller{
                 $materialGroup = strtoupper(substr($edpCode, 0, 2));
 
                 // Determine category based on material group
-                if ($materialGroup === '0C') {
+                if ($materialGroup === 'OC') {
                     $category = 'capital';
                 } elseif (ctype_digit($materialGroup)) {
                     $groupNum = intval($materialGroup);
