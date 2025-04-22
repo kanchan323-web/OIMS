@@ -1,3 +1,4 @@
+
 @extends('layouts.frontend.admin_layout')
 @section('page-content')
 
@@ -30,9 +31,9 @@
 
                     <div class="col-lg-12">
                         <div class="table-responsive rounded mb-3">
-                            <table class="data-tables table mb-0 tbl-server-info">
+                            <table class="table table-bordered tbl-server-info" id="edpTable">
                                 <thead class="bg-white text-uppercase">
-                                    <tr class="ligth ligth-data">
+                                    <tr>
                                         <th>#</th>
                                         <th>EDP Code</th>
                                         <th>Category</th>
@@ -43,31 +44,7 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody class="ligth-body" id="stockTable">
-                                    @foreach($edp_list as $index => $list)
-
-                                        <tr>
-                                            <td>{{$index + 1}}</td>
-                                            <td>{{$list->edp_code}}</td>
-                                            <td>{{$list->category}}</td>
-                                            <td>{{$list->material_group}}</td>
-                                            <td>{{$list->description}}</td>
-                                            <td>{{$list->section}}</td>
-                                            <td>{{$list->measurement}}</td>
-
-                                            <td>
-                                                <a class="badge bg-success mr-2" data-toggle="tooltip"
-                                                    href="{{url('/admin/edp/' . $list->id . '/edit')}}" data-placement="top"
-                                                    title="" data-original-title="Edit"><i class="ri-pencil-line mr-0"></i>
-                                                </a>
-                                                <a class="badge bg-warning mr-2" data-toggle="modal" data-target="#DeleteModal"
-                                                    onclick="deleteCategory({{$list->id}})" data-placement="top" title=""
-                                                    data-original-title="Delete" href="#"><i
-                                                        class="ri-delete-bin-line mr-0"></i></a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -106,13 +83,48 @@
 
         <script>
             function deleteCategory(id) {
-
                 $("#delete_id").val(id);
             }
 
             setTimeout(function () {
                 $("#successMessage").fadeOut('slow');
             }, 3000); // 3 seconds
+        </script>
+        <script type="text/javascript">
+            $(function () {
+                $('#edpTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ route('admin.edp.index') }}",
+                    columns: [
+                        {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false},
+                        {data: 'edp_code', name: 'edp_code'},
+                        {data: 'category', name: 'category'},
+                        {data: 'material_group', name: 'material_group'},
+                        {data: 'description', name: 'description'},
+                        {data: 'section', name: 'section'},
+                        {data: 'measurement', name: 'measurement'},
+                        {
+                    data: 'id', 
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, row) {
+                        // Base URL (adjust if needed)                           
+                        var baseUrl = window.location.origin;
+                        
+                        // Edit button           
+                        var editBtn = '<a class="badge bg-success mr-2" href="' + baseUrl + '/OIMS/admin/edp/' + data + '/edit" data-toggle="tooltip" title="Edit"><i class="ri-pencil-line"></i></a>';
+                        
+                        // Delete button
+                        var deleteBtn = '<a class="badge bg-warning mr-2" data-toggle="modal" data-target="#DeleteModal" onclick="deleteCategory(' + data + ')" title="Delete"><i class="ri-delete-bin-line"></i></a>';
+                        
+                        return editBtn + '' + deleteBtn;
+                    }
+                }
+                    ]
+                });
+            });
         </script>
 
 @endsection
