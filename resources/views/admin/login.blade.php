@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('resources/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('resources/css/loginstyle.css') }}">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-   
+
 </head>
 
 <body class="bg-light">
@@ -22,7 +22,7 @@
                         <div class="login-header">
                             <div class="brand-logo back-link text-decoration-none d-flex align-items-center">
                                 <img src="{{ asset('resources/images/login/user-shield.svg') }}" alt="Admin Icon" class="brand-logo-img">
-                            </div> 
+                            </div>
                             <h4>OIMS Admin Login</h4>
                         </div>
                         <div class="login-body">
@@ -51,9 +51,9 @@
                                                 <span class="input-group-text">
                                                     <img src="{{ asset('resources/images/login/user-tie.svg') }}" alt="key" class="me-1" width="16" height="16">
                                                 </span>
-                                                <input type="text" class="form-control @error('login') is-invalid @enderror" 
-                                                    name="login" value="{{ old('login') }}" 
-                                                    placeholder="Enter Email or Username" id="login" required>
+                                                <input type="text" class="form-control @error('login') is-invalid @enderror"
+                                                    name="login" value="{{ old('login') }}"
+                                                    placeholder="Enter Email or Username or CPF Number" id="login" required>
                                                 @error('login')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -64,10 +64,10 @@
                                         <div class="form-floating mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                    
+
                                                     <img src="{{ asset('resources/images/login/key.svg') }}" alt="key" class="me-1" width="16" height="16">
                                                 </span>
-                                                <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                                <input type="password" class="form-control @error('password') is-invalid @enderror"
                                                     name="password" id="password" placeholder="Enter Password" required>
                                                 <span class="input-group-text password-toggle" id="togglePassword">
                                                     <img src="{{ asset('resources/images/login/eye.svg') }}" alt="eye" class="me-1" width="16" height="16">
@@ -85,7 +85,7 @@
                                             <button class="btn btn-primary" type="submit">
                                                 <img src="{{ asset('resources/images/login/check.svg') }}" alt="Help" class="me-1" width="16" height="16">
                                                 Log In
-                                              
+
                                             </button>
                                         </div>
                                     </div>
@@ -122,7 +122,7 @@
             $('#togglePassword').click(function(){
                 const password = $('#password');
                 const icon = $(this).find('img');
-                
+
                 if(password.attr('type') === 'password'){
                     password.attr('type', 'text');
                     icon.attr('src', "{{ asset('resources/images/login/eye-slash.svg') }}");

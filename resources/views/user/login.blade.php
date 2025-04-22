@@ -21,9 +21,9 @@
                     <div class="login-card">
                         <div class="login-header">
                             <div class="brand-logo back-link text-decoration-none d-flex align-items-center">
-                               
+
                                     <img src="{{ asset('resources/images/login/user-tie.svg') }}" alt="Admin Icon" class="brand-logo-img">
-                             
+
                             </div>
                             <h4>OIMS User Login</h4>
                         </div>
@@ -55,9 +55,9 @@
                                                 <span class="input-group-text">
                                                     <img src="{{ asset('resources/images/login/user-tie.svg') }}" alt="key" class="me-1" width="16" height="16">
                                                 </span>
-                                                <input type="text" class="form-control @error('login') is-invalid @enderror" 
-                                                    name="login" value="{{ old('login') }}" 
-                                                    placeholder="Enter Email or Username" id="login">
+                                                <input type="text" class="form-control @error('login') is-invalid @enderror"
+                                                    name="login" value="{{ old('login') }}"
+                                                    placeholder="Enter Email or Username or CPF Number" id="login">
                                                 @error('login')
                                                     <p class="invalid-feedback">{{ $message }}</p>
                                                 @enderror
@@ -71,7 +71,7 @@
                                                 <span class="input-group-text">
                                                     <img src="{{ asset('resources/images/login/key.svg') }}" alt="key" class="me-1" width="16" height="16">
                                                 </span>
-                                                <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                                <input type="password" class="form-control @error('password') is-invalid @enderror"
                                                     name="password" id="password" placeholder="Enter Password">
                                                 <span class="input-group-text password-toggle" id="togglePassword">
                                                 <img src="{{ asset('resources/images/login/eye.svg') }}" alt="eye" class="me-1" width="16" height="16">
@@ -89,11 +89,11 @@
                                             <button class="btn btn-primary" type="submit">
                                                 <img src="{{ asset('resources/images/login/check.svg') }}" alt="Help" class="me-1" width="16" height="16">
                                                 Log In
-                                              
+
                                             </button>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-12">
                                         <div class="d-flex justify-content-between align-items-center mt-3">
                                             <a href="{{ route('forgotpassword') }}" class="forgot-link text-decoration-none">
@@ -114,7 +114,7 @@
             </div>
         </div>
     </section>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
     </script>
@@ -125,7 +125,7 @@
             $('#togglePassword').click(function(){
                 const password = $('#password');
                 const icon = $(this).find('img');
-                
+
                 if(password.attr('type') === 'password'){
                     password.attr('type', 'text');
                     icon.attr('src', "{{ asset('resources/images/login/eye-slash.svg') }}");
