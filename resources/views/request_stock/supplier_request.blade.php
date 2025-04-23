@@ -79,6 +79,7 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
+                                    <th>Request Id</th>
                                     <th>Supplier Rig Name</th>
                                     <th>EDP Code</th>
                                     <th>Status</th>
@@ -91,6 +92,7 @@
                                                         @if(!in_array($stockdata->user_id, $datarig))
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
+                                                                                    <td>{{ $stockdata->RID }}</td>
                                                                                     <td>{{ $stockdata->location_name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     @php
@@ -521,7 +523,8 @@
                                 tableBody.append(`
                                                                 <tr>
                                                                     <td>${index + 1}</td>
-                                                                    <td>${stockdata.location_name} (${stockdata.location_id})</td>
+                                                                    <td>${stockdata.RID}</td>
+                                                                    <td>${stockdata.location_name}</td>
                                                                     <td>${stockdata.edp_code}</td>
                                                                     <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
                                                                     <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>

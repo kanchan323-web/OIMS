@@ -214,7 +214,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
             Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get');
             Route::get('/incoming_request_list', [RequestStockController::class, 'IncomingRequestStockList'])->name('incoming_request_list');
-            Route::get('/incoming_request_list_filter', [RequestStockController::class, 'IncomingRequestStockFilter'])->name('incoming_request_filter.get');
             Route::post('/request-status/accept', [RequestStockController::class, 'accept'])->name('request.accept');
             Route::post('/request-status/decline', [RequestStockController::class, 'decline'])->name('request.decline');
             Route::post('/request-status/query', [RequestStockController::class, 'query'])->name('request.query');

@@ -95,6 +95,7 @@
                                                                         </th> -->
 
                                     <th>Sr.No</th>
+                                    <th>Request ID</th>
                                     <th>Requester Rig Name</th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
@@ -108,7 +109,8 @@
                                                         @if(!in_array($stockdata->user_id, $datarig))
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
-                                                                                    <td>{{ $stockdata->Location_Name }}</td>
+                                                                                    <td>{{ $stockdata->RID }}</td>
+                                                                                    <td>{{ $stockdata->Location_Name }}</td>    
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
                                                                                     <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
@@ -674,6 +676,7 @@
                                 tableBody.append(`
                                                                                                 <tr>
                                                                                                     <td>${index + 1}</td>
+                                                                <td>${stockdata.RID}</td>
                                                                 <td>${stockdata.Location_Name}</td>
                                                                 <td>${stockdata.edp_code}</td>
                                                                 <td>${stockdata.description}</td>
