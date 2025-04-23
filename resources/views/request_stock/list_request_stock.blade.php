@@ -4,6 +4,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
+                    {{Breadcrumbs::render('incoming_request_stock_list')}}
                     @if (Session::get('success'))
                         <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
                             <strong>Success:</strong> {{ Session::get('success') }}
