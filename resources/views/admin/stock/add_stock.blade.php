@@ -110,11 +110,11 @@
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="category" id="category_id" required>
-                                                                                        <option selected disabled value="">Select Category...</option>
-                                                                                        <option value="Spares">Spares</option>
-                                                                                        <option value="Stores">Stores</option>
-                                                                                        <option value="Capital items">Capital items</option>
-                                                                                    </select> -->
+                                                                                                    <option selected disabled value="">Select Category...</option>
+                                                                                                    <option value="Spares">Spares</option>
+                                                                                                    <option value="Stores">Stores</option>
+                                                                                                    <option value="Capital items">Capital items</option>
+                                                                                                </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
                                             <div class="text-danger">{{ $message }}</div>
@@ -135,10 +135,10 @@
                                         <input type="text" class="form-control" name="section" id="section_id" required
                                             readonly>
                                         <!--    <select class="form-control" name="section" id="section_id" required>
-                                                                                        <option selected disabled value="">Select Section...</option>
-                                                                                        <option value="ENGG">ENGG</option>
-                                                                                        <option value="DRILL">DRILL</option>
-                                                                                    </select> -->
+                                                                                                    <option selected disabled value="">Select Section...</option>
+                                                                                                    <option value="ENGG">ENGG</option>
+                                                                                                    <option value="DRILL">DRILL</option>
+                                                                                                </select> -->
                                         <input type="hidden" name="section" id="section_hidden">
                                         @error('section')
                                             <div class="text-danger">{{ $message }}</div>
@@ -156,7 +156,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="qty">Total Quantity</label>
-                                        <input type="number" class="form-control" name="qty" id="qty" required readonly>
+                                        <input type="text" class="form-control" name="qty" id="qty" required readonly>
                                         @error('qty')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -164,8 +164,8 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="new_spareable">New </label>
-                                        <input type="text" class="form-control" name="new_spareable" id="new_spareable"
-                                            required>
+                                        <input type="text" class="form-control formatted-number" name="new_spareable"
+                                            id="new_spareable" required>
                                         @error('new_spareable')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -173,8 +173,8 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="used_spareable">Used </label>
-                                        <input type="text" class="form-control" name="used_spareable" id="used_spareable"
-                                            required>
+                                        <input type="text" class="form-control formatted-number" name="used_spareable"
+                                            id="used_spareable" required>
                                         @error('used_spareable')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -192,7 +192,8 @@
 
                                 <button class="btn btn-primary" type="submit">Submit Form</button>
                                 <a href="{{ route('admin.add_stock') }}" class="btn btn-secondary">Reset</a>
-                                <a href="{{ url()->previous() ?: route('admin.stock_list') }}" class="btn btn-light">Go Back</a>
+                                <a href="{{ url()->previous() ?: route('admin.stock_list') }}" class="btn btn-light">Go
+                                    Back</a>
                             </form>
                         </div>
                     </div>
@@ -200,6 +201,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function formatToIndianNumber(x) {
+            if (!x) return '';
+            x = x.toString().replace(/,/g, '');
+            var afterPoint = '';
+            if (x.indexOf('.') > 0)
+                afterPoint = x.substring(x.indexOf('.'), x.length);
+            x = Math.floor(x);
+            x = x.toString();
+            var lastThree = x.substring(x.length - 3);
+            var otherNumbers = x.substring(0, x.length - 3);
+            if (otherNumbers != '')
+                lastThree = ',' + lastThree;
+            return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+        }
+    </script>
 
     <script>
         $(document).ready(function () {
@@ -313,11 +331,12 @@
                 });
                 */
             function calculateSum() {
-                var value1 = parseFloat($('#new_spareable').val()) || 0; // Default to 0 if empty or invalid
-                var value2 = parseFloat($('#used_spareable').val()) || 0; // Default to 0 if empty or invalid
-                var sum = value1 + value2; // Calculate the sum
-                $('#qty').val(sum); // Display the sum in the 'sum' input field
+                var value1 = parseFloat(unformatIndianNumber($('#new_spareable').val())) || 0;
+                var value2 = parseFloat(unformatIndianNumber($('#used_spareable').val())) || 0;
+                var sum = value1 + value2;
+                $('#qty').val(formatToIndianNumber(sum));
             }
+
 
             // Attach the keyup event to both input fields
             $('#new_spareable, #used_spareable').on('keyup', function () {
@@ -330,6 +349,31 @@
                       }
                   });
                   */
+
+            function unformatIndianNumber(x) {
+                return x.replace(/,/g, '');
+            }
+
+            function applyIndianFormat(id) {
+                let value = $('#' + id).val();
+                if (value) {
+                    let plain = unformatIndianNumber(value);
+                    if (!isNaN(plain)) {
+                        $('#' + id).val(formatToIndianNumber(plain));
+                    }
+                }
+            }
+
+            $('#new_spareable, #used_spareable').on('blur', function () {
+                applyIndianFormat(this.id);
+            });
+
+            $('#new_spareable, #used_spareable').on('focus', function () {
+                // remove commas for editing
+                let val = unformatIndianNumber($(this).val());
+                $(this).val(val);
+            });
+
         });
 
 
@@ -342,7 +386,8 @@
 
             function validateInput(field) {
                 let unit = $("#measurement").val()?.trim();
-                let value = $(field).val().trim();
+                let rawValue = $(field).val().trim();
+                let value = rawValue.replace(/,/g, ''); // Remove commas for validation
                 let isValid = true;
                 let errorMsg = "";
 
@@ -365,6 +410,7 @@
                 toggleError(field, isValid, errorMsg);
                 toggleSubmit();
             }
+
 
             function toggleError(field, isValid, message) {
                 $(field).toggleClass("is-invalid", !isValid).next(".invalid-feedback").remove();

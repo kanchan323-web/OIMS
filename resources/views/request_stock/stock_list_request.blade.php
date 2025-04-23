@@ -105,7 +105,7 @@
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
                                             <td>
-                                                {{ $stockdata->qty }}
+                                                {{ IND_money_format($stockdata->qty) }}
                                                 <span class="text-muted small">{{ $stockdata->measurement }}</span>
                                             </td>
                                             <td>{{ $stockdata->name }}</td>

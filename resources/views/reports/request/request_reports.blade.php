@@ -77,6 +77,26 @@
     <script>
         $(document).ready(function () {
             function fetchReport() {
+
+                function formatToIndianNumber(number) {
+                    number = number.toString().replace(/,/g, ''); // Remove existing commas
+                    let [intPart, decimalPart] = number.split('.');
+
+                    // Format integer part with Indian comma style
+                    let lastThree = intPart.slice(-3);
+                    let otherNumbers = intPart.slice(0, -3);
+
+                    if (otherNumbers !== '') {
+                        lastThree = ',' + lastThree;
+                    }
+
+                    let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+
+                    // Add decimal part if exists
+                    return decimalPart ? formatted + '.' + decimalPart : formatted;
+                }
+
+
                 let formData = $("#filterForm").serialize();
                 // console.log("Form Data Sent:", formData); // Debugging
 
@@ -110,22 +130,22 @@
                             case "summary":
                                 headers = "<th>Sr.No</th><th>Total Requests</th><th>Approved</th><th>Declined</th><th>Pending</th>";
                                 rows += `<tr>
-                                                <td>1</td>
-                                                <td class="text-purple"><strong>${response.data.total_requests ?? 0}</strong></td>
-                                                <td class="text-success"><strong>${response.data.approved ?? 0}</strong></td>
-                                                <td class="text-danger"><strong>${response.data.declined ?? 0}</strong></td>
-                                                <td class="text-warning"><strong>${response.data.pending ?? 0}</strong></td>
-                                            </tr>`;
+                                                    <td>1</td>
+                                                    <td class="text-purple"><strong>${response.data.total_requests ?? 0}</strong></td>
+                                                    <td class="text-success"><strong>${response.data.approved ?? 0}</strong></td>
+                                                    <td class="text-danger"><strong>${response.data.declined ?? 0}</strong></td>
+                                                    <td class="text-warning"><strong>${response.data.pending ?? 0}</strong></td>
+                                                </tr>`;
                                 break;
 
                             case "approval_rates":
                                 headers = "<th>Sr.No</th><th>Approval Rate (%)</th><th>Decline Rate (%)</th><th>Pending (%)</th>";
                                 rows += `<tr>
-                                                <td>1</td>
-                                                <td class="text-success"><strong>${response.data.approval_rate ?? 0}%</strong></td>
-                                                <td class="text-danger"><strong>${response.data.decline_rate ?? 0}%</strong></td>
-                                                <td class="text-warning"><strong>${response.data.pending_rate ?? 0}%</strong></td>
-                                            </tr>`;
+                                                    <td>1</td>
+                                                    <td class="text-success"><strong>${response.data.approval_rate ?? 0}%</strong></td>
+                                                    <td class="text-danger"><strong>${response.data.decline_rate ?? 0}%</strong></td>
+                                                    <td class="text-warning"><strong>${response.data.pending_rate ?? 0}%</strong></td>
+                                                </tr>`;
                                 break;
 
 
@@ -167,13 +187,13 @@
                                         }
 
                                         rows += `<tr>
-                                                            <td>${index + 1}</td>
-                                                            <td>${item.supplier_qty ?? 0}</td>
-                                                            <td><span class="badge ${statusColor}">${statusLabel}</span></td>
-                                                            <td>${item.processed_by_name ?? '-'}</td>
-                                                            <td>${item.rig_name ?? '-'}</td>
-                                                            <td>${item.created_at ?? '-'}</td>
-                                                        </tr>`;
+                                                                <td>${index + 1}</td>
+                                                                <td>${formatToIndianNumber(item.supplier_qty ?? 0)}</td>
+                                                                <td><span class="badge ${statusColor}">${statusLabel}</span></td>
+                                                                <td>${item.processed_by_name ?? '-'}</td>
+                                                                <td>${item.rig_name ?? '-'}</td>
+                                                                <td>${item.created_at ?? '-'}</td>
+                                                            </tr>`;
                                     });
                                 }
 
@@ -191,14 +211,14 @@
                                             : `<span class="badge badge-danger">Not Delivered</span>`;
 
                                         rows += `<tr>
-                                            <td>${index + 1}</td>
-                                            <td>${item.request_id ?? '-'}</td>
-                                            <td>${item.requested_stock_item ?? 'Nill'}</td>
-                                            <td>${item.requester_stock_item ?? 'Nill'}</td>
-                                            <td>${statusBadge}</td>
-                                            <td>${item.expected_delivery ?? '-'}</td>
-                                            <td>${item.actual_delivery ?? '-'}</td>
-                                        </tr>`;
+                                                <td>${index + 1}</td>
+                                                <td>${item.request_id ?? '-'}</td>
+                                                <td>${item.requested_stock_item ?? 'Nill'}</td>
+                                                <td>${item.requester_stock_item ?? 'Nill'}</td>
+                                                <td>${statusBadge}</td>
+                                                <td>${item.expected_delivery ?? '-'}</td>
+                                                <td>${item.actual_delivery ?? '-'}</td>
+                                            </tr>`;
                                     });
                                 }
                                 break;
@@ -208,15 +228,15 @@
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {
                                         rows += `<tr>
-                                                    <td>${index + 1}</td>
-                                                    <td>${item.request_id ?? '-'}</td>
-                                                    <td>${item.requested_stock_item ?? '-'}</td>
-                                                    <td>${item.requester_stock_item ?? '-'}</td>
-                                                    <td>${item.initial_stock ?? '-'}</td>
-                                                    <td>${item.received_stock ?? '-'}</td>
-                                                    <td>${item.used_stock ?? 0}</td>
-                                                    <td>${item.remaining_stock ?? 0}</td>
-                                                </tr>`;
+                                                        <td>${index + 1}</td>
+                                                        <td>${item.request_id ?? '-'}</td>
+                                                        <td>${item.requested_stock_item ?? '-'}</td>
+                                                        <td>${item.requester_stock_item ?? '-'}</td>
+                                                        <td>${formatToIndianNumber(item.initial_stock) ?? '-'}</td>
+                                                        <td>${formatToIndianNumber(item.received_stock) ?? '-'}</td>
+                                                        <td>${formatToIndianNumber(item.used_stock) ?? 0}</td>
+                                                        <td>${formatToIndianNumber(item.remaining_stock) ?? 0}</td>
+                                                    </tr>`;
                                     });
                                 }
                                 break;
@@ -244,31 +264,31 @@
 
         $(document).ready(function () {
             $("#downloadPdf").click(function (e) {
-                    e.preventDefault();
-                    let baseUrl = "{{ route('report_requestPdfDownload') }}";
-                    let formData = $("#filterForm").serializeArray();
-                    let filteredParams = formData
-                        .filter(item => item.value.trim() !== "")
-                        .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
-                        .join("&");
-                    let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
-                    window.open(finalUrl, '_blank');
-                });
-             });
-
-            $(document).ready(function () {
-                $("#downloadexcel").click(function (e) {
-                        e.preventDefault();
-                        let baseUrl = "{{ route('report_requestExcelDownload') }}";
-                        let formData = $("#filterForm").serializeArray();
-                        let filteredParams = formData
-                            .filter(item => item.value.trim() !== "")
-                            .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
-                            .join("&");
-                        let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
-                        window.open(finalUrl, '_blank');
-                });
+                e.preventDefault();
+                let baseUrl = "{{ route('report_requestPdfDownload') }}";
+                let formData = $("#filterForm").serializeArray();
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
             });
+        });
+
+        $(document).ready(function () {
+            $("#downloadexcel").click(function (e) {
+                e.preventDefault();
+                let baseUrl = "{{ route('report_requestExcelDownload') }}";
+                let formData = $("#filterForm").serializeArray();
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
     </script>
 
 @endsection

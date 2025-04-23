@@ -7,6 +7,7 @@
                 <div class="col-sm-12">
                     {{ Breadcrumbs::render('add_stock') }}
 
+
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -131,7 +132,6 @@
     </div>
 
     <script>
-        // ✅ Define helper functions first
         const unitTypes = {
             'EA': 'integer', 'KIT': 'integer', 'PAA': 'integer', 'PAC': 'integer', 'ROL': 'integer', 'ST': 'integer',
             'FT': 'decimal', 'GAL': 'decimal', 'KG': 'decimal', 'KL': 'decimal', 'L': 'decimal', 'LB': 'decimal',
@@ -159,7 +159,7 @@
             return numStr.replace(/,/g, '');
         }
 
-        function validateInput(field) {
+        function validateInput(field, isFinal = false) {
             let unit = $("#measurement").val()?.trim();
             let formattedVal = $(field).val().trim();
             let rawVal = formattedVal.replace(/,/g, '');
@@ -173,7 +173,7 @@
 
             if (unit && unitTypes[unit]) {
                 if (unitTypes[unit] === 'integer') {
-                    isValid = /^\d+$/.test(rawVal);
+                    isValid = /^\d*$/.test(rawVal);
                     if (!isValid) {
                         errorMsg = "Only whole numbers allowed!";
                     } else if (total > 10) {
@@ -181,15 +181,21 @@
                         errorMsg = "Total spareable qty cannot exceed 10!";
                     }
                 } else if (unitTypes[unit] === 'decimal') {
-                    if (/^\d+(\.\d+)?$/.test(rawVal)) {
-                        let decimalPart = rawVal.includes(".") ? rawVal.split(".")[1] : "";
-                        isValid = decimalPart.length <= 10;
-                        if (!isValid) {
-                            errorMsg = "Max 10 decimal places allowed!";
+                    // Allow partial decimals while typing
+                    if (isFinal) {
+                        // Final validation (on blur/submit)
+                        if (/^\d+(\.\d{1,10})?$/.test(rawVal)) {
+                            isValid = true;
+                        } else {
+                            isValid = false;
+                            errorMsg = "Invalid decimal format!";
                         }
                     } else {
-                        isValid = false;
-                        errorMsg = "Invalid decimal format!";
+                        // Allow valid starting patterns like ".", "2.", "2.5", etc.
+                        isValid = /^(\d+)?(\.)?(\d{0,10})?$/.test(rawVal);
+                        if (!isValid) {
+                            errorMsg = "Invalid number format!";
+                        }
                     }
                 }
             }
@@ -197,6 +203,7 @@
             toggleError(field, isValid, errorMsg);
             toggleSubmit();
         }
+
 
 
         function toggleError(field, isValid, message) {
@@ -279,19 +286,20 @@
             toggleFields(false);
 
             $("#new_spareable, #used_spareable").on("input", function () {
-                validateInput(this);
+                validateInput(this); // Partial validation while typing
                 calculateSum();
             });
 
-            // Add this for formatting when focus is lost
             $("#new_spareable, #used_spareable").on("blur", function () {
                 let input = $(this);
+                validateInput(this, true); // Final validation on blur
+
                 let cleanVal = input.val().replace(/,/g, '');
                 if (!isNaN(cleanVal) && cleanVal !== '') {
-                    let formattedVal = formatToIndianNumber(cleanVal);
-                    input.val(formattedVal);
+                    input.val(formatToIndianNumber(cleanVal));
                 }
             });
+
 
             $("#measurement").on("change", function () {
                 $("#new_spareable, #used_spareable").trigger("input");
