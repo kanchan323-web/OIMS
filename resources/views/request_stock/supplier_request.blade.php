@@ -88,48 +88,48 @@
                             </thead>
                             <tbody id="stockTable" class="ligth-body">
                                 @foreach($data as $index => $stockdata)
-                                                        @if(!in_array($stockdata->user_id, $datarig))
-                                                                                <tr>
-                                                                                    <td>{{ $index + 1 }}</td>
-                                                                                    <td>{{ $stockdata->location_name }}</td>
-                                                                                    <td>{{ $stockdata->edp_code }}</td>
-                                                                                    @php
-                                                                                        $statusColors = [
-                                                                                            'Pending' => 'badge-warning',
-                                                                                            'Approve' => 'badge-success',
-                                                                                            'Decline' => 'badge-danger',
-                                                                                            'Query' => 'badge-info',
-                                                                                            'Received' => 'badge-primary',
-                                                                                            'MIT' => 'badge-purple'
-                                                                                        ];
-                                                                                        $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
-                                                                                    @endphp
-                                                                                    <td><span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span></td>
-                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
-                                                                                    <td>
-                                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                                            onclick="RequestStockData({{ json_encode($stockdata->id) }})"
-                                                                                            data-target=".bd-example-modal-xl" data-placement="top" title="Supplier Request"
-                                                                                            href="#">
-                                                                                            <i class="ri-arrow-right-circle-line"></i>
-                                                                                        </a>
-                                                                                        @php
-                                                                                            $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
-                                                                                        @endphp
-                                                                                        <a class="badge badge-info position-relative"
-                                                                                            onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
-                                                                                            data-placement="top" title="View Request Status" href="#">
-                                                                                            <i class="ri-eye-line"></i>
-                                                                                            @if($hasUnread)
-                                                                                                <span
-                                                                                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                                                                                    ●
-                                                                                                </span>
-                                                                                            @endif
-                                                                                        </a>
-                                                                                    </td>
-                                                                                </tr>
+                                        @if(!in_array($stockdata->user_id, $datarig))
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $stockdata->location_name }}</td>
+                                                <td>{{ $stockdata->edp_code }}</td>
+                                                @php
+                                                    $statusColors = [
+                                                        'Pending' => 'badge-warning',
+                                                        'Approve' => 'badge-success',
+                                                        'Decline' => 'badge-danger',
+                                                        'Query' => 'badge-info',
+                                                        'Received' => 'badge-primary',
+                                                        'MIT' => 'badge-purple'
+                                                    ];
+                                                    $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
+                                                @endphp
+                                                <td><span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span></td>
+                                                <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
+                                                <td>
+                                                    <a class="badge badge-success mr-2" data-toggle="modal"
+                                                        onclick="RequestStockData({{ json_encode($stockdata->id) }})"
+                                                        data-target=".bd-example-modal-xl" data-placement="top" title="Supplier Request"
+                                                        href="#">
+                                                        <i class="ri-arrow-right-circle-line"></i>
+                                                    </a>
+                                                    @php
+                                                        $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
+                                                    @endphp
+                                                    <a class="badge badge-info position-relative"
+                                                        onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
+                                                        data-placement="top" title="View Request Status" href="#">
+                                                        <i class="ri-eye-line"></i>
+                                                        @if($hasUnread)
+                                                            <span
+                                                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                                ●
+                                                            </span>
                                                         @endif
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endif
                                 @endforeach
                             </tbody>
 
