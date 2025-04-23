@@ -462,7 +462,7 @@ class RequestStockController extends Controller
                 'stocks.created_at as stock_created_at',
                 'edps.edp_code'
             )
-                ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+                ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
                 ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
                 ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
                 ->join('edps', 'stocks.edp_code', '=', 'edps.id')
