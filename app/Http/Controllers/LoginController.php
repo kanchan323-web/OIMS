@@ -80,7 +80,8 @@ class LoginController extends Controller
 
     public function forgotpassword(){
        // return view('forgotpassword'); // through email
-       return view('forgotPassToAdmin'); // through admin
+       $admins = User::where('user_type', 'admin')->first(['user_name', 'cpf_no', 'email']);
+       return view('forgotPassToAdmin',compact('admins')); // through admin
     }
 
 

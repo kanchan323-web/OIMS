@@ -91,11 +91,11 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <a href="{{ route('forgotpassword') }}" class="forgot-link text-decoration-none">
+                                        <div class="d-flex justify-content-between align-items-center mt-3 col-2 offset-10">
+                                            {{-- <a href="{{ route('forgotpassword') }}" class="forgot-link text-decoration-none">
                                                 <img src="{{ asset('resources/images/login/question.svg') }}" alt="Help" class="me-1" width="16" height="16">
                                                 Forgot Password?
-                                            </a>
+                                            </a> --}}
                                             <a href="{{ route('home') }}" class="back-link text-decoration-none d-flex align-items-center">
                                                 <img src="{{ asset('resources/images/login/left-long.svg') }}" alt="Back" class="me-1" width="16" height="16">
                                                 Go Back
