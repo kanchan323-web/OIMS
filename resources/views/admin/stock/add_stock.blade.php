@@ -6,9 +6,9 @@
             <div class="row">
                 <div class="col-sm-12">
 
-
-                    {{ Breadcrumbs::render('add_stock') }}
-
+                    
+                    {{ Breadcrumbs::render('admin_add_stock') }}
+                    
 
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">

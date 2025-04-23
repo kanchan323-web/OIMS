@@ -36,6 +36,7 @@
 
         <div class="row">
             <div class="col-sm-12">
+                {{Breadcrumbs::render('add_rig')}}
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">

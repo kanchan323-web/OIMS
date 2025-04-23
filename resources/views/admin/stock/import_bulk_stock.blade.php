@@ -6,6 +6,7 @@
         <div class="container-fluid add-form-list">
             <div class="row">
                 <div class="col-sm-12">
+                    {{Breadcrumbs::render('admin_import_bulk_stock')}}
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">Import Stock Data</h4>

@@ -4,6 +4,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
+                    {{Breadcrumbs::render('Admin.dashboard')}}
                     <div class="row">
                         <div class="col-lg-3 col-md-3">
                             <div class="card card-block card-stretch card-height">

@@ -25,6 +25,7 @@
 
         <div class="row">
             <div class="col-sm-12">
+                {{Breadcrumbs::render('rig_user_list')}}
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
