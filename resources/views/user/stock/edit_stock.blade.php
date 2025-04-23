@@ -38,7 +38,7 @@
                                 <input type="hidden" name="id" value="{{ $editData->id }}">
 
                                 <div class="form-row">
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-4">
                                         <label for="">EDP Code</label>
                                         <input type="text" class="form-control @error('edp_code') is-invalid @enderror"
                                             name="edp_code_display" value="{{ $edpCodes->edp_code }}" readonly>
@@ -49,7 +49,7 @@
                                     </div>
 
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-4">
                                         <label for="">Location ID</label>
                                         <input type="text" class="form-control @error('location_id') is-invalid @enderror"
                                             name="location_id" value="{{ old('location_id', $editData->location_id) }}"
@@ -59,7 +59,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-4">
                                         <label for="">Location Name</label>
                                         <input type="text" class="form-control @error('location_name') is-invalid @enderror"
                                             name="location_name"
@@ -69,18 +69,30 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-4">
                                         <label for="">Category</label>
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly value="{{ old('category', $editData->category) }}">
-                                        <!--    <select class="form-control @error('category') is-invalid @enderror" name="category"
-                                                                            id="category_id" readonly required>
-                                                                            <option selected disabled value="">Select Category...</option>
-                                                                            <option value="Spares" {{ old('category', $editData->category) == 'Spares' ? 'selected' : '' }}>Spares</option>
-                                                                            <option value="Stores" {{ old('category', $editData->category) == 'Stores' ? 'selected' : '' }}>Stores</option>
-                                                                            <option value="Capital items" {{ old('category', $editData->category) == 'Capital items' ? 'selected' : '' }}>Capital items</option>
-                                                                        </select> -->
                                         @error('category')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <label for="">Section</label>
+                                        <input type="text" class="form-control" name="section" id="section_id" required
+                                            readonly value="{{ old('section', $editData->section) }}">
+                                        @error('section')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+
+                                    <div class="col-md-4 mb-4">
+                                        <label for="">Unit of Measurement</label>
+                                        <input type="text" class="form-control @error('measurement') is-invalid @enderror"
+                                            name="measurement" id="measurement"
+                                            value="{{ old('measurement', $editData->measurement) }}" required readonly>
+                                        @error('measurement')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -95,62 +107,6 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Section</label>
-                                        <input type="text" class="form-control" name="section" id="section_id" required
-                                            readonly value="{{ old('section', $editData->section) }}">
-                                        <!--  <select class="form-control @error('section') is-invalid @enderror" name="section"
-                                                                            id="section_id" readonly required>
-                                                                            <option selected disabled value="">Select Section...</option>
-                                                                            <option value="ENGG" {{ old('section', $editData->section) == 'ENGG' ? 'selected' : '' }}>ENGG</option>
-                                                                            <option value="DRILL" {{ old('section', $editData->section) == 'DRILL' ? 'selected' : '' }}>DRILL</option>
-                                                                        </select> -->
-                                        @error('section')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Unit of Measurement</label>
-                                        <input type="text" class="form-control @error('measurement') is-invalid @enderror"
-                                            name="measurement" id="measurement"
-                                            value="{{ old('measurement', $editData->measurement) }}" required readonly>
-                                        @error('measurement')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Available Quantity</label>
-                                        <input type="text" class="form-control" name="qty" id="qty"
-                                            value="{{ $editData->qty }}" required readonly>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">New Spareable</label>
-                                        <input type="text" class="form-control @error('new_spareable') is-invalid @enderror"
-                                            name="new_spareable" id="new_spareable"
-                                            value="{{ old('new_spareable', $editData->new_spareable) }}" required>
-                                        @error('new_spareable')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Used Spareable</label>
-                                        <input type="text"
-                                            class="form-control @error('used_spareable') is-invalid @enderror"
-                                            name="used_spareable" id="used_spareable"
-                                            value="{{ old('used_spareable', $editData->used_spareable) }}" required>
-                                        @error('used_spareable')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
                                     <div class="col-md-6 mb-3">
                                         <label for="">Remarks / Notes</label>
                                         <textarea class="form-control @error('remarks') is-invalid @enderror" name="remarks"
@@ -160,9 +116,41 @@
                                         @enderror
                                     </div>
 
+
+
+                                    <div class="col-md-4 mb-4">
+                                        <label for="">Total Quantity</label>
+                                        <input type="text" class="form-control" name="qty" id="qty"
+                                            value="{{ $editData->qty }}" required readonly>
+                                    </div>
+
+                                    <div class="col-md-4 mb-4">
+                                        <label for="">New </label>
+                                        <input type="text" class="form-control @error('new_spareable') is-invalid @enderror"
+                                            name="new_spareable" id="new_spareable"
+                                            value="{{ old('new_spareable', $editData->new_spareable) }}" required>
+                                        @error('new_spareable')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+
+                                    <div class="col-md-4 mb-4">
+                                        <label for="">Used </label>
+                                        <input type="text"
+                                            class="form-control @error('used_spareable') is-invalid @enderror"
+                                            name="used_spareable" id="used_spareable"
+                                            value="{{ old('used_spareable', $editData->used_spareable) }}" required>
+                                        @error('used_spareable')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+
+
                                 </div>
 
-                                <button class="btn btn-primary" type="submit">Update Stock</button>
+                                <button class="btn btn-success" type="submit">Update Stock</button>
                                 <a href="{{ route('stock_list') }}" class="btn btn-light">Go Back</a>
                             </form>
                         </div>

@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     {{ Breadcrumbs::render('add_stock') }}
-                    
+
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -21,7 +21,7 @@
 
                                 <div class="form-row">
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-4">
                                         <label for="edp_code_id">EDP Code</label>
                                         <select class="form-control select2" name="edp_code" id="edp_code_id" required>
                                             <option value="" disabled selected>Select EDP Code</option>
@@ -33,9 +33,7 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-4">
                                         <label for="location_ids">Location Id</label>
                                         <input type="text" class="form-control" name="location_id" placeholder="Location Id"
                                             value="{{ old('location_id', $LocationName?->location_id) }}" id="location_ids"
@@ -45,7 +43,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-4">
                                         <label for="location_name">Location Name</label>
                                         <input type="text" class="form-control" placeholder="Location Name"
                                             name="location_name" id="location_name"
@@ -55,18 +53,30 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
+                                    <div class="col-md-4 mb-4 edp_detail" style="display: none;">
                                         <label for="category_id">Category</label>
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly>
-                                        <!--    <select class="form-control" name="category" id="category_id" required>
-                                                                                                                                        <option selected disabled value="">Select Category...</option>
-                                                                                                                                        <option value="Spares">Spares</option>
-                                                                                                                                        <option value="Stores">Stores</option>
-                                                                                                                                        <option value="Capital items">Capital items</option>
-                                                                                                                                    </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4 mb-4 edp_detail" style="display: none;">
+                                        <label for="section_id">Section</label>
+                                        <input type="text" class="form-control" name="section" id="section_id" required
+                                            readonly>
+                                        <input type="hidden" name="section" id="section_hidden">
+                                        @error('section')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-4 mb-4 edp_detail" style="display: none;">
+                                        <label for="measurement">Unit of Measurement</label>
+                                        <input type="text" class="form-control" name="measurement" id="measurement" required
+                                            readonly>
+                                        @error('measurement')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -79,57 +89,6 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
-                                        <label for="section_id">Section</label>
-                                        <input type="text" class="form-control" name="section" id="section_id" required
-                                            readonly>
-                                        <!--    <select class="form-control" name="section" id="section_id" required>
-                                                                                                                                        <option selected disabled value="">Select Section...</option>
-                                                                                                                                        <option value="ENGG">ENGG</option>
-                                                                                                                                        <option value="DRILL">DRILL</option>
-                                                                                                                                    </select> -->
-                                        <input type="hidden" name="section" id="section_hidden">
-                                        @error('section')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
-                                        <label for="measurement">Unit of Measurement</label>
-                                        <input type="text" class="form-control" name="measurement" id="measurement" required
-                                            readonly>
-                                        @error('measurement')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="qty">Available Quantity</label>
-                                        <input type="number" class="form-control" name="qty" id="qty" required readonly>
-                                        @error('qty')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="new_spareable">New </label>
-                                        <input type="text" class="form-control" name="new_spareable" id="new_spareable"
-                                            required>
-                                        @error('new_spareable')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="used_spareable">Used </label>
-                                        <input type="text" class="form-control" name="used_spareable" id="used_spareable"
-                                            required>
-                                        @error('used_spareable')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
                                     <div class="col-md-6 mb-3">
                                         <label for="remarks">Remarks / Notes</label>
                                         <textarea class="form-control" name="remarks" id="remarks" required></textarea>
@@ -137,11 +96,33 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    <div class="col-md-4 mb-4">
+                                        <label for="qty">Total Quantity</label>
+                                        <input type="number" class="form-control" name="qty" id="qty" required readonly>
+                                        @error('qty')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <label for="new_spareable">New </label>
+                                        <input type="text" class="form-control" name="new_spareable" id="new_spareable"
+                                            required>
+                                        @error('new_spareable')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <label for="used_spareable">Used </label>
+                                        <input type="text" class="form-control" name="used_spareable" id="used_spareable"
+                                            required>
+                                        @error('used_spareable')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
-
-                                <button class="btn btn-primary" type="submit">Submit Form</button>
+                                <button class="btn btn-success" type="submit">Submit Stock</button>
                                 <a href="{{ route('add_stock') }}" class="btn btn-secondary">Reset</a>
-                                <a href="{{ url()->previous() ?: route('stock_list') }}" class="btn btn-light">Go Back</a>
+                                <a href="{{ route('stock_list') }}" class="btn btn-light">Go Back</a>
                             </form>
                         </div>
                     </div>

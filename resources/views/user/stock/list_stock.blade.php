@@ -76,9 +76,9 @@
                         <div class="col-sm-6 col-md-4">
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Add or Edit Stock</a>
+                                        class="las la-plus mr-1"></i>Add or Edit Stock</a>
                                 <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Import Bulk Stocks </a>
+                                        class="las la-plus mr-1"></i>Import Bulk Stocks </a>
                             </div>
                         </div>
                     </div>
@@ -202,37 +202,11 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <label for="category">Category</label>
-                                <input type="text" class="form-control" name="category" placeholder=" Category "
-                                    id="category_id" readonly>
-                                <input type="hidden" name="category" id="hidden_category">
-                                <div class="invalid-feedback">
-                                    Please select a category
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-4">
                                 <label for="">Location Id</label>
                                 <input type="text" class="form-control" name="location_id" placeholder=" Location Id"
                                     id="location_id" readonly>
                                 <div class="invalid-feedback">
                                     Enter location id
-                                </div>
-                            </div> <div class="col-md-4 mb-4">
-                                <label for="">Unit of Measurement </label>
-                                <input type="text" class="form-control" name="measurement" placeholder="Unit of Measurement"
-                                    id="measurement" readonly>
-                                <div class="invalid-feedback">
-                                    Enter Unit of Measurement
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 mb-4">
-                                <label for="section">Section</label>
-                                <input type="text" class="form-control" name="section" placeholder=" Section " id="section"
-                                    readonly>
-                                <input type="hidden" name="section" id="hidden_section">
-                                <div class="invalid-feedback">
-                                    Please select a Section
                                 </div>
                             </div>
                             <div class="col-md-4 mb-4">
@@ -243,6 +217,33 @@
                                     Enter Location Name
                                 </div>
                             </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="category">Category</label>
+                                <input type="text" class="form-control" name="category" placeholder=" Category "
+                                    id="category_id" readonly>
+                                <input type="hidden" name="category" id="hidden_category">
+                                <div class="invalid-feedback">
+                                    Please select a category
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="section">Section</label>
+                                <input type="text" class="form-control" name="section" placeholder=" Section " id="section"
+                                    readonly>
+                                <input type="hidden" name="section" id="hidden_section">
+                                <div class="invalid-feedback">
+                                    Please select a Section
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="">Unit of Measurement </label>
+                                <input type="text" class="form-control" name="measurement" placeholder="Unit of Measurement"
+                                    id="measurement" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Unit of Measurement
+                                </div>
+                            </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="">Description </label>
                                 <textarea class="form-control" id="description" name="description"
