@@ -124,13 +124,13 @@
                                                     </a>
 
                                                    <!--  Edit Button (Only for Your Members) -->
-                                                    @if(in_array($stockdata->user_id, $datarig))
+                                                 
                                                         <a class="badge bg-success mr-2"
                                                             href="{{ url('/user/edit_stock/' . $stockdata->id) }}" data-toggle="tooltip" data-placement="top"
                                                             data-original-title="Edit Stock">
                                                             <i class="ri-pencil-line mr-0"></i>
                                                         </a>
-                                                    @endif
+                                                
                                                 </div>
 
                                             </td>
