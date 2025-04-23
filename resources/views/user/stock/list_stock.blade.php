@@ -118,7 +118,7 @@
                                                     <a class="badge badge-info mr-2" data-toggle="modal"
                                                         onclick="viewstockdata({{ $stockdata->id }})"
                                                         data-target=".bd-example-modal-xl" data-placement="top"
-                                                            title="Tooltip on top"
+                                                            title="Display Stock Detail"
                                                         href="#">
                                                         <i class="ri-eye-line mr-0"></i>
                                                     </a>
