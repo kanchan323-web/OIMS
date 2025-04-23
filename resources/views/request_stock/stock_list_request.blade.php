@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     {{ Breadcrumbs::render('request_stock_list') }}
-          
+
                     @if (Session::get('success'))
                         <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
                             <strong>Success:</strong> {{ Session::get('success') }}
@@ -35,7 +35,7 @@
                         </div>
                     @endif
                     <div class="row justify-content-between">
-                        <div class="col-sm-6 col-md-9">
+                        <div class="col-sm-6 col-md-12">
                             <div id="user_list_datatable_info" class="dataTables_filter">
                                 <form id="filterForm" class="mr-3 position-relative">
                                     <div class="row">
@@ -48,8 +48,6 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        
-
 
                                         <div class="col-md-2 mb-2">
                                             <label for="Description">Description</label>
@@ -74,28 +72,11 @@
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
                                             <a href="{{ route('stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
-                                            <!-- <a href="{{ route('stock_list_pdf') }}"
-                                                class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
-                                                id="downloadPdf" target="_blank">
-                                                <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                            </a> -->
-
-
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-
-
-                        <!-- <div class="col-sm-6 col-md-3">
-                            <div class="user-list-files d-flex">
-                                <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Add Stock</a>
-                                <a href="{{ route('import_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Bulk Stocks </a>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
 
@@ -106,11 +87,12 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
-                                    <th>Supplier Rig Name</th>
                                     <th>EDP</th>
                                     <th>Section</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
+                                    <th>Supplier Name</th>
+                                    <th>Supplier Rig</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -119,7 +101,6 @@
                                     @foreach($Stock_Table_Data as $index => $stockdata)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $stockdata->name }}</td>
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
@@ -127,31 +108,24 @@
                                                 {{ $stockdata->qty }}
                                                 <span class="text-muted small">{{ $stockdata->measurement }}</span>
                                             </td>
+                                            <td>{{ $stockdata->name }}</td>
+                                            <td>{{ $stockdata->user_name }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center list-action">
                                                     <!-- View Button (Always Visible) -->
                                                     <a class="badge badge-info mr-2" data-toggle="modal"
                                                         onclick="viewstockdata({{ $stockdata->id }})"
-                                                        data-target=".bd-example-modal-xl" data-placement="top" title="View"
-                                                        href="#">
+                                                        data-target=".bd-example-modal-xl" data-placement="top" title="Display Stock Detail">
                                                         <i class="ri-eye-line mr-0"></i>
                                                     </a>
 
-
                                                     <a class="badge badge-success mr-2" data-toggle="modal"
                                                         onclick="addRequest({{ $stockdata->id }})"
-                                                        data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
-                                                        href="#">
+                                                        data-target=".bd-addRequest-modal-xl" data-placement="top" title="Create Stock Request">
                                                         <i class="ri-arrow-right-circle-line"></i>
                                                     </a>
-
-
                                                     <!-- Edit Button (Only for Your Members) -->
-
-
                                                 </div>
-
-
                                             </td>
                                         </tr>
                                     @endforeach
@@ -165,7 +139,7 @@
 
 
             </div>
-            
+
         </div>
     </div>
 
@@ -208,7 +182,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">View Stock</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Display Stock Detail</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -333,7 +307,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Request for Stock </h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Create Request for Stock </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -439,7 +413,7 @@
                                         <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
                                 </div>
                             </div>
-                            <button class="btn btn-primary" id="AddRequestStock" type="submit">Submit Request</button>
+                            <button class="btn btn-success" id="AddRequestStock" type="submit">Submit Request</button>
                             <a href="{{route('stock_list.get')}}" class="btn btn-light">Go Back</a>
                         </form>
                     </div>
@@ -719,7 +693,7 @@
             });
         });
     </script>
-    
+
 
 
 
