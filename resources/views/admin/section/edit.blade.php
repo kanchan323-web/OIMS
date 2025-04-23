@@ -28,11 +28,12 @@
 
         <div class="row">
             <div class="col-sm-12">
+                {{Breadcrumbs::render('section_Edit',$editData->id)}}
 
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Add Section</h4>
+                            <h4 class="card-title">Edit Section</h4>
                         </div>
                     </div>
                     <div class="card-body">

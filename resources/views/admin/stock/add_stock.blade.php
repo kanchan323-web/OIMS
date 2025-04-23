@@ -7,7 +7,7 @@
                 <div class="col-sm-12">
 
                     
-                    {{ Breadcrumbs::render('add_stock') }}
+                    {{ Breadcrumbs::render('admin_add_stock') }}
                     
 
                     <div class="card">

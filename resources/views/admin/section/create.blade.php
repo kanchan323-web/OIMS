@@ -3,7 +3,6 @@
 @extends('layouts.frontend.admin_layout')
 @section('page-content')
 
-
 <div class="content-page">
     <div class="container-fluid add-form-list">
 
@@ -26,6 +25,7 @@
                     </button>
                 </div>
                 @endif
+                {{Breadcrumbs::render('section_create')}}
 
 
                 <div class="card">
