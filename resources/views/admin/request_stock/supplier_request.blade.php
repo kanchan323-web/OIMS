@@ -5,6 +5,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
+                    {{Breadcrumbs::render('Raised_Requests_List')}}
                     @if (Session::get('success'))
                         <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
                             <strong>Success:</strong> {{ Session::get('success') }}

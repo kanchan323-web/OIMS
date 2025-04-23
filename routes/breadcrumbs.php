@@ -3,9 +3,6 @@
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
-
-
-
 Breadcrumbs::for('user.dashboard', function (BreadcrumbTrail $trail) {
     $trail->push('Dashboard', route('user.dashboard'));
 });
@@ -19,7 +16,7 @@ Breadcrumbs::for('map_all_user_list', function (BreadcrumbTrail $trail) {
 // User Mapping Stock List
 Breadcrumbs::for('map_user_stock_list', function (BreadcrumbTrail $trail) {
     $trail->parent('map_all_user_list');  // Clear hierarchy
-    $trail->push('Stock Assignment', route('map_user_stock_list'));
+    $trail->push('Stock Added By User', route('map_user_stock_list'));
 });
 
 
@@ -34,22 +31,43 @@ Breadcrumbs::for('add_stock', function (BreadcrumbTrail $trail) {
     $trail->push('Add Stock', route('admin.add_stock'));
 });
 
-Breadcrumbs::for('edit_stock', function (BreadcrumbTrail $trail, $stock) {
+Breadcrumbs::for('edit_stock', function ($trail, $id) {
     $trail->parent('stock_list');
-    $trail->push('Edit Stock', route('edit_stock', $stock->id));
+    $trail->push('Edit Stock', route('edit_stock', $id));
 });
 
 Breadcrumbs::for('import_stock', function (BreadcrumbTrail $trail) {
     $trail->parent('stock_list');
     $trail->push('Import Stock', route('import_stock'));
 });
-
-Breadcrumbs::for('stock.downloadSample', function (BreadcrumbTrail $trail) {
-    $trail->parent('stock_list');
-    $trail->push('Download Sample', route('stock.downloadSample'));
+Breadcrumbs::for('request_stock_list', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard');
+    $trail->push('Request Stock List', route('stock_list.get'));
+});
+Breadcrumbs::for('incoming_request_stock_list', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard');
+    $trail->push('Incoming Request ', route('incoming_request_list'));
 });
 
-Breadcrumbs::for('stock_filter', function (BreadcrumbTrail $trail) {
-    $trail->parent('stock_list');
-    $trail->push('Stock Filter', route('stock_filter'));
+Breadcrumbs::for('Raised_Requests_List', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard');
+    $trail->push('Raised Requests ', route('admin.raised_requests.index'));
 });
+
+Breadcrumbs::for('Report_Stock', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard');
+    $trail->push('Report Stock', route('stock_report.index'));
+});
+
+Breadcrumbs::for('Report_Request', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard');
+    $trail->push('Report Request', route('request_report.index'));
+});
+
+Breadcrumbs::for('User_profile', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard');
+    $trail->push('User Profile', route('user.profile'));
+});
+
+
+

@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-sm-12">
 
-                   
+                    {{ Breadcrumbs::render('edit_stock', $editData->id) }}
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
