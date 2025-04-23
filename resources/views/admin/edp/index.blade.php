@@ -8,6 +8,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
+                    {{Breadcrumbs::render('edit_list')}}
                     @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert" id="successMessage">
                             {{ session('success') }}
@@ -31,7 +32,7 @@
 
                     <div class="col-lg-12">
                         <div class="table-responsive rounded mb-3">
-                            <table class="table table-bordered tbl-server-info" id="edpTable">
+                            <table class="table  tbl-server-info" id="edpTable">
                                 <thead class="bg-white text-uppercase">
                                     <tr>
                                         <th>#</th>

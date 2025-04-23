@@ -5,6 +5,7 @@
         <div class="container-fluid add-form-list">
             <div class="row">
                 <div class="col-sm-12">
+                    {{Breadcrumbs::render('admin_edit_stock',$editData->id)}}
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">

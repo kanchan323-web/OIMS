@@ -6,9 +6,10 @@
         <div class="container-fluid add-form-list">
             <div class="row">
                 <div class="col-sm-12">
+                    {{Breadcrumbs::render('import_bulk_edp')}}
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">Import EDP Data</h4>
+                            <h4 class="card-title">Import Bulk EDP </h4>
                         </div>
                         <div class="card-body">
                             @if (Session::get('success'))
