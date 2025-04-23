@@ -52,7 +52,6 @@
                                             <span class="file-name ext-primary small" style="color:#a943d6">No file
                                                 chosen</span>
                                         </div>
-
                                         @error('file')
                                             <div class="text-danger mt-1">
                                                 {{ $message }}
@@ -64,7 +63,6 @@
                                             Download Stock Sample File
                                         </a>
                                     </div>
-
                                 </div>
                                 <button class="btn btn-success" type="submit">Import</button>
                                 <a href="{{ route('stock_list') }}" class="btn btn-light">Go Back</a>
