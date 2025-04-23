@@ -48,7 +48,6 @@
                                         @enderror
                                     </div>
 
-
                                     <div class="col-md-4 mb-4">
                                         <label for="">Location ID</label>
                                         <input type="text" class="form-control @error('location_id') is-invalid @enderror"
@@ -85,8 +84,6 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-
                                     <div class="col-md-4 mb-4">
                                         <label for="">Unit of Measurement</label>
                                         <input type="text" class="form-control @error('measurement') is-invalid @enderror"
@@ -96,8 +93,6 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-
                                     <div class="col-md-6 mb-3">
                                         <label for="">Description</label>
                                         <textarea class="form-control @error('description') is-invalid @enderror"
@@ -116,8 +111,6 @@
                                         @enderror
                                     </div>
 
-
-
                                     <div class="col-md-4 mb-4">
                                         <label for="">Total Quantity</label>
                                         <input type="text" class="form-control" name="qty" id="qty"
@@ -134,7 +127,6 @@
                                         @enderror
                                     </div>
 
-
                                     <div class="col-md-4 mb-4">
                                         <label for="">Used </label>
                                         <input type="text"
@@ -145,9 +137,6 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-
-
                                 </div>
 
                                 <button class="btn btn-success" type="submit">Update Stock</button>

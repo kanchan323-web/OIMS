@@ -42,7 +42,6 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
                                     <div class="col-md-4 mb-4">
                                         <label for="location_name">Location Name</label>
                                         <input type="text" class="form-control" placeholder="Location Name"
