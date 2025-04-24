@@ -98,11 +98,14 @@
                                     </div>
                                     <div class="col-md-4 mb-4">
                                         <label for="qty">Total Quantity</label>
-                                        <input type="number" class="form-control" name="qty" id="qty" required readonly>
+                                        <input type="text" class="form-control" id="qty_display" readonly>
+                                        <input type="hidden" name="qty" id="qty" required>
+
                                         @error('qty')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                     <div class="col-md-4 mb-4">
                                         <label for="new_spareable">New </label>
                                         <input type="text" class="form-control" name="new_spareable" id="new_spareable"
@@ -214,10 +217,12 @@
             var value1 = parseFloat(cleanNumber($('#new_spareable').val())) || 0;
             var value2 = parseFloat(cleanNumber($('#used_spareable').val())) || 0;
             var sum = value1 + value2;
-            $('#qty').val(sum);
-            $('#qty_display').text(formatToIndianNumber(sum));
-            $('#qty').data('raw', sum); // Store raw value if needed
+
+            $('#qty').val(sum); // raw value for submission
+            $('#qty_display').val(formatToIndianNumber(sum)); // formatted display
         }
+
+
 
         $(document).ready(function () {
             function toggleFields(show) {
@@ -251,11 +256,13 @@
                                 $("#section_hidden").val(response.edp.section);
 
                                 if (response.stock) {
+                                    console.log(response.stock);
                                     $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                                     $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);
-                                    $("#new_spareable").val(response.stock.new_spareable);
-                                    $("#used_spareable").val(response.stock.used_spareable);
+                                    $("#qty_display").val(formatToIndianNumber(response.stock.qty));
+                                    $("#new_spareable").val(formatToIndianNumber(response.stock.new_spareable));
+                                    $("#used_spareable").val(formatToIndianNumber(response.stock.used_spareable));
                                     $("#remarks").val(response.stock.remarks);
                                 } else {
                                     $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
@@ -289,11 +296,14 @@
                 let input = $(this);
                 validateInput(this, true); // Final validation on blur
 
-                let cleanVal = input.val().replace(/,/g, '');
+                let cleanVal = cleanNumber(input.val());
                 if (!isNaN(cleanVal) && cleanVal !== '') {
-                    input.val(formatToIndianNumber(cleanVal));
+                    input.val(formatToIndianNumber(cleanVal)); // <- reformat with commas
                 }
+
+                calculateSum(); // <- recalculate after formatting
             });
+
 
 
             $("#measurement").on("change", function () {
@@ -303,8 +313,12 @@
             $("#addStockForm").on("submit", function () {
                 $('#new_spareable').val(cleanNumber($('#new_spareable').val()));
                 $('#used_spareable').val(cleanNumber($('#used_spareable').val()));
-                $('#qty').val(cleanNumber($('#qty').val()));
+                $('#qty').val(cleanNumber($('#qty').val())); // Already handled, but for double safety
             });
+
+            $("#qty").val((i, val) => val ? formatToIndianNumber(val.replace(/,/g, '')) : '');
+            $("#new_spareable").val((i, val) => val ? formatToIndianNumber(val.replace(/,/g, '')) : '');
+            $("#used_spareable").val((i, val) => val ? formatToIndianNumber(val.replace(/,/g, '')) : '');
 
             // Trigger initial input validation
             $("#new_spareable, #used_spareable").trigger("input");
