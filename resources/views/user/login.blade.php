@@ -28,6 +28,12 @@
                             <h4>OIMS User Login</h4>
                         </div>
                         <div class="login-body">
+                            @if (session('error') || request()->query('timeout'))
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    {{ session('error') ?? 'Session expired. Please log in again.' }}
+                                
+                                </div>
+                            @endif
                             @if (Session::get('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <div class="d-flex align-items-center">
