@@ -47,28 +47,19 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        
-
-
                                         <div class="col-md-2 mb-2">
                                             <label for="Description">Description</label>
                                             <input type="text" class="form-control" placeholder="Description"
                                                 name="Description" id="Description">
                                         </div>
-
-
                                         <div class="col-md-2 mb-2">
                                             <label for="form_date">From Date</label>
                                             <input type="date" class="form-control" name="form_date" id="form_date">
                                         </div>
-
-
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div>
-
-
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
@@ -78,15 +69,11 @@
                                                 id="downloadPdf" target="_blank">
                                                 <i class="fas fa-file-pdf mr-1"></i> Export PDF
                                             </a> -->
-
-
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-
-
                         <!-- <div class="col-sm-6 col-md-3">
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('add_stock') }}" class="btn btn-primary add-list"><i
@@ -97,7 +84,6 @@
                         </div> -->
                     </div>
                 </div>
-
 
                 <div class="col-lg-12">
                     <div class="table-responsive rounded mb-3">

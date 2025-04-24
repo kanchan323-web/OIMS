@@ -917,6 +917,8 @@ class RequestStockController extends Controller
 
             $stock = Stock::find($requester->stock_id);
             $requesterStock = Stock::find($requester->requester_stock_id);
+           
+            Stock::where('id', $stock->id)->update(['req_status' => 'inactive']);
 
             if (!$stock) {
                 return response()->json([
@@ -969,6 +971,7 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
+
             LogsRequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 3,
@@ -998,7 +1001,7 @@ class RequestStockController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Stock updated and requester stock updated successfully.'
+                'message' => 'The Receipt Has Been Acknowledged.'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
