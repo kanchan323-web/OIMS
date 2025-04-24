@@ -249,7 +249,7 @@
                                         Enter EDP Code
                                     </div>
                                 </div> --}}
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="category">Category</label>
                                     <input type="text" class="form-control" placeholder="Category" id="category_id"
                                         name="category" readonly>
@@ -257,7 +257,7 @@
                                         Enter Category Name
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="section">Section</label>
                                     <input type="text" class="form-control" placeholder="Section" name="section"
                                         id="section" readonly>

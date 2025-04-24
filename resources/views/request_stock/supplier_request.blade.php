@@ -177,7 +177,15 @@
                                         Enter Requester Rig Name
                                     </div>
                                 </div> --}}
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
+                                    <label for="">EDP Code</label>
+                                    <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
+                                        readonly>
+                                    <div class="invalid-feedback">
+                                        Enter EDP Code
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
                                     <label for="">Supplier Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Supplier Name"
                                         id="Supplier_Location_Id" readonly>
@@ -185,7 +193,7 @@
                                         Supplier Name
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-4">
+                                <div class="col-md-4 mb-4">
                                     <label for="">Supplier Rig Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Supplier Rig Name"
                                         id="Supplier_Location_Name" readonly>
