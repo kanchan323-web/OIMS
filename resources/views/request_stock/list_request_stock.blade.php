@@ -96,7 +96,7 @@
 
                                     <th>Sr.No</th>
                                     <th>Request ID</th>
-                                    <th>Requester Rig Name</th>
+                                    <th>Requester Rig</th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
                                     <th>Request Date</th>
@@ -136,8 +136,7 @@
                                                                                         <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
                                                                                             <a class="badge badge-success" data-toggle="modal"
                                                                                                 onclick="RequestStockData({{ json_encode($stockdata->id) }})"
-                                                                                                data-target=".bd-example-modal-xl" data-placement="top" title="Supplier Request"
-                                                                                                href="#">
+                                                                                                data-target=".bd-example-modal-xl" data-placement="top" title="Requestor's Request">
                                                                                                 <i class="ri-arrow-right-circle-line"></i>
                                                                                             </a>
 
@@ -150,7 +149,7 @@
 
                                                                                             <a class="badge badge-info position-relative"
                                                                                                 onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
-                                                                                                data-placement="top" title="View Request Status" href="#">
+                                                                                                data-placement="top" title="Display Request Status">
                                                                                                 <i class="ri-eye-line"></i>
                                                                                                 @if($hasUnread)
                                                                                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -189,7 +188,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"> Requester Request</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"> Requester's Request Detail</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -200,39 +199,7 @@
                         <form id="mainModalForm">
                             <input type="hidden" id="request_id" name="request_id">
                             <div class="form-row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Requester Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Requester Name"
-                                        id="location_id" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Requester Name
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Requester Rig Name</label>
-                                    <input type="text" class="form-control" placeholder="Requester Rig Name" name=""
-                                        id="requester_Id" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Requester Rig Name
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Supplier Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Supplier Name"
-                                        id="Supplier_Location_Id" readonly>
-                                    <div class="invalid-feedback">
-                                        Supplier Name
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Supplier Rig Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Supplier Rig Name"
-                                        id="Supplier_Location_Name" readonly>
-                                    <div class="invalid-feedback">
-                                        Supplier Rig Name
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="">EDP Code</label>
                                     <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
                                         readonly>
@@ -240,7 +207,26 @@
                                         Enter EDP Code
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Requester Name</label>
+                                    <input type="text" class="form-control" name="" placeholder="Requester Name"
+                                        id="location_id" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Requester Name
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Requester Rig Name</label>
+                                    <input type="text" class="form-control" placeholder="Requester Rig Name" name=""
+                                        id="requester_Id" readonly>
+                                    <input type="hidden" class="form-control" name="" placeholder="Supplier Name" id="Supplier_Location_Id" readonly>
+                                    <input type="hidden" class="form-control" name="" placeholder="Supplier Rig Name" id="Supplier_Location_Name" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Requester Rig Name
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
                                     <label for="category">Category</label>
                                     <input type="text" class="form-control" placeholder="Category" id="category_id"
                                         name="category" readonly>
@@ -248,7 +234,7 @@
                                         Enter Category Name
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="section">Section</label>
                                     <input type="text" class="form-control" placeholder="Section" name="section"
                                         id="section" readonly>
@@ -256,7 +242,7 @@
                                         Enter Section Name
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="">Unit of Measurement </label>
                                     <input type="text" class="form-control" name="measurement"
                                         placeholder="Unit of Measurement" id="measurement" readonly>
@@ -264,7 +250,7 @@
                                         Enter Unit of Measurement
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="">Description </label>
                                     <textarea class="form-control" id="description" name="description"
                                         placeholder="Description" readonly></textarea>
@@ -272,23 +258,15 @@
                                         Enter Description
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Supplier Total Quantity</label>
+                                <div class="col-md-4 mb-4">
+                                    <label for=""> Total Quantity</label>
                                     <input type="text" class="form-control" placeholder="Supplier Total Quantity"
                                         name="total_qty" id="total_qty" readonly>
                                     <div class="invalid-feedback">
-                                        Supplier Total Quantity
+                                         Total Quantity
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">New </label>
-                                    <input type="text" class="form-control" placeholder="New Spearable "
-                                        name="new_spareable" id="new_spearable" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter New
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="">Requester Requested Quantity</label>
                                     <input type="text" class="form-control" placeholder="Requested Quantity" name="req_qty"
                                         id="req_qty" readonly>
@@ -296,7 +274,16 @@
                                         Enter Requested Quantity
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
+                                    <label for="">New </label>
+                                    <input type="text" class="form-control" placeholder="New Spearable "
+                                        name="new_spareable" id="new_spearable" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter New
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-4">
                                     <label for="">Used </label>
                                     <input type="text" class="form-control" placeholder="Used Spareable"
                                         name="used_spareable" id="used_spareable" readonly>
@@ -304,14 +291,14 @@
                                         Enter Used
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="">Status </label>
                                     <input type="text" class="form-control" name="status" id="status" readonly>
                                     <div class="invalid-feedback">
                                         Enter Status
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label for="request_date">Request Date</label>
                                     <input type="text" class="form-control" placeholder="Request Date" name="request_date"
                                         id="request_date" readonly>
@@ -319,11 +306,13 @@
                                         Enter Request Date
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
                                     <label id="status_label" style="display:none">Request Status Message</label>
                                     <span id="status_msg"></span>
                                 </div>
                             </div>
+
+                            <!-- request decline staus -->
                             <div class="d-flex justify-content-center mt-4">
                                 <button class="btn btn-danger mx-2" type="button" data-toggle="modal"
                                     data-target="#declineReasonModal">
@@ -523,8 +512,8 @@
                                     <th>Status</th>
                                     <th>Message</th>
                                     <th>Supplier Qty</th>
-                                    <th>New Spareable</th>
-                                    <th>Used Spareable</th>
+                                    <th>New </th>
+                                    <th>Used </th>
                                     <th>Requestor</th>
                                     <th>Date</th>
                                 </tr>
