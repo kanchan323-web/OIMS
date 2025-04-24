@@ -538,8 +538,6 @@
                                     <th>Supplier Qty</th>
                                     <th>New </th>
                                     <th>Used </th>
-                                    <th>New </th>
-                                    <th>Used </th>
                                     <th>Requestor</th>
                                     <th>Date</th>
                                 </tr>
