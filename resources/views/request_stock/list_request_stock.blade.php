@@ -365,6 +365,7 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                            {{-- table change --}}
                                             <table class="table table-bordered">
                                                 <thead>
                                                     <tr>
@@ -873,7 +874,8 @@
 
             $(document).on("click", "#confirmReceivedRequest", function (e) {
                 e.preventDefault();
-                console.log("Submit Event Triggered!");
+                // console.log("Submit Event Triggered!");
+
                 let requestId = $("#mainModalForm").find("#request_id").val();
                 let newSpareable = $("#modal_new_spareable").val();
                 let usedSpareable = $("#modal_used_spareable").val();

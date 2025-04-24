@@ -299,7 +299,7 @@
 
 
                                 <button class="btn btn-success mx-2" type="button" id="openReceivedRequestModal">
-                                    Acknowledge stock receival
+                                    Acknowledge the Receipt
                                 </button>
                                 <button class="btn btn-primary mx-2" type="button" data-toggle="modal"
                                     data-target="#raiseQueryModal">
@@ -711,7 +711,7 @@
                         request_id: requestId
                     },
                     success: function (response) {
-                        console.log(response);
+                        // console.log(response);
                         if (response.success) {
                             Swal.fire({
                                 icon: "success",
@@ -751,8 +751,8 @@
                 type: "GET",
                 data: { request_id: request_id },
                 success: function (response) {
-                    console.log(request_id);
-                    console.log(response);
+                    // console.log(request_id);
+                    // console.log(response);
                     let html = "";
                     if (response.length > 0) {
                         response.forEach(status => {
