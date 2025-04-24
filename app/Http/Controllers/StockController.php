@@ -392,6 +392,11 @@ class StockController extends Controller
 
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
 
+        $request->merge([
+            'qty' => str_replace(',', '', $request->qty),
+            'new_spareable' => str_replace(',', '', $request->new_spareable),
+            'used_spareable' => str_replace(',', '', $request->used_spareable),
+        ]);
 
         $rules = [
             'edp_code' => 'required|integer',
