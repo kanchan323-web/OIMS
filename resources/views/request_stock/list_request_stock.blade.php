@@ -39,7 +39,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        
+
                                         <div class="col-md-2 mb-2">
                                             <label for="Description">Description</label>
                                             <input type="text" class="form-control" placeholder="Description"
@@ -110,7 +110,7 @@
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
                                                                                     <td>{{ $stockdata->RID }}</td>
-                                                                                    <td>{{ $stockdata->Location_Name }}</td>    
+                                                                                    <td>{{ $stockdata->Location_Name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
                                                                                     <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
@@ -140,14 +140,14 @@
                                                                                                 href="#">
                                                                                                 <i class="ri-arrow-right-circle-line"></i>
                                                                                             </a>
-                                                                                    
+
                                                                                             <input type="hidden" id="StockdataID" value="{{ $stockdata->id }}">
                                                                                             <input type="hidden" id="StockdataStatusName" value="{{ $stockdata->status_name }}">
-                                                                                    
+
                                                                                             @php
                                                                                                 $hasUnread = $stockdata->requestStatuses->where('is_read', 0)->count() > 0;
                                                                                             @endphp
-                                                                                    
+
                                                                                             <a class="badge badge-info position-relative"
                                                                                                 onclick="ViewRequestStatus({{ $stockdata->id }})" data-toggle="modal"
                                                                                                 data-placement="top" title="View Request Status" href="#">
@@ -158,7 +158,7 @@
                                                                                                     </span>
                                                                                                 @endif
                                                                                             </a>
-                                                                                    
+
                                                                                             @if($stockdata->status == 6)
                                                                                                 <a class="badge badge-warning" data-toggle="modal"
                                                                                                     onclick="openEditReceivedRequestModal({{ json_encode($stockdata->id) }})"
@@ -168,7 +168,7 @@
                                                                                                 </a>
                                                                                             @endif
                                                                                         </div>
-                                                                                    </td>                                                                                    
+                                                                                    </td>
                                                                                 </tr>
                                                         @endif
                                 @endforeach
@@ -632,6 +632,10 @@
     </div>
 
     <script>
+        $(document).ready(function() {
+            $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
+        });
+
 
         //ajax filter for incomming request stock
 
@@ -1200,12 +1204,12 @@
         }
 
         $(document).on('click', '.sub-modal-close', function () {
-            $('#editReceivedRequestModal').modal('hide'); 
+            $('#editReceivedRequestModal').modal('hide');
         });
 
         $('#editReceivedRequestModal').on('hidden.bs.modal', function () {
-            $('.modal-backdrop').remove(); 
-            $('body').removeClass('modal-open').css('overflow', 'auto'); 
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open').css('overflow', 'auto');
         });
 
 
@@ -1213,7 +1217,7 @@
             let requestId = $('#edit_request_id').val();
             let newSpareable = parseInt($('#edit_modal_new_spareable').val()) || 0;
             let usedSpareable = parseInt($('#edit_modal_used_spareable').val()) || 0;
-            let requestedQty = parseInt($('#edit_modal_req_qty').text()) || 0; 
+            let requestedQty = parseInt($('#edit_modal_req_qty').text()) || 0;
 
             if ((newSpareable + usedSpareable) > requestedQty) {
                 $('#edit_error_message').text("Total of 'New' and 'Used' cannot exceed the Requested Quantity.");
@@ -1229,7 +1233,7 @@
                 },
                 success: function (response) {
                     if (response.success) {
-                        window.location.href = "{{ route('incoming_request_list') }}"; 
+                        window.location.href = "{{ route('incoming_request_list') }}";
                     } else {
                         $('#edit_error_message').text(response.message);
                     }
@@ -1253,6 +1257,6 @@
             });
         });
     </script>
-    
+
 
 @endsection

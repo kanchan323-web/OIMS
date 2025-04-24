@@ -431,6 +431,11 @@
 
 
     <script>
+
+    $(document).ready(function() {
+            $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
+    });
+
         $(document).ready(function () {
             $("#AddRequestStock").on("submit", function () {
                 // Show loader
