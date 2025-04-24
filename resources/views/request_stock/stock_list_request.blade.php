@@ -86,13 +86,12 @@
                         <table class="data-tables table mb-0 tbl-server-info">
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
-                                    <th>Sr.No</th>
+                                    <th>Sr.No </th>
+                                    <th>Supplier Rig</th>
                                     <th>EDP</th>
                                     <th>Section</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
-                                    <th>Supplier Name</th>
-                                    <th>Supplier Rig</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -101,6 +100,7 @@
                                     @foreach($Stock_Table_Data as $index => $stockdata)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $stockdata->name }}</td>
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
@@ -108,8 +108,6 @@
                                                 {{ IND_money_format($stockdata->qty) }}
                                                 <span class="text-muted small">{{ $stockdata->measurement }}</span>
                                             </td>
-                                            <td>{{ $stockdata->name }}</td>
-                                            <td>{{ $stockdata->user_name }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center list-action">
                                                     <!-- View Button (Always Visible) -->
@@ -193,23 +191,7 @@
 
 
                         <div class="form-row">
-                            <div class="col-md-6 mb-3">
-                                <label for="">Location Id</label>
-                                <input type="text" class="form-control" name="location_id" placeholder=" Location Id"
-                                    id="location_id" readonly>
-                                <div class="invalid-feedback">
-                                    Enter location id
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Location Name</label>
-                                <input type="text" class="form-control" placeholder=" Location Name" name="location_name"
-                                    id="location_name" readonly>
-                                <div class="invalid-feedback">
-                                    Enter Location Name
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-4">
                                 <label for="">EDP Code</label>
                                 <input type="text" class="form-control" name="edp_code" placeholder=" EDP Code"
                                     id="edp_code_id" readonly>
@@ -217,7 +199,24 @@
                                     Enter EDP Code
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-4">
+                                <label for="">Supplier Rig Id</label>
+                                <input type="text" class="form-control" name="location_id" placeholder=" Location Id"
+                                    id="location_id" readonly>
+                                <div class="invalid-feedback">
+                                    Enter location id
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="">Supplier Rig Name</label>
+                                <input type="text" class="form-control" placeholder=" Location Name" name="location_name"
+                                    id="location_name" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Location Name
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
                                 <label for="category">Category</label>
                                 <input type="text" class="form-control" name="category" placeholder=" Category "
                                     id="category_id" readonly>
@@ -226,17 +225,7 @@
                                     Please select a category
                                 </div>
                             </div>
-
-
-                            <div class="col-md-6 mb-3">
-                                <label for="">Description </label>
-                                <textarea class="form-control" id="description_id" name="description"
-                                    placeholder="Enter Description" readonly></textarea>
-                                <div class="invalid-feedback">
-                                    Enter Description
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-4">
                                 <label for="section">Section</label>
                                 <input type="text" class="form-control" name="section" placeholder=" Section " id="section"
                                     readonly>
@@ -245,15 +234,7 @@
                                     Please select a Section
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Available Quantity</label>
-                                <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
-                                    id="qty" readonly>
-                                <div class="invalid-feedback">
-                                    Enter Available Quantity
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-4">
                                 <label for="">Unit of Measurement </label>
                                 <input type="text" class="form-control" name="measurement" placeholder="Unit of Measurement"
                                     id="measurement" readonly>
@@ -262,19 +243,11 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="">New Spareable </label>
-                                <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable"
-                                    id="new_spareable" readonly>
+                                <label for="">Description </label>
+                                <textarea class="form-control" id="description_id" name="description"
+                                    placeholder="Enter Description" readonly></textarea>
                                 <div class="invalid-feedback">
-                                    Enter New Spareable
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="">Used Spareable </label>
-                                <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
-                                    id="used_spareable" readonly>
-                                <div class="invalid-feedback">
-                                    Enter Used Spareable
+                                    Enter Description
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -285,16 +258,38 @@
                                     Enter Remarks / Notes
                                 </div>
                             </div>
+
+                            <div class="col-md-4 mb-4">
+                                <label for="">Total Quantity</label>
+                                <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
+                                    id="qty" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Available Quantity
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 mb-4">
+                                <label for="">New  </label>
+                                <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable"
+                                    id="new_spareable" readonly>
+                                <div class="invalid-feedback">
+                                    Enter New Spareable
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="">Used  </label>
+                                <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
+                                    id="used_spareable" readonly>
+                                <div class="invalid-feedback">
+                                    Enter Used Spareable
+                                </div>
+                            </div>
+
                         </div>
-                        <!-- <button class="btn btn-primary" type="submit">Submit form</button>
-                                                                          <button type="reset" class="btn btn-danger">Reset</button>
-                                                                          <a href="" class="btn btn-light">Go Back</a> -->
-                        <!-- </form> -->
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="reset" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                 </div>
             </div>
         </div>
@@ -307,7 +302,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Create Request for Stock </h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Create Stock Request</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -318,9 +313,8 @@
                             id="AddRequestStock">
                             @csrf
                             <div class="form-row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="">User Name</label>
-                                    <input type="text" class="form-control" name="user_name"
+                                  <!--  <label for="">User Name</label> -->
+                                    <input type="hidden" class="form-control" name="user_name"
                                         value="{{Auth::user()->user_name}}" placeholder="User Name" id="" required readonly>
                                     @error("user_name")
                                         <small class="text-danger">{{$message}}</small>
@@ -335,8 +329,8 @@
                                     @error("requester_rig_id")
                                         <small class="text-danger">{{$message}}</small>
                                     @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
+
+                                <div class="col-md-4 mb-4">
                                     <label for="">EDP Code</label>
                                     <input type="text" class="form-control" name="edp_code" id="Redp_code" readonly>
                                     <input type="hidden" class="form-control" name="stock_id" id="Rstock_id" readonly>
@@ -345,47 +339,14 @@
                                         <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="category">Category</label>
-                                    <input type="text" class="form-control" name="category" id="Rcategory" readonly>
-                                    @error("category")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="section">Section</label>
-                                    <input type="text" class="form-control" name="section" id="Rsection" readonly>
-                                    @error("section")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Unit of Measurement </label>
-                                    <input type="text" class="form-control" name="measurement" id="Rmeasurement" value=""
-                                        readonly>
-                                    @error("measurement")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Description</label>
-                                    <textarea class="form-control" id="Rdescription" name="description" readonly></textarea>
-                                    @error("description")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Available Quantity</label>
-                                    <input type="text" class="form-control" name="available_qty" id="Available_qty"
-                                        readonly>
-                                    @error("available_qty")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Supplier Rig ID</label>
+                                    <input type="text" class="form-control" placeholder=" Supplier Location Name"
+                                        id="supplierRigId" name="supplierRigId" required readonly>
                                 </div>
 
-
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Supplier Location Name</label>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Supplier Rig Name</label>
                                     <input type="text" class="form-control" placeholder=" Supplier Location Name"
                                         id="Rsupplier_location_name" name="supplier_rig_id" required readonly>
                                     <input type="hidden" class="form-control" placeholder=" Supplier Location Name"
@@ -396,22 +357,79 @@
                                     <input type="hidden" class="form-control" name="supplier_id" placeholder=" "
                                         id="Rsupplier_id" required readonly>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
+                                    <label for="category">Category</label>
+                                    <input type="text" class="form-control" name="category" id="Rcategory" readonly>
+                                    @error("category")
+                                        <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="section">Section</label>
+                                    <input type="text" class="form-control" name="section" id="Rsection" readonly>
+                                    @error("section")
+                                        <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Unit of Measurement </label>
+                                    <input type="text" class="form-control" name="measurement" id="Rmeasurement" value=""
+                                        readonly>
+                                    @error("measurement")
+                                        <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Description</label>
+                                    <textarea class="form-control" id="Rdescription" name="description" readonly></textarea>
+                                    @error("description")
+                                        <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Total Quantity</label>
+                                    <input type="text" class="form-control" name="available_qty" id="Available_qty"
+                                        readonly>
+                                    @error("available_qty")
+                                        <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4 mb-4">
                                     <label for="">Requested Quantity</label>
                                     <input type="number" class="form-control" name="requested_qty"
                                         placeholder="Requested Quantity" id="RequestQTY" required>
-
-
                                     <small id="qtyError" class="text-danger" style="display: none;"></small>
                                     @error("requested_qty")
                                         <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-4">
+                                    <label for="">New  </label>
+                                    <input type="text" class="form-control" placeholder=" New " name="newQty"
+                                        id="newQty" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter New
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Used  </label>
+                                    <input type="text" class="form-control" placeholder=" Used " name="usedQty"
+                                        id="usedQty" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Used
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
                                     <label for="">Expected Delivery Date</label>
                                     <input type="date" class="form-control" name="expected_date" id="expected_date">
                                         <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
                                 </div>
+
+
+
+
+
+
                             </div>
                             <button class="btn btn-success" id="AddRequestStock" type="submit">Submit Request</button>
                             <a href="{{route('stock_list.get')}}" class="btn btn-light">Go Back</a>
@@ -447,12 +465,7 @@
         });
     </script>
 
-
     <script>
-
-
-
-
         function addRequest(id) {
             var id = id;
             $.ajaxSetup({
@@ -494,13 +507,16 @@
                             $("#qtyError").hide();
                         }
                     });
-                  //  console.log(response.viewdata);
+                   // console.log(response.viewdata);
+                    $("#newQty").val(response.for_request_viewdata['new_spareable']);
+                    $("#usedQty").val(response.for_request_viewdata['used_spareable']);
                     $("#Rmeasurement").val(response.viewdata['measurement']);
                     $("#Rnew_spareable").val(response.viewdata['new_spareable']);
                     $("#Rused_spareable").val(response.viewdata['used_spareable']);
                     $("#Rremarks").val(response.viewdata['remarks']);
                     $("#Rdescription").val(response.viewdata['description']);
                     $("#Rsupplier_location_name").val(response.viewdata['location_name']);
+                    $("#supplierRigId").val(response.viewdata['location_id']);
                     $("#Rsupplier_location_id").val(response.viewdata['rig_id']);
                     $("#Rsupplier_id").val(response.viewdata['user_id']);
                   //  console.log(response.viewdata['location_id']);
@@ -508,13 +524,10 @@
             });
         }
 
-
         function viewstockdata(id) {
             var id = id;
             // console.log(id);
             // return false;
-
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
@@ -531,22 +544,12 @@
                     $("#location_id").val(response.viewdata['location_id']);
                     $("#location_name").val(response.viewdata['location_name']);
                     $("#edp_code_id").val(response.viewdata['edp_code']);
-
-
-
-
                     var sectionValue = response.viewdata['section'];
                     $("#section").val(sectionValue);
                     $("#hidden_section").val(sectionValue);
-
-
                     var categoryValue = response.viewdata['category'];
                     $("#category_id").val(categoryValue);
                     $("#hidden_category").val(categoryValue);
-
-
-
-
                     $("#qty").val(response.viewdata['qty']);
                     $("#measurement").val(response.viewdata['measurement']);
                     $("#new_spareable").val(response.viewdata['new_spareable']);
@@ -556,13 +559,6 @@
                 }
             });
         }
-
-
-
-
-
-
-
 
         $(document).ready(function () {
             // Filter Stock Data on Button Click
@@ -632,17 +628,8 @@
             });
         });
 
-
-
-
-
-
         function deleteStockdata(id) {
-
-
             $("#delete_id").val(id);
-
-
         }
 
 
@@ -650,8 +637,6 @@
             $("#selectAll").on("change", function () {
                 $(".row-checkbox").prop("checked", $(this).prop("checked"));
             });
-
-
             $(".row-checkbox").on("change", function () {
                 if ($(".row-checkbox:checked").length === $(".row-checkbox").length) {
                     $("#selectAll").prop("checked", true);
@@ -663,18 +648,12 @@
         $(document).ready(function () {
             $("#downloadPdf").click(function (e) {
                 e.preventDefault();
-
-
                 let baseUrl = "{{ route('stock_list_pdf') }}";
                 let formData = $("#filterForm").serializeArray();
-
-
                 let filteredParams = formData
                     .filter(item => item.value.trim() !== "")
                     .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
                     .join("&");
-
-
                 let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
                 window.open(finalUrl, '_blank');
             });
@@ -698,8 +677,6 @@
             });
         });
     </script>
-
-
 
 
 @endsection
