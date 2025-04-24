@@ -216,22 +216,22 @@
                                         Enter Requester Rig Name
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                {{-- <div class="col-md-6 mb-3">
                                     <label for="">Supplier Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Supplier Name"
                                         id="Supplier_Location_Id" readonly>
                                     <div class="invalid-feedback">
                                         Supplier Name
                                     </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
+                                </div> --}}
+                                {{-- <div class="col-md-6 mb-3">
                                     <label for="">Supplier Rig Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Supplier Rig Name"
                                         id="Supplier_Location_Name" readonly>
                                     <div class="invalid-feedback">
                                         Supplier Rig Name
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-6 mb-3">
                                     <label for="">EDP Code</label>
                                     <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
@@ -524,8 +524,8 @@
                                     <th>Status</th>
                                     <th>Message</th>
                                     <th>Supplier Qty</th>
-                                    <th>New Spareable</th>
-                                    <th>Used Spareable</th>
+                                    <th>New </th>
+                                    <th>Used </th>
                                     <th>Requestor</th>
                                     <th>Date</th>
                                 </tr>

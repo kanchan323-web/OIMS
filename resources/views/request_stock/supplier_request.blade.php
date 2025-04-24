@@ -160,22 +160,22 @@
                         <form id="mainModalForm">
                             <input type="hidden" id="request_id" name="request_id">
                             <div class="form-row">
-                                <div class="col-md-6 mb-3">
+                                {{-- <div class="col-md-6 mb-3">
                                     <label for="">Requester Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Requester Name"
                                         id="location_id" readonly>
                                     <div class="invalid-feedback">
                                         Enter Requester Name
                                     </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
+                                </div> --}}
+                                {{-- <div class="col-md-6 mb-3">
                                     <label for="">Requester Rig Name</label>
                                     <input type="text" class="form-control" placeholder="Requester Rig Name" name=""
                                         id="requester_Id" readonly>
                                     <div class="invalid-feedback">
                                         Enter Requester Rig Name
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-6 mb-3">
                                     <label for="">Supplier Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Supplier Name"
