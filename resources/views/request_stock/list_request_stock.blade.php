@@ -637,9 +637,7 @@
             $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
         });
 
-
         //ajax filter for incomming request stock
-
 
         $(document).ready(function () {
             // Filter Stock Data on Button Click
@@ -651,8 +649,6 @@
                     url: "{{ route('incoming_request_filter.get') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
-
-
                         let tableBody = $("#stockTable"); // Table inside modal
                         tableBody.empty(); // Clear old data
 
@@ -678,38 +674,28 @@
                                 });
 
                                 // Append row data to table
-                                tableBody.append(`
-                                                                                                <tr>
-                                                                                                    <td>${index + 1}</td>
-                                                                <td>${stockdata.RID}</td>
-                                                                <td>${stockdata.Location_Name}</td>
-                                                                <td>${stockdata.edp_code}</td>
-                                                                <td>${stockdata.description}</td>
-                                                                <td>${formattedDate}</td>
-                                                                <td>
-                                                                    <span class="badge ${badgeClass}">${stockdata.status_name}</span>
-                                                                </td>
-                                                                <td>
-                                                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                        onclick="RequestStockData(${stockdata.id})"
-                                                                        data-target=".bd-example-modal-xl" data-placement="top"
-                                                                        title="Supplier Request" href="#">
-                                                                                                            <i class="ri-arrow-right-circle-line"></i>
-                                                                                                        </a>
-                                                                    <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                                        data-toggle="modal" data-placement="top"
-                                                                        title="View Request Status" href="#">
-                                                                        <i class="ri-eye-line"></i>
-                                                                    </a>
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            `);
+                                tableBody.append(`<tr><td>${index + 1}</td>
+                                                        <td>${stockdata.RID}</td>
+                                                        <td>${stockdata.Location_Name}</td>
+                                                        <td>${stockdata.edp_code}</td>
+                                                        <td>${stockdata.description}</td>
+                                                        <td>${formattedDate}</td>
+                                                        <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                        <td><a class="badge badge-success mr-2" data-toggle="modal"
+                                                                onclick="RequestStockData(${stockdata.id})"
+                                                                data-target=".bd-example-modal-xl" data-placement="top"
+                                                                title="Supplier Request" href="#"><i class="ri-arrow-right-circle-line"></i>
+                                                                </a>
+                                                                <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                    data-toggle="modal" data-placement="top"
+                                                                    title="View Request Status" href="#">
+                                                                    <i class="ri-eye-line"></i>
+                                                                </a>
+                                                        </td></tr> `);
                             });
 
                         } else {
-                            tableBody.append(`
-                                                            <tr><td colspan="6" class="text-center">No records found</td></tr>
-                                                        `);
+                            tableBody.append(`<tr><td colspan="6" class="text-center">No records found</td></tr> `);
                         }
                     },
                     error: function (xhr, status, error) {
@@ -718,8 +704,6 @@
                 });
             });
         });
-
-
 
         //to bring data into the main modal
         function RequestStockData(id) {
@@ -821,7 +805,6 @@
                 $(".row-checkbox").prop("checked", $(this).prop("checked"));
             });
 
-
             $(".row-checkbox").on("change", function () {
                 if ($(".row-checkbox:checked").length === $(".row-checkbox").length) {
                     $("#selectAll").prop("checked", true);
@@ -838,8 +821,6 @@
                 $(".alert").fadeOut("slow");
             }, 3000);
         });
-
-
 
         //For multiple modal seamless transitions
         $(document).ready(function () {
@@ -859,7 +840,6 @@
                 $(this).closest(".modal").modal("hide");
             });
 
-
             // Prevent clicking outside sub-modal from closing the main modal
             $(".modal").on("hidden.bs.modal", function (e) {
                 if ($(".modal:visible").length) {
@@ -867,7 +847,6 @@
                 }
             });
         });
-
 
 
         //For accept
@@ -879,7 +858,6 @@
                 let newSpareable = parseInt($("#modal_new_spareable").val()) || 0;
                 let usedSpareable = parseInt($("#modal_used_spareable").val()) || 0;
                 let totalSpareable = newSpareable + usedSpareable;
-
 
                 if (totalSpareable > requestedQty) {
                     $("#error_message").text("Total spareable quantity cannot exceed Requested Quantity.");
