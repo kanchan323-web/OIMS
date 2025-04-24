@@ -35,7 +35,7 @@ Route::get('/', function () {
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 
-Route::middleware(['admin.auth'])->group(function () {
+Route::middleware(['admin.auth','check.session'])->group(function () {
 
     Route::prefix('/admin')->group(function () {
         Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
@@ -153,6 +153,11 @@ Route::middleware(['admin.auth'])->group(function () {
         Route::post('/notifications/mark-read-admin', [NotificationController::class, 'markAsReadAdmin'])->name('notifications.markReadAdmin');
         Route::post('/notifications/mark-all-read-admin', [NotificationController::class, 'markAllReadAdmin'])->name('notifications.markAllReadAdmin');
     });
+
+    Route::post('/extend-session', function() {
+        request()->session()->put('last_activity', time());
+        return response()->json(['success' => true]);
+    })->name('admin.extend-session');
 });
 
 
@@ -163,7 +168,7 @@ Route::get('/user/login', [LoginController::class, 'index'])->name('user.login')
 Route::post('/user/authenticate', [LoginController::class, 'authenticate'])->name('user.authenticate');
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','check.session'])->group(function () {
 
     Route::prefix('/user')->group(function () {
 

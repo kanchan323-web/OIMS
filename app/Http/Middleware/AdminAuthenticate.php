@@ -20,6 +20,7 @@ class AdminAuthenticate
             Auth::logout();
             return redirect()->route('admin.login')->with('error', 'Unauthorized access.');
         }
+        $request->session()->put('last_activity', time());
 
         return $next($request);
     }
