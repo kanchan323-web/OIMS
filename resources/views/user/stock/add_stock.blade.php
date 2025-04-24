@@ -176,22 +176,18 @@
                     isValid = /^\d*$/.test(rawVal);
                     if (!isValid) {
                         errorMsg = "Only whole numbers allowed!";
-                    } else if (total > 10) {
-                        isValid = false;
-                        errorMsg = "Total spareable qty cannot exceed 10!";
                     }
                 } else if (unitTypes[unit] === 'decimal') {
-                    // Allow partial decimals while typing
                     if (isFinal) {
-                        // Final validation (on blur/submit)
+                        // Final check: full decimal format, up to 10 digits after .
                         if (/^\d+(\.\d{1,10})?$/.test(rawVal)) {
                             isValid = true;
                         } else {
                             isValid = false;
-                            errorMsg = "Invalid decimal format!";
+                            errorMsg = "Only up to 10 digits allowed after decimal point!";
                         }
                     } else {
-                        // Allow valid starting patterns like ".", "2.", "2.5", etc.
+                        // While typing
                         isValid = /^(\d+)?(\.)?(\d{0,10})?$/.test(rawVal);
                         if (!isValid) {
                             errorMsg = "Invalid number format!";
@@ -199,7 +195,6 @@
                     }
                 }
             }
-
             toggleError(field, isValid, errorMsg);
             toggleSubmit();
         }
@@ -258,9 +253,9 @@
                                 if (response.stock) {
                                     $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                                     $("#id").val(response.stock.id);
-                                    $("#qty").val(formatToIndianNumber(response.stock.qty)); // formatted
-                                    $("#new_spareable").val(formatToIndianNumber(response.stock.new_spareable)); // formatted
-                                    $("#used_spareable").val(formatToIndianNumber(response.stock.used_spareable)); // formatted
+                                    $("#qty").val(response.stock.qty);
+                                    $("#new_spareable").val(response.stock.new_spareable);
+                                    $("#used_spareable").val(response.stock.used_spareable);
                                     $("#remarks").val(response.stock.remarks);
                                 } else {
                                     $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
@@ -270,7 +265,6 @@
                                     $("#used_spareable").val('');
                                     $("#remarks").val('');
                                 }
-
                             } else {
                                 alert("EDP details not found!");
                             }
