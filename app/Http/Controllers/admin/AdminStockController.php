@@ -433,6 +433,12 @@ class AdminStockController extends Controller
 
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
 
+        $request->merge([
+            'qty' => str_replace(',', '', $request->qty),
+            'new_spareable' => str_replace(',', '', $request->new_spareable),
+            'used_spareable' => str_replace(',', '', $request->used_spareable),
+        ]);
+
         $rules = [
             // 'location_id' => 'required',
             // 'location_name' => 'required',
@@ -459,7 +465,7 @@ class AdminStockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
-
+       
         $rigUser = RigUser::find($request->rig_id);
         if (!$rigUser) {
             return redirect()->back()
@@ -493,16 +499,16 @@ class AdminStockController extends Controller
             'message'         => "Stock Updated for EDP Code: {$request->edp_code}.",
             'action'          => "Update",
         ]);
-
+        
         $validatedData = $request->validate($rules);
         $validatedData['location_id'] = $rigUser->location_id;
         $validatedData['location_name'] = $rigUser->name;
         $validatedData['rig_id'] = $request->rig_id;
         $validatedData['new_spareable'] = $request->new_spareable;
         $validatedData['used_spareable'] = $request->used_spareable;
-
+        
         $stock->update($validatedData);
-
+        
         $user = Auth::user();
         $url = route('stock_list');
         $this->notifyAdmins(

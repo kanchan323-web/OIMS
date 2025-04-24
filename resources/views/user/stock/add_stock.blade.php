@@ -258,9 +258,9 @@
                                 if (response.stock) {
                                     $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                                     $("#id").val(response.stock.id);
-                                    $("#qty").val(response.stock.qty);
-                                    $("#new_spareable").val(response.stock.new_spareable);
-                                    $("#used_spareable").val(response.stock.used_spareable);
+                                    $("#qty").val(formatToIndianNumber(response.stock.qty)); // formatted
+                                    $("#new_spareable").val(formatToIndianNumber(response.stock.new_spareable)); // formatted
+                                    $("#used_spareable").val(formatToIndianNumber(response.stock.used_spareable)); // formatted
                                     $("#remarks").val(response.stock.remarks);
                                 } else {
                                     $("#addStockForm").attr("action", "{{ route('stockSubmit') }}");
@@ -270,6 +270,7 @@
                                     $("#used_spareable").val('');
                                     $("#remarks").val('');
                                 }
+
                             } else {
                                 alert("EDP details not found!");
                             }

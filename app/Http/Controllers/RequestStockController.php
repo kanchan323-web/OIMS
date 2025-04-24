@@ -825,7 +825,7 @@ class RequestStockController extends Controller
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             //->where('requesters.supplier_id', $userId)
             ->where('requesters.requester_rig_id', $rig_id)
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code')
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
@@ -852,7 +852,7 @@ class RequestStockController extends Controller
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->where('requesters.requester_rig_id', Auth::user()->rig_id)
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code')
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
             ->when($request->edp_code, function ($query, $edp_code) {
                 return $query->where('stocks.edp_code', $edp_code);
             })
