@@ -156,6 +156,31 @@
 
 
 <script>
+ $(document).ready(function () {
+    function fetchIncommingCount(){
+        console.log('fetchIncommingCount');
+            $.ajax({
+                url: "{{ route('fetchIncommingCount') }}",
+                method: "get",
+                success: function () {
+                    console.log('fetchIncommingCount');
+                }
+            });
+        }
+
+    function fetchRaisedCount() {
+        console.log('fetchIncommingCount');
+            $.ajax({
+                url: "{{ route('fetchRaisedCount') }}",
+                method: "get",
+                success: function () {
+                    console.log('fetchRaisedCount');
+                }
+            });
+        }
+    });
+
+
     $(document).ready(function () {
         function fetchNotifications() {
             $.ajax({

@@ -1403,7 +1403,7 @@ class RequestStockController extends Controller
             ->where('requesters.status', 1)
             ->select('edps.edp_code')
             ->get();
-        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
+        return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
 
     public function raisedPenddingRequest(Request $request){
@@ -1441,7 +1441,7 @@ class RequestStockController extends Controller
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
-        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        $edps = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->where('requesters.supplier_rig_id', $rig_id)
             ->where('requesters.status', 2)
@@ -1449,7 +1449,7 @@ class RequestStockController extends Controller
             ->get();
 
         $status_type = 'raisedPenddingRequest.get';
-        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID','status_type'));
+        return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig', 'edps','status_type'));
     }
 
     public function CommanRequestStockFilter(Request $request){
@@ -1494,5 +1494,15 @@ class RequestStockController extends Controller
         }
         return view('request_stock.comman_request_view', compact('data'));
     }
+
+    public function fetchIncommingCount(Request $request){
+        $rig_id = Auth::user()->rig_id;
+        return $rig_id;
+    }
+    public function fetchRaisedCount(Request $request){
+        $rig_id = Auth::user()->rig_id;
+        return $rig_id;
+    }
+
 
 }

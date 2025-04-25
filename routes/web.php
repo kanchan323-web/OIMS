@@ -237,6 +237,8 @@ Route::middleware(['auth','check.session'])->group(function () {
             Route::get('/incomingPenddingRequest', [RequestStockController::class, 'incomingPenddingRequest'])->name('incomingPndding_request.get');
             Route::get('/raisedPenddingRequest', [RequestStockController::class, 'raisedPenddingRequest'])->name('raisedPenddingRequest.get');
             Route::get('/RequestStockListFilter', [RequestStockController::class, 'CommanRequestStockFilter'])->name('CommanRequestStockFilter.get');
+            Route::get('/fetchIncommingCount', [RequestStockController::class, 'fetchIncommingCount'])->name('fetchIncommingCount');
+            Route::get('/fetchRaisedCount', [RequestStockController::class, 'fetchRaisedCount'])->name('fetchRaisedCount');
         });
 
         //User mapping
