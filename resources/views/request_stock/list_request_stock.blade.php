@@ -621,11 +621,13 @@
                         @csrf
                         <input type="hidden" id="edit_request_id" name="edit_request_id">
                         <div class="form-group">
+                            <input type="hidden" id="original_new_spareable" value="0">
                             <label for="edit_modal_new_spareable">New </label>
                             <input type="number" class="form-control" id="edit_modal_new_spareable"
                                 name="edit_modal_new_spareable" min="0" value="0">
                         </div>
                         <div class="form-group">
+                            <input type="hidden" id="original_used_spareable" value="0">
                             <label for="edit_modal_used_spareable">Used </label>
                             <input type="number" class="form-control" id="edit_modal_used_spareable"
                                 name="edit_modal_used_spareable" min="0" value="0">
@@ -770,6 +772,10 @@
                                 }
                             }
                             $("#request_date").val(stock.formatted_created_at ?? '');
+                            $("#modal_total_new").text(stock.supplier_new_spareable ?? 0);
+                            $("#modal_total_used").text(stock.supplier_used_spareable ?? 0);
+                            $("#original_new_spareable").val(stock.new_spareable ?? 0);
+                            $("#original_used_spareable").val(stock.used_spareable ?? 0);
 
                             if (stock.status == 4) {
                                 $(".btn-danger, .btn-primary").hide();
@@ -865,28 +871,47 @@
         $(document).ready(function () {
             console.log("Script Loaded!");
 
+            // ✅ Function to validate new & used spareable inputs
             function validateSpareableInputs() {
                 let requestedQty = parseInt($("#modal_req_qty").text().trim()) || 0;
                 let newSpareable = parseInt($("#modal_new_spareable").val()) || 0;
                 let usedSpareable = parseInt($("#modal_used_spareable").val()) || 0;
                 let totalSpareable = newSpareable + usedSpareable;
 
+                let originalNew = parseInt($("#original_new_spareable").val()) || 0;
+                let originalUsed = parseInt($("#original_used_spareable").val()) || 0;
+
+                console.log("Requested Qty:", requestedQty);
+    console.log("Entered New:", newSpareable, " | Original New:", originalNew);
+    console.log("Entered Used:", usedSpareable, " | Original Used:", originalUsed);
+
+                let errorMsg = "";
+
                 if (totalSpareable > requestedQty) {
-                    $("#error_message").text("Total spareable quantity cannot exceed Requested Quantity.");
-                    return false;
-                } else {
-                    $("#error_message").text("");
-                    return true;
+                    errorMsg = "Total spareable quantity cannot exceed Requested Quantity.";
                 }
+
+                if (newSpareable > originalNew) {
+                    errorMsg = "Entered new spareable exceeds available new spareable quantity.";
+                }
+
+                if (usedSpareable > originalUsed) {
+                    errorMsg = "Entered used spareable exceeds available used spareable quantity.";
+                }
+
+                $("#error_message").text(errorMsg);
+
+                return errorMsg === "";
             }
 
+            // ✅ Trigger validation on input
             $("#modal_new_spareable, #modal_used_spareable").on("input", function () {
                 validateSpareableInputs();
             });
 
+            // ✅ On submit
             $(document).on("click", "#confirmReceivedRequest", function (e) {
                 e.preventDefault();
-                // console.log("Submit Event Triggered!");
 
                 let requestId = $("#mainModalForm").find("#request_id").val();
                 let newSpareable = $("#modal_new_spareable").val();
@@ -895,6 +920,10 @@
 
                 if (!requestId) {
                     console.log("Request ID is missing!");
+                    return;
+                }
+
+                if (!validateSpareableInputs()) {
                     return;
                 }
 
@@ -919,6 +948,7 @@
                 });
             });
         });
+
 
 
         //for decline and query
