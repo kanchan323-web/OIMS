@@ -3,7 +3,7 @@
         <nav class="navbar navbar-expand-lg navbar-light p-0">
             <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                 <i class="ri-menu-line wrapper-menu"></i>
-            
+
             </div>
 
             <div class="welcome-header ">
@@ -30,7 +30,7 @@
                     </div>
                 @endif
             </div>
-           
+
 
 
             <div class="d-flex align-items-center">
@@ -42,13 +42,26 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto navbar-list align-items-center">
                         <li>
-                            <a href="{{route('pendding_request.get')}}" class="btn add-btn  btn-outline-warning mt-2 shadow-none mx-2 d-none d-md-block">Pendding Request</a>
+                           <a href="{{route('incomingPndding_request.get')}}" data-toggle="tooltip" data-placement="top" data-original-title="Incomming Pendding Request">
+                             <svg class="svg-icon" id="p-dash2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                             </svg>
+                            <span id="notification-count" class="badge badge-primary notification-badge" style="">3</span></a>
+                        </a>
                         </li>
                         <li>
-                            <a href="{{route('query_request.get')}}" class="btn add-btn  btn-outline-primary shadow-none mx-2 d-none d-md-block">Query Request</a>
-                        </li>
+                            <a href="{{route('raisedPenddingRequest.get')}}" data-toggle="tooltip" data-placement="top" data-original-title="Raised Pendding Request">
+                              <svg class="svg-icon" id="p-dash2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                 <circle cx="9" cy="21" r="1"></circle>
+                                 <circle cx="20" cy="21" r="1"></circle>
+                                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                              </svg>
+                             <span id="notification-count" class="badge badge-primary notification-badge" style="">3</span></a>
+                         </a>
+                         </li>
 
-                       
                         <!-- Notification Dropdown -->
                         <li class="nav-item nav-icon dropdown">
                             <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton"

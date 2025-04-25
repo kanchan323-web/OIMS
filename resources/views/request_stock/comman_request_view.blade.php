@@ -51,12 +51,12 @@
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
-                                            <input type="hidden" class="form-control" name="type" value="{{$status_type}}" >
+                                            <input type="hidden" class="form-control" name="type">
                                         </div>
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route($status_type) }}" class="btn btn-secondary ml-2">Reset</a>
+                                            <a href="#" class="btn btn-secondary ml-2">Reset</a>
                                         </div>
                                     </div>
                                 </form>
@@ -608,7 +608,9 @@
     <script>
 
         //ajax filter for incomming request stock
-
+        $(document).ready(function() {
+            $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
+        });
 
         $(document).ready(function () {
             // Filter Stock Data on Button Click

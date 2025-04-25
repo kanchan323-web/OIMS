@@ -234,8 +234,8 @@ Route::middleware(['auth','check.session'])->group(function () {
             Route::post('/decline-pending-request', [RequestStockController::class, 'declineforRaisedRequest'])->name('request.raisedrequestdecline');
             Route::get('/get-request-status/{id}', [RequestStockController::class, 'getRequestStatusforEdit'])->name('request-status.get');
             Route::post('/update-request-status/{id}', [RequestStockController::class, 'updateRequestStatus'])->name('request-status.update');
-            Route::get('/pendding_request', [RequestStockController::class, 'pendding_request'])->name('pendding_request.get');
-            Route::get('/query_request', [RequestStockController::class, 'query_request'])->name('query_request.get');
+            Route::get('/incomingPenddingRequest', [RequestStockController::class, 'incomingPenddingRequest'])->name('incomingPndding_request.get');
+            Route::get('/raisedPenddingRequest', [RequestStockController::class, 'raisedPenddingRequest'])->name('raisedPenddingRequest.get');
             Route::get('/RequestStockListFilter', [RequestStockController::class, 'CommanRequestStockFilter'])->name('CommanRequestStockFilter.get');
         });
 

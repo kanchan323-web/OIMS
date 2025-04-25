@@ -917,7 +917,7 @@ class RequestStockController extends Controller
 
             $stock = Stock::find($requester->stock_id);
             $requesterStock = Stock::find($requester->requester_stock_id);
-           
+
             Stock::where('id', $stock->id)->update(['req_status' => 'inactive']);
 
             if (!$stock) {
@@ -1373,7 +1373,7 @@ class RequestStockController extends Controller
         }
     }
 
-    public function pendding_request(Request $request){
+    public function incomingPenddingRequest(Request $request){
         $moduleName = "Pendding Request Stock List";
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
@@ -1387,16 +1387,13 @@ class RequestStockController extends Controller
             'requesters.*',
             'mst_status.status_name',
             'stocks.id as stock_id',
-            'stocks.id as stock_id',
             'stocks.description',
             'edps.edp_code',)->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.supplier_rig_id', $rig_id)
-            ->where('requesters.status', 1)
-            ->with('requestStatuses')
-            ->distinct()
+            ->whereIn('requesters.status', [1,2,4,6])
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
@@ -1406,12 +1403,10 @@ class RequestStockController extends Controller
             ->where('requesters.status', 1)
             ->select('edps.edp_code')
             ->get();
-
-        $status_type = 'pendding_request.get';
-        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID','status_type'));
+        return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
 
-    public function query_request(Request $request){
+    public function raisedPenddingRequest(Request $request){
         $moduleName = "Query Request Stock List";
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
@@ -1419,22 +1414,30 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-        $data = Requester::select(
+     /*   $data = Requester::select(
             'rig_users.name as Location_Name',
             'rig_users.location_id',
             'requesters.*',
             'mst_status.status_name',
-            'stocks.id as stock_id',
             'stocks.id as stock_id',
             'stocks.description',
             'edps.edp_code',)->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-            ->where('requesters.supplier_rig_id', $rig_id)
-            ->where('requesters.status', 2)
-            ->with('requestStatuses')
-            ->distinct()
+            ->where('requesters.requester_rig_id', $rig_id)
+            ->whereIn('requesters.status', [1,2,4,6])
+            ->orderBy('requesters.created_at', 'desc')
+            ->get();
+*/
+
+           $data = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.requester_rig_id', $rig_id)
+            ->whereIn('requesters.status', [1,2,4,6])
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
@@ -1445,7 +1448,7 @@ class RequestStockController extends Controller
             ->select('edps.edp_code')
             ->get();
 
-        $status_type = 'query_request.get';
+        $status_type = 'raisedPenddingRequest.get';
         return view('request_stock.comman_request_view', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID','status_type'));
     }
 
