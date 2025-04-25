@@ -44,7 +44,8 @@
                                             <select class="form-control select2" name="edp_code" id="edp_code" required>
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($EDP_Code_ID as $edp_code_id)
-                                                    <option value="{{ $edp_code_id->edp_code }}">{{ $edp_code_id->EDP_Code }}</option>
+                                                    <option value="{{ $edp_code_id->edp_code }}">{{ $edp_code_id->EDP_Code }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -56,16 +57,16 @@
                                         </div>
 
 
-                                        <div class="col-md-2 mb-2">
+                                        {{-- <div class="col-md-2 mb-2">
                                             <label for="form_date">From Date</label>
                                             <input type="date" class="form-control" name="form_date" id="form_date">
-                                        </div>
+                                        </div> --}}
 
 
-                                        <div class="col-md-2 mb-2">
+                                        {{-- <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
-                                        </div>
+                                        </div> --}}
 
 
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
@@ -113,13 +114,15 @@
                                                     <!-- View Button (Always Visible) -->
                                                     <a class="badge badge-info mr-2" data-toggle="modal"
                                                         onclick="viewstockdata({{ $stockdata->id }})"
-                                                        data-target=".bd-example-modal-xl" data-placement="top" title="Display Stock Detail">
+                                                        data-target=".bd-example-modal-xl" data-placement="top"
+                                                        title="Display Stock Detail">
                                                         <i class="ri-eye-line mr-0"></i>
                                                     </a>
 
                                                     <a class="badge badge-success mr-2" data-toggle="modal"
                                                         onclick="addRequest({{ $stockdata->id }})"
-                                                        data-target=".bd-addRequest-modal-xl" data-placement="top" title="Create Stock Request">
+                                                        data-target=".bd-addRequest-modal-xl" data-placement="top"
+                                                        title="Create Stock Request">
                                                         <i class="ri-arrow-right-circle-line"></i>
                                                     </a>
                                                     <!-- Edit Button (Only for Your Members) -->
@@ -269,7 +272,7 @@
                             </div>
 
                             <div class="col-md-4 mb-4">
-                                <label for="">New  </label>
+                                <label for="">New </label>
                                 <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable"
                                     id="new_spareable" readonly>
                                 <div class="invalid-feedback">
@@ -277,7 +280,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <label for="">Used  </label>
+                                <label for="">Used </label>
                                 <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
                                     id="used_spareable" readonly>
                                 <div class="invalid-feedback">
@@ -313,22 +316,21 @@
                             id="AddRequestStock">
                             @csrf
                             <div class="form-row">
-                                  <!--  <label for="">User Name</label> -->
-                                    <input type="hidden" class="form-control" name="user_name"
-                                        value="{{Auth::user()->user_name}}" placeholder="User Name" id="" required readonly>
-                                    @error("user_name")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                    <input type="hidden" class="form-control" name="requester_id"
-                                        value="{{Auth::user()->id}}">
-                                    @error("requester_id")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
-                                    <input type="hidden" class="form-control" name="requester_rig_id"
-                                        value="{{Auth::user()->rig_id}}">
-                                    @error("requester_rig_id")
-                                        <small class="text-danger">{{$message}}</small>
-                                    @enderror
+                                <!--  <label for="">User Name</label> -->
+                                <input type="hidden" class="form-control" name="user_name"
+                                    value="{{Auth::user()->user_name}}" placeholder="User Name" id="" required readonly>
+                                @error("user_name")
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                                <input type="hidden" class="form-control" name="requester_id" value="{{Auth::user()->id}}">
+                                @error("requester_id")
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
+                                <input type="hidden" class="form-control" name="requester_rig_id"
+                                    value="{{Auth::user()->rig_id}}">
+                                @error("requester_rig_id")
+                                    <small class="text-danger">{{$message}}</small>
+                                @enderror
 
                                 <div class="col-md-4 mb-4">
                                     <label for="">EDP Code</label>
@@ -404,17 +406,17 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">New  </label>
-                                    <input type="text" class="form-control" placeholder=" New " name="newQty"
-                                        id="newQty" readonly>
+                                    <label for="">New </label>
+                                    <input type="text" class="form-control" placeholder=" New " name="newQty" id="newQty"
+                                        readonly>
                                     <div class="invalid-feedback">
                                         Enter New
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">Used  </label>
-                                    <input type="text" class="form-control" placeholder=" Used " name="usedQty"
-                                        id="usedQty" readonly>
+                                    <label for="">Used </label>
+                                    <input type="text" class="form-control" placeholder=" Used " name="usedQty" id="usedQty"
+                                        readonly>
                                     <div class="invalid-feedback">
                                         Enter Used
                                     </div>
@@ -422,7 +424,8 @@
                                 <div class="col-md-4 mb-4">
                                     <label for="">Expected Delivery Date</label>
                                     <input type="date" class="form-control" name="expected_date" id="expected_date">
-                                        <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
+                                    <small class="text-primary">If date is not selected, system will automatically select 15
+                                        days from today as 'Expected Date'.</small>
                                 </div>
 
 
@@ -450,9 +453,9 @@
 
     <script>
 
-    $(document).ready(function() {
+        $(document).ready(function () {
             $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
-    });
+        });
 
         $(document).ready(function () {
             $("#AddRequestStock").on("submit", function () {
@@ -466,6 +469,25 @@
     </script>
 
     <script>
+
+        function formatToIndianNumber(x) {
+            x = x.toString();
+            let parts = x.split(".");
+            let intPart = parts[0].replace(/,/g, '');
+            let decimalPart = parts[1] || "";
+
+            let lastThree = intPart.slice(-3);
+            let otherNumbers = intPart.slice(0, -3);
+
+            if (otherNumbers !== '') {
+                lastThree = ',' + lastThree;
+            }
+
+            let formattedInt = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return decimalPart ? formattedInt + "." + decimalPart : formattedInt;
+        }
+
+
         function addRequest(id) {
             var id = id;
             $.ajaxSetup({
@@ -480,8 +502,8 @@
                     data: id
                 },
                 success: function (response) {
-                   // console.log("stock id check:" + response.for_request_viewdata['EDPID']);
-                  //  console.log("edp_code check:" + response.for_request_viewdata['edp_id']);
+                    // console.log("stock id check:" + response.for_request_viewdata['EDPID']);
+                    //  console.log("edp_code check:" + response.for_request_viewdata['edp_id']);
                     $("#Rlocation_id").val(response.for_request_viewdata['location_id']);
                     $("#Rlocation_name").val(response.for_request_viewdata['location_name']);
                     $("#Redp_code").val(response.viewdata['edp_code']);
@@ -494,7 +516,7 @@
                     var categoryValue = response.for_request_viewdata['category'];
                     $("#Rcategory").val(categoryValue);
                     $("#Rhidden_category").val(categoryValue);
-                    $("#Available_qty").val(response.for_request_viewdata['qty']);
+                    $("#Available_qty").val(formatToIndianNumber(response.for_request_viewdata['qty']));
                     $("#RequestQTY").on("input", function () {
                         let availableQty = parseFloat($("#Available_qty").val()) || 0;
                         let requestQty = parseFloat($(this).val()) || 0;
@@ -507,9 +529,9 @@
                             $("#qtyError").hide();
                         }
                     });
-                   // console.log(response.viewdata);
-                    $("#newQty").val(response.for_request_viewdata['new_spareable']);
-                    $("#usedQty").val(response.for_request_viewdata['used_spareable']);
+                    // console.log(response.viewdata);
+                    $("#newQty").val(formatToIndianNumber(response.for_request_viewdata['new_spareable']));
+                    $("#usedQty").val(formatToIndianNumber(response.for_request_viewdata['used_spareable']));
                     $("#Rmeasurement").val(response.viewdata['measurement']);
                     $("#Rnew_spareable").val(response.viewdata['new_spareable']);
                     $("#Rused_spareable").val(response.viewdata['used_spareable']);
@@ -519,7 +541,7 @@
                     $("#supplierRigId").val(response.viewdata['location_id']);
                     $("#Rsupplier_location_id").val(response.viewdata['rig_id']);
                     $("#Rsupplier_id").val(response.viewdata['user_id']);
-                  //  console.log(response.viewdata['location_id']);
+                    //  console.log(response.viewdata['location_id']);
                 }
             });
         }
@@ -550,10 +572,10 @@
                     var categoryValue = response.viewdata['category'];
                     $("#category_id").val(categoryValue);
                     $("#hidden_category").val(categoryValue);
-                    $("#qty").val(response.viewdata['qty']);
+                    $("#qty").val(formatToIndianNumber(response.viewdata['qty']));
                     $("#measurement").val(response.viewdata['measurement']);
-                    $("#new_spareable").val(response.viewdata['new_spareable']);
-                    $("#used_spareable").val(response.viewdata['used_spareable']);
+                    $("#new_spareable").val(formatToIndianNumber(response.viewdata['new_spareable']));
+                    $("#used_spareable").val(formatToIndianNumber(response.viewdata['used_spareable']));
                     $("#remarks").val(response.viewdata['remarks']);
                     $("#description_id").val(response.viewdata['description']);
                 }
@@ -575,45 +597,45 @@
                                 let editButton = '';
                                 if (response.datarig.includes(stockdata.user_id)) {
                                     editButton = `
-                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                                onclick="makeRequest(${stockdata.id})"
-                                                data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
-                                                href="#">
-                                                <i class="ri-arrow-right-circle-line"></i>
-                                            </a>
-                                        `;
+                                            <a class="badge badge-success mr-2" data-toggle="modal"
+                                                    onclick="makeRequest(${stockdata.id})"
+                                                    data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
+                                                    href="#">
+                                                    <i class="ri-arrow-right-circle-line"></i>
+                                                </a>
+                                            `;
                                 }
                                 tableBody.append(`
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${stockdata.location_name}</td>
-                                        <td>${stockdata.EDP_Code}</td>
-                                        <td>${stockdata.section}</td>
-                                        <td>${stockdata.description}</td>
-                                        <td>${stockdata.qty}
-                                            <span class="text-muted small">${stockdata.measurement}</span>
+                                        <tr>
+                                            <td>${index + 1}</td>
+                                            <td>${stockdata.location_name}</td>
+                                            <td>${stockdata.EDP_Code}</td>
+                                            <td>${stockdata.section}</td>
+                                            <td>${stockdata.description}</td>
+                                            <td>${formatToIndianNumber(stockdata.qty)}
+                                                <span class="text-muted small">${stockdata.measurement}</span>
+                                                </td>
+                                            <td>
+
+
+                                                <a class="badge badge-info mr-2" data-toggle="modal"
+                                                    onclick="viewstockdata(${stockdata.id})"
+                                                    data-target=".bd-example-modal-xl" data-placement="top" title="View"
+                                                    href="#">
+                                                    <i class="ri-eye-line mr-0"></i>
+                                                </a>
+
+
+                                                <a class="badge badge-success mr-2" data-toggle="modal"
+                                                    onclick="addRequest(${stockdata.id})"
+                                                    data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
+                                                    href="#">
+                                                    <i class="ri-arrow-right-circle-line"></i>
+                                                </a>
+                                                ${editButton}
                                             </td>
-                                        <td>
-
-
-                                            <a class="badge badge-info mr-2" data-toggle="modal"
-                                                onclick="viewstockdata(${stockdata.id})"
-                                                data-target=".bd-example-modal-xl" data-placement="top" title="View"
-                                                href="#">
-                                                <i class="ri-eye-line mr-0"></i>
-                                            </a>
-
-
-                                            <a class="badge badge-success mr-2" data-toggle="modal"
-                                                onclick="addRequest(${stockdata.id})"
-                                                data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
-                                                href="#">
-                                                <i class="ri-arrow-right-circle-line"></i>
-                                            </a>
-                                            ${editButton}
-                                        </td>
-                                    </tr>
-                                `);
+                                        </tr>
+                                    `);
                             });
                         } else {
                             tableBody.append(

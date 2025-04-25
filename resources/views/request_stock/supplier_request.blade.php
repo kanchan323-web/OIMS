@@ -27,12 +27,14 @@
                     <div class="row justify-content-between">
                         <div class="col-md-9">
                             <div id="user_list_datatable_info" class="dataTables_filter">
-                                <form id="filterForm" action="{{ route('request_stock_filter') }}" method="post" class="mr-3 position-relative">
+                                <form id="filterForm" action="{{ route('request_stock_filter') }}" method="post"
+                                    class="mr-3 position-relative">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">EDP Code</label>
-                                            <select class="form-control filter-input select2" name="edp_code" id="edp_code" required>
+                                            <select class="form-control filter-input select2" name="edp_code" id="edp_code"
+                                                required>
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($edps as $edp)
                                                     <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
@@ -43,8 +45,8 @@
 
                                         <div class="col-md-2 mb-2">
                                             <label for="location_name">Location Name</label>
-                                            <input type="text" class="form-control filter-input"
-                                                placeholder="Location Name" name="location_name" id="location_name"
+                                            <input type="text" class="form-control filter-input" placeholder="Location Name"
+                                                name="location_name" id="location_name"
                                                 value="{{ request('location_name') }}">
                                         </div>
 
@@ -56,12 +58,13 @@
 
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
-                                            <input type="date" class="form-control filter-input" name="to_date"
-                                                id="to_date" value="{{ request('to_date') }}">
+                                            <input type="date" class="form-control filter-input" name="to_date" id="to_date"
+                                                value="{{ request('to_date') }}">
                                         </div>
 
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
-                                            <button type="button" id="filterButton" class="btn btn-primary mr-2">Search</button>
+                                            <button type="button" id="filterButton"
+                                                class="btn btn-primary mr-2">Search</button>
                                             <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
                                         </div>
                                     </div>
@@ -113,7 +116,8 @@
                                                                                     <td>
                                                                                         <a class="badge badge-success mr-2" data-toggle="modal"
                                                                                             onclick="RequestStockData({{ json_encode($stockdata->id) }})"
-                                                                                            data-target=".bd-example-modal-xl" data-placement="top" title="Action by Supplier">
+                                                                                            data-target=".bd-example-modal-xl" data-placement="top"
+                                                                                            title="Action by Supplier">
                                                                                             <i class="ri-arrow-right-circle-line"></i>
                                                                                         </a>
                                                                                         @php
@@ -161,7 +165,7 @@
                         <form id="mainModalForm">
                             <input type="hidden" id="request_id" name="request_id">
                             <div class="form-row">
-                              {{-- <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label for="">Requester Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Requester Name"
                                         id="location_id" readonly>
@@ -176,16 +180,8 @@
                                     <div class="invalid-feedback">
                                         Enter Requester Rig Name
                                     </div>
-                                </div> --}}
-                                <div class="col-md-4 mb-4">
-                                    <label for="">EDP Code</label>
-                                    <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
-                                        readonly>
-                                    <div class="invalid-feedback">
-                                        Enter EDP Code
-                                    </div>
                                 </div>
-                                <div class="col-md-4 mb-4">
+                                <div class="col-md-6 mb-3">
                                     <label for="">Supplier Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Supplier Name"
                                         id="Supplier_Location_Id" readonly>
@@ -251,7 +247,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">New  </label>
+                                    <label for="">New </label>
                                     <input type="text" class="form-control" placeholder="New Spearable "
                                         name="new_spareable" id="new_spearable" readonly>
                                     <div class="invalid-feedback">
@@ -259,7 +255,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">Used  </label>
+                                    <label for="">Used </label>
                                     <input type="text" class="form-control" placeholder="Used Spareable"
                                         name="used_spareable" id="used_spareable" readonly>
                                     <div class="invalid-feedback">
@@ -502,7 +498,7 @@
 
     <script>
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
         });
 
@@ -528,28 +524,28 @@
                                 }[stockdata.status_name] || 'badge-secondary';
 
                                 tableBody.append(`
-                                                                <tr>
-                                                                    <td>${index + 1}</td>
-                                                                    <td>${stockdata.RID}</td>
-                                                                    <td>${stockdata.location_name}</td>
-                                                                    <td>${stockdata.edp_code}</td>
-                                                                     <td>${stockdata.description}</td>
-                                                                    <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                                    <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
-                                                                    <td>
-                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                                onclick="RequestStockData(${stockdata.id})"
-                                                                                data-target=".bd-example-modal-xl" data-placement="top"
-                                                                                title="Supplier Request" href="#">
-                                                                                <i class="ri-arrow-right-circle-line"></i>
-                                                                            </a>
-                                                                        <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                                                data-toggle="modal" data-placement="top" title="View Request Status" href="#">
-                                                                                <i class="ri-eye-line"></i>
-                                                                            </a>
-                                                                    </td>
-                                                                </tr>
-                                                            `);
+                                                                                <tr>
+                                                                                    <td>${index + 1}</td>
+                                                                                    <td>${stockdata.RID}</td>
+                                                                                    <td>${stockdata.location_name}</td>
+                                                                                    <td>${stockdata.edp_code}</td>
+                                                                                     <td>${stockdata.description}</td>
+                                                                                    <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                                                    <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
+                                                                                    <td>
+                                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
+                                                                                                onclick="RequestStockData(${stockdata.id})"
+                                                                                                data-target=".bd-example-modal-xl" data-placement="top"
+                                                                                                title="Supplier Request" href="#">
+                                                                                                <i class="ri-arrow-right-circle-line"></i>
+                                                                                            </a>
+                                                                                        <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                                                data-toggle="modal" data-placement="top" title="View Request Status" href="#">
+                                                                                                <i class="ri-eye-line"></i>
+                                                                                            </a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            `);
                             });
                         } else {
                             tableBody.append(`<tr><td colspan="5" class="text-center">No records found</td></tr>`);
@@ -578,6 +574,21 @@
             }, 3000);
         });
 
+        function formatToIndianNumber(x) {
+            x = x.toString();
+            let parts = x.split(".");
+            let intPart = parts[0].replace(/,/g, '');
+            let decimalPart = parts[1] || "";
+            let lastThree = intPart.slice(-3);
+            let otherNumbers = intPart.slice(0, -3);
+
+            if (otherNumbers !== '') {
+                lastThree = ',' + lastThree;
+            }
+
+            let formattedInt = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return decimalPart ? formattedInt + "." + decimalPart : formattedInt;
+        }
 
 
         function RequestStockData(id) {
@@ -604,7 +615,6 @@
                     if (stockData.length > 0 && stockData[0] !== null) {
                         var stock = stockData[0];
                         if (typeof stock === "object") {
-
                             //  711 working here
                             if (stock.status == 2) {
                                 $(".acceptanc_button").show();
@@ -613,6 +623,19 @@
                                 $(".acceptanc_button").hide();
                             }
                             //  711 working here
+
+                            let latestStatus = null;
+                            if (Array.isArray(stock.request_statuses) && stock.request_statuses.length > 0) {
+                                // Sort by created_at just in case
+                                stock.request_statuses.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                                latestStatus = stock.request_statuses[0];
+                            }
+
+                            let finalNewSpareable = latestStatus?.supplier_new_spareable ?? stock.new;
+                            let finalUsedSpareable = latestStatus?.supplier_used_spareable ?? stock.used;
+
+                            $("#new_spearable").val(formatToIndianNumber(finalNewSpareable));
+                            $("#used_spareable").val(formatToIndianNumber(finalUsedSpareable));
 
                             $("#request_id").val(stock.id ?? '');
                             $("#location_id").val(stock.requester_name ?? '');
@@ -623,11 +646,9 @@
                             $("#category_id").val(stock.category ?? '');
                             $("#section").val(stock.section ?? '');
                             $("#description").val(stock.description ?? '');
-                            $("#total_qty").val(stock.available_qty ?? '');
-                            $("#req_qty").val(stock.requested_qty ?? '');
+                            $("#total_qty").val(formatToIndianNumber(stock.available_qty ?? ''));
+                            $("#req_qty").val(formatToIndianNumber(stock.requested_qty ?? ''));
                             $("#measurement").val(stock.measurement ?? '');
-                            $("#new_spearable").val(stock.new_spareable ?? '');
-                            $("#used_spareable").val(stock.used_spareable ?? '');
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
                             if (response.request_status !== null) {
@@ -640,7 +661,7 @@
                                     $('#status_msg').text(response.request_status['query_msg']).addClass('text-primary');
                                 }
                             }
-                            console.log(stock.status);
+                            
                             $("#request_date").val(stock.formatted_created_at ?? '');
                             //debugger;
                             if (stock.status == 4) {
@@ -769,22 +790,22 @@
                             let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                                                    <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                                                                    <td><span class="badge badge-${status.status_id == 2 ? 'success' :
                                     (status.status_id == 3 ? 'danger' :
                                         (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                                                        ${status.status_name}
-                                                                    </span></td>
-                                                                    <td>
-                                                                        <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                                            ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                                                        </button>
-                                                                    </td>
-                                                                    <td>${status.supplier_qty || 'N/A'}</td>
-                                                                    <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                                                    <td>${status.supplier_used_spareable || 'N/A'}</td>
-                                                                    <td>${status.requestor_name}</td>
-                                                                    <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                                                </tr>`;
+                                                                                        ${status.status_name}
+                                                                                    </span></td>
+                                                                                    <td>
+                                                                                        <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                                                                            ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                                                                        </button>
+                                                                                    </td>
+                                                                                    <td>${status.supplier_qty || 'N/A'}</td>
+                                                                                    <td>${status.supplier_new_spareable || 'N/A'}</td>
+                                                                                    <td>${status.supplier_used_spareable || 'N/A'}</td>
+                                                                                    <td>${status.requestor_name}</td>
+                                                                                    <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                                                                </tr>`;
                         });
                     } else {
                         html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
@@ -855,7 +876,7 @@
             @else
                 console.error("Stock data is not available.");
             @endif
-                                                                        });
+                                                                                        });
 
         //For multiple modal seamless transitions
         $(document).ready(function () {
