@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                {{-- {{Breadcrumbs::render('User_Activity_Report')}} --}}
+                {{Breadcrumbs::render('Stock_Report')}}
                 <div class="row justify-content-between">
                     <div class="col-sm-6 col-md-9">
                         <div id="user_list_datatable_info" class="dataTables_filter">
