@@ -70,6 +70,16 @@ Breadcrumbs::for('User_profile', function (BreadcrumbTrail $trail) {
     $trail->push('User Profile', route('user.profile'));
 });
 
+//Report
+
+Breadcrumbs::for('Stock_Report', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard'); 
+    $trail->push('Stock Report', route('stock_report.index'));
+});
+Breadcrumbs::for('Request_Report', function (BreadcrumbTrail $trail) {
+    $trail->parent('user.dashboard'); 
+    $trail->push('Request Report', route('request_report'));
+});
 // User Breadcrumbs End
 
 // Admin Breadcrumbs Start
