@@ -1497,11 +1497,17 @@ class RequestStockController extends Controller
 
     public function fetchIncommingCount(Request $request){
         $rig_id = Auth::user()->rig_id;
-        return $rig_id;
+        $data = Requester:: selectRaw('COUNT(requesters.id) as incoming_pending')
+                ->where('requesters.supplier_rig_id', $rig_id)
+                ->whereIn('requesters.status', [1,2,4,6])->first();
+                return response()->json(['data' => $data]);
     }
     public function fetchRaisedCount(Request $request){
         $rig_id = Auth::user()->rig_id;
-        return $rig_id;
+        $data = Requester:: selectRaw('COUNT(requesters.id) as raised_pending')
+                ->where('requesters.requester_rig_id', $rig_id)
+                ->whereIn('requesters.status', [1,2,4,6])->first();
+                return response()->json(['data' => $data]);
     }
 
 
