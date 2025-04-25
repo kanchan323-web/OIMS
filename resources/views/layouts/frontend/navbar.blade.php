@@ -157,13 +157,17 @@
 
 <script>
  $(document).ready(function () {
+     fetchIncommingCount();
+     fetchRaisedCount();
+    });
+
     function fetchIncommingCount(){
-        console.log('fetchIncommingCount');
+       // console.log('fetchIncommingCount');
             $.ajax({
                 url: "{{ route('fetchIncommingCount') }}",
                 method: "get",
-                success: function () {
-                    console.log('fetchIncommingCount');
+                success: function (response) {
+                    console.log('response' +response.data.incoming_pending);
                 }
             });
         }
@@ -174,11 +178,10 @@
                 url: "{{ route('fetchRaisedCount') }}",
                 method: "get",
                 success: function () {
-                    console.log('fetchRaisedCount');
+                    console.log('response' +response.data.raised_pending);
                 }
             });
         }
-    });
 
 
     $(document).ready(function () {
