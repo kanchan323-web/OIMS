@@ -35,9 +35,64 @@
     }
 
     function showWarning() {
-        // Create/show your warning modal here
-        // Include a button that calls extendSession()
+    // Create modal div
+    const modal = document.createElement('div');
+    modal.id = 'session-timeout-warning';
+    modal.className = 'modal fade show';
+    modal.style.display = 'block';
+    modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    modal.setAttribute('role', 'dialog');
+    
+    // Modal dialog
+    modal.innerHTML = `
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title text-dark"><i class="fas fa-exclamation-triangle me-2"></i>Session About to Expire</h5>
+            </div>
+            <div class="modal-body">
+                <p>Your session will expire in ${warningTime} seconds due to inactivity.</p>
+                <p>Would you like to continue your session?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="session-logout">Log Out</button>
+                <button type="button" class="btn btn-primary" id="session-extend">Continue Session</button>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(modal);
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = '15px'; // Prevent scrollbar jump
+    
+    // Add event listeners
+    document.getElementById('session-extend').addEventListener('click', function() {
+        extendSession();
+        removeModal();
+    });
+    
+    document.getElementById('session-logout').addEventListener('click', function() {
+        logout();
+        removeModal();
+    });
+    
+    // Close modal when clicking backdrop
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            removeModal();
+        }
+    });
+    
+    function removeModal() {
+        document.body.removeChild(modal);
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
     }
+}
 
     function extendSession() {
         fetch("{{ route('admin.extend-session') }}", {
@@ -53,7 +108,7 @@
     const isAdminPage = window.location.pathname.startsWith('/admin');
     const loginRoute = isAdminPage ? "{{ route('admin.login') }}" : "{{ route('user.login') }}";
     window.location.href = `${loginRoute}?timeout=1`;
-        }
+}
 
     // Reset on activity
     ['click', 'mousemove', 'keypress'].forEach(evt => {
