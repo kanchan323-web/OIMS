@@ -177,7 +177,7 @@
             $.ajax({
                 url: "{{ route('fetchRaisedCount') }}",
                 method: "get",
-                success: function () {
+                success: function (response) {
                     console.log('response' +response.data.raised_pending);
                 }
             });
