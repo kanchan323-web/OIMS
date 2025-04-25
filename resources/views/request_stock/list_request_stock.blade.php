@@ -881,10 +881,6 @@
                 let originalNew = parseInt($("#original_new_spareable").val()) || 0;
                 let originalUsed = parseInt($("#original_used_spareable").val()) || 0;
 
-                console.log("Requested Qty:", requestedQty);
-    console.log("Entered New:", newSpareable, " | Original New:", originalNew);
-    console.log("Entered Used:", usedSpareable, " | Original Used:", originalUsed);
-
                 let errorMsg = "";
 
                 if (totalSpareable > requestedQty) {
