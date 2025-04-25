@@ -19,6 +19,50 @@
             </div>
         </div>
     </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const sessionLifetime = 300; // 5 minute
+    const warningTime = 60; // Warn 1 min before
+    
+    let timeoutWarning, timeoutRedirect;
+
+    function resetTimers() {
+        clearTimeout(timeoutWarning);
+        clearTimeout(timeoutRedirect);
+        
+        timeoutWarning = setTimeout(showWarning, (sessionLifetime - warningTime) * 1000);
+        timeoutRedirect = setTimeout(logout, sessionLifetime * 1000);
+    }
+
+    function showWarning() {
+        // Create/show your warning modal here
+        // Include a button that calls extendSession()
+    }
+
+    function extendSession() {
+        fetch("{{ route('admin.extend-session') }}", {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            }
+        }).then(() => resetTimers());
+    }
+
+    function logout() {
+    const isAdminPage = window.location.pathname.startsWith('/admin');
+    const loginRoute = isAdminPage ? "{{ route('admin.login') }}" : "{{ route('user.login') }}";
+    window.location.href = `${loginRoute}?timeout=1`;
+        }
+
+    // Reset on activity
+    ['click', 'mousemove', 'keypress'].forEach(evt => {
+        window.addEventListener(evt, resetTimers);
+    });
+
+    resetTimers(); // Initialize
+});
+</script>
     <!-- Backend Bundle JavaScript -->
     <script src="{{ asset('resources/js/backend-bundle.min.js') }}"></script>
 

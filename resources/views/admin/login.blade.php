@@ -21,16 +21,25 @@
                     <div class="login-card">
                         <div class="login-header">
                             <div class="brand-logo back-link text-decoration-none d-flex align-items-center">
-                                <img src="{{ asset('resources/images/login/user-shield.svg') }}" alt="Admin Icon" class="brand-logo-img">
+
+                                <img src="{{ asset('resources/images/login/user-shield.svg') }}" alt="Admin Icon"
+                                    class="brand-logo-img">
                             </div>
                             <h4>OIMS Admin Login</h4>
                         </div>
                         <div class="login-body">
+                            @if (session('error') || request()->query('timeout'))
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    {{ session('error') ?? 'Session expired. Please log in again.' }}
+                                  
+                                </div>
+                            @endif
                             @if (Session::get('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     <i class="fas fa-check-circle me-2"></i>
                                     <strong>Success:</strong> {{ Session::get('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
                                 </div>
                             @endif
 
@@ -38,7 +47,8 @@
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                     <i class="fas fa-exclamation-circle me-2"></i>
                                     <strong>Error:</strong> {{ Session::get('error') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
                                 </div>
                             @endif
 
@@ -49,11 +59,14 @@
                                         <div class="form-floating mb-3">
                                             <div class="input-group">
                                                 <span class="input-group-text">
-                                                    <img src="{{ asset('resources/images/login/user-tie.svg') }}" alt="key" class="me-1" width="16" height="16">
+                                                    <img src="{{ asset('resources/images/login/user-tie.svg') }}"
+                                                        alt="key" class="me-1" width="16" height="16">
                                                 </span>
-                                                <input type="text" class="form-control @error('login') is-invalid @enderror"
+                                                <input type="text"
+                                                    class="form-control @error('login') is-invalid @enderror"
                                                     name="login" value="{{ old('login') }}"
-                                                    placeholder="Enter Email or Username or CPF Number" id="login" required>
+                                                    placeholder="Enter Email or Username or CPF Number" id="login"
+                                                    required>
                                                 @error('login')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
@@ -65,12 +78,15 @@
                                             <div class="input-group">
                                                 <span class="input-group-text">
 
-                                                    <img src="{{ asset('resources/images/login/key.svg') }}" alt="key" class="me-1" width="16" height="16">
+                                                    <img src="{{ asset('resources/images/login/key.svg') }}" alt="key"
+                                                        class="me-1" width="16" height="16">
                                                 </span>
-                                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                                <input type="password"
+                                                    class="form-control @error('password') is-invalid @enderror"
                                                     name="password" id="password" placeholder="Enter Password" required>
                                                 <span class="input-group-text password-toggle" id="togglePassword">
-                                                    <img src="{{ asset('resources/images/login/eye.svg') }}" alt="eye" class="me-1" width="16" height="16">
+                                                    <img src="{{ asset('resources/images/login/eye.svg') }}" alt="eye"
+                                                        class="me-1" width="16" height="16">
 
                                                 </span>
                                                 @error('password')
@@ -83,7 +99,8 @@
                                     <div class="col-12">
                                         <div class="d-grid mb-3">
                                             <button class="btn btn-primary" type="submit">
-                                                <img src="{{ asset('resources/images/login/check.svg') }}" alt="Help" class="me-1" width="16" height="16">
+                                                <img src="{{ asset('resources/images/login/check.svg') }}" alt="Help"
+                                                    class="me-1" width="16" height="16">
                                                 Log In
 
                                             </button>
@@ -91,13 +108,18 @@
                                     </div>
 
                                     <div class="col-12">
-                                        <div class="d-flex justify-content-between align-items-center mt-3 col-2 offset-10">
-                                            {{-- <a href="{{ route('forgotpassword') }}" class="forgot-link text-decoration-none">
-                                                <img src="{{ asset('resources/images/login/question.svg') }}" alt="Help" class="me-1" width="16" height="16">
+                                        <div
+                                            class="d-flex justify-content-between align-items-center mt-3 col-2 offset-10">
+                                            {{-- <a href="{{ route('forgotpassword') }}"
+                                                class="forgot-link text-decoration-none">
+                                                <img src="{{ asset('resources/images/login/question.svg') }}" alt="Help"
+                                                    class="me-1" width="16" height="16">
                                                 Forgot Password?
                                             </a> --}}
-                                            <a href="{{ route('home') }}" class="back-link text-decoration-none d-flex align-items-center">
-                                                <img src="{{ asset('resources/images/login/left-long.svg') }}" alt="Back" class="me-1" width="16" height="16">
+                                            <a href="{{ route('home') }}"
+                                                class="back-link text-decoration-none d-flex align-items-center">
+                                                <img src="{{ asset('resources/images/login/left-long.svg') }}"
+                                                    alt="Back" class="me-1" width="16" height="16">
                                                 Go Back
                                             </a>
                                         </div>
@@ -114,16 +136,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
-    </script>
+        </script>
 
     <script type="text/javascript">
         $(document).ready(function () {
             // Toggle password visibility
-            $('#togglePassword').click(function(){
+            $('#togglePassword').click(function () {
                 const password = $('#password');
                 const icon = $(this).find('img');
 
-                if(password.attr('type') === 'password'){
+                if (password.attr('type') === 'password') {
                     password.attr('type', 'text');
                     icon.attr('src', "{{ asset('resources/images/login/eye-slash.svg') }}");
                 } else {
@@ -143,4 +165,5 @@
         }
     </script>
 </body>
+
 </html>
