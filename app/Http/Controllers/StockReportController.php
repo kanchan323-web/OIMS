@@ -26,156 +26,105 @@ use App\Models\Requester;
 
 class StockReportController extends Controller
 {
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $moduleName = "Stock Reports";
         return view('reports.stock.stock_reports', compact('moduleName',));
     }
 
-    public function report_stock_filter(Request $request)
-    {
-        $moduleName = "Report Stock";
-
-        $data = array(
-            'report_type' => $request->report_type,
-            'from_date' => $request->form_date,
-            'to_date' => $request->to_date,
-        );
-
-        $response = $this->stock_common_filter($data);
-        return response()->json(['data' => $response]);
+    public function report_stock_filter(Request $request){
+        $reportType = $request->input('report_type');
+        if (!$reportType) {
+            return response()->json(['error' => 'Missing report type'], 400);
+        }
+        switch ($reportType) {
+            case 'overview':
+                $data = $this->stockOverview($request);
+                break;
+            case 'stock_receiver':
+                $data = $this->stockAdditions($request);
+                break;
+            case 'stock_issuer':
+                $data = $this->stockRemovals($request);
+                break;
+            default:
+                return response()->json(['error' => 'Invalid report type'], 400);
+        }
+        return response()->json(['data' => $data ?? []]);
     }
 
-    private function stock_common_filter($data){
-       // dd($data);
-
+    private function stockOverview($request){
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
-        $query1 = Stock::query();
+        if(!empty($request->from_date) || !empty($request->to_date)) {
+            $query->whereBetween('stocks.created_at', [$request->from_date , $request->to_date]);
+        }
+        $stock_overview = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
+        ->where('rig_id', $rig_id)
+        ->orderBy('stocks.id', 'desc')
+        ->get();
+        return $stock_overview;
+    }
 
-        if($data['report_type']==1){
-            if (!empty($data['from_date']) || !empty($data['to_date'])) {
-                $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
-            }
-            $stock_summary = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
-            ->where('rig_id', $rig_id)
-            ->get();
-            return $stock_summary;
+    private function stockAdditions($request){
+        $rig_id = Auth::user()->rig_id;
+        $query = Stock::query();
+        if (!empty($data['from_date']) || !empty($data['to_date'])) {
+            $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
         }
 
-        if($data['report_type']==2){
-
-            if (!empty($data['from_date']) || !empty($data['to_date'])) {
-                $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
-                $query1->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
-            }
-
-            $stock_addition = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','request_status.created_at')
-            ->where('requesters.requester_rig_id', $rig_id)
-            ->where('request_status.status_id', 3)
-            ->get();
-            if(!empty($stock_addition)){
-                return $stock_addition;
-            }else{
-                return '';
-            }
-           // return $stock_addition;
+        $stock_addition = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+        ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','request_status.updated_at')
+        ->where('requesters.requester_rig_id', $rig_id)
+        ->where('request_status.status_id', 3)
+        ->orderBy('requesters.updated_at', 'desc')
+        ->get();
+        return $stock_addition;
+    }
+    private function stockRemovals($request){
+        $rig_id = Auth::user()->rig_id;
+        $query = Stock::query();
+        if(!empty($request->from_date) || !empty($request->to_date)) {
+            $query->whereBetween('stocks.created_at', [$request->from_date , $request->to_date]);
         }
-        elseif($data['report_type']==3){
-
-            $stock_removal = $query1 ->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
-            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','request_status.created_at','request_status.supplier_new_spareable','request_status.supplier_used_spareable')
-            ->where('requesters.supplier_rig_id', $rig_id)
-            ->where('request_status.status_id', 3)
-            ->get();
-            if(!empty($stock_removal)){
-                return $stock_removal;
-            }else{
-                return '';
-            }
-           // return  $stock_removal;
-        }
-        elseif($data['report_type']==4){
-            $stock_adjustments = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','request_status.created_at')
-            ->where('requesters.requester_rig_id', $rig_id)
-            ->where('request_status.status_id', 3)
-            ->get();
-            if(!empty($stock_adjustments)){
-                return $stock_adjustments;
-            }else{
-                return '';
-            }
-          //  return  $stock_adjustments;
-        }elseif($data['report_type']==5){
-
-            if (!empty($data['from_date']) || !empty($data['to_date'])) {
-                $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
-                $query1->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
-            }
-
-            $stock_consumption = $query ->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
-            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','requesters.requested_qty as consume','stocks.qty as avl_qty','request_status.created_at',
-                    'request_status.supplier_new_spareable','request_status.supplier_used_spareable')
-            ->where('requesters.supplier_rig_id', $rig_id)
-            ->where('request_status.status_id', 3)
-            ->get();
-            if(!empty($stock_consumption)){
-                return $stock_consumption;
-            }else{
-                return '';
-            }
-           // return  $stock_consumption;
-        }elseif($data['report_type']==6){
-
-            $stock_replenishment = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
-            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-            ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty as avl_qty','request_status.created_at','requesters.requested_qty as replinish')
-            ->where('requesters.requester_rig_id', $rig_id)
-            ->where('request_status.status_id', 3)
-            ->get();
-            if(!empty($stock_replenishment)){
-                return $stock_replenishment;
-            }else{
-                return '';
-            }
-           // return  $stock_replenishment;
-        }else{
-           return '';
-        }
+        $stock_removal = $query ->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
+        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+        ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','request_status.updated_at','request_status.supplier_new_spareable','request_status.supplier_used_spareable')
+        ->where('requesters.supplier_rig_id', $rig_id)
+        ->where('request_status.status_id', 3)
+        ->orderBy('requesters.updated_at', 'desc')
+        ->get();
+        return $stock_removal;
     }
 
     public function stockPdfDownload(Request $request){
-        $moduleName = "Download Stock Report";
-        $data = array(
-            'report_type' => $request->report_type,
-            'from_date' => $request->form_date,
-            'to_date' => $request->to_date,
-        );
-       $stockData = $this->stock_common_filter($data);
+        $reportType = $request->input('report_type');
+        if (!$reportType) {
+            return response()->json(['error' => 'Missing report type'], 400);
+        }
 
-      // return view('pdf.report.stock.stock_report', compact('stockData','data'));
-
+        switch ($reportType) {
+            case 'overview':
+                $data = $this->stockOverview($request);
+                break;
+            case 'stock_receiver':
+                $data = $this->stockAdditions($request);
+                break;
+            case 'stock_issuer':
+                $data = $this->stockRemovals($request);
+                break;
+            default:
+                $data = json(['error' => 'Invalid report type'], 400);
+        }
+      // return view('pdf.report.stock.stock_report', compact('data','request'));
         // Generate PDF with retrieved data
-        $pdf = PDF::loadView('pdf.report.stock.stock_report', compact('stockData','data'));
-
+        $pdf = PDF::loadView('pdf.report.stock.stock_report', compact('data','request'));
         return $pdf->download('Stock_Report.pdf');
     }
 
@@ -190,16 +139,15 @@ class StockReportController extends Controller
 
         $reportType = $data['report_type'];
         switch ($reportType) {
-            case '1':
+            case 'overview':
                     $sheet->setTitle('Stock Overview Report');
                     $sheet->setCellValue('A1', 'Sr.No');
                     $sheet->setCellValue('B1', 'EDP Code');
                     $sheet->setCellValue('C1', 'Section');
                     $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Total Qty');
-                    $sheet->setCellValue('F1', 'Available Qty');
-                    $sheet->setCellValue('G1', 'Date');
-                    $stockDatas = $this->stock_common_filter($data);
+                    $sheet->setCellValue('F1', 'Total Qty');
+                    $sheet->setCellValue('G1', 'Creation Date');
+                    $stockDatas = $this->stockOverview($data);
 
                     $row = 2; // Start from the second row to leave space for headers
                     $i=1;
@@ -208,22 +156,21 @@ class StockReportController extends Controller
                         $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
                         $sheet->setCellValue('C' . $row, $stockData->section);
                         $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->initial_qty);
                         $sheet->setCellValue('F' . $row, $stockData->qty);
                         $sheet->setCellValue('G' . $row, $stockData->created_at);
                         $row++;
                         $i++;
                     }
             break;
-            case '2':
+            case 'stock_receiver':
                     $sheet->setTitle('Stock Additions Report');
                     $sheet->setCellValue('A1', 'Sr.No');
                     $sheet->setCellValue('B1', 'EDP Code');
                     $sheet->setCellValue('C1', 'Description');
-                    $sheet->setCellValue('D1', 'Add');
+                    $sheet->setCellValue('D1', 'Received QTY');
                     $sheet->setCellValue('E1', 'Supplier Rig');
-                    $sheet->setCellValue('F1', 'Date');
-                    $stockDatas = $this->stock_common_filter($data);
+                    $sheet->setCellValue('F1', 'Receipt Date');
+                    $stockDatas = $this->stockAdditions($data);
 
                     $row = 2; // Start from the second row to leave space for headers
                     $i=1;
@@ -238,15 +185,15 @@ class StockReportController extends Controller
                         $i++;
                     }
                 break;
-            case '3':
+            case 'stock_issuer':
                     $sheet->setTitle('Stock Removals Report');
                     $sheet->setCellValue('A1', 'Sr.No');
                     $sheet->setCellValue('B1', 'EDP Code');
                     $sheet->setCellValue('C1', 'Description');
-                    $sheet->setCellValue('D1', 'Remove');
-                    $sheet->setCellValue('E1', 'Supplier Rig');
-                    $sheet->setCellValue('F1', 'Date');
-                    $stockDatas = $this->stock_common_filter($data);
+                    $sheet->setCellValue('D1', 'Issued QTY');
+                    $sheet->setCellValue('E1', 'Receiver Rig');
+                    $sheet->setCellValue('F1', 'Issued Date');
+                    $stockDatas = $this->stockRemovals($data);
 
                     $row = 2; // Start from the second row to leave space for headers
                     $i=1;
@@ -260,75 +207,6 @@ class StockReportController extends Controller
                         $row++;
                         $i++;
                     }
-                break;
-            case '4':
-                    $sheet->setTitle('Stock Adjustments Report');
-                    $sheet->setCellValue('A1', 'Sr.No');
-                    $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Description');
-                    $sheet->setCellValue('D1', 'Adjustments');
-                    $sheet->setCellValue('E1', 'Rig');
-                    $sheet->setCellValue('F1', 'Date');
-                    $stockDatas = $this->stock_common_filter($data);
-
-                    $row = 2; // Start from the second row to leave space for headers
-                    $i=1;
-                    foreach ($stockDatas as $stockData) {
-                        $sheet->setCellValue('A' . $row, $i);
-                        $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->description);
-                        $sheet->setCellValue('D' . $row, $stockData->requested_qty);
-                        $sheet->setCellValue('E' . $row, $stockData->name);
-                        $sheet->setCellValue('F' . $row, $stockData->created_at);
-                        $row++;
-                        $i++;
-                    }
-                break;
-            case '5':
-                    $sheet->setTitle('Stock Consumptions Report');
-                    $sheet->setCellValue('A1', 'Sr.No');
-                    $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Description');
-                    $sheet->setCellValue('D1', 'Consumed');
-                    $sheet->setCellValue('E1', 'Consumed Type');
-                    $sheet->setCellValue('F1', 'Date');
-                    $stockDatas = $this->stock_common_filter($data);
-
-                    $row = 2; // Start from the second row to leave space for headers
-                    $i=1;
-                    foreach ($stockDatas as $stockData) {
-                        $sheet->setCellValue('A' . $row, $i);
-                        $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->description);
-                        $sheet->setCellValue('D' . $row, $stockData->avl_qty);
-                        $sheet->setCellValue('E' . $row, $stockData->name);
-                        $sheet->setCellValue('F' . $row, $stockData->created_at);
-                        $row++;
-                        $i++;
-                    }
-            break;
-            case '6':
-                $sheet->setTitle('Stock Overview Report');
-                $sheet->setCellValue('A1', 'Sr.No');
-                $sheet->setCellValue('B1', 'EDP Code');
-                $sheet->setCellValue('C1', 'Description');
-                $sheet->setCellValue('D1', 'Replenishment');
-                $sheet->setCellValue('E1', 'Status');
-                $sheet->setCellValue('F1', 'Date');
-                $stockDatas = $this->stock_common_filter($data);
-
-                $row = 2; // Start from the second row to leave space for headers
-                $i=1;
-                foreach ($stockDatas as $stockData) {
-                    $sheet->setCellValue('A' . $row, $i);
-                    $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                    $sheet->setCellValue('C' . $row, $stockData->description);
-                    $sheet->setCellValue('D' . $row, $stockData->replinish);
-                    $sheet->setCellValue('E' . $row, $stockData->name);
-                    $sheet->setCellValue('F' . $row, $stockData->created_at);
-                    $row++;
-                    $i++;
-                }
                 break;
             default:
                 return response()->json(['error' => 'Invalid report type'], 400);
