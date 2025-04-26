@@ -8,21 +8,21 @@
                     {{ Breadcrumbs::render('stock_list') }}
 
                     @if (Session::get('success'))
-                    <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
-                        <strong>Success:</strong> {{ Session::get('success') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                        <div class="alert bg-success text-white alert-dismissible fade show" role="alert">
+                            <strong>Success:</strong> {{ Session::get('success') }}
+                            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     @endif
 
                     @if (Session::get('error'))
-                    <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
-                        <strong>Error:</strong> {{ Session::get('error') }}
-                        <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                        <div class="alert bg-danger text-white alert-dismissible fade show" role="alert">
+                            <strong>Error:</strong> {{ Session::get('error') }}
+                            <button type="button" class="close close-dark" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     @endif
 
                     <div class="row justify-content-between">
@@ -89,7 +89,7 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
-                                 <!--   <th>Location Name</th> -->
+                                    <!--   <th>Location Name</th> -->
                                     <th>EDP</th>
                                     <th>Section</th>
                                     <th>Description</th>
@@ -100,10 +100,10 @@
                             </thead>
                             <tbody class="ligth-body" id="stockTable">
                                 @if (isset($data) && $data != null)
-                                    @foreach($data as $index => $stockdata)
+                                    @foreach ($data as $index => $stockdata)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                        <!--    <td>{{ $stockdata->name }}</td> -->
+                                            <!--    <td>{{ $stockdata->name }}</td> -->
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
@@ -111,25 +111,25 @@
                                                 {{ IND_money_format($stockdata->qty) }}
                                                 <span class="text-muted small">{{ $stockdata->measurement }}</span>
                                             </td>
-                                            <td>{{ $stockdata->created_at }}</td>
+                                            <td>{{ $stockdata->formatted_date }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center list-action">
                                                     <!-- View Button (Always Visible) -->
                                                     <a class="badge badge-info mr-2" data-toggle="modal"
                                                         onclick="viewstockdata({{ $stockdata->id }})"
                                                         data-target=".bd-example-modal-xl" data-placement="top"
-                                                            title="Display Stock Detail"
-                                                        href="#">
+                                                        title="Display Stock Detail" href="#">
                                                         <i class="ri-eye-line mr-0"></i>
                                                     </a>
 
-                                                   <!--  Edit Button (Only for Your Members) -->
+                                                    <!--  Edit Button (Only for Your Members) -->
 
-                                                        <a class="badge bg-success mr-2"
-                                                            href="{{ url('/user/edit_stock/' . $stockdata->id) }}" data-toggle="tooltip" data-placement="top"
-                                                            data-original-title="Edit Stock">
-                                                            <i class="ri-pencil-line mr-0"></i>
-                                                        </a>
+                                                    <a class="badge bg-success mr-2"
+                                                        href="{{ url('/user/edit_stock/' . $stockdata->id) }}"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Edit Stock">
+                                                        <i class="ri-pencil-line mr-0"></i>
+                                                    </a>
 
                                                 </div>
 
@@ -153,7 +153,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <form action="{{route('Delete_stock')}}" method="post">
+                <form action="{{ route('Delete_stock') }}" method="post">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Are you sure?</h5>
@@ -210,8 +210,8 @@
                             </div>
                             <div class="col-md-4 mb-4">
                                 <label for="">Location Name</label>
-                                <input type="text" class="form-control" placeholder=" Location Name" name="location_name"
-                                    id="location_name" readonly>
+                                <input type="text" class="form-control" placeholder=" Location Name"
+                                    name="location_name" id="location_name" readonly>
                                 <div class="invalid-feedback">
                                     Enter Location Name
                                 </div>
@@ -227,8 +227,8 @@
                             </div>
                             <div class="col-md-4 mb-4">
                                 <label for="section">Section</label>
-                                <input type="text" class="form-control" name="section" placeholder=" Section " id="section"
-                                    readonly>
+                                <input type="text" class="form-control" name="section" placeholder=" Section "
+                                    id="section" readonly>
                                 <input type="hidden" name="section" id="hidden_section">
                                 <div class="invalid-feedback">
                                     Please select a Section
@@ -236,8 +236,8 @@
                             </div>
                             <div class="col-md-4 mb-4">
                                 <label for="">Unit of Measurement </label>
-                                <input type="text" class="form-control" name="measurement" placeholder="Unit of Measurement"
-                                    id="measurement" readonly>
+                                <input type="text" class="form-control" name="measurement"
+                                    placeholder="Unit of Measurement" id="measurement" readonly>
                                 <div class="invalid-feedback">
                                     Enter Unit of Measurement
                                 </div>
@@ -245,24 +245,22 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="">Description </label>
-                                <textarea class="form-control" id="description" name="description"
-                                    placeholder="Enter Description" readonly></textarea>
+                                <textarea class="form-control" id="description" name="description" placeholder="Enter Description" readonly></textarea>
                                 <div class="invalid-feedback">
                                     Enter Description
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="">Remarks / Notes </label>
-                                <textarea class="form-control" id="remarks" name="remarks" placeholder=" Remarks / Notes"
-                                    readonly></textarea>
+                                <textarea class="form-control" id="remarks" name="remarks" placeholder=" Remarks / Notes" readonly></textarea>
                                 <div class="invalid-feedback">
                                     Enter Remarks / Notes
                                 </div>
                             </div>
                             <div class="col-md-4 mb-4">
                                 <label for="">Total Quantity</label>
-                                <input type="text" class="form-control" placeholder=" Available Quantity" name="qty"
-                                    id="qty" readonly>
+                                <input type="text" class="form-control" placeholder=" Available Quantity"
+                                    name="qty" id="qty" readonly>
                                 <div class="invalid-feedback">
                                     Enter Available Quantity
                                 </div>
@@ -270,14 +268,14 @@
 
                             <div class="col-md-4 mb-4">
                                 <label for="">New </label>
-                                <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable"
-                                    id="new_spareable" readonly>
+                                <input type="text" class="form-control" placeholder=" New Spareable"
+                                    name="new_spareable" id="new_spareable" readonly>
                                 <div class="invalid-feedback">
                                     Enter New Spareable
                                 </div>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <label for="">Used  </label>
+                                <label for="">Used </label>
                                 <input type="text" class="form-control" placeholder=" Used " name="used_spareable"
                                     id="used_spareable" readonly>
                                 <div class="invalid-feedback">
@@ -312,14 +310,14 @@
             });
             $.ajax({
                 type: "GET",
-                url: "{{route('stock_list_view')}}",
+                url: "{{ route('stock_list_view') }}",
                 data: {
                     data: id
                 },
-                success: function (response) {
-                   // console.log(response.viewdata);
+                success: function(response) {
+                    // console.log(response.viewdata);
                     $("#location_id").val(response.viewdata['location_id']);
-                   // $("#location_name").val(response.viewdata['location_name'] + "( " +response.viewdata['location_id'] + " )" );
+                    // $("#location_name").val(response.viewdata['location_name'] + "( " +response.viewdata['location_id'] + " )" );
                     $("#location_name").val(response.viewdata['location_name']);
                     $("#edp_code_id").val(response.viewdata['edp_code']);
                     var sectionValue = response.viewdata['section'];
@@ -344,19 +342,19 @@
 
 
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Filter Stock Data on Button Click
-            $("#filterButton").click(function () {
+            $("#filterButton").click(function() {
                 $.ajax({
                     type: "GET",
                     url: "{{ route('stock_filter') }}",
                     data: $("#filterForm").serialize(),
-                    success: function (response) {
+                    success: function(response) {
                         let tableBody = $("#stockTable");
                         tableBody.empty();
 
                         if (response.data && response.data.length > 0) {
-                            $.each(response.data, function (index, stockdata) {
+                            $.each(response.data, function(index, stockdata) {
                                 let editButton = '';
                                 //console.log("Stock data:", stockdata);
 
@@ -393,7 +391,7 @@
                             );
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         console.error("Error fetching data:", error);
                     }
                 });
@@ -408,12 +406,12 @@
 
         }
 
-        $(document).ready(function () {
-            $("#selectAll").on("change", function () {
+        $(document).ready(function() {
+            $("#selectAll").on("change", function() {
                 $(".row-checkbox").prop("checked", $(this).prop("checked"));
             });
 
-            $(".row-checkbox").on("change", function () {
+            $(".row-checkbox").on("change", function() {
                 if ($(".row-checkbox:checked").length === $(".row-checkbox").length) {
                     $("#selectAll").prop("checked", true);
                 } else {
@@ -421,8 +419,8 @@
                 }
             });
         });
-        $(document).ready(function () {
-            $("#downloadPdf").click(function (e) {
+        $(document).ready(function() {
+            $("#downloadPdf").click(function(e) {
                 e.preventDefault();
 
                 let baseUrl = "{{ route('stock_list_pdf') }}";
@@ -438,23 +436,23 @@
             });
         });
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Automatically fade out alerts after 3 seconds
-            setTimeout(function () {
+            setTimeout(function() {
                 $(".alert").fadeOut("slow");
             }, 3000);
         });
     </script>
 
-<script>
-    $(document).ready(function () {
-        $('#edp_code').select2({
-            theme: 'bootstrap4',
-            allowClear: true,
-            width: '100%' // Ensures it fits your layout
+    <script>
+        $(document).ready(function() {
+            $('#edp_code').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%' // Ensures it fits your layout
+            });
         });
-    });
-</script>
+    </script>
 
 
 

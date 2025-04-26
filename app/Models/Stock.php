@@ -26,4 +26,8 @@ class Stock extends Model
         'rig_id',
         'expected_date',
     ];
+
+    public function getFormattedDateAttribute(){
+        return $this->created_at->format('d-m-Y');
+    }
 }
