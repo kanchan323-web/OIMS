@@ -117,7 +117,7 @@
                                                 <td>${stockdata.section}</td>
                                                 <td>${stockdata.description}</td>
                                                 <td>${stockdata.qty}</td>
-                                                <td>${formattedDate}</td>
+                                                <td>${stockdata.creation_date}</td>
                                             </tr>`;
                                     });
                                 }
@@ -135,7 +135,7 @@
                                                 <td>${stockdata.description}</td>
                                                 <td>${stockdata.requested_qty}</td>
                                                 <td>${stockdata.name}</td>
-                                                <td>${stockdata.updated_at}</td>
+                                                <td>${stockdata.receipt_date}</td>
                                             </tr>`;
                                     });
                                 }
@@ -153,7 +153,7 @@
                                                     <td>${stockdata.description}</td>
                                                     <td>${stockdata.requested_qty}</td>
                                                     <td>${stockdata.name}</td>
-                                                    <td>${stockdata.updated_at}</td>
+                                                    <td>${stockdata.issued_date}</td>
                                                 </tr>`;
                                     });
                                 }

@@ -60,7 +60,8 @@ class StockReportController extends Controller
         }
         $stock_overview = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
         ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-        ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name')
+        ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name',
+        DB::raw("DATE_FORMAT(stocks.created_at, '%d-%m-%Y') as creation_date"))
         ->where('rig_id', $rig_id)
         ->orderBy('stocks.id', 'desc')
         ->get();
@@ -78,7 +79,8 @@ class StockReportController extends Controller
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')
         ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
         ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','request_status.updated_at')
+        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty',
+           DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as receipt_date"))
         ->where('requesters.requester_rig_id', $rig_id)
         ->where('request_status.status_id', 3)
         ->orderBy('requesters.updated_at', 'desc')
@@ -95,7 +97,9 @@ class StockReportController extends Controller
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')
         ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
         ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','request_status.updated_at','request_status.supplier_new_spareable','request_status.supplier_used_spareable')
+        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty',
+         DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as issued_date"),
+         'request_status.supplier_new_spareable','request_status.supplier_used_spareable')
         ->where('requesters.supplier_rig_id', $rig_id)
         ->where('request_status.status_id', 3)
         ->orderBy('requesters.updated_at', 'desc')
@@ -157,7 +161,7 @@ class StockReportController extends Controller
                         $sheet->setCellValue('C' . $row, $stockData->section);
                         $sheet->setCellValue('D' . $row, $stockData->description);
                         $sheet->setCellValue('F' . $row, $stockData->qty);
-                        $sheet->setCellValue('G' . $row, $stockData->created_at);
+                        $sheet->setCellValue('G' . $row, $stockData->creation_date);
                         $row++;
                         $i++;
                     }
@@ -180,7 +184,7 @@ class StockReportController extends Controller
                         $sheet->setCellValue('C' . $row, $stockData->description);
                         $sheet->setCellValue('D' . $row, $stockData->requested_qty);
                         $sheet->setCellValue('E' . $row, $stockData->name);
-                        $sheet->setCellValue('F' . $row, $stockData->created_at);
+                        $sheet->setCellValue('F' . $row, $stockData->receipt_date);
                         $row++;
                         $i++;
                     }
@@ -203,7 +207,7 @@ class StockReportController extends Controller
                         $sheet->setCellValue('C' . $row, $stockData->description);
                         $sheet->setCellValue('D' . $row, $stockData->requested_qty);
                         $sheet->setCellValue('E' . $row, $stockData->name);
-                        $sheet->setCellValue('F' . $row, $stockData->created_at);
+                        $sheet->setCellValue('F' . $row, $stockData->issued_date);
                         $row++;
                         $i++;
                     }
