@@ -74,7 +74,7 @@
                                 <td>{{ $stock->section }}</td>
                                 <td>{{ $stock->description }}</td>
                                 <td>{{ $stock->qty }}</td>
-                                <td>{{ $stock->FormattedDate }}</td>
+                                <td>{{ $stock->creation_date }}</td>
                             </tr>
                         @endforeach
                     @endif
@@ -108,7 +108,7 @@
                                 <td>{{ $stock->description }}</td>
                                 <td>{{ $stock->requested_qty }}</td>
                                 <td>{{ $stock->name }}</td>
-                                <td>{{ $stock->updated_at }}</td>
+                                <td>{{ $stock->receipt_date }}</td>
                             </tr>
                         @endforeach
                     @endif
@@ -142,7 +142,7 @@
                                 <td>{{ $stock->description }}</td>
                                 <td>{{ $stock->requested_qty }}</td>
                                 <td>{{ $stock->name }}</td>
-                                <td>{{ $stock->updated_at }}</td>
+                                <td>{{ $stock->issued_date }}</td>
                             </tr>
                         @endforeach
                     @endif
