@@ -6,7 +6,7 @@
                 <div class="col-lg-12">
                     {{Breadcrumbs::render('Admin.dashboard')}}
                     <div class="row">
-                        <div class="col-lg-3 col-md-3">
+                        <div class="col-lg-6 col-md-6">
                             <div class="card card-block card-stretch card-height">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
