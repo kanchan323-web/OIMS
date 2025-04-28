@@ -35,7 +35,7 @@ Route::get('/', function () {
 Route::get('/admin/login', [AdminLoginController::class, 'index'])->name('admin.login');
 Route::post('/admin/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
 
-Route::middleware(['admin.auth','check.session'])->group(function () {
+Route::middleware(['admin.auth','admin.session'])->group(function () {
 
     Route::prefix('/admin')->group(function () {
         Route::get('/profile', [AdminLoginController::class, 'profile'])->name('user.admin.profile');
@@ -168,7 +168,7 @@ Route::get('/user/login', [LoginController::class, 'index'])->name('user.login')
 Route::post('/user/authenticate', [LoginController::class, 'authenticate'])->name('user.authenticate');
 
 
-Route::middleware(['auth','check.session'])->group(function () {
+Route::middleware(['auth', 'user.session'])->group(function () {
 
     Route::prefix('/user')->group(function () {
 
@@ -267,6 +267,11 @@ Route::middleware(['auth','check.session'])->group(function () {
         //Notifications
         Route::post('/notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
         Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+
+        Route::post('/extend-session', function() {
+            request()->session()->put('last_activity', time());
+            return response()->json(['success' => true]);
+        })->name('user.extend-session');
     });
 });
 

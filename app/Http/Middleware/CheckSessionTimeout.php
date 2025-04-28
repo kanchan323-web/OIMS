@@ -23,7 +23,8 @@ class CheckSessionTimeout
              return $next($request);
          }
  
-         $sessionLifetime = 300; // 5 minute in seconds
+         $sessionLifetime = 1800;  // 30 min session 
+        //  $sessionLifetime = 30;  // 30 sec session 
          $lastActivity = $request->session()->get('last_activity', time());
          
          if (time() - $lastActivity > $sessionLifetime) {
