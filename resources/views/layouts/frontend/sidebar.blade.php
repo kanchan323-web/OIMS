@@ -113,7 +113,7 @@
                         </li>
                         <li class="">
                             <a href="{{ route('request_report.index') }}">
-                                <i class="las la-minus"></i><span>Transfers</span>
+                                <i class="las la-minus"></i><span>Transactions</span>
                             </a>
                         </li>
                     </ul>

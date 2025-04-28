@@ -426,11 +426,6 @@
                                         <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
                                 </div>
 
-
-
-
-
-
                             </div>
                             <button class="btn btn-success" id="AddRequestStock" type="submit">Submit Request</button>
                             <a href="{{route('stock_list.get')}}" class="btn btn-light">Go Back</a>
@@ -674,6 +669,7 @@
                 }
             });
         });
+
         $(document).ready(function () {
             $("#downloadPdf").click(function (e) {
                 e.preventDefault();
