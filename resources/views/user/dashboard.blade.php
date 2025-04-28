@@ -1,15 +1,8 @@
 @extends('layouts.frontend.layout')
 @section('page-content')
-    <div class="content-page">
-        <div class="container-fluid">
-            <div class="row">
-              
-                {{ Breadcrumbs::render('user.dashboard') }}
-              
-
-                <div class="col-lg-12">
-                    <div class="row">
-                        <div class="col-lg-3 col-md-3">
+   {{-- <div class="col-lg-12"> --}}
+                    {{-- <div class="row"> --}}
+                        {{-- <div class="col-lg-3 col-md-3">
                             <div class="card card-block card-stretch card-height">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center mb-4 card-total-sale">
@@ -97,7 +90,7 @@
                                 </div>
 
                             </div>
-                        </div>
+                        </div> --}}
                         {{-- <div class="col-lg-3 col-md-3">
                             <div class="card card-block card-stretch card-height">
                                 <div class="card-body">
@@ -123,8 +116,142 @@
 
                             </div>
                         </div> --}}
+                    {{-- </div> --}}
+                {{-- </div> --}}
+    <div class="content-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="container-fluid py-4">
+                    <!-- Breadcrumbs -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                          
+                            {{ Breadcrumbs::render('user.dashboard') }}
+                        </div>
+                    </div>
+                
+                    <!-- Stats Cards -->
+                    <div class="row g-4">
+    
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card border-0 shadow-sm h-100 hover-effect">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h3 class="h3 card-title text-muted mb-0">Incoming Requests</h3>
+                                        <div class="bg-danger bg-opacity-10 p-2 rounded status-card">
+                                            <h5 class="card-title text-dark">15</h5>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row g-3 mt-3">
+                                        <div class="col-6 mb-2">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">MIT</h6>
+                                                <h4 class="fw-bold text-primary">{{$mitstatus}}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-2">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Received</h6>
+                                                <h4 class="fw-bold text-warning">{{$Received_Status}}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Pending</h6>
+                                                <h4 class="fw-bold text-info">{{$Pending_Status}}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Decline</h6>
+                                                <h4 class="fw-bold text-danger">{{$Decline_Status}}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             
+                            </div>
+                        </div>
+                        
+                        <!-- Outgoing Requests Card -->
+                        <div class="col-lg-6 col-md-6">
+                            <div class="card border-0 shadow-sm h-100 hover-effect">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title text-muted mb-0 text-center">Outgoing Requests</h5>
+                                        <div class="bg-info bg-opacity-10 p-2 rounded status-card">
+                                            <h5 class="card-title text-dark">15</h5>
+                                        </div>
+                                    </div>
+                                    
+                               
+                                        <div class="row g-3 mt-3">
+                                            <div class="col-6 mb-2">
+                                                <div class="border rounded p-3 text-center status-card">
+                                                    <h6 class="text-muted">MIT</h6>
+                                                    <h4 class="fw-bold text-primary">42</h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 mb-2">
+                                                <div class="border rounded p-3 text-center status-card">
+                                                    <h6 class="text-muted">Received</h6>
+                                                    <h4 class="fw-bold text-warning">18</h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="border rounded p-3 text-center status-card">
+                                                    <h6 class="text-muted">Pending</h6>
+                                                    <h4 class="fw-bold text-info">26</h4>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="border rounded p-3 text-center status-card">
+                                                    <h6 class="text-muted">Decline</h6>
+                                                    <h4 class="fw-bold text-danger">14</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
+                <style>
+                    .hover-effect {
+                        transition: all 0.3s ease;
+                        border-radius: 10px;
+                        border: 1px solid var(--bs-border-color);
+                    }
+                    .hover-effect:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+                        border-color: var(--bs-border-color-translucent);
+                    }
+                    .card-title {
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                    }
+                    .status-card {
+                        transition: all 0.2s ease;
+                        cursor: pointer;
+                        background-color: var(--bs-body-bg);
+                    }
+                    .status-card:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+                        background-color: var(--bs-light-bg-subtle);
+                    }
+                    .status-card h4 {
+                        transition: all 0.2s ease;
+                    }
+                    .status-card:hover h4 {
+                        transform: scale(1.05);
+                    }
+                </style>
+                
                 <div class="col-lg-8 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
                         <div class="card-header">
