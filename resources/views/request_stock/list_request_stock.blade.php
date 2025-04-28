@@ -769,11 +769,11 @@
                             $("#category_id").val(stock.category ?? '');
                             $("#section").val(stock.section ?? '');
                             $("#description").val(stock.description ?? '');
-                            $("#total_qty").text(formatIndianNumber(stock.available_qty ?? ''));
-                            $("#req_qty").text(formatIndianNumber(stock.requested_qty ?? ''));
+                            $("#total_qty").val(formatIndianNumber(stock.available_qty ?? ''));
+                            $("#req_qty").val(formatIndianNumber(stock.requested_qty ?? ''));
                             $("#measurement").val(stock.measurement ?? '');
-                            $("#new_spearable").text(formatIndianNumber(stock.new_spareable ?? ''));
-                            $("#used_spareable").text(formatIndianNumber(stock.used_spareable ?? ''));
+                            $("#new_spearable").val(formatIndianNumber(stock.new_spareable ?? ''));
+                            $("#used_spareable").val(formatIndianNumber(stock.used_spareable ?? ''));
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
                             if (response.request_status !== null) {
