@@ -113,7 +113,7 @@
                                                                                     <td>{{ $stockdata->Location_Name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
-                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
+                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y') }}</td>
 
                                                                                     <!-- Status with Dynamic Color -->
                                                                                     @php
@@ -682,10 +682,10 @@
                                 let badgeClass = statusColors[stockdata.status_name] || 'badge-secondary';
 
                                 // Format created_at date (assuming it's returned as ISO format)
-                                let formattedDate = new Date(stockdata.created_at).toLocaleString('en-GB', {
+                            /*    let formattedDate = new Date(stockdata.created_at).toLocaleString('en-GB', {
                                     day: '2-digit', month: '2-digit', year: 'numeric',
-                                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                                });
+                                    //hour: '2-digit', minute: '2-digit', second: '2-digit'
+                                }); */
 
                                 // Append row data to table
                                 tableBody.append(`<tr><td>${index + 1}</td>
@@ -693,7 +693,7 @@
                                                         <td>${stockdata.Location_Name}</td>
                                                         <td>${stockdata.edp_code}</td>
                                                         <td>${stockdata.description}</td>
-                                                        <td>${formattedDate}</td>
+                                                        <td>${stockdata.creation_date}</td>
                                                         <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
                                                         <td><a class="badge badge-success mr-2" data-toggle="modal"
                                                                 onclick="RequestStockData(${stockdata.id})"

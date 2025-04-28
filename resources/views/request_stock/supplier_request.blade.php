@@ -109,7 +109,7 @@
                                                                                         $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
                                                                                     @endphp
                                                                                     <td><span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span></td>
-                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
+                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y') }}</td>
                                                                                     <td>
                                                                                         <a class="badge badge-success mr-2" data-toggle="modal"
                                                                                             onclick="RequestStockData({{ json_encode($stockdata->id) }})"
@@ -535,7 +535,7 @@
                                                                     <td>${stockdata.edp_code}</td>
                                                                      <td>${stockdata.description}</td>
                                                                     <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                                    <td>${stockdata.created_at ? stockdata.created_at : '-'}</td>
+                                                                    <td>${stockdata.created_at ? stockdata.creation_date : '-'}</td>
                                                                     <td>
                                                                         <a class="badge badge-success mr-2" data-toggle="modal"
                                                                                 onclick="RequestStockData(${stockdata.id})"

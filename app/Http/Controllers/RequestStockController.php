@@ -458,6 +458,7 @@ class RequestStockController extends Controller
                 'rig_users.name as Location_Name',
                 'rig_users.location_id',
                 'requesters.*',
+                DB::raw("DATE_FORMAT(stocks.created_at, '%d-%m-%Y') as creation_date"),
                 'mst_status.status_name',
                 'stocks.description',
                 'stocks.created_at as stock_created_at',
@@ -470,7 +471,7 @@ class RequestStockController extends Controller
                 ->when($request->edp_code, function ($query, $edp_code) {
                     return $query->where('edps.edp_code', $edp_code);
                 })
-                ->when($request->description, function ($query, $description) {
+                ->when($request->Description, function ($query, $description) {
                     return $query->where('stocks.description', 'LIKE', "%{$description}%");
                 })
                 ->when($request->form_date, function ($query) use ($request) {
@@ -852,7 +853,7 @@ class RequestStockController extends Controller
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->where('requesters.requester_rig_id', Auth::user()->rig_id)
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
+            ->select('requesters.*', DB::raw("DATE_FORMAT(requesters.created_at, '%d-%m-%Y') as creation_date"),'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
             ->when($request->edp_code, function ($query, $edp_code) {
                 return $query->where('stocks.edp_code', $edp_code);
             })
