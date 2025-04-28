@@ -94,7 +94,7 @@
                                     <th>Section</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
-                                    <th>Creation Date</th>
+                                    <th>Date Updated</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -111,7 +111,7 @@
                                                 {{ IND_money_format($stockdata->qty) }}
                                                 <span class="text-muted small">{{ $stockdata->measurement }}</span>
                                             </td>
-                                            <td>{{ $stockdata->formatted_date }}</td>
+                                            <td>{{ $stockdata->date }}</td>
                                             <td>
                                                 <div class="d-flex align-items-center list-action">
                                                     <!-- View Button (Always Visible) -->
@@ -367,19 +367,17 @@
                                 tableBody.append(`
                                 <tr>
                                     <td>${index + 1}</td>
-                                    <td>${stockdata.name}</td>
                                     <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
-
                                     <td>${stockdata.qty}
                                         <span class="text-muted small">${stockdata.measurement}</span>
                                     </td>
-
+                                    <td>${stockdata.date}</td>
                                     <td>
                                         <a class="badge badge-info mr-2" data-toggle="modal"
                                             onclick="viewstockdata(${stockdata.id})" data-target=".bd-example-modal-xl"
-                                            data-placement="top" title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
+                                            data-placement="top" title="View"><i class="ri-eye-line mr-0"></i></a>
                                         ${editButton}
                                     </td>
                                 </tr>

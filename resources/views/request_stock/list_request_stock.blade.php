@@ -113,7 +113,7 @@
                                                                                     <td>{{ $stockdata->Location_Name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
-                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y') }}</td>
+                                                                                    <td>{{ $stockdata->updated_at->format('d-m-Y') }}</td>
 
                                                                                     <!-- Status with Dynamic Color -->
                                                                                     @php
