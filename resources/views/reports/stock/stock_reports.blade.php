@@ -105,7 +105,7 @@
                             case "overview":
                                 if (response.data && response.data.length > 0) {
                                     headers =
-                                        "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total Quantity</th><th>Creation Date</th>";
+                                        "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total Quantity</th><th>Date Updated</th>";
                                     $.each(response.data, function(index, stockdata) {
                                         var date = stockdata.updated_at;
                                         var dateObj = new Date(date);
@@ -117,20 +117,19 @@
                                                 <td>${stockdata.section}</td>
                                                 <td>${stockdata.description}</td>
                                                 <td>${stockdata.qty}</td>
-                                                <td>${stockdata.creation_date}</td>
+                                                <td>${stockdata.date}</td>
                                             </tr>`;
                                     });
                                 }
                                 break;
                             case "stock_receiver":
-                                //  if (response.data.stock_addition || response.data.stock_removal) {
-                                //  console.log("AJAX Responsexcx:", response.data);
                                 if (response.data && response.data.length > 0) {
                                     headers =
-                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Received QTY </th><th>Supplier Rig</th><th>Receipt Date</th>";
+                                        "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Received QTY </th><th>Supplier Rig</th><th>Receipt Date</th>";
                                     $.each(response.data, function(index, stockdata) {
                                         rows += `<tr>
                                                <td>${index + 1}</td>
+                                               <td>${stockdata.RID}</td>
                                                 <td>${stockdata.EDP_Code}</td>
                                                 <td>${stockdata.description}</td>
                                                 <td>${stockdata.requested_qty}</td>
@@ -145,10 +144,11 @@
                             case "stock_issuer":
                                 if (response.data && response.data.length > 0) {
                                     headers =
-                                        "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver  Rig</th><th>Issued Date</th>";
+                                        "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver  Rig</th><th>Issued Date</th>";
                                     $.each(response.data, function(index, stockdata) {
                                         rows += `<tr>
-                                                <td>${index + 1}</td>
+                                                    <td>${index + 1}</td>
+                                                    <td>${stockdata.RID}</td>
                                                     <td>${stockdata.EDP_Code}</td>
                                                     <td>${stockdata.description}</td>
                                                     <td>${stockdata.requested_qty}</td>

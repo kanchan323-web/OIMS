@@ -58,7 +58,7 @@
                         <th>Section</th>
                         <th>Description</th>
                         <th>Total Quantity</th>
-                        <th>Creation Date</th>
+                        <th>Date Updated</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,7 +74,7 @@
                                 <td>{{ $stock->section }}</td>
                                 <td>{{ $stock->description }}</td>
                                 <td>{{ $stock->qty }}</td>
-                                <td>{{ $stock->creation_date }}</td>
+                                <td>{{ $stock->date }}</td>
                             </tr>
                         @endforeach
                     @endif
@@ -83,11 +83,12 @@
         @break
 
         @case('stock_receiver')
-            <h2>Stock Additions Report</h2>
+            <h2>Stock Received Report</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Sr.No</th>
+                        <th>Request ID</th>
                         <th>EDP Code</th>
                         <th>Description</th>
                         <th>Received QTY</th>
@@ -104,6 +105,7 @@
                         @foreach ($data as $index => $stock)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                                <td>{{ $stock->RID }}</td>
                                 <td>{{ $stock->EDP_Code }}</td>
                                 <td>{{ $stock->description }}</td>
                                 <td>{{ $stock->requested_qty }}</td>
@@ -117,11 +119,12 @@
         @break
 
         @case('stock_issuer')
-            <h2>Stock Removals Report</h2>
+            <h2>Stock Issued Report</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Sr.No</th>
+                        <th>Request ID</th>
                         <th>EDP Code</th>
                         <th>Description</th>
                         <th>Issued QTY</th>
@@ -138,6 +141,7 @@
                         @foreach ($data as $index => $stock)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+                                <td>{{ $stock->RID }}</td>
                                 <td>{{ $stock->EDP_Code }}</td>
                                 <td>{{ $stock->description }}</td>
                                 <td>{{ $stock->requested_qty }}</td>
