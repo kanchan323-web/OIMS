@@ -33,9 +33,64 @@ class DashboardController extends Controller
                 ->count();
             //   Top-Card-data
 
+    
             // Overview Of Stock Comparison   
             $totalStock = Stock::where('rig_id', $rig_id)->count();
             // Overview Of Stock Comparison 
+
+            // MIT Status
+            $mitstatus = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->where('requesters.supplier_rig_id', $rig_id)
+                ->with('requestStatuses')
+                ->where('requesters.status',6)
+                ->count();
+            // MIT Status
+
+            // Received Status
+            $Received_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->where('requesters.supplier_rig_id', $rig_id)
+                ->with('requestStatuses')
+                ->where('requesters.status',3)
+                ->count();
+            // Received Status
+
+            // Pending Status
+            $Pending_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->where('requesters.supplier_rig_id', $rig_id)
+                ->with('requestStatuses')
+                ->where('requesters.status',1)
+                ->count();
+            // Pending Status
+
+            // Pending Status
+            $Decline_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->where('requesters.supplier_rig_id', $rig_id)
+                ->with('requestStatuses')
+                ->where('requesters.status',5)
+                ->count();
+            // Pending Status
+
+           
 
             // Stock category data
             $categoryCounts = Stock::where('rig_id', $rig_id)
@@ -171,7 +226,11 @@ class DashboardController extends Controller
                   'usedStock',
                   'newPercent', 
                   'usedPercent',
-                  'ReceivedStock'
+                  'ReceivedStock',
+                  'mitstatus',
+                  'Received_Status',
+                  'Pending_Status',
+                  'Decline_Status',
             ));
         } else {
             return redirect()->route('user.login');
