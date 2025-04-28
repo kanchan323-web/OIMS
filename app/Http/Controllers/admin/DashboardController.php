@@ -39,6 +39,158 @@ class DashboardController extends Controller
         ->where('requesters.requester_rig_id', $rig_id)
         ->where('mst_status.status_name', 'Pending')
         ->count();
+
+
+            // MIT Status
+            $Total_Incoming = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->with('requestStatuses')
+                
+                ->count('status');
+            // MIT Status
+           
+            // MIT Status
+            $mitstatus = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->with('requestStatuses')
+                ->where('requesters.status',6)
+                ->count();
+            // MIT Status
+
+            // Received Status
+            $Received_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->with('requestStatuses')
+                ->where('requesters.status',3)
+                ->count();
+            // Received Status
+
+            // Pending Status
+            $Pending_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->with('requestStatuses')
+                ->where('requesters.status',1)
+                ->count();
+            // Pending Status
+
+            // Pending Status
+            $Decline_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->with('requestStatuses')
+                ->where('requesters.status',5)
+                ->count();
+            // Pending Status
+
+            // Query Status
+            $Query_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->with('requestStatuses')
+                ->where('requesters.status',2)
+                ->count();
+            // Query Status
+
+            // Approve Status
+            $Approve_Status = Requester::select(
+                'requesters.*',
+                )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+                ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+                ->with('requestStatuses')
+                ->where('requesters.status',4)
+                ->count();
+            // Approve Status
+
+
+            // Raised MIT Status
+            $mit_raised =  Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.status',6)
+            ->count();
+            // Raised MIT Status
+
+            // Raised Received Status
+            $Received_raised =  Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.status',3)
+            ->count();
+            // Raised Received Status
+
+            // Raised Pending Status
+            $Pending_raised =  Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.status',1)
+            ->count();
+            // Raised Pending Status
+
+
+            // Raised Decline Status
+            $Decline_raised =  Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.status',5)
+            ->count();
+            // Raised Decline Status
+
+
+            // Raised Approve Status
+            $Approve_raised =  Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.status',4)
+            ->count();
+            // Raised Approve Status
+
+
+            // Raised Query Status
+            $Query_raised =  Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->where('requesters.status',2)
+            ->count();
+            // Raised Query Status
+
+
+            // Raised Total 
+            $Total_Raised =  Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->count('status');
+            // Raised Total
         
             // In your controller:
             $weeklyStockData = [];
@@ -140,7 +292,21 @@ class DashboardController extends Controller
         'usedStock',
           'newPercent', 
                   'usedPercent',
-                  'CompletedRequest'
+                  'CompletedRequest',
+                  'mitstatus',
+                  'Received_Status',
+                  'Pending_Status',
+                  'Decline_Status',
+                  'Approve_Status',
+                  'Query_Status',
+                  'mit_raised',
+                'Received_raised',
+                'Pending_raised',
+                'Decline_raised',
+                'Approve_raised',
+                'Query_raised',
+                'Total_Incoming',
+                'Total_Raised',
         ));
     }
 
