@@ -511,7 +511,7 @@
                     var categoryValue = response.for_request_viewdata['category'];
                     $("#Rcategory").val(categoryValue);
                     $("#Rhidden_category").val(categoryValue);
-                    $("#Available_qty").text(formatIndianNumber(response.for_request_viewdata['qty']));
+                    $("#Available_qty").val(formatIndianNumber(response.for_request_viewdata['qty']));
                     $("#RequestQTY").on("input", function () {
                         let availableQty = parseFloat($("#Available_qty").val()) || 0;
                         let requestQty = parseFloat($(this).val()) || 0;
@@ -525,11 +525,11 @@
                         }
                     });
                    // console.log(response.viewdata);
-                    $("#newQty").text(formatIndianNumber(response.for_request_viewdata['new_spareable']));
-                    $("#usedQty").text(formatIndianNumber(response.for_request_viewdata['used_spareable']));
+                    $("#newQty").val(formatIndianNumber(response.for_request_viewdata['new_spareable']));
+                    $("#usedQty").val(formatIndianNumber(response.for_request_viewdata['used_spareable']));
                     $("#Rmeasurement").val(response.viewdata['measurement']);
-                    $("#Rnew_spareable").text(formatIndianNumber(response.viewdata['new_spareable']));
-                    $("#Rused_spareable").text(formatIndianNumber(response.viewdata['used_spareable']));
+                    $("#Rnew_spareable").val(formatIndianNumber(response.viewdata['new_spareable']));
+                    $("#Rused_spareable").val(formatIndianNumber(response.viewdata['used_spareable']));
                     $("#Rremarks").val(response.viewdata['remarks']);
                     $("#Rdescription").val(response.viewdata['description']);
                     $("#Rsupplier_location_name").val(response.viewdata['location_name']);
@@ -567,10 +567,10 @@
                     var categoryValue = response.viewdata['category'];
                     $("#category_id").val(categoryValue);
                     $("#hidden_category").val(categoryValue);
-                    $("#qty").text(formatIndianNumber(response.viewdata['qty']));
+                    $("#qty").val(formatIndianNumber(response.viewdata['qty']));
                     $("#measurement").val(response.viewdata['measurement']);
-                    $("#new_spareable").text(formatIndianNumber(response.viewdata['new_spareable']));
-                    $("#used_spareable").text(formatIndianNumber(response.viewdata['used_spareable']));
+                    $("#new_spareable").val(formatIndianNumber(response.viewdata['new_spareable']));
+                    $("#used_spareable").val(formatIndianNumber(response.viewdata['used_spareable']));
                     $("#remarks").val(response.viewdata['remarks']);
                     $("#description_id").val(response.viewdata['description']);
                 }
