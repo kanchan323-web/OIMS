@@ -113,7 +113,7 @@
                                                                                     <td>{{ $stockdata->Location_Name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
-                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y') }}</td>
+                                                                                    <td>{{ $stockdata->updated_at->format('d-m-Y') }}</td>
 
                                                                                     <!-- Status with Dynamic Color -->
                                                                                     @php
@@ -719,6 +719,21 @@
             });
         });
 
+        function formatIndianNumber(x) {
+            if (x == null) return 0;
+            x = x.toString();
+            var afterPoint = '';
+            if (x.indexOf('.') > 0)
+                afterPoint = x.substring(x.indexOf('.'), x.length);
+            x = Math.floor(x);
+            x = x.toString();
+            var lastThree = x.substring(x.length - 3);
+            var otherNumbers = x.substring(0, x.length - 3);
+            if (otherNumbers !== '')
+                lastThree = ',' + lastThree;
+            return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+        }
+
         //to bring data into the main modal
         function RequestStockData(id) {
             $(".btn-danger").hide();
@@ -754,11 +769,11 @@
                             $("#category_id").val(stock.category ?? '');
                             $("#section").val(stock.section ?? '');
                             $("#description").val(stock.description ?? '');
-                            $("#total_qty").val(stock.available_qty ?? '');
-                            $("#req_qty").val(stock.requested_qty ?? '');
+                            $("#total_qty").val(formatIndianNumber(stock.available_qty ?? ''));
+                            $("#req_qty").val(formatIndianNumber(stock.requested_qty ?? ''));
                             $("#measurement").val(stock.measurement ?? '');
-                            $("#new_spearable").val(stock.new_spareable ?? '');
-                            $("#used_spareable").val(stock.used_spareable ?? '');
+                            $("#new_spearable").val(formatIndianNumber(stock.new_spareable ?? ''));
+                            $("#used_spareable").val(formatIndianNumber(stock.used_spareable ?? ''));
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
                             if (response.request_status !== null) {
@@ -900,12 +915,10 @@
                 return errorMsg === "";
             }
 
-            // ✅ Trigger validation on input
             $("#modal_new_spareable, #modal_used_spareable").on("input", function () {
                 validateSpareableInputs();
             });
 
-            // ✅ On submit
             $(document).on("click", "#confirmReceivedRequest", function (e) {
                 e.preventDefault();
 

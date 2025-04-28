@@ -57,13 +57,10 @@ class StockController extends Controller
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->select('stocks.*', 'edps.edp_code', 'rig_users.name')
+            ->select('stocks.*', DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date"),'edps.edp_code', 'rig_users.name')
             ->where('rig_id', $rig_id)
-            ->orderBy('stocks.id', 'desc')
+            ->orderBy('stocks.updated_at', 'desc')
             ->get();
-
-
-
         $moduleName = "Stock List";
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
@@ -92,8 +89,9 @@ class StockController extends Controller
 
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
                 ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-                ->select('stocks.*', 'edps.edp_code AS EDP_Code', 'rig_users.name')
+                ->select('stocks.*', DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date"),'edps.edp_code AS EDP_Code', 'rig_users.name')
                 ->where('rig_id', $rig_id)
+                ->orderBy('stocks.updated_at', 'desc')
                 ->get();
 
             $datarig = User::where('user_type', '!=', 'admin')
@@ -212,7 +210,7 @@ class StockController extends Controller
     public function downloadSample()
     {
         $filePath = public_path('sample-files/sample_stock_user.xlsx');
-        
+
         return Response::download($filePath, 'Sample_Stock_File_User.xlsx');
     }
 
@@ -248,7 +246,7 @@ class StockController extends Controller
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
                 return redirect()->back();
             }
-            
+
             $user = Auth::user();
             $rigUser = RigUser::find($user->rig_id);
             if (!$rigUser) {
@@ -268,21 +266,21 @@ class StockController extends Controller
                     $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
                     continue;
                 }
-                
+
 
                 $edp = Edp::where('edp_code', $row[0])->first();
                 if (!$edp) {
                     $errors[] = "Row " . ($index + 2) . ": EDP code {$row[0]} not found in the Edp table.";
                     continue;
                 }
-                
-                  
+
+
                      // Convert quantities to integers
                         $qtyNew = (int)$row[1];
                         $qtyUsed = (int)$row[2];
                         $totalQty = $qtyNew + $qtyUsed;
-                      
-          
+
+
 
                 // Validate required fields
                 $requiredFields = range(0, 2);
@@ -296,7 +294,7 @@ class StockController extends Controller
                 // Check if stock already exists
                 $stock = Stock::where('edp_code', $edp->id)->where('rig_id', $rigUser->id)
                     ->first();
-                   
+
                 if ($stock) {
                     // Update existing stock
                     $stock->update([

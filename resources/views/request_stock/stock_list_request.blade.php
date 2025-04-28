@@ -467,6 +467,22 @@
     </script>
 
     <script>
+
+        function formatIndianNumber(x) {
+            if (x == null) return 0;
+            x = x.toString();
+            var afterPoint = '';
+            if (x.indexOf('.') > 0)
+                afterPoint = x.substring(x.indexOf('.'), x.length);
+            x = Math.floor(x);
+            x = x.toString();
+            var lastThree = x.substring(x.length - 3);
+            var otherNumbers = x.substring(0, x.length - 3);
+            if (otherNumbers !== '')
+                lastThree = ',' + lastThree;
+            return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+        }
+
         function addRequest(id) {
             var id = id;
             $.ajaxSetup({
@@ -495,7 +511,7 @@
                     var categoryValue = response.for_request_viewdata['category'];
                     $("#Rcategory").val(categoryValue);
                     $("#Rhidden_category").val(categoryValue);
-                    $("#Available_qty").val(response.for_request_viewdata['qty']);
+                    $("#Available_qty").val(formatIndianNumber(response.for_request_viewdata['qty']));
                     $("#RequestQTY").on("input", function () {
                         let availableQty = parseFloat($("#Available_qty").val()) || 0;
                         let requestQty = parseFloat($(this).val()) || 0;
@@ -509,11 +525,11 @@
                         }
                     });
                    // console.log(response.viewdata);
-                    $("#newQty").val(response.for_request_viewdata['new_spareable']);
-                    $("#usedQty").val(response.for_request_viewdata['used_spareable']);
+                    $("#newQty").val(formatIndianNumber(response.for_request_viewdata['new_spareable']));
+                    $("#usedQty").val(formatIndianNumber(response.for_request_viewdata['used_spareable']));
                     $("#Rmeasurement").val(response.viewdata['measurement']);
-                    $("#Rnew_spareable").val(response.viewdata['new_spareable']);
-                    $("#Rused_spareable").val(response.viewdata['used_spareable']);
+                    $("#Rnew_spareable").val(formatIndianNumber(response.viewdata['new_spareable']));
+                    $("#Rused_spareable").val(formatIndianNumber(response.viewdata['used_spareable']));
                     $("#Rremarks").val(response.viewdata['remarks']);
                     $("#Rdescription").val(response.viewdata['description']);
                     $("#Rsupplier_location_name").val(response.viewdata['location_name']);
@@ -551,10 +567,10 @@
                     var categoryValue = response.viewdata['category'];
                     $("#category_id").val(categoryValue);
                     $("#hidden_category").val(categoryValue);
-                    $("#qty").val(response.viewdata['qty']);
+                    $("#qty").val(formatIndianNumber(response.viewdata['qty']));
                     $("#measurement").val(response.viewdata['measurement']);
-                    $("#new_spareable").val(response.viewdata['new_spareable']);
-                    $("#used_spareable").val(response.viewdata['used_spareable']);
+                    $("#new_spareable").val(formatIndianNumber(response.viewdata['new_spareable']));
+                    $("#used_spareable").val(formatIndianNumber(response.viewdata['used_spareable']));
                     $("#remarks").val(response.viewdata['remarks']);
                     $("#description_id").val(response.viewdata['description']);
                 }
@@ -562,84 +578,84 @@
         }
 
         $(document).ready(function () {
-    // Reusable search function
-    function triggerSearch() {
-        $.ajax({
-            type: "GET",
-            url: "{{ route('request_stock_filter.get') }}",
-            data: $("#filterForm").serialize(),
-            success: function (response) {
-                let tableBody = $("#stockTable");
-                tableBody.empty();
-                if (response.data && response.data.length > 0) {
-                    $.each(response.data, function (index, stockdata) {
-                        let editButton = '';
-                        if (response.datarig.includes(stockdata.user_id)) {
-                            editButton = `
-                                <a class="badge badge-success mr-2" data-toggle="modal"
-                                        onclick="makeRequest(${stockdata.id})"
-                                        data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
-                                        href="#">
-                                        <i class="ri-arrow-right-circle-line"></i>
-                                    </a>
-                                `;
+        // Reusable search function
+            function triggerSearch() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('request_stock_filter.get') }}",
+                    data: $("#filterForm").serialize(),
+                    success: function (response) {
+                        let tableBody = $("#stockTable");
+                        tableBody.empty();
+                        if (response.data && response.data.length > 0) {
+                            $.each(response.data, function (index, stockdata) {
+                                let editButton = '';
+                                if (response.datarig.includes(stockdata.user_id)) {
+                                    editButton = `
+                                        <a class="badge badge-success mr-2" data-toggle="modal"
+                                                onclick="makeRequest(${stockdata.id})"
+                                                data-target=".bd-makerequest-modal-xl" data-placement="top" title="View"
+                                                href="#">
+                                                <i class="ri-arrow-right-circle-line"></i>
+                                            </a>
+                                        `;
+                                }
+                                tableBody.append(`
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${stockdata.location_name}</td>
+                                        <td>${stockdata.EDP_Code}</td>
+                                        <td>${stockdata.section}</td>
+                                        <td>${stockdata.description}</td>
+                                        <td>${formatIndianNumber(stockdata.qty)}
+                                            <span class="text-muted small">${stockdata.measurement}</span>
+                                            </td>
+                                        <td>
+
+
+                                            <a class="badge badge-info mr-2" data-toggle="modal"
+                                                onclick="viewstockdata(${stockdata.id})"
+                                                data-target=".bd-example-modal-xl" data-placement="top" title="View"
+                                                href="#">
+                                                <i class="ri-eye-line mr-0"></i>
+                                            </a>
+
+
+                                            <a class="badge badge-success mr-2" data-toggle="modal"
+                                                onclick="addRequest(${stockdata.id})"
+                                                data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
+                                                href="#">
+                                                <i class="ri-arrow-right-circle-line"></i>
+                                            </a>
+                                            ${editButton}
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            tableBody.append(`<tr><td colspan="7" class="text-center">No records found</td></tr>`);
                         }
-                        tableBody.append(`
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${stockdata.location_name}</td>
-                                <td>${stockdata.EDP_Code}</td>
-                                <td>${stockdata.section}</td>
-                                <td>${stockdata.description}</td>
-                                <td>${stockdata.qty}
-                                    <span class="text-muted small">${stockdata.measurement}</span>
-                                    </td>
-                                <td>
-
-
-                                    <a class="badge badge-info mr-2" data-toggle="modal"
-                                        onclick="viewstockdata(${stockdata.id})"
-                                        data-target=".bd-example-modal-xl" data-placement="top" title="View"
-                                        href="#">
-                                        <i class="ri-eye-line mr-0"></i>
-                                    </a>
-
-
-                                    <a class="badge badge-success mr-2" data-toggle="modal"
-                                        onclick="addRequest(${stockdata.id})"
-                                        data-target=".bd-addRequest-modal-xl" data-placement="top" title="View"
-                                        href="#">
-                                        <i class="ri-arrow-right-circle-line"></i>
-                                    </a>
-                                    ${editButton}
-                                </td>
-                            </tr>
-                        `);
-                    });
-                } else {
-                    tableBody.append(`<tr><td colspan="7" class="text-center">No records found</td></tr>`);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error fetching data:", error);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching data:", error);
+                    }
+                });
             }
-        });
-    }
 
     // 1. Search on button click
     $("#filterButton").click(triggerSearch);
 
     // 2. Search on Enter key inside any form input
     $("#filterForm input").on("keydown", function (e) {
-        if (e.key === "Enter") {
-            e.preventDefault(); // prevent form submit
-            triggerSearch();
-        }
-    });
+            if (e.key === "Enter") {
+                e.preventDefault(); // prevent form submit
+                triggerSearch();
+            }
+        });
 
-    // 3. Search when EDP Code is selected
-    $("#edp_code").on("change", triggerSearch);
-});
+        // 3. Search when EDP Code is selected
+        $("#edp_code").on("change", triggerSearch);
+    });
 
         function deleteStockdata(id) {
             $("#delete_id").val(id);

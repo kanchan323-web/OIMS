@@ -212,16 +212,17 @@
     <!-- Backend Bundle JavaScript -->
     <script src="{{ asset('resources/js/backend-bundle.min.js') }}"></script>
 
-    <!-- Table Treeview JavaScript -->
-    <script src="{{ asset('resources/js/table-treeview.js') }}"></script>
+<!-- Table Treeview JavaScript -->
+<script src="{{ asset('resources/js/table-treeview.js') }}"></script>
 
-    <!-- Chart Custom JavaScript -->
-    <script src="{{ asset('resources/js/customizer.js') }}"></script>
+<!-- Chart Custom JavaScript -->
+<script src="{{ asset('resources/js/customizer.js') }}"></script>
 
-    <!-- Chart Custom JavaScript -->
-    <script async src="{{ asset('resources/js/chart-custom.js') }}"></script>
+<!-- Chart Custom JavaScript -->
+<script async src="{{ asset('resources/js/chart-custom.js') }}"></script>
 
-    <!-- app JavaScript -->
-    <script src="{{ asset('resources/js/app.js') }}"></script>
-  </body>
+<!-- app JavaScript -->
+<script src="{{ asset('resources/js/app.js') }}"></script>
+</body>
+
 </html>

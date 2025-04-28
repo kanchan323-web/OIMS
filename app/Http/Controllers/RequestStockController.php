@@ -48,7 +48,7 @@ class RequestStockController extends Controller
             ->where('stocks.rig_id', '!=', $rig_id)
             ->where('stocks.req_status', 'inactive')
             ->where('stocks.qty', '!=', 0)
-            ->orderBy('stocks.id', 'desc')
+            ->orderBy('stocks.updated_at', 'desc')
             ->get();
 
 
@@ -87,7 +87,7 @@ class RequestStockController extends Controller
                 ->where('rig_id', '!=', $rig_id)
                 ->where('req_status', 'inactive')
                 ->where('qty', '!=', 0)
-                ->orderBy('stocks.id', 'desc')
+                ->orderBy('stocks.updated_at', 'desc')
                 ->get();
 
             $datarig = User::where('user_type', '!=', 'admin')
@@ -433,7 +433,7 @@ class RequestStockController extends Controller
             ->where('requesters.supplier_rig_id', $rig_id)
             ->with('requestStatuses')
             ->distinct()
-            ->orderBy('requesters.created_at', 'desc')
+            ->orderBy('requesters.updated_at', 'desc')
             ->get();
 
         $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
@@ -481,7 +481,7 @@ class RequestStockController extends Controller
                     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
                 })
                 ->where('requesters.supplier_rig_id', $rig_id)
-                ->orderBy('requesters.created_at', 'desc')
+                ->orderBy('requesters.updated_at', 'desc')
                 ->get();
 
             return response()->json(['data' => $data]);
@@ -827,7 +827,7 @@ class RequestStockController extends Controller
             //->where('requesters.supplier_id', $userId)
             ->where('requesters.requester_rig_id', $rig_id)
             ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
-            ->orderBy('requesters.created_at', 'desc')
+            ->orderBy('requesters.updated_at', 'desc')
             ->get();
 
         $datarig = User::where('user_type', '!=', 'admin')
@@ -853,7 +853,8 @@ class RequestStockController extends Controller
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->where('requesters.requester_rig_id', Auth::user()->rig_id)
-            ->select('requesters.*', DB::raw("DATE_FORMAT(requesters.created_at, '%d-%m-%Y') as creation_date"),'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
+            ->select('requesters.*', DB::raw("DATE_FORMAT(requesters.updated_at, '%d-%m-%Y') as date"),'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
+            ->orderBy('requesters.updated_at', 'desc')
             ->when($request->edp_code, function ($query, $edp_code) {
                 return $query->where('stocks.edp_code', $edp_code);
             })
