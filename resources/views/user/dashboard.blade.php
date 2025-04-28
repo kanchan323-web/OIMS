@@ -137,38 +137,61 @@
                             <div class="card border-0 shadow-sm h-100 hover-effect">
                                 <div class="card-body p-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h3 class="h3 card-title text-muted mb-0">Incoming Requests</h3>
+                                        <h3 class="h3 card-title text-muted mb-0">
+                                          <a href="{{route('incoming_request_list')}}"> Incoming Requests</a> 
+                                        </h3>
                                         <div class="bg-danger bg-opacity-10 p-2 rounded status-card">
-                                            <h5 class="card-title text-dark">15</h5>
+                                            <h5 class="card-title text-dark">{{$Total_Incoming}}</h5>
                                         </div>
                                     </div>
                                     
                                     <div class="row g-3 mt-3">
-                                        <div class="col-6 mb-2">
+
+                                        <div class="col-4 mb-2">
                                             <div class="border rounded p-3 text-center status-card">
                                                 <h6 class="text-muted">MIT</h6>
                                                 <h4 class="fw-bold text-primary">{{$mitstatus}}</h4>
                                             </div>
                                         </div>
-                                        <div class="col-6 mb-2">
+
+                                        <div class="col-4 mb-2">
                                             <div class="border rounded p-3 text-center status-card">
                                                 <h6 class="text-muted">Received</h6>
                                                 <h4 class="fw-bold text-warning">{{$Received_Status}}</h4>
                                             </div>
                                         </div>
-                                        <div class="col-6">
+
+                                        <div class="col-4">
                                             <div class="border rounded p-3 text-center status-card">
                                                 <h6 class="text-muted">Pending</h6>
                                                 <h4 class="fw-bold text-info">{{$Pending_Status}}</h4>
                                             </div>
                                         </div>
-                                        <div class="col-6">
+
+                                        <div class="col-4">
                                             <div class="border rounded p-3 text-center status-card">
                                                 <h6 class="text-muted">Decline</h6>
                                                 <h4 class="fw-bold text-danger">{{$Decline_Status}}</h4>
                                             </div>
                                         </div>
+
+                                        <div class="col-4">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Approve</h6>
+                                                <h4 class="fw-bold text-danger">{{$Approve_Status}}</h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Query</h6>
+                                                <h4 class="fw-bold text-danger">{{$Query_Status}}</h4>
+                                            </div>
+                                        </div>
+
+
                                     </div>
+
                                 </div>
                              
                             </div>
@@ -179,39 +202,60 @@
                             <div class="card border-0 shadow-sm h-100 hover-effect">
                                 <div class="card-body p-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="card-title text-muted mb-0 text-center">Outgoing Requests</h5>
+                                        <h5 class="card-title text-muted mb-0 text-center">
+                                            <a href="{{route('raised_requests.index')}}">Raised Requests</a>
+                                        </h5>
                                         <div class="bg-info bg-opacity-10 p-2 rounded status-card">
-                                            <h5 class="card-title text-dark">15</h5>
+                                            <h5 class="card-title text-dark">{{$Total_Raised}}</h5>
                                         </div>
                                     </div>
                                     
-                               
-                                        <div class="row g-3 mt-3">
-                                            <div class="col-6 mb-2">
-                                                <div class="border rounded p-3 text-center status-card">
-                                                    <h6 class="text-muted">MIT</h6>
-                                                    <h4 class="fw-bold text-primary">42</h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-6 mb-2">
-                                                <div class="border rounded p-3 text-center status-card">
-                                                    <h6 class="text-muted">Received</h6>
-                                                    <h4 class="fw-bold text-warning">18</h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="border rounded p-3 text-center status-card">
-                                                    <h6 class="text-muted">Pending</h6>
-                                                    <h4 class="fw-bold text-info">26</h4>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="border rounded p-3 text-center status-card">
-                                                    <h6 class="text-muted">Decline</h6>
-                                                    <h4 class="fw-bold text-danger">14</h4>
-                                                </div>
+                                    <div class="row g-3 mt-3">
+
+                                        <div class="col-4 mb-2">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">MIT</h6>
+                                                <h4 class="fw-bold text-primary">{{$mit_raised}}</h4>
                                             </div>
                                         </div>
+
+                                        <div class="col-4 mb-2">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Received</h6>
+                                                <h4 class="fw-bold text-warning">{{$Received_raised}}</h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Pending</h6>
+                                                <h4 class="fw-bold text-info">{{$Pending_raised}}</h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Decline</h6>
+                                                <h4 class="fw-bold text-danger">{{$Decline_raised}}</h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Approve</h6>
+                                                <h4 class="fw-bold text-danger">{{$Approve_raised}}</h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <div class="border rounded p-3 text-center status-card">
+                                                <h6 class="text-muted">Query</h6>
+                                                <h4 class="fw-bold text-danger">{{$Query_raised}}</h4>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
                                 </div>
                                 
                             </div>
