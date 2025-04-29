@@ -27,39 +27,44 @@ use Illuminate\Support\Facades\Session;
 class AdminRequestStockController extends Controller
 {
 
-    public function RequestStockList(Request $request)
-    {
+    public function RequestStockList(Request $request){
         $rig_id = Auth::user()->rig_id;
+        $datarig = User::where('user_type', '!=', 'admin')
+            //->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
 
-
-        $EDP_Code_ID = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-            ->where('rig_id', '!=', $rig_id)
-            ->where('qty', '!=', 0)
-            ->where('req_status', 'inactive')
-            ->get();
-        
-        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement','stocks.qty', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $data = Requester::select(
+            'rig_users.name as Location_Name',
+            'rig_users.location_id',
+            'requesters.*',
+            'mst_status.status_name',
+            'stocks.id as stock_id',
+            'stocks.id as stock_id',
+            'stocks.description',
+            'edps.edp_code',
+        )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->where('stocks.rig_id', '!=', $rig_id)
-            ->where('stocks.req_status', 'inactive')
-            ->where('stocks.qty', '!=', 0)
-            ->orderBy('stocks.id', 'desc')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            //->where('requesters.supplier_rig_id', $rig_id)
+            ->with('requestStatuses')
+            ->distinct()
+            ->orderBy('requesters.updated_at', 'desc')
             ->get();
 
-           
-
+        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('edps.edp_code')
+            ->get();
 
         $moduleName = "Request Stock List";
 
-
-        return view('admin.request_stock.stock_list_request', compact('Stock_Table_Data', 'moduleName', 'EDP_Code_ID'));
+        return view('admin.request_stock.stock_list_request', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
 
 
-    public function RequestStockFilter(Request $request)
-    {
+    public function RequestStockFilter(Request $request){
         $rig_id = Auth::user()->rig_id;
         if ($request->ajax()) {
             $stockData = Stock::select('edp_code')->distinct()->get();
@@ -95,26 +100,7 @@ class AdminRequestStockController extends Controller
         }
     }
 
-    // public function RequestStockList(Request $request)
-    // {
-
-    //     $rig_id = Auth::user()->rig_id;
-    //     $datarig = User::where('user_type', '!=', 'admin')
-    //         ->where('rig_id', $rig_id)
-    //         ->pluck('id')
-    //         ->toArray();
-
-    //     $data = RequestStock::get();
-    //     $moduleName = "Request Stocks List";
-    //     return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig'));
-    // }
-
-
-
-
-    public function SupplierRequest(Request $request)
-    {
-
+    public function SupplierRequest(Request $request){
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
             ->where('rig_id', $rig_id)
@@ -129,16 +115,12 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function StockList(Request $request)
-    {
+    public function StockList(Request $request){
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
             ->where('rig_id', $rig_id)
             ->pluck('id')
             ->toArray();
-
-
-
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
             ->where('rig_id', '!=', $rig_id)
@@ -146,7 +128,6 @@ class AdminRequestStockController extends Controller
             ->get();
 
         // dd($stockData);
-
 
         $data = Stock::select('stocks.*', 'rig_users.name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
@@ -163,8 +144,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function request_stock_filter(Request $request)
-    {
+    public function request_stock_filter(Request $request){
         $rig_id = Auth::user()->rig_id;
         $data = Stock::when($request->category, function ($query, $category) {
             return $query->where('category', $category);
@@ -185,8 +165,6 @@ class AdminRequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-
-
         $moduleName = "Request Stocks filter";
         return view('admin.request_stock.list_request_stock', compact('data', 'moduleName'));
     }
@@ -194,16 +172,14 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function RequestStockAdd(Request $request)
-    {
+    public function RequestStockAdd(Request $request){
         $moduleName = "Add Stock";
         return view('admin.request_stock.add_request_stock', compact('moduleName'));
     }
 
 
 
-    public function RequestStockAddPost(Request $request)
-    {
+    public function RequestStockAddPost(Request $request){
         $request->validate([
             'available_qty' => 'required|numeric',
             'requested_qty' => 'required|numeric',
@@ -314,8 +290,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function RequestStockViewPost(Request $request)
-    {
+    public function RequestStockViewPost(Request $request){
         $requestStock = Requester::leftJoin('users as request', 'request.id', '=', 'requesters.requester_id')
             ->leftJoin('users as suppliers', 'suppliers.id', '=', 'requesters.supplier_id')
             ->leftJoin('rig_users as request_rig', 'request.rig_id', '=', 'request_rig.id')
@@ -361,8 +336,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function IncomingRequestStockList(Request $request)
-    {
+    public function IncomingRequestStockList(Request $request){
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
             //->where('rig_id', $rig_id)
@@ -398,8 +372,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function IncomingRequestStockFilter(Request $request)
-    {
+    public function IncomingRequestStockFilter(Request $request){
         $rig_id = Auth::user()->rig_id;
 
         if ($request->ajax()) {
@@ -444,8 +417,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function accept(Request $request)
-    {
+    public function accept(Request $request){
         try {
             $requester = Requester::find($request->request_id);
             if (!$requester) {
@@ -513,8 +485,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function decline(Request $request)
-    {
+    public function decline(Request $request){
         try {
             $requester = Requester::find($request->request_id);
             if (!$requester) {
@@ -578,8 +549,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function query(Request $request)
-    {
+    public function query(Request $request){
         try {
             $requester = Requester::find($request->request_id);
             if (!$requester) {
@@ -650,8 +620,7 @@ class AdminRequestStockController extends Controller
 
 
 
-    public function updateStatus(Request $request)
-    {
+    public function updateStatus(Request $request){
         $request->validate([
             'request_id' => 'required|exists:requesters,id',
             'status' => 'required|integer'
