@@ -62,6 +62,7 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                     <div class="col-md-4 mb-4 edp_detail" style="display: none;">
                                         <label for="section_id">Section</label>
                                         <input type="text" class="form-control" name="section" id="section_id" required
@@ -81,11 +82,32 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
-                                        <label for="description">Description</label>
-                                        <textarea class="form-control" name="description" id="description" required
-                                            readonly></textarea>
-                                        @error('description')
+                                  
+                                    <div class="col-md-4 mb-4">
+                                        <label for="new_spareable">New </label>
+                                        <input type="text" class="form-control" name="new_spareable" id="new_spareable"
+                                            required>
+                                        @error('new_spareable')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-4 mb-4">
+                                        <label for="used_spareable">Used </label>
+                                        <input type="text" class="form-control" name="used_spareable" id="used_spareable"
+                                            required>
+                                        @error('used_spareable')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                   
+
+                                    <div class="col-md-4 mb-4">
+                                        <label for="qty">Total Quantity</label>
+                                        <input type="text" class="form-control" id="qty_display" readonly>
+                                        <input type="hidden" name="qty" id="qty" required>
+
+                                        @error('qty')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -96,32 +118,17 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="col-md-4 mb-4">
-                                        <label for="qty">Total Quantity</label>
-                                        <input type="text" class="form-control" id="qty_display" readonly>
-                                        <input type="hidden" name="qty" id="qty" required>
+                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
+                                        <label for="description">Description</label>
+                                        <textarea class="form-control" name="description" id="description" required
+                                            readonly></textarea>
+                                        @error('description')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                  
 
-                                        @error('qty')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
 
-                                    <div class="col-md-4 mb-4">
-                                        <label for="new_spareable">New </label>
-                                        <input type="text" class="form-control" name="new_spareable" id="new_spareable"
-                                            required>
-                                        @error('new_spareable')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-4 mb-4">
-                                        <label for="used_spareable">Used </label>
-                                        <input type="text" class="form-control" name="used_spareable" id="used_spareable"
-                                            required>
-                                        @error('used_spareable')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
                                 </div>
                                 <button class="btn btn-success" type="submit">Submit Stock</button>
                                 <a href="{{ route('add_stock') }}" class="btn btn-secondary">Reset</a>
