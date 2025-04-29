@@ -274,8 +274,9 @@ class StockReportController extends Controller
             })
             ->select([
                 'logs_stocks.*',
+                'logs_stocks.qty as Quantity',
                 'edps.edp_code as EDP_Code',
-                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at")
+                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at_formatted")
             ])
             ->get(); // Only call get() once here
     
