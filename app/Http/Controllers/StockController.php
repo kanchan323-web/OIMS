@@ -47,7 +47,6 @@ class StockController extends Controller
             ->pluck('id')
             ->toArray();
 
-
         $stockData = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code AS EDP_Code')
             ->where('rig_id', $rig_id)
@@ -62,6 +61,7 @@ class StockController extends Controller
             ->orderBy('stocks.updated_at', 'desc')
             ->get();
         $moduleName = "Stock List";
+        
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
