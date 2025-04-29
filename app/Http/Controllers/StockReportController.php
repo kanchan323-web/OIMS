@@ -89,8 +89,15 @@ class StockReportController extends Controller
     private function stockAdditions($request){
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
-        if (!empty($data['from_date']) || !empty($data['to_date'])) {
-            $query->whereBetween('stocks.created_at', [$data['from_date'], $data['to_date']]);
+        $from = $request->input('form_date');
+        $to = $request->input('to_date');
+
+        if ($from && $to) {
+            $query->whereBetween('stocks.updated_at', [$from, $to]);
+        } elseif ($from) {
+            $query->whereDate('stocks.updated_at', '>=', $from);
+        } elseif ($to) {
+            $query->whereDate('stocks.updated_at', '<=', $to);
         }
 
         $stock_addition = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
@@ -108,8 +115,15 @@ class StockReportController extends Controller
     private function stockRemovals($request){
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
-        if(!empty($request->from_date) || !empty($request->to_date)) {
-            $query->whereBetween('stocks.created_at', [$request->from_date , $request->to_date]);
+        $from = $request->input('form_date');
+        $to = $request->input('to_date');
+
+        if ($from && $to) {
+            $query->whereBetween('stocks.updated_at', [$from, $to]);
+        } elseif ($from) {
+            $query->whereDate('stocks.updated_at', '>=', $from);
+        } elseif ($to) {
+            $query->whereDate('stocks.updated_at', '<=', $to);
         }
         $stock_removal = $query ->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')

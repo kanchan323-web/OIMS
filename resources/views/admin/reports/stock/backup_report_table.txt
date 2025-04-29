@@ -1,0 +1,148 @@
+
+<!-- Add these in your layout (if not already included) -->
+<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<div class="col-lg-12">
+    <div class="table-responsive rounded mb-3">
+        <table id="dynamicTable" class="table mb-0 tbl-server-info">
+            <thead class="bg-white text-uppercase">
+                <tr class="ligth ligth-data" id="tableHeaders" role="row"></tr>
+            </thead>
+            <tbody class="ligth-body" id="reportTable"></tbody>
+        </table>
+    </div>
+</div>
+
+
+$(document).ready(function() {
+    function fetchReport() {
+        let formData = $("#filterForm").serialize();
+
+        $.ajax({
+            type: "GET",
+            url: "{{ route('report_stock_filter') }}",
+            data: formData,
+            success: function(response) {
+                console.log("AJAX Response:", response.data);
+
+                // Destroy previous instance
+                if ($.fn.DataTable.isDataTable('#dynamicTable')) {
+                    $('#dynamicTable').DataTable().destroy();
+                }
+
+                let tableBody = $("#reportTable");
+                let tableHeaders = $("#tableHeaders");
+                tableBody.empty();
+                tableHeaders.empty();
+
+                if (!response.data || response.data.length === 0) {
+                    tableBody.html('<tr><td colspan="7" class="text-center">No records found</td></tr>');
+                    return;
+                }
+
+                let reportType = $("#report_type").val();
+                let headers = "";
+                let rows = "";
+
+                switch (reportType) {
+                    case "overview":
+                        headers = "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total Quantity</th><th>Date Updated</th>";
+                        $.each(response.data, function(index, stockdata) {
+                            rows += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${stockdata.EDP_Code}</td>
+                                <td>${stockdata.section}</td>
+                                <td>${stockdata.description}</td>
+                                <td>${stockdata.qty}</td>
+                                <td>${stockdata.date}</td>
+                            </tr>`;
+                        });
+                        break;
+
+                    case "stock_receiver":
+                        headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Received QTY</th><th>Supplier Rig</th><th>Receipt Date</th>";
+                        $.each(response.data, function(index, stockdata) {
+                            rows += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${stockdata.RID}</td>
+                                <td>${stockdata.EDP_Code}</td>
+                                <td>${stockdata.description}</td>
+                                <td>${stockdata.requested_qty}</td>
+                                <td>${stockdata.name}</td>
+                                <td>${stockdata.receipt_date}</td>
+                            </tr>`;
+                        });
+                        break;
+
+                    case "stock_issuer":
+                        headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver Rig</th><th>Issued Date</th>";
+                        $.each(response.data, function(index, stockdata) {
+                            rows += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${stockdata.RID}</td>
+                                <td>${stockdata.EDP_Code}</td>
+                                <td>${stockdata.description}</td>
+                                <td>${stockdata.requested_qty}</td>
+                                <td>${stockdata.name}</td>
+                                <td>${stockdata.issued_date}</td>
+                            </tr>`;
+                        });
+                        break;
+
+                    default:
+                        tableBody.html('<tr><td colspan="7" class="text-center">Invalid Report Type</td></tr>');
+                        return;
+                }
+
+                tableHeaders.html(headers);
+                tableBody.html(rows);
+
+                // Reinitialize DataTable with sorting enabled
+                $('#dynamicTable').DataTable({
+                    ordering: true,
+                    paging: true,
+                    searching: true
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    // Bind buttons
+    $("#filterButton").click(fetchReport);
+    $("#report_type").change(fetchReport);
+});
+private function stockOverview($request)
+{
+    $rig_id = Auth::user()->rig_id;
+    $query = Stock::query();
+
+    $from = $request->input('form_date');
+    $to = $request->input('to_date');
+
+    if ($from && $to) {
+        $query->whereBetween('stocks.updated_at', [$from, $to]);
+    } elseif ($from) {
+        $query->whereDate('stocks.updated_at', '>=', $from);
+    } elseif ($to) {
+        $query->whereDate('stocks.updated_at', '<=', $to);
+    }
+
+    $stock_overview = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
+        ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+        ->select(
+            'stocks.*',
+            'edps.edp_code AS EDP_Code',
+            'rig_users.name',
+            DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date")
+        )
+        ->where('stocks.rig_id', $rig_id)
+        ->orderBy('stocks.id', 'desc')
+        ->get();
+
+    return $stock_overview;
+}
