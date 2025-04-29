@@ -95,7 +95,7 @@ class RequestReportController extends Controller
 
     private function transactionHistory($fromDate, $toDate)
     {
-        return LogsStocks::query()
+        $query = LogsStocks::query()
             ->leftJoin('edps', 'logs_stocks.edp_code', '=', 'edps.id')
             ->when($fromDate, fn($q) => $q->whereDate('logs_stocks.updated_at', '>=', $fromDate))
             ->when($toDate, fn($q) => $q->whereDate('logs_stocks.updated_at', '<=', $toDate))
@@ -103,8 +103,9 @@ class RequestReportController extends Controller
                 'logs_stocks.*',
                 'edps.edp_code as EDP_Code',
                 DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at")
-            ])
-            ->get();
+            ])->get();
+            dd($query);
+        return $query->get();
     }
 
 

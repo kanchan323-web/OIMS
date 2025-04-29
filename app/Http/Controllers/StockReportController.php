@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LogsStocks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -45,6 +46,9 @@ class StockReportController extends Controller
                 break;
             case 'stock_issuer':
                 $data = $this->stockRemovals($request);
+                break;
+            case 'transaction_history':
+                $data = $this->transactionHistory($request);
                 break;
             default:
                 return response()->json(['error' => 'Invalid report type'], 400);
@@ -239,5 +243,30 @@ class StockReportController extends Controller
 
         $writer->save('php://output');
     }
+
+
+    public function transactionHistory(Request $request)
+    {
+        $fromDate = $request->input('form_date');
+        $toDate = $request->input('to_date');
+    
+        $query = LogsStocks::query()
+            ->leftJoin('edps', 'logs_stocks.edp_code', '=', 'edps.id')
+            ->when($fromDate, function ($q) use ($fromDate) {
+                $q->whereDate('logs_stocks.updated_at', '>=', $fromDate);
+            })
+            ->when($toDate, function ($q) use ($toDate) {
+                $q->whereDate('logs_stocks.updated_at', '<=', $toDate);
+            })
+            ->select([
+                'logs_stocks.*',
+                'edps.edp_code as EDP_Code',
+                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at")
+            ])
+            ->get(); // Only call get() once here
+    
+        return $query;
+    }
+    
 
 }

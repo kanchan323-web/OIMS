@@ -111,11 +111,11 @@
                                 <i class="las la-minus"></i><span>Stocks </span>
                             </a>
                         </li>
-                        <li class="">
+                        {{-- <li class="">
                             <a href="{{ route('request_report.index') }}">
                                 <i class="las la-minus"></i><span>Transactions</span>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 
