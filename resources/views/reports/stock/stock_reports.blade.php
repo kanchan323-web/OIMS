@@ -59,14 +59,11 @@
 
                 <div class="col-lg-12">
                     <div class="table-responsive rounded mb-3">
-                        <table class="data-tables table mb-0 tbl-server-info">
+                        <table id="dynamicTable" class="table mb-0 tbl-server-info">
                             <thead class="bg-white text-uppercase">
-                                <tr class="ligth ligth-data" id="tableHeaders">
-                                    <!-- Headers will be set dynamically -->
-                                </tr>
+                                <tr class="ligth ligth-data" id="tableHeaders" role="row"></tr>
                             </thead>
-                            <tbody class="ligth-body" id="reportTable">
-                            </tbody>
+                            <tbody class="ligth-body" id="reportTable"></tbody>
                         </table>
                     </div>
                 </div>
@@ -77,108 +74,107 @@
 
     <script>
         $(document).ready(function() {
-            // Filter Stock Data on Button Click
+    function fetchReport() {
+        let formData = $("#filterForm").serialize();
+        console.log("Form Data:", formData);
 
-            function fetchReport() {
-                let formData = $("#filterForm").serialize();
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('report_stock_filter') }}",
-                    data: $("#filterForm").serialize(),
-                    success: function(response) {
-                        console.log("AJAX Response:", response.data);
-                        let tableBody = $("#reportTable");
-                        let tableHeaders = $("#tableHeaders");
-                        tableBody.empty();
-                        tableHeaders.empty();
-                        if (!response.data) {
-                            console.warn("No data received.");
-                            tableBody.html(
-                                '<tr><td colspan="6" class="text-center">No records found</td></tr>'
-                            );
-                            return;
-                        }
-                        let reportType = $("#report_type").val();
-                        let headers = "";
-                        let rows = "";
-                        switch (reportType) {
-                            case "overview":
-                                if (response.data && response.data.length > 0) {
-                                    headers =
-                                        "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total Quantity</th><th>Date Updated</th>";
-                                    $.each(response.data, function(index, stockdata) {
-                                        var date = stockdata.updated_at;
-                                        var dateObj = new Date(date);
-                                        var formattedDate = dateObj.toISOString().split(
-                                            'T')[0];
-                                        rows += `<tr>
-                                                <td>${index + 1}</td>
-                                                <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.section}</td>
-                                                <td>${stockdata.description}</td>
-                                                <td>${stockdata.qty}</td>
-                                                <td>${stockdata.date}</td>
-                                            </tr>`;
-                                    });
-                                }
-                                break;
-                            case "stock_receiver":
-                                if (response.data && response.data.length > 0) {
-                                    headers =
-                                        "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Received QTY </th><th>Supplier Rig</th><th>Receipt Date</th>";
-                                    $.each(response.data, function(index, stockdata) {
-                                        rows += `<tr>
-                                               <td>${index + 1}</td>
-                                               <td>${stockdata.RID}</td>
-                                                <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.description}</td>
-                                                <td>${stockdata.requested_qty}</td>
-                                                <td>${stockdata.name}</td>
-                                                <td>${stockdata.receipt_date}</td>
-                                            </tr>`;
-                                    });
-                                }
-                                //}
-                                break;
+        $.ajax({
+            type: "GET",
+            url: "{{ route('report_stock_filter') }}",
+            data: formData,
+            success: function(response) {
+                console.log("AJAX Response:", response.data);
 
-                            case "stock_issuer":
-                                if (response.data && response.data.length > 0) {
-                                    headers =
-                                        "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver  Rig</th><th>Issued Date</th>";
-                                    $.each(response.data, function(index, stockdata) {
-                                        rows += `<tr>
-                                                    <td>${index + 1}</td>
-                                                    <td>${stockdata.RID}</td>
-                                                    <td>${stockdata.EDP_Code}</td>
-                                                    <td>${stockdata.description}</td>
-                                                    <td>${stockdata.requested_qty}</td>
-                                                    <td>${stockdata.name}</td>
-                                                    <td>${stockdata.issued_date}</td>
-                                                </tr>`;
-                                    });
-                                }
-                                break;
-                            default:
-                                tableBody.html(
-                                    '<tr><td colspan="5" class="text-center">Invalid Report Type</td></tr>'
-                                );
-                                return;
-                        }
+              
+                if ($.fn.DataTable.isDataTable('#dynamicTable')) {
+                    $('#dynamicTable').DataTable().destroy();
+                }
 
-                        tableHeaders.html(headers);
-                        tableBody.html(rows ||
-                            '<tr><td colspan="6" class="text-center">No records found</td></tr>'
-                        );
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error fetching data:", error);
-                    }
+                let tableBody = $("#reportTable");
+                let tableHeaders = $("#tableHeaders");
+                tableBody.empty();
+                tableHeaders.empty();
+
+                if (!response.data || response.data.length === 0) {
+                    tableBody.html('<div class="col-lg-12"><div class="table-responsive rounded mb-3"><table id="dynamicTable" class="table mb-0 tbl-server-info"><thead class="bg-white text-uppercase"><th><tr class="ligth ligth-data" id="tableHeaders" role="row"></tr></thead><tbody class="ligth-body" id="reportTable"><tr><td colspan="7" class="text-center">No records found</td></tr></tbody></table></div></div>');
+                    return;
+                }
+
+                let reportType = $("#report_type").val();
+                let headers = "";
+                let rows = "";
+
+                switch (reportType) {
+                    case "overview":
+                        headers = "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total Quantity</th><th>Date Updated</th>";
+                        $.each(response.data, function(index, stockdata) {
+                            rows += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${stockdata.EDP_Code}</td>
+                                <td>${stockdata.section}</td>
+                                <td>${stockdata.description}</td>
+                                <td>${stockdata.qty}</td>
+                                <td>${stockdata.date}</td>
+                            </tr>`;
+                        });
+                        break;
+
+                    case "stock_receiver":
+                        headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Received QTY</th><th>Supplier Rig</th><th>Receipt Date</th>";
+                        $.each(response.data, function(index, stockdata) {
+                            rows += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${stockdata.RID}</td>
+                                <td>${stockdata.EDP_Code}</td>
+                                <td>${stockdata.description}</td>
+                                <td>${stockdata.requested_qty}</td>
+                                <td>${stockdata.name}</td>
+                                <td>${stockdata.receipt_date}</td>
+                            </tr>`;
+                        });
+                        break;
+
+                    case "stock_issuer":
+                        headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver Rig</th><th>Issued Date</th>";
+                        $.each(response.data, function(index, stockdata) {
+                            rows += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${stockdata.RID}</td>
+                                <td>${stockdata.EDP_Code}</td>
+                                <td>${stockdata.description}</td>
+                                <td>${stockdata.requested_qty}</td>
+                                <td>${stockdata.name}</td>
+                                <td>${stockdata.issued_date}</td>
+                            </tr>`;
+                        });
+                        break;
+
+                    default:
+                        tableBody.html('<tr><td colspan="7" class="text-center">Invalid Report Type</td></tr>');
+                        return;
+                }
+
+                tableHeaders.html(headers);
+                tableBody.html(rows);
+
+                // Reinitialize DataTable with sorting enabled
+                $('#dynamicTable').DataTable({
+                    ordering: true,
+                    paging: true,
+                    searching: true
                 });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
             }
-
-            $("#filterButton").click(fetchReport);
-            $("#report_type").change(fetchReport);
         });
+    }
+
+    // Bind buttons
+    $("#filterButton").click(fetchReport);
+    $("#report_type").change(fetchReport);
+});
+
 
         $(document).ready(function() {
             $("#downloadPdf").click(function(e) {
