@@ -130,9 +130,9 @@
                             <a href="{{ route('request_report.index') }}">
                                 <i class="las la-minus"></i><span>Transactions</span>
                             </a>
-                        </li> --}}
+                        </li>
                     </ul>
-                </li>
+                </li> --}}
 
 
                 {{-- <li class="">
