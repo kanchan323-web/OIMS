@@ -59,16 +59,30 @@ class StockReportController extends Controller
     private function stockOverview($request){
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
-        if(!empty($request->from_date) || !empty($request->to_date)) {
-            $query->whereBetween('stocks.updated_at', [$request->from_date , $request->to_date]);
+    
+        $from = $request->input('form_date');
+        $to = $request->input('to_date');
+    
+        if ($from && $to) {
+            $query->whereBetween('stocks.updated_at', [$from, $to]);
+        } elseif ($from) {
+            $query->whereDate('stocks.updated_at', '>=', $from);
+        } elseif ($to) {
+            $query->whereDate('stocks.updated_at', '<=', $to);
         }
+    
         $stock_overview = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
-        ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-        ->select('stocks.*', 'edps.edp_code AS EDP_Code','rig_users.name',
-        DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date"))
-        ->where('rig_id', $rig_id)
-        ->orderBy('stocks.id', 'desc')
-        ->get();
+            ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
+            ->select(
+                'stocks.*',
+                'edps.edp_code AS EDP_Code',
+                'rig_users.name',
+                DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date")
+            )
+            ->where('stocks.rig_id', $rig_id)
+            ->orderBy('stocks.id', 'desc')
+            ->get();
+    
         return $stock_overview;
     }
 
