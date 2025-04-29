@@ -27,12 +27,14 @@
                     <div class="row justify-content-between">
                         <div class="col-md-9">
                             <div id="user_list_datatable_info" class="dataTables_filter">
-                                <form id="filterForm" action="{{ route('request_stock_filter') }}" method="post" class="mr-3 position-relative">
+                                <form id="filterForm" action="{{ route('request_stock_filter') }}" method="post"
+                                    class="mr-3 position-relative">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">EDP Code</label>
-                                            <select class="form-control filter-input select2" name="edp_code" id="edp_code" required>
+                                            <select class="form-control filter-input select2" name="edp_code" id="edp_code"
+                                                required>
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($edps as $edp)
                                                     <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
@@ -43,8 +45,8 @@
 
                                         <div class="col-md-2 mb-2">
                                             <label for="location_name">Location Name</label>
-                                            <input type="text" class="form-control filter-input"
-                                                placeholder="Location Name" name="location_name" id="location_name"
+                                            <input type="text" class="form-control filter-input" placeholder="Location Name"
+                                                name="location_name" id="location_name"
                                                 value="{{ request('location_name') }}">
                                         </div>
 
@@ -56,12 +58,13 @@
 
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
-                                            <input type="date" class="form-control filter-input" name="to_date"
-                                                id="to_date" value="{{ request('to_date') }}">
+                                            <input type="date" class="form-control filter-input" name="to_date" id="to_date"
+                                                value="{{ request('to_date') }}">
                                         </div>
 
                                         <div class="col-md-4 mb-2 d-flex align-items-end">
-                                            <button type="button" id="filterButton" class="btn btn-primary mr-2">Search</button>
+                                            <button type="button" id="filterButton"
+                                                class="btn btn-primary mr-2">Search</button>
                                             <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
                                         </div>
                                     </div>
@@ -113,7 +116,8 @@
                                                                                     <td>
                                                                                         <a class="badge badge-success mr-2" data-toggle="modal"
                                                                                             onclick="RequestStockData({{ json_encode($stockdata->id) }})"
-                                                                                            data-target=".bd-example-modal-xl" data-placement="top" title="Action by Supplier">
+                                                                                            data-target=".bd-example-modal-xl" data-placement="top"
+                                                                                            title="Action by Supplier">
                                                                                             <i class="ri-arrow-right-circle-line"></i>
                                                                                         </a>
                                                                                         @php
@@ -150,7 +154,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"> Action Performed by Supplier</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"> Acknowledgement Receipt </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -161,7 +165,7 @@
                         <form id="mainModalForm">
                             <input type="hidden" id="request_id" name="request_id">
                             <div class="form-row">
-                              {{-- <div class="col-md-6 mb-3">
+                                {{-- <div class="col-md-6 mb-3">
                                     <label for="">Requester Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Requester Name"
                                         id="location_id" readonly>
@@ -235,6 +239,22 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
+                                    <label for="">New </label>
+                                    <input type="text" class="form-control" placeholder="New Spearable "
+                                        name="new_spareable" id="new_spearable" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter New
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Used </label>
+                                    <input type="text" class="form-control" placeholder="Used Spareable"
+                                        name="used_spareable" id="used_spareable" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Used
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
                                     <label for="">Supplier Total Quantity</label>
                                     <input type="text" class="form-control" placeholder="Supplier Total Quantity"
                                         name="total_qty" id="total_qty" readonly>
@@ -243,29 +263,23 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">Requester Requested Quantity</label>
+                                    <label for="">Requested Quantity</label>
                                     <input type="text" class="form-control" placeholder="Requested Quantity" name="req_qty"
                                         id="req_qty" readonly>
                                     <div class="invalid-feedback">
                                         Enter Requested Quantity
                                     </div>
                                 </div>
+                                
                                 <div class="col-md-4 mb-4">
-                                    <label for="">New  </label>
-                                    <input type="text" class="form-control" placeholder="New Spearable "
-                                        name="new_spareable" id="new_spearable" readonly>
+                                    <label for="">Issued Qty</label>
+                                    <input type="text" class="form-control" placeholder="Issued Qty" name="issued_qty"
+                                        id="issued_qty" readonly>
                                     <div class="invalid-feedback">
-                                        Enter New
+                                        Enter Supplied new materials
                                     </div>
                                 </div>
-                                <div class="col-md-4 mb-4">
-                                    <label for="">Used  </label>
-                                    <input type="text" class="form-control" placeholder="Used Spareable"
-                                        name="used_spareable" id="used_spareable" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Used
-                                    </div>
-                                </div>
+
                                 <div class="col-md-4 mb-4">
                                     <label for="">Status </label>
                                     <input type="text" class="form-control" name="status" id="status" readonly>
@@ -502,7 +516,7 @@
 
     <script>
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
         });
 
@@ -528,28 +542,28 @@
                                 }[stockdata.status_name] || 'badge-secondary';
 
                                 tableBody.append(`
-                                                                <tr>
-                                                                    <td>${index + 1}</td>
-                                                                    <td>${stockdata.RID}</td>
-                                                                    <td>${stockdata.location_name}</td>
-                                                                    <td>${stockdata.edp_code}</td>
-                                                                     <td>${stockdata.description}</td>
-                                                                    <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                                    <td>${stockdata.date ? stockdata.date : '-'}</td>
-                                                                    <td>
-                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                                onclick="RequestStockData(${stockdata.id})"
-                                                                                data-target=".bd-example-modal-xl" data-placement="top"
-                                                                                title="Supplier Request" href="#">
-                                                                                <i class="ri-arrow-right-circle-line"></i>
-                                                                            </a>
-                                                                        <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                                                data-toggle="modal" data-placement="top" title="View Request Status" href="#">
-                                                                                <i class="ri-eye-line"></i>
-                                                                            </a>
-                                                                    </td>
-                                                                </tr>
-                                                            `);
+                                                        <tr>
+                                                            <td>${index + 1}</td>
+                                                            <td>${stockdata.RID}</td>
+                                                            <td>${stockdata.location_name}</td>
+                                                            <td>${stockdata.edp_code}</td>
+                                                                <td>${stockdata.description}</td>
+                                                            <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                            <td>${stockdata.date ? stockdata.date : '-'}</td>
+                                                            <td>
+                                                                <a class="badge badge-success mr-2" data-toggle="modal"
+                                                                        onclick="RequestStockData(${stockdata.id})"
+                                                                        data-target=".bd-example-modal-xl" data-placement="top"
+                                                                        title="Supplier Request" href="#">
+                                                                        <i class="ri-arrow-right-circle-line"></i>
+                                                                    </a>
+                                                                <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                        data-toggle="modal" data-placement="top" title="View Request Status" href="#">
+                                                                        <i class="ri-eye-line"></i>
+                                                                    </a>
+                                                            </td>
+                                                        </tr>
+                                                    `);
                             });
                         } else {
                             tableBody.append(`<tr><td colspan="5" class="text-center">No records found</td></tr>`);
@@ -628,6 +642,8 @@
                             $("#measurement").val(stock.measurement ?? '');
                             $("#new_spearable").val(stock.new_spareable ?? '');
                             $("#used_spareable").val(stock.used_spareable ?? '');
+                            let supplierQty = stock.request_statuses?.[0]?.supplier_qty ?? '';
+                            $("#issued_qty").val(supplierQty);
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
                             if (response.request_status !== null) {
@@ -769,22 +785,22 @@
                             let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                                                    <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                                                        <td><span class="badge badge-${status.status_id == 2 ? 'success' :
                                     (status.status_id == 3 ? 'danger' :
                                         (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                                                        ${status.status_name}
-                                                                    </span></td>
-                                                                    <td>
-                                                                        <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                                            ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                                                        </button>
-                                                                    </td>
-                                                                    <td>${status.supplier_qty || 'N/A'}</td>
-                                                                    <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                                                    <td>${status.supplier_used_spareable || 'N/A'}</td>
-                                                                    <td>${status.requestor_name}</td>
-                                                                    <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                                                </tr>`;
+                                                                            ${status.status_name}
+                                                                        </span></td>
+                                                                        <td>
+                                                                            <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                                                                ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                                                            </button>
+                                                                        </td>
+                                                                        <td>${status.supplier_qty || 'N/A'}</td>
+                                                                        <td>${status.supplier_new_spareable || 'N/A'}</td>
+                                                                        <td>${status.supplier_used_spareable || 'N/A'}</td>
+                                                                        <td>${status.requestor_name}</td>
+                                                                        <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                                                    </tr>`;
                         });
                     } else {
                         html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
@@ -855,7 +871,7 @@
             @else
                 console.error("Stock data is not available.");
             @endif
-                                                                        });
+                                                                            });
 
         //For multiple modal seamless transitions
         $(document).ready(function () {

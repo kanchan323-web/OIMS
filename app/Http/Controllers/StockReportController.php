@@ -105,6 +105,7 @@ class StockReportController extends Controller
         ->get();
         return $stock_addition;
     }
+
     private function stockRemovals($request){
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
@@ -123,6 +124,30 @@ class StockReportController extends Controller
         ->orderBy('requesters.updated_at', 'desc')
         ->get();
         return $stock_removal;
+    }
+
+    private function transactionHistory(Request $request)
+    {
+        $fromDate = $request->input('form_date');
+        $toDate = $request->input('to_date');
+    
+        $query = LogsStocks::query()
+            ->leftJoin('edps', 'logs_stocks.edp_code', '=', 'edps.id')
+            ->when($fromDate, function ($q) use ($fromDate) {
+                $q->whereDate('logs_stocks.updated_at', '>=', $fromDate);
+            })
+            ->when($toDate, function ($q) use ($toDate) {
+                $q->whereDate('logs_stocks.updated_at', '<=', $toDate);
+            })
+            ->select([
+                'logs_stocks.*',
+                'logs_stocks.qty as Quantity',
+                'edps.edp_code as EDP_Code',
+                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at_formatted")
+            ])
+            ->get(); 
+    
+        return $query;
     }
 
     public function stockPdfDownload(Request $request){
@@ -259,29 +284,7 @@ class StockReportController extends Controller
     }
 
 
-    public function transactionHistory(Request $request)
-    {
-        $fromDate = $request->input('form_date');
-        $toDate = $request->input('to_date');
     
-        $query = LogsStocks::query()
-            ->leftJoin('edps', 'logs_stocks.edp_code', '=', 'edps.id')
-            ->when($fromDate, function ($q) use ($fromDate) {
-                $q->whereDate('logs_stocks.updated_at', '>=', $fromDate);
-            })
-            ->when($toDate, function ($q) use ($toDate) {
-                $q->whereDate('logs_stocks.updated_at', '<=', $toDate);
-            })
-            ->select([
-                'logs_stocks.*',
-                'logs_stocks.qty as Quantity',
-                'edps.edp_code as EDP_Code',
-                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at_formatted")
-            ])
-            ->get(); // Only call get() once here
-    
-        return $query;
-    }
     
 
 }

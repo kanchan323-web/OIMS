@@ -41,7 +41,7 @@ class RequestStockController extends Controller
             ->where('req_status', 'inactive')
             ->get();
 
-        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement', 'stocks.qty', 'rig_users.name', 'users.user_name','edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
+        $Stock_Table_Data = Stock::select('stocks.id', 'stocks.measurement', 'stocks.qty', 'rig_users.name', 'users.user_name', 'edps.edp_code', 'edps.category', 'edps.description', 'edps.section')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->join('users', 'stocks.user_id', '=', 'users.id')
@@ -397,14 +397,22 @@ class RequestStockController extends Controller
         if (!$requestStock) {
             return response()->json(['success' => false, 'message' => 'Request not found']);
         }
-        $user = Auth::user();
-        $request_status = RequestStatus::where('request_status.request_id', $request->data)
-            ->where('request_status.sent_to', $user->id)
-            ->orderBy('request_status.created_at', 'desc')
+
+        // Fetch the request status for the viewer
+        $request_status = RequestStatus::where('request_id', $request->data)
+            ->orderBy('created_at', 'desc')
             ->select(['request_status.*'])
             ->first();
 
-        return response()->json(['success' => true, 'data' => $requestStock, 'request_status' => $request_status]);
+        // Extract supplier quantity (null if not found)
+        $supplier_qty = $request_status->suppliers_qty ?? null;
+
+        return response()->json([
+            'success' => true,
+            'data' => $requestStock,
+            'request_status' => $request_status,
+            'supplier_qty' => $supplier_qty
+        ]);
     }
 
 
@@ -826,7 +834,7 @@ class RequestStockController extends Controller
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             //->where('requesters.supplier_id', $userId)
             ->where('requesters.requester_rig_id', $rig_id)
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code', 'edps.description')
             ->orderBy('requesters.updated_at', 'desc')
             ->get();
 
@@ -853,7 +861,7 @@ class RequestStockController extends Controller
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->where('requesters.requester_rig_id', Auth::user()->rig_id)
-            ->select('requesters.*', DB::raw("DATE_FORMAT(requesters.updated_at, '%d-%m-%Y') as date"),'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
+            ->select('requesters.*', DB::raw("DATE_FORMAT(requesters.updated_at, '%d-%m-%Y') as date"), 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code', 'edps.description')
             ->orderBy('requesters.updated_at', 'desc')
             ->when($request->edp_code, function ($query, $edp_code) {
                 return $query->where('stocks.edp_code', $edp_code);
@@ -1353,8 +1361,8 @@ class RequestStockController extends Controller
 
             // Notify all rig users of the same rig
             $rigUsers = User::where('rig_id', $user->rig_id)
-                            ->where('user_type', 'user')
-                            ->get();
+                ->where('user_type', 'user')
+                ->get();
 
             foreach ($rigUsers as $rigUser) {
                 DB::table('notification_user')->insert([
@@ -1375,7 +1383,8 @@ class RequestStockController extends Controller
         }
     }
 
-    public function incomingPenddingRequest(Request $request){
+    public function incomingPenddingRequest(Request $request)
+    {
         $moduleName = "Pendding Request Stock List";
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
@@ -1390,12 +1399,13 @@ class RequestStockController extends Controller
             'mst_status.status_name',
             'stocks.id as stock_id',
             'stocks.description',
-            'edps.edp_code',)->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            'edps.edp_code',
+        )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.supplier_rig_id', $rig_id)
-            ->whereIn('requesters.status', [1,2,4,6])
+            ->whereIn('requesters.status', [1, 2, 4, 6])
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
@@ -1408,7 +1418,8 @@ class RequestStockController extends Controller
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
 
-    public function raisedPenddingRequest(Request $request){
+    public function raisedPenddingRequest(Request $request)
+    {
         $moduleName = "Query Request Stock List";
         $rig_id = Auth::user()->rig_id;
         $datarig = User::where('user_type', '!=', 'admin')
@@ -1416,7 +1427,7 @@ class RequestStockController extends Controller
             ->pluck('id')
             ->toArray();
 
-     /*   $data = Requester::select(
+        /*   $data = Requester::select(
             'rig_users.name as Location_Name',
             'rig_users.location_id',
             'requesters.*',
@@ -1433,13 +1444,13 @@ class RequestStockController extends Controller
             ->get();
 */
 
-           $data = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        $data = Requester::leftJoin('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->where('requesters.requester_rig_id', $rig_id)
-            ->whereIn('requesters.status', [1,2,4,6])
-            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code','edps.description')
+            ->whereIn('requesters.status', [1, 2, 4, 6])
+            ->select('requesters.*', 'stocks.location_name', 'stocks.location_id', 'mst_status.status_name', 'edps.edp_code', 'edps.description')
             ->orderBy('requesters.created_at', 'desc')
             ->get();
 
@@ -1451,10 +1462,11 @@ class RequestStockController extends Controller
             ->get();
 
         $status_type = 'raisedPenddingRequest.get';
-        return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig', 'edps','status_type'));
+        return view('request_stock.supplier_request', compact('data', 'moduleName', 'datarig', 'edps', 'status_type'));
     }
 
-    public function CommanRequestStockFilter(Request $request){
+    public function CommanRequestStockFilter(Request $request)
+    {
         $rig_id = Auth::user()->rig_id;
         if ($request->ajax()) {
             $data = Requester::query();
@@ -1465,7 +1477,8 @@ class RequestStockController extends Controller
                 'mst_status.status_name',
                 'stocks.description',
                 'stocks.created_at as stock_created_at',
-                'edps.edp_code')->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+                'edps.edp_code'
+            )->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
                 ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
                 ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
                 ->join('edps', 'stocks.edp_code', '=', 'edps.id')
@@ -1483,34 +1496,34 @@ class RequestStockController extends Controller
                 })
                 ->where('requesters.supplier_rig_id', $rig_id);
 
-                if($request->type=='pendding_request.get'){
-                    $data->where('requesters.status', 1);
-                }
-                if($request->type=='query_request.get'){
-                    $data->where('requesters.status', 2);
-                }
+            if ($request->type == 'pendding_request.get') {
+                $data->where('requesters.status', 1);
+            }
+            if ($request->type == 'query_request.get') {
+                $data->where('requesters.status', 2);
+            }
 
-                $result = $data->orderBy('requesters.created_at', 'desc')->get();
+            $result = $data->orderBy('requesters.created_at', 'desc')->get();
 
             return response()->json(['data' => $result]);
         }
         return view('request_stock.comman_request_view', compact('data'));
     }
 
-    public function fetchIncommingCount(Request $request){
+    public function fetchIncommingCount(Request $request)
+    {
         $rig_id = Auth::user()->rig_id;
-        $data = Requester:: selectRaw('COUNT(requesters.id) as incoming_pending')
-                ->where('requesters.supplier_rig_id', $rig_id)
-                ->whereIn('requesters.status', [1,2,4,6])->first();
-                return response()->json(['data' => $data]);
+        $data = Requester::selectRaw('COUNT(requesters.id) as incoming_pending')
+            ->where('requesters.supplier_rig_id', $rig_id)
+            ->whereIn('requesters.status', [1, 2, 4, 6])->first();
+        return response()->json(['data' => $data]);
     }
-    public function fetchRaisedCount(Request $request){
+    public function fetchRaisedCount(Request $request)
+    {
         $rig_id = Auth::user()->rig_id;
-        $data = Requester:: selectRaw('COUNT(requesters.id) as raised_pending')
-                ->where('requesters.requester_rig_id', $rig_id)
-                ->whereIn('requesters.status', [1,2,4,6])->first();
-                return response()->json(['data' => $data]);
+        $data = Requester::selectRaw('COUNT(requesters.id) as raised_pending')
+            ->where('requesters.requester_rig_id', $rig_id)
+            ->whereIn('requesters.status', [1, 2, 4, 6])->first();
+        return response()->json(['data' => $data]);
     }
-
-
 }
