@@ -492,8 +492,6 @@
                     data: id
                 },
                 success: function (response) {
-                   // console.log("stock id check:" + response.for_request_viewdata['EDPID']);
-                  //  console.log("edp_code check:" + response.for_request_viewdata['edp_id']);
                     $("#Rlocation_id").val(response.for_request_viewdata['location_id']);
                     $("#Rlocation_name").val(response.for_request_viewdata['location_name']);
                     $("#Redp_code").val(response.viewdata['edp_code']);
@@ -508,18 +506,17 @@
                     $("#Rhidden_category").val(categoryValue);
                     $("#Available_qty").val(formatIndianNumber(response.for_request_viewdata['qty']));
                     $("#RequestQTY").on("input", function () {
-                        let availableQty = parseFloat($("#Available_qty").val()) || 0;
+                        let availableQty = parseFloat($("#Available_qty").val().replace(/,/g, '')) || 0;
                         let requestQty = parseFloat($(this).val()) || 0;
                         if (requestQty > availableQty) {
                             $("#RequestQTY").addClass("is-invalid");
-                            $("#qtyError").text(
-                                "Requested quantity cannot be greater than available quantity!").show();
+                            $("#qtyError").text("Requested quantity cannot be greater than available quantity!").show();
                         } else {
                             $("#RequestQTY").removeClass("is-invalid");
                             $("#qtyError").hide();
                         }
                     });
-                   // console.log(response.viewdata);
+                 
                     $("#newQty").val(formatIndianNumber(response.for_request_viewdata['new_spareable']));
                     $("#usedQty").val(formatIndianNumber(response.for_request_viewdata['used_spareable']));
                     $("#Rmeasurement").val(response.viewdata['measurement']);
@@ -531,7 +528,6 @@
                     $("#supplierRigId").val(response.viewdata['location_id']);
                     $("#Rsupplier_location_id").val(response.viewdata['rig_id']);
                     $("#Rsupplier_id").val(response.viewdata['user_id']);
-                  //  console.log(response.viewdata['location_id']);
                 }
             });
         }
