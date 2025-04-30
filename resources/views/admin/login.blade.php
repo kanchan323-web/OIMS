@@ -35,7 +35,7 @@
                                 </div>
                             @endif
                             @if (Session::get('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <div class="alert alert-success alert-dismissible fade show" role="alert"> 
                                     <i class="fas fa-check-circle me-2"></i>
                                     <strong>Success:</strong> {{ Session::get('success') }}
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"
