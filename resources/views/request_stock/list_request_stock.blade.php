@@ -769,7 +769,7 @@
                             $("#category_id").val(stock.category ?? '');
                             $("#section").val(stock.section ?? '');
                             $("#description").val(stock.description ?? '');
-                            $("#total_qty").val(formatIndianNumber(stock.available_qty ?? ''));
+                            $("#total_qty").val(formatIndianNumber(stock.qty ?? ''));
                             $("#req_qty").val(formatIndianNumber(stock.requested_qty ?? ''));
                             $("#measurement").val(stock.measurement ?? '');
                             $("#new_spearable").val(formatIndianNumber(stock.new_spareable ?? ''));

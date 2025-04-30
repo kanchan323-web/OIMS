@@ -388,6 +388,7 @@ class RequestStockController extends Controller
                 'stocks.measurement',
                 'stocks.new_spareable',
                 'stocks.used_spareable',
+                'stocks.qty',
                 'edps.edp_code as edp_code',
                 'mst_status.status_name',
                 DB::raw("DATE_FORMAT(requesters.created_at, '%d-%m-%Y') as formatted_created_at")
@@ -450,7 +451,7 @@ class RequestStockController extends Controller
             ->select('edps.edp_code')
             ->get();
 
-
+//
         $moduleName = "Incoming Request List";
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
