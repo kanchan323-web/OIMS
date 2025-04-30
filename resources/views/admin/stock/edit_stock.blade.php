@@ -38,7 +38,7 @@
                                 <div class="form-row">
                             
                                     <!-- EDP Code -->
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="">EDP Code</label>
                                         <input type="text" class="form-control @error('edp_code') is-invalid @enderror" name="edp_code_display" value="{{ $edpCodes->edp_code }}" readonly>
                                         <input type="hidden" name="edp_code" value="{{ $edpCodes->id }}">
@@ -48,7 +48,7 @@
                                     </div>
                             
                                     <!-- Rig -->
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="rig_id">Select Rig</label>
                                         <select class="form-control select2 @error('rig_id') is-invalid @enderror" disabled>
                                             <option value="" disabled>Select Rig</option>
@@ -65,10 +65,27 @@
                                     </div>
                             
                                     <!-- Category -->
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="category_id">Category</label>
                                         <input type="text" class="form-control @error('category') is-invalid @enderror" name="category" id="category_id" value="{{ old('category', $editData->category) }}" readonly required>
                                         @error('category')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Section -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="section_id">Section</label>
+                                        <input type="text" class="form-control @error('section') is-invalid @enderror" name="section" id="section_id" value="{{ old('section', $editData->section) }}" readonly required>
+                                        @error('section')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                     <!-- Measurement -->
+                                     <div class="col-md-6 mb-3">
+                                        <label for="measurement">Unit of Measurement</label>
+                                        <input type="text" class="form-control @error('measurement') is-invalid @enderror" name="measurement" id="measurement" value="{{ old('measurement', $editData->measurement) }}" readonly required>
+                                        @error('measurement')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -82,51 +99,7 @@
                                         @enderror
                                     </div>
                             
-                                    <!-- Section -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="section_id">Section</label>
-                                        <input type="text" class="form-control @error('section') is-invalid @enderror" name="section" id="section_id" value="{{ old('section', $editData->section) }}" readonly required>
-                                        @error('section')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                            
-                                    <!-- Measurement -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="measurement">Unit of Measurement</label>
-                                        <input type="text" class="form-control @error('measurement') is-invalid @enderror" name="measurement" id="measurement" value="{{ old('measurement', $editData->measurement) }}" readonly required>
-                                        @error('measurement')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                            
-                                    <!-- Total Quantity -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="qty">Total Quantity</label>
-                                        <input type="text" class="form-control @error('qty') is-invalid @enderror" name="qty" id="qty" value="{{ IND_money_format($editData->qty) }}" readonly required>
-                                        @error('qty')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                            
-                                    <!-- New Spareable -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="new_spareable">New Spareable</label>
-                                        <input type="text" class="form-control @error('new_spareable') is-invalid @enderror" name="new_spareable" id="new_spareable" value="{{ old('new_spareable', IND_money_format($editData->new_spareable)) }}" required>
-                                        @error('new_spareable')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                            
-                                    <!-- Used Spareable -->
-                                    <div class="col-md-6 mb-3">
-                                        <label for="used_spareable">Used Spareable</label>
-                                        <input type="text" class="form-control @error('used_spareable') is-invalid @enderror" name="used_spareable" id="used_spareable" value="{{ old('used_spareable', IND_money_format($editData->used_spareable)) }}" required>
-                                        @error('used_spareable')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                            
+                                    
                                     <!-- Remarks -->
                                     <div class="col-md-6 mb-3">
                                         <label for="remarks">Remarks / Notes</label>
@@ -135,7 +108,35 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                   
                             
+                                    <!-- Total Quantity -->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="qty">Total Quantity</label>
+                                        <input type="text" class="form-control @error('qty') is-invalid @enderror" name="qty" id="qty" value="{{ IND_money_format($editData->qty) }}" readonly required>
+                                        @error('qty')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                            
+                                    <!-- New Spareable -->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="new_spareable">New Spareable</label>
+                                        <input type="text" class="form-control @error('new_spareable') is-invalid @enderror" name="new_spareable" id="new_spareable" value="{{ old('new_spareable', IND_money_format($editData->new_spareable)) }}" required>
+                                        @error('new_spareable')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                            
+                                    <!-- Used Spareable -->
+                                    <div class="col-md-4 mb-3">
+                                        <label for="used_spareable">Used Spareable</label>
+                                        <input type="text" class="form-control @error('used_spareable') is-invalid @enderror" name="used_spareable" id="used_spareable" value="{{ old('used_spareable', IND_money_format($editData->used_spareable)) }}" required>
+                                        @error('used_spareable')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    
                                 </div>
                             
                                 <button class="btn btn-primary" type="submit">Update Stock</button>
