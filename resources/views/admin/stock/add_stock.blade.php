@@ -37,7 +37,7 @@
                                         @enderror
                                     </div> --}}
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class=" col-md-6 mb-4" id="edpchange">
                                         <label for="edp_code_id">EDP Code</label>
                                         <select class="form-control " name="edp_code" id="edp_code_id" required>
                                             <option value="" disabled selected>Select EDP Code</option>
@@ -51,7 +51,7 @@
                                     </div>
 
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6 mb-3" id="rigchange">
                                         <label for="rig_id">Select Rig</label>
 
                                         @php
@@ -105,7 +105,7 @@
                                         @enderror
                                     </div> --}}
 
-                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
+                                    <div class="col-md-4 mb-4 edp_detail" style="display: none;">
                                         <label for="category_id">Category</label>
                                         <input type="text" class="form-control" name="category" id="category_id" required
                                             readonly>
@@ -117,15 +117,6 @@
                                                                                                 </select> -->
                                         <input type="hidden" name="category" id="category_hidden">
                                         @error('category')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
-                                        <label for="description">Description</label>
-                                        <textarea class="form-control" name="description" id="description" required
-                                            readonly></textarea>
-                                        @error('description')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -144,7 +135,6 @@
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-
                                     <div class="col-md-6 mb-3 edp_detail" style="display: none;">
                                         <label for="measurement">Unit of Measurement</label>
                                         <input type="text" class="form-control" name="measurement" id="measurement" required
@@ -154,7 +144,23 @@
                                         @enderror
                                     </div>
 
+                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
+                                        <label for="description">Description</label>
+                                        <textarea class="form-control" name="description" id="description" required
+                                            readonly></textarea>
+                                        @error('description')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     <div class="col-md-6 mb-3">
+                                        <label for="remarks">Remarks / Notes</label>
+                                        <textarea class="form-control" name="remarks" id="remarks" required></textarea>
+                                        @error('remarks')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6 mb-3" id="changetotal">
                                         <label for="qty">Total Quantity</label>
                                         <input type="text" class="form-control" name="qty" id="qty" required readonly>
                                         @error('qty')
@@ -162,7 +168,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6 mb-3" id="changenew">
                                         <label for="new_spareable">New </label>
                                         <input type="text" class="form-control formatted-number" name="new_spareable"
                                             id="new_spareable" required>
@@ -171,19 +177,11 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6 mb-3" id="changeused">
                                         <label for="used_spareable">Used </label>
                                         <input type="text" class="form-control formatted-number" name="used_spareable"
                                             id="used_spareable" required>
                                         @error('used_spareable')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label for="remarks">Remarks / Notes</label>
-                                        <textarea class="form-control" name="remarks" id="remarks" required></textarea>
-                                        @error('remarks')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -202,6 +200,45 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function() {
+            // Function to check if both EDP code and Rig are selected
+            function checkSelections() {
+                const edpSelected = $('#edp_code_id').val() && $('#edp_code_id').val() !== '';
+                const rigSelected = $('#rig_id').val() && $('#rig_id').val() !== '';
+                
+                if (edpSelected && rigSelected) {
+                    // Change column width when both are selected
+                    $('#edpchange').removeClass('col-md-6').addClass('col-md-4');
+                    $('#rigchange').removeClass('col-md-6').addClass('col-md-4');
+                    $('#changetotal').removeClass('col-md-6').addClass('col-md-4');
+                    $('#changenew').removeClass('col-md-6').addClass('col-md-4');
+                    $('#changeused').removeClass('col-md-6').addClass('col-md-4');
+                } else {
+                    // Revert back to original width if either is not selected
+                    $('#edpchange').removeClass('col-md-4').addClass('col-md-6');
+                    $('#rigchange').removeClass('col-md-4').addClass('col-md-6');
+                    $('#changetotal').removeClass('col-md-4').addClass('col-md-6');
+                    $('#changenew').removeClass('col-md-4').addClass('col-md-6');
+                    $('#changeused').removeClass('col-md-4').addClass('col-md-6');
+                }
+            }
+            
+            // Check on initial load
+            checkSelections();
+            
+            // Check when EDP code changes
+            $('#edp_code_id').change(function() {
+                checkSelections();
+            });
+            
+            // Check when Rig changes
+            $('#rig_id').change(function() {
+                checkSelections();
+            });
+        });
+        </script>
+</script>
     <script>
         function formatToIndianNumber(x) {
             if (!x) return '';

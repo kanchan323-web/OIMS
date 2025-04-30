@@ -82,7 +82,31 @@
                                         @enderror
                                     </div>
 
-                                  
+                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
+                                        <label for="description">Description</label>
+                                        <textarea class="form-control" name="description" id="description" required
+                                            readonly></textarea>
+                                        @error('description')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="remarks">Remarks / Notes</label>
+                                        <textarea class="form-control" name="remarks" id="remarks" required></textarea>
+                                        @error('remarks')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-4 mb-4">
+                                        <label for="qty">Total Quantity</label>
+                                        <input type="text" class="form-control" id="qty_display" readonly>
+                                        <input type="hidden" name="qty" id="qty" required>
+
+                                        @error('qty')
+                                            <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     <div class="col-md-4 mb-4">
                                         <label for="new_spareable">New </label>
                                         <input type="text" class="form-control" name="new_spareable" id="new_spareable"
@@ -102,30 +126,8 @@
                                     </div>
                                    
 
-                                    <div class="col-md-4 mb-4">
-                                        <label for="qty">Total Quantity</label>
-                                        <input type="text" class="form-control" id="qty_display" readonly>
-                                        <input type="hidden" name="qty" id="qty" required>
-
-                                        @error('qty')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="remarks">Remarks / Notes</label>
-                                        <textarea class="form-control" name="remarks" id="remarks" required></textarea>
-                                        @error('remarks')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3 edp_detail" style="display: none;">
-                                        <label for="description">Description</label>
-                                        <textarea class="form-control" name="description" id="description" required
-                                            readonly></textarea>
-                                        @error('description')
-                                            <div class="text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                    
+                                    
                                   
 
 
