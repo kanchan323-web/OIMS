@@ -5,12 +5,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Section;
 use App\Models\LogsSection;
+use Illuminate\Support\Str;
 
 class SectionController extends Controller
 {
     public function index(){
         $moduleName = "Section List";
-        $section_list = Section::orderBy('id', 'desc')->get();
+        $section_list = Section::orderBy('updated_at', 'desc')->get();
         return view('admin.section.index', compact('moduleName','section_list'));
     }
 
@@ -27,13 +28,15 @@ class SectionController extends Controller
             return redirect()->route('admin.section.create')
                 ->with('error', 'Section already exists.');
         }
+
+        $section_name = Str::upper($request->input('section_name'));
         $Section = new Section;
-        $Section->section_name = $request->section_name;
+        $Section->section_name = $section_name;
         $Section->save();
 
         LogsSection::create([
             'section_id' => $Section->id,
-            'section_name' => $request->section_name,
+            'section_name' => $section_name,
             'creater_id' => auth()->id(),
             'creater_type' => auth()->user()->user_type,
             'message' => 'Section has been created.',
@@ -57,17 +60,17 @@ class SectionController extends Controller
             if ($section) {
                 $oldName = $section->section_name;
 
-
+                $section_name = Str::upper($request->input('section_name'));
                 $section->update([
-                    'section_name' => $request->section_name
+                    'section_name' => $section_name
                 ]);
 
                 LogsSection::create([
                     'section_id'   => $request->section_id,
-                    'section_name'   => $request->section_name,
+                    'section_name'   => $section_name,
                     'creater_id'      => auth()->id(),
                     'creater_type'    => auth()->user()->user_type,
-                    'message'         => "Section has been updated from '$oldName' to '{$request->section_name}'.",
+                    'message'         => "Section has been updated from '$oldName' to '{$section_name}'.",
                 ]);
             }
             return redirect()->route('admin.section.index')

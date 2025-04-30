@@ -41,7 +41,7 @@
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name">Section Name</label>
-                                    <input type="text" class="form-control @error('section_name') is-invalid @enderror"
+                                    <input type="text" class="form-control @error('section_name') is-invalid @enderror" style="text-transform: uppercase;"
                                     name="section_name" value="{{ old('section_name')}}" required>
                                 </div>
                             </div>

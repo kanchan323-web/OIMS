@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     {{Breadcrumbs::render('section_list')}}
-                    
+
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
@@ -50,15 +50,15 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $section->section_name }}</td>
-                                            <td>{{ $section->created_at }}</td>
+                                            <td>{{ $section->updated_at->format('d-m-Y')}}</td>
                                             <td>
                                                 <div class="d-flex align-items-center list-action">
-                                                    <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit" href="{{ route('admin.section.edit', $section->id) }}">
+                                                    <a class="badge bg-success mr-2" data-toggle="tooltip" title="Section Edit" href="{{ route('admin.section.edit', $section->id) }}">
                                                         <i class="ri-pencil-line mr-0"></i>
                                                     </a>
 
                                                     <a class="badge bg-warning mr-2" data-toggle="modal" data-target="#DeleteModal"
-                                                        onclick="deleteSection({{$section->id}})" data-placement="top" title="Delete"
+                                                        onclick="deleteSection({{$section->id}})" data-placement="top" title="Section Delete"
                                                         data-original-title="Delete" href="#"><i
                                                         class="ri-delete-bin-line mr-0"></i>
                                                     </a>
@@ -104,13 +104,18 @@
 </div>
 
 <script>
+     $(document).ready(function() {
+            $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
+    });
+
     function deleteSection(id) {
         $("#delete_id").val(id);
     }
 
-    setTimeout(function () {
+   /* setTimeout(function () {
                     $("#successMessage").fadeOut('slow');
                 }, 3000); // 3 seconds
+    */
 </script>
 
 

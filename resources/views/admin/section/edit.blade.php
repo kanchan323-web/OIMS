@@ -43,7 +43,8 @@
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name">Section Name</label>
-                                    <input type="text" class="form-control" name="section_name" value="{{$editData->section_name}}" required>
+                                    <input type="text" class="form-control" name="section_name" value="{{$editData->section_name}}" style="text-transform: uppercase;"
+                                     required>
                                     <input type="hidden" class="form-control" name="section_id" value="{{$editData->id}}" required>
                                 </div>
                             </div>

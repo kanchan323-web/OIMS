@@ -20,15 +20,15 @@ class EdpController extends Controller{
     public function index(Request $request)
 {
     $moduleName = "EDP List";
-    
+
     if ($request->ajax()) {
         $data = Edp::orderBy('id', 'desc')->get();
-        
+
         return DataTables::of($data)
             ->addIndexColumn()
-            ->make(true); 
+            ->make(true);
     }
-    
+
     return view('admin.edp.index', compact('moduleName'));
 }
 
@@ -243,6 +243,17 @@ class EdpController extends Controller{
                 // Validate UoM
                 if (!in_array($uom, $allowedUoM)) {
                     $errors[] = "Row " . ($index + 2) . ": Invalid UoM value '{$uom}'.";
+                }
+
+                //Validate section
+                if (!preg_match('/^[A-Z\s]+$/', $row[3])) {
+                    $errors[] = "Row " . ($index + 2) . ": Section contain only Alphabetic Uppercase Characters.";
+                }
+
+                $section_name = Section::where('section_name', $row[3])->first();
+                if (!$section_name) {
+                    $errors[] = "Row " . ($index + 2) . ": Section {$row[3]} not found in the Section table.";
+                    continue;
                 }
 
                 // Check for duplicate EDP codes within the file
