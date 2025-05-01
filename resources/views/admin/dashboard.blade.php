@@ -155,24 +155,41 @@
                                 
                                 <div class="row g-3 mt-3">
 
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center status-card">
+                                            <h6 class="text-muted">Pending</h6>
+                                            <h4 class="fw-bold text-info">{{$Pending_Status}}</h4>
+                                        </div>
+                                    </div>
+
+                                    
+                                    
+
+                                    
+                                    <div class="col-4">
+                                        <div class="border rounded p-3 text-center status-card">
+                                            <h6 class="text-muted">Approve</h6>
+                                            <h4 class="fw-bold text-danger">{{$Approve_Status}}</h4>
+                                        </div>
+                                    </div>
+
+                                   
                                     <div class="col-4 mb-2 ">
                                         <div class="border rounded p-3 text-center status-card">
                                             <h6 class="text-muted">MIT</h6>
                                             <h4 class="fw-bold text-primary">{{$mitstatus}}</h4>
                                         </div>
                                     </div>
-
                                     <div class="col-4 mb-2">
                                         <div class="border rounded p-3 text-center status-card">
                                             <h6 class="text-muted">Received</h6>
                                             <h4 class="fw-bold text-warning">{{$Received_Status}}</h4>
                                         </div>
                                     </div>
-
                                     <div class="col-4">
                                         <div class="border rounded p-3 text-center status-card">
-                                            <h6 class="text-muted">Pending</h6>
-                                            <h4 class="fw-bold text-info">{{$Pending_Status}}</h4>
+                                            <h6 class="text-muted">Query</h6>
+                                            <h4 class="fw-bold text-danger">{{$Query_Status}}</h4>
                                         </div>
                                     </div>
 
@@ -183,19 +200,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-4">
-                                        <div class="border rounded p-3 text-center status-card">
-                                            <h6 class="text-muted">Approve</h6>
-                                            <h4 class="fw-bold text-danger">{{$Approve_Status}}</h4>
-                                        </div>
-                                    </div>
 
-                                    <div class="col-4">
-                                        <div class="border rounded p-3 text-center status-card">
-                                            <h6 class="text-muted">Query</h6>
-                                            <h4 class="fw-bold text-danger">{{$Query_Status}}</h4>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

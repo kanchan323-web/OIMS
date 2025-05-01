@@ -186,33 +186,18 @@
                 </li>  -->
 
                 <li class="">
-                    <a href="#logReport" class="collapsed" data-toggle="collapse" aria-expanded="false">
-                        <svg class="svg-icon" id="log-folder" width="20" height="20"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2z">
-                            </path>
-                            <path d="M8 10h8v6H8z" fill="none"></path>
-                            <line x1="10" y1="12" x2="14" y2="12"></line>
-                            <line x1="10" y1="14" x2="14" y2="14"></line>
-                            <line x1="10" y1="16" x2="12" y2="16"></line>
+                    <a href="{{ route('get.logs') }}" class="">
+                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 4H7a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"></path>
+                            <path d="M18 4V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1" stroke-width="1.5"></path>
+                            <line x1="12" y1="9" x2="12" y2="13" stroke-width="3"></line>
+                            <circle cx="12" cy="16" r="1" fill="currentColor"></circle>
+                            <line x1="8" y1="7" x2="16" y2="7" stroke-width="2"></line>
                         </svg>
                         <span class="ml-4">Log Report</span>
-                        <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="10 15 15 20 20 15"></polyline>
-                            <path d="M4 4h7a4 4 0 0 1 4 4v12"></path>
-                        </svg>
                     </a>
-                    <ul id="logReport" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="">
-                            <a href="{{ route('get.logs') }}">
-                                <i class="las la-minus"></i><span>View Logs</span>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
+                
 
             </ul>
         </nav>
