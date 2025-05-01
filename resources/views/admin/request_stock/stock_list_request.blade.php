@@ -46,33 +46,33 @@
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">Supplier</label>
-                                            <select class="form-control" name="edp_code" id="edp_code">
-                                                <option disabled selected>Select EDP Code...</option>
-                                                @foreach ($data as $edp_code_data)
-                                                    <option value="{{ $edp_code_data->edp_code }}">
-                                                        {{ $edp_code_data->edp_code }}
+                                            <select class="form-control" name="supplier" id="supplier_id">
+                                                <option disabled selected>Select Supplier...</option>
+                                                @foreach ($rigUsers as $rigUser)
+                                                    <option value="{{ $rigUser->id }}">
+                                                        {{ $rigUser->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">Receiver</label>
-                                            <select class="form-control" name="edp_code" id="edp_code">
-                                                <option disabled selected>Select EDP Code...</option>
-                                                @foreach ($data as $edp_code_data)
-                                                    <option value="{{ $edp_code_data->edp_code }}">
-                                                        {{ $edp_code_data->edp_code }}
-                                                    </option>
-                                                @endforeach
+                                            <select class="form-control" name="reciever" id="reciever_id">
+                                                <option disabled selected>Select Receiver...</option>
+                                                @foreach ($rigUsers as $rigUser)
+                                                <option value="{{ $rigUser->id }}">
+                                                    {{ $rigUser->name }}
+                                                </option>
+                                            @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">Status</label>
-                                            <select class="form-control" name="edp_code" id="edp_code">
-                                                <option disabled selected>Select EDP Code...</option>
-                                                @foreach ($data as $edp_code_data)
-                                                    <option value="{{ $edp_code_data->edp_code }}">
-                                                        {{ $edp_code_data->edp_code }}
+                                            <select class="form-control" name="status" id="status">
+                                                <option disabled selected>Select Status...</option>
+                                                @foreach ($mst_status as $status)
+                                                    <option value="{{ $status->id }}">
+                                                        {{ $status->status_name }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -1216,6 +1216,27 @@
             placeholder: "Select EDP Code...",
             allowClear: true,
             width: '100%' // makes it match Bootstrap .form-control width
+        });
+
+        $('#supplier_id').select2({
+            theme: 'bootstrap4',
+            placeholder: "Select Supplier...",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#reciever_id').select2({
+            theme: 'bootstrap4',
+            placeholder: "Select Reciever...",
+            allowClear: true,
+            width: '100%'
+        });
+
+        $('#status').select2({
+            theme: 'bootstrap4',
+            placeholder: "Select Status...",
+            allowClear: true,
+            width: '100%'
         });
     });
 </script>

@@ -8,6 +8,7 @@ use App\Mail\RequestAcceptedMail;
 use App\Mail\RequestDeclinedMail;
 use App\Mail\RequestQueryMail;
 use App\Models\Edp;
+use App\Models\MasterStatus;
 use App\Models\RequestStatus;
 use App\Models\RequestStock;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,10 @@ class AdminRequestStockController extends Controller
 {
 
     public function RequestStockList(Request $request){
-        $rig_id = Auth::user()->rig_id;
+        $rigUsers = RigUser::where('name', '!=', 'admin')
+                ->orderBy('id', 'desc')->get();
+        $mst_status = MasterStatus::all();
+
         $datarig = User::where('user_type', '!=', 'admin')
             //->where('rig_id', $rig_id)
             ->pluck('id')
@@ -56,11 +60,12 @@ class AdminRequestStockController extends Controller
         $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('edps.edp_code')
+            ->distinct()
             ->get();
 
         $moduleName = "Request Stock List";
 
-        return view('admin.request_stock.stock_list_request', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
+        return view('admin.request_stock.stock_list_request', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID','rigUsers','mst_status'));
     }
 
 
