@@ -105,13 +105,15 @@ class StockReportController extends Controller
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')
         ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
         ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name as req_name','requesters.requested_qty','request_status.updated_at','stocks.location_name as sup_name','stocks.qty as sup_qty','req.qty as req_qty')
+        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name as req_name','requesters.requested_qty','request_status.supplier_qty',
+          DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as date"),'stocks.location_name as sup_name','requesters.RID')
         ->where('request_status.status_id', 3)
+        ->orderBy('requesters.updated_at', 'desc')
         ->get();
         return $stock_adjustments;
     }
 
-    
+
     private function stockConsumptions($request){
         $query = Stock::query();
         if(!empty($request->from_date) || !empty($request->to_date)) {

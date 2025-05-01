@@ -35,24 +35,24 @@ class AdminRequestStockController extends Controller
             ->toArray();
 
         $data = Requester::select(
-            'rig_users.name as Location_Name',
-            'rig_users.location_id',
+            'rig_users.name as reciever',
+            'sr.name as supplier',
             'requesters.*',
             'mst_status.status_name',
-            'stocks.id as stock_id',
+           // 'request_status.id as supplier_qty',
             'stocks.id as stock_id',
             'stocks.description',
             'edps.edp_code',
         )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+         ->join('rig_users as sr', 'requesters.supplier_rig_id', '=', 'sr.id')
             ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+          //  ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
-            //->where('requesters.supplier_rig_id', $rig_id)
-            ->with('requestStatuses')
-            ->distinct()
             ->orderBy('requesters.updated_at', 'desc')
             ->get();
-
+      // dd($data);
         $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('edps.edp_code')

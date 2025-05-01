@@ -13,11 +13,7 @@
                                             <label for="edp_code">Report Type</label>
                                             <select class="form-control" name="report_type" id="report_type">
                                                 <option disabled selected>Select Report Type...</option>
-                                                <option value="summary">Stock Summary</option>
-                                                <option value="additions">Stock Additions</option>
-                                                <option value="removals">Stock Removals</option>
-                                                <option value="adjustments">Stock Adjustments </option>
-                                                <option value="consumptions">Stock Consumptions</option>
+                                                <option value="adjustments">Stock Transfer</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
@@ -166,22 +162,18 @@
                         break;
 
                     case "adjustments":
-                        headers = "<th>Sr.No</th><th>Edp Code</th><th>Description</th><th>Req Rig</th><th>Req QTY</th><th>Supplier Rig</th><th>Supplier QTY</th><th>Date</th>";
+                        headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Receiver</th><th>Reciept QTY</th><th>Supplier</th><th>Issued QTY</th><th>Date</th>";
                         $.each(response.data, function (index, stockdata) {
-                            var dateObj = new Date(stockdata.updated_at);
-    var formattedDate = ("0" + dateObj.getDate()).slice(-2) + "-" +
-                        ("0" + (dateObj.getMonth() + 1)).slice(-2) + "-" +
-                        dateObj.getFullYear();
-
                             rows += `<tr>
                                 <td>${index + 1}</td>
+                                 <td>${stockdata.RID}</td>
                                 <td>${stockdata.EDP_Code}</td>
                                 <td>${stockdata.description}</td>
                                 <td>${stockdata.req_name}</td>
-                                <td>${stockdata.req_qty}</td>
+                                <td>${stockdata.requested_qty}</td>
                                 <td>${stockdata.sup_name}</td>
-                                <td>${stockdata.sup_qty}</td>
-                                <td>${formattedDate}</td>
+                                <td>${stockdata.supplier_qty}</td>
+                                <td>${stockdata.date}</td>
                             </tr>`;
                         });
                         break;

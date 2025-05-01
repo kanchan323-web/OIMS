@@ -24,7 +24,7 @@
                     @endif
 
                     <div class="row justify-content-between">
-                        <div class="col-sm-6 col-md-9">
+                        <div class="col-sm-12 col-md-12">
                             <div id="user_list_datatable_info" class="dataTables_filter">
                                 <form id="filterForm" class="mr-3 position-relative">
                                     <div class="row">
@@ -39,10 +39,43 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-2 mb-2">
+                                        <div class="col-md-3 mb-3">
                                             <label for="Description">Description</label>
                                             <input type="text" class="form-control" placeholder="Description"
                                                 name="Description" id="Description">
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label for="edp_code">Supplier</label>
+                                            <select class="form-control" name="edp_code" id="edp_code">
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($data as $edp_code_data)
+                                                    <option value="{{ $edp_code_data->edp_code }}">
+                                                        {{ $edp_code_data->edp_code }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label for="edp_code">Receiver</label>
+                                            <select class="form-control" name="edp_code" id="edp_code">
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($data as $edp_code_data)
+                                                    <option value="{{ $edp_code_data->edp_code }}">
+                                                        {{ $edp_code_data->edp_code }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label for="edp_code">Status</label>
+                                            <select class="form-control" name="edp_code" id="edp_code">
+                                                <option disabled selected>Select EDP Code...</option>
+                                                @foreach ($data as $edp_code_data)
+                                                    <option value="{{ $edp_code_data->edp_code }}">
+                                                        {{ $edp_code_data->edp_code }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="form_date">From Date</label>
@@ -52,32 +85,17 @@
                                             <label for="to_date">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div>
-                                        <div class="col-md-4 mb-2 d-flex align-items-end">
+                                        <div class="col-md-2 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-secondary ml-2">Reset</a>
-                                            <!-- <a href="{{ route('stock_list_pdf') }}"
-                                                                                    class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
-                                                                                    id="downloadPdf" target="_blank">
-                                                                                    <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                                                                </a> -->
-
-
+                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-danger ml-2">Reset</a>
+                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-secondary ml-2">Pending</a>
+                                            <a href="{{ route('admin.stock_list.get') }}" class="btn badge badge-purple ml-2">MIT</a>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-
-
-                        <!--         <div class="col-sm-6 col-md-3">
-                                                                <div class="user-list-files d-flex">
-                                                                    <a href="{{ route('admin.request_stock_add') }}" class="btn btn-primary add-list"><i
-                                                                            class="las la-plus mr-3"></i>Add Stock</a>
-                                                                    <a href="#" class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Bulk Stocks
-                                                                    </a>
-                                                        </div>
-                                                            </div>  -->
                     </div>
                 </div>
 
@@ -86,19 +104,16 @@
                         <table class="data-tables table mb-0 tbl-server-info">
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
-                                    <!-- <th>
-                                                                            <div class="checkbox d-inline-block">
-                                                                                <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                                                                <label for="checkbox1" class="mb-0"></label>
-                                                                            </div>
-                                                                        </th> -->
-
                                     <th>Sr.No</th>
-                                    <th>Requester Rig Name</th>
+                                    <th>Request ID</th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
-                                    <th>Request Date</th>
+                                    <th>Receiver</th>
+                                    <th>Reciept Qty</th>
+                                    <th>Supplier</th>
+                                    <th>Issued Qty</th>
                                     <th>Status</th>
+                                    <th>Date(Status)</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -107,11 +122,14 @@
                                                         @if(!in_array($stockdata->user_id, $datarig))
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
-                                                                                    <td>{{ $stockdata->Location_Name }}</td>
+
+                                                                                    <td>{{ $stockdata->RID }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
-                                                                                    <td>{{ $stockdata->created_at->format('d-m-Y H:i:s') }}</td>
-
+                                                                                    <td>{{ $stockdata->reciever }}</td>
+                                                                                    <td>{{ $stockdata->requested_qty }}</td>
+                                                                                    <td>{{ $stockdata->supplier }}</td>
+                                                                                    <td>{{ $stockdata->requested_qty }}</td>
                                                                                     <!-- Status with Dynamic Color -->
                                                                                     @php
                                                                                         $statusColors = [
@@ -122,22 +140,22 @@
                                                                                             'Received' => 'badge-primary',
                                                                                             'MIT' => 'badge-purple'
                                                                                         ];
-
                                                                                         $badgeClass = $statusColors[$stockdata->status_name] ?? 'badge-secondary';
                                                                                     @endphp
 
                                                                                     <td>
                                                                                         <span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span>
                                                                                     </td>
+                                                                                    <td>{{ $stockdata->updated_at->format('d-m-Y') }}</td>
                                                                                     <td class="text-center">
                                                                                         <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
-                                                                                            <a class="badge badge-success" data-toggle="modal"
+                                                                                         <!--   <a class="badge badge-success" data-toggle="modal"
                                                                                                 onclick="RequestStockData({{ json_encode($stockdata->id) }})"
                                                                                                 data-target=".bd-example-modal-xl" data-placement="top" title="Supplier Request"
                                                                                                 href="#">
                                                                                                 <i class="ri-arrow-right-circle-line"></i>
                                                                                             </a>
-
+                                                                                        -->
                                                                                             <input type="hidden" id="StockdataID" value="{{ $stockdata->id }}">
                                                                                             <input type="hidden" id="StockdataStatusName" value="{{ $stockdata->status_name }}">
 
@@ -155,15 +173,6 @@
                                                                                                     </span>
                                                                                                 @endif
                                                                                             </a>
-
-                                                                                            @if($stockdata->status == 6)
-                                                                                                <a class="badge badge-warning" data-toggle="modal"
-                                                                                                    onclick="openEditReceivedRequestModal({{ json_encode($stockdata->id) }})"
-                                                                                                    data-target="#receivedRequestModal" data-placement="top"
-                                                                                                    title="Edit Received Request">
-                                                                                                    <i class="ri-edit-line"></i>
-                                                                                                </a>
-                                                                                            @endif
                                                                                         </div>
                                                                                     </td>
                                                                                 </tr>
@@ -520,9 +529,9 @@
                                     <th>Status</th>
                                     <th>Message</th>
                                     <th>Supplier Qty</th>
-                                    <th>New Spareable</th>
-                                    <th>Used Spareable</th>
-                                    <th>Requestor</th>
+                                    <th>New</th>
+                                    <th>Used</th>
+                                    <th>Receiver</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
@@ -1154,46 +1163,6 @@
                 }, 500);
             });
         });
-
-
-
-        // Function to open the Edit Received Request Modal
-        function openEditReceivedRequestModal(requestId) {
-            $.ajax({
-                url: "{{ url('/admin/request-stock/get-request-status') }}/" + requestId,
-                type: 'GET',
-                success: function (response) {
-                    console.log(response);
-                    if (response.success) {
-                        // Store requestId in the hidden input field
-                        $('#edit_request_id').val(requestId);
-
-                        // Populate modal fields
-                        $('#edit_modal_total_qty').text(response.data.supplier_qty);
-                        $('#edit_modal_req_qty').text(response.data.requested_qty);
-                        $('#edit_modal_total_new').text(response.data.supplier_new_spareable);
-                        $('#edit_modal_total_used').text(response.data.supplier_used_spareable);
-
-                        $('#edit_modal_new_spareable').val(response.data.supplier_new_spareable);
-                        $('#edit_modal_used_spareable').val(response.data.supplier_used_spareable);
-
-                        // Remove previous modals and show new one
-                        $('#editReceivedRequestModal').modal('hide');
-                        $('.modal-backdrop').remove();
-                        $('body').removeClass('modal-open').css('overflow', 'auto');
-
-                        setTimeout(() => {
-                            $('#editReceivedRequestModal').modal('show');
-                        }, 300);
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function () {
-                    alert('Failed to fetch request details.');
-                }
-            });
-        }
 
         $(document).on('click', '.sub-modal-close', function () {
             $('#editReceivedRequestModal').modal('hide');
