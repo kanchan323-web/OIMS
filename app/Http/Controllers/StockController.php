@@ -177,7 +177,7 @@ class StockController extends Controller
             'stock_id'        => $stock->id,
             'location_id'     => $stock->location_id,
             'location_name'   => $stock->location_name,
-            'edp_code'        => $edpCode,
+            'edp_code'        => $stock->edp_code,
             'category'        => $stock->category,
             'description'     => $stock->description,
             'section'         => $stock->section,
@@ -192,12 +192,13 @@ class StockController extends Controller
             'req_status'      => "Inactive",
             'created_at'      => now(),
             'updated_at'      => now(),
-            'creater_id'      => auth()->id(),
-            'creater_type'    => auth()->user()->user_type,
+            'creater_id'      => $user->rig_id,
+            'creater_type'    => null,
             'receiver_id'     => null,
             'receiver_type'   => null,
             'message'         => "Stock created for EDP Code: {$edpCode}.",
-            'action'          => "ADD",
+            'action'          => "Added",
+            'reference_id'    => $user->cpf_no,
         ]);
 
         Session::flash('success', 'Stock submitted successfully!');
@@ -322,6 +323,34 @@ class StockController extends Controller
                         'user_id'       => $user->id,
                     ]);
                 }
+
+                LogsStocks::create([
+                    'stock_id'        => $stock->id,
+                    'location_id'     => $rigUser->location_id,
+                    'location_name'   => $rigUser->name,
+                    'edp_code'        => $edp->id,
+                    'category'        => $edp->category,
+                    'description'     => $edp->description,
+                    'section'         => $edp->section,
+                    'qty'             => $totalQty,
+                    'initial_qty'     => $totalQty,
+                    'measurement'     => $edp->measurement,
+                    'new_spareable'   => $qtyNew,
+                    'used_spareable'  => $qtyUsed,
+                    'remarks'         => 'nill',
+                    'user_id'         => $user->id,
+                    'rig_id'          => $user->rig_id,
+                    'req_status'      => "Inactive",
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                    'creater_id'      => $user->rig_id,
+                    'creater_type'    => null,
+                    'receiver_id'     => null,
+                    'receiver_type'   => null,
+                    'message'         => "Stock created for EDP Code: {$edp->edp_code}.",
+                    'action'          => "Added",
+                    'reference_id'    => $user->cpf_no,
+                ]);
             }
 
             Storage::delete($filePath);
@@ -432,7 +461,7 @@ class StockController extends Controller
             'stock_id'        => $stock->id,
             'location_id'     => $request->location_id,
             'location_name'   => $request->location_name,
-            'edp_code'        => $edpCode,
+            'edp_code'        => $stock->edp_code,
             'category'        => $request->category,
             'description'     => $request->description,
             'section'         => $request->section,
@@ -447,12 +476,13 @@ class StockController extends Controller
             'req_status'      => "Inactive",
             'created_at'      => now(),
             'updated_at'      => now(),
-            'creater_id'      => auth()->id(),
-            'creater_type'    => auth()->user()->user_type,
+            'creater_id'      => $stock->rig_id,
+            'creater_type'    => null,
             'receiver_id'     => null,
             'receiver_type'   => null,
             'message'         => "Stock Updated for EDP Code: {$edpCode}.",
-            'action'          => "Update",
+            'action'          => "Modified",
+            'reference_id'    => $user->cpf_no,
         ]);
 
         $validatedData = $request->validate($rules);

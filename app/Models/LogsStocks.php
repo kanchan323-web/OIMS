@@ -34,6 +34,7 @@ class LogsStocks extends Model
         'receiver_id',
         'receiver_type',
         'message',
-        'action'
+        'action',
+        'reference_id'
     ];
 }
