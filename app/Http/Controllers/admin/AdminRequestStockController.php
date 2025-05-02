@@ -77,8 +77,6 @@ class AdminRequestStockController extends Controller
 
             $stockData = Stock::select('edp_code')->distinct()->get();
             $query = Requester::query();
-
-
                 $data = Requester::select(
                     'rig_users.name as reciever',
                     'sr.name as supplier',
@@ -104,7 +102,6 @@ class AdminRequestStockController extends Controller
                     ->when($request->Description, function ($query, $description) {
                         return $query->where('stocks.description', 'LIKE', "%{$description}%");
                     })
-
                     ->when($request->supplier, function ($query, $supplier) {
                         return $query->where('requesters.supplier_rig_id', $supplier);
                     })
@@ -114,7 +111,6 @@ class AdminRequestStockController extends Controller
                     ->when($request->status, function ($query, $status) {
                         return $query->where('requesters.status', $status);
                     })
-
                     ->when($request->from_date, function ($query) use ($request) {
                         return $query->whereDate('requesters.updated_at', '>=', Carbon::parse($request->from_date)->startOfDay());
                     })
@@ -124,19 +120,6 @@ class AdminRequestStockController extends Controller
                     ->orderBy('requesters.updated_at', 'desc')
                     ->get();
 
-                  //  dd('jcgb');
-           // return  $data;
-
-          /*  $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
-                ->select('stocks.*', 'edps.edp_code AS EDP_Code')
-                ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-                ->where('rig_id', '!=', $rig_id)
-                ->where('req_status', 'inactive')
-                ->where('qty', '!=', 0)
-                ->orderBy('stocks.id', 'desc')
-                ->get();
-            */
-
             $datarig = User::where('user_type', '!=', 'admin')
                 ->where('rig_id', $rig_id)
                 ->pluck('id')
@@ -144,6 +127,49 @@ class AdminRequestStockController extends Controller
 
             return response()->json(['data' => $data, 'datarig' => $datarig, 'stockData' => $stockData]);
         }
+    }
+
+    public function RequestStockListStatus(Request $request){
+        $moduleName = "Request Stock List";
+        $rigUsers = RigUser::where('name', '!=', 'admin')
+                ->orderBy('id', 'desc')->get();
+        $mst_status = MasterStatus::all();
+
+        $datarig = User::where('user_type', '!=', 'admin')
+            //->where('rig_id', $rig_id)
+            ->pluck('id')
+            ->toArray();
+        $query = Requester::query();
+        $data = Requester::select(
+            'rig_users.name as reciever',
+            'sr.name as supplier',
+            'requesters.*',
+            'mst_status.status_name',
+            'request_status.id as supplier_qty',
+            'stocks.id as stock_id',
+            'stocks.description',
+            'edps.edp_code',
+            )->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->join('rig_users as sr', 'requesters.supplier_rig_id', '=', 'sr.id')
+            ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->leftJoin('request_status', function($join) {
+                    $join->on('requesters.id', '=', 'request_status.request_id')
+                    ->where('request_status.status_id', '=', 3); // Condition on request_status table
+                })
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->when($request->status, function ($query, $status) {
+                return $query->where('requesters.status', $status);
+            })
+            ->orderBy('requesters.updated_at', 'desc')
+            ->get();
+
+        $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.edp_code as edp_id','edps.edp_code')
+            ->distinct()
+            ->get();
+        return view('admin.request_stock.stock_list_request', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID','rigUsers','mst_status'));
     }
 
     public function SupplierRequest(Request $request){

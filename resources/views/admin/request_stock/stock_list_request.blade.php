@@ -45,17 +45,6 @@
                                                 name="Description" id="Description">
                                         </div>
                                         <div class="col-md-2 mb-2">
-                                            <label for="edp_code">Supplier</label>
-                                            <select class="form-control" name="supplier" id="supplier_id">
-                                                <option disabled selected>Select Supplier...</option>
-                                                @foreach ($rigUsers as $rigUser)
-                                                    <option value="{{ $rigUser->id }}">
-                                                        {{ $rigUser->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 mb-2">
                                             <label for="edp_code">Receiver</label>
                                             <select class="form-control" name="reciever" id="reciever_id">
                                                 <option disabled selected>Select Receiver...</option>
@@ -64,6 +53,17 @@
                                                     {{ $rigUser->name }}
                                                 </option>
                                             @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label for="edp_code">Supplier</label>
+                                            <select class="form-control" name="supplier" id="supplier_id">
+                                                <option disabled selected>Select Supplier...</option>
+                                                @foreach ($rigUsers as $rigUser)
+                                                    <option value="{{ $rigUser->id }}">
+                                                        {{ $rigUser->name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
@@ -88,10 +88,11 @@
                                         <div class="col-md-2 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-danger ml-2">Reset</a>
 
-                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-secondary ml-2">Pending</a>
-                                            <a href="{{ route('admin.stock_list.get') }}" class="btn badge badge-purple ml-2">MIT</a>
+                                            <button type="reset" class="btn btn-danger ml-2">Reset</button>
+
+                                            <a href="{{ route('admin.requestList', ['status' =>1]) }}" class="btn btn-secondary ml-2">Pending</a>
+                                            <a href="{{ route('admin.requestList', ['status' =>6]) }}" class="btn badge badge-purple ml-2">MIT</a>
                                         </div>
                                     </div>
                                 </form>
