@@ -165,7 +165,7 @@
                         <input type="hidden" name="delete_id" id="delete_id">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class=" btn btn-primary " data-dismiss="modal">Cancle</button>
+                        <button type="button" class=" btn btn-primary " data-dismiss="modal">Cancel</button>
                         <button type="submit" class=" btn btn-secondary ">Delete</button>
                     </div>
                 </form>
@@ -479,44 +479,32 @@
         }
 
         function addRequest(id) {
-            var id = id;
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
             $.ajax({
                 type: "GET",
                 url: "{{route('stock_list_view')}}",
-                data: {
-                    data: id
-                },
+                data: { data: id },
                 success: function (response) {
+                    // Set values in the modal form
                     $("#Rlocation_id").val(response.for_request_viewdata['location_id']);
                     $("#Rlocation_name").val(response.for_request_viewdata['location_name']);
                     $("#Redp_code").val(response.viewdata['edp_code']);
                     $("#req_edp_id").val(response.for_request_viewdata['EDPID']);
                     $("#Rstock_id").val(id);
                     $("#Rstock_code").val(response.for_request_viewdata['id']);
-                    var sectionValue = response.for_request_viewdata['section'];
-                    $("#Rsection").val(sectionValue);
-                    $("#Rhidden_section").val(sectionValue);
-                    var categoryValue = response.for_request_viewdata['category'];
-                    $("#Rcategory").val(categoryValue);
-                    $("#Rhidden_category").val(categoryValue);
+
+                    $("#Rsection").val(response.for_request_viewdata['section']);
+                    $("#Rhidden_section").val(response.for_request_viewdata['section']);
+
+                    $("#Rcategory").val(response.for_request_viewdata['category']);
+                    $("#Rhidden_category").val(response.for_request_viewdata['category']);
+
                     $("#Available_qty").val(formatIndianNumber(response.for_request_viewdata['qty']));
-                    $("#RequestQTY").on("input", function () {
-                        let availableQty = parseFloat($("#Available_qty").val().replace(/,/g, '')) || 0;
-                        let requestQty = parseFloat($(this).val()) || 0;
-                        if (requestQty > availableQty) {
-                            $("#RequestQTY").addClass("is-invalid");
-                            $("#qtyError").text("Requested quantity cannot be greater than available quantity!").show();
-                        } else {
-                            $("#RequestQTY").removeClass("is-invalid");
-                            $("#qtyError").hide();
-                        }
-                    });
-                 
                     $("#newQty").val(formatIndianNumber(response.for_request_viewdata['new_spareable']));
                     $("#usedQty").val(formatIndianNumber(response.for_request_viewdata['used_spareable']));
                     $("#Rmeasurement").val(response.viewdata['measurement']);
@@ -528,9 +516,56 @@
                     $("#supplierRigId").val(response.viewdata['location_id']);
                     $("#Rsupplier_location_id").val(response.viewdata['rig_id']);
                     $("#Rsupplier_id").val(response.viewdata['user_id']);
+
+                    // Disable the submit button initially
+                    $("#AddRequestStock button[type='submit']").prop("disabled", true);
+
+                    // Validation for Requested Quantity
+                    $("#RequestQTY").off("input").on("input", function () {
+                        let availableQty = parseFloat($("#Available_qty").val().replace(/,/g, '')) || 0;
+                        let requestQty = parseFloat($(this).val()) || 0;
+                        let isValid = true;
+
+                        if (!$(this).val().trim()) {
+                            $(this).addClass("is-invalid");
+                            $("#qtyError").text("Requested quantity is required!").show();
+                            isValid = false;
+                        } else if (requestQty > availableQty) {
+                            $(this).addClass("is-invalid");
+                            $("#qtyError").text("Requested quantity cannot be greater than available quantity!").show();
+                            isValid = false;
+                        } else {
+                            $(this).removeClass("is-invalid");
+                            $("#qtyError").hide();
+                        }
+
+                        // Enable/disable submit button
+                        $("#AddRequestStock button[type='submit']").prop("disabled", !isValid);
+                    });
+
+                    // Clear error on blur/focus if valid
+                    $("#RequestQTY").off("blur focus").on("blur focus", function () {
+                        if ($(this).val().trim()) {
+                            $(this).removeClass("is-invalid");
+                            $("#qtyError").hide();
+                        }
+                    });
                 }
             });
         }
+
+        // Final validation before form submission
+        $("#AddRequestStock").on("submit", function (e) {
+            let requestQty = $("#RequestQTY").val().trim();
+            if (!requestQty) {
+                e.preventDefault();
+                $("#RequestQTY").addClass("is-invalid");
+                $("#qtyError").text("Requested quantity is required!").show();
+                $("#AddRequestStock button[type='submit']").prop("disabled", true);
+                return false;
+            }
+        });
+
 
         function viewstockdata(id) {
             var id = id;
