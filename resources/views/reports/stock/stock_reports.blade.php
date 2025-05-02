@@ -173,8 +173,8 @@
                                                 <td>${index + 1}</td>
                                                 <td>${item.EDP_Code ?? '-'}</td>
                                                 <td>${item.description ?? '-'}</td>
-                                                <td>${item.formatted_new_spareable ?? '0'}</td>
-                                                <td>${item.formatted_used_spareable ?? '0'}</td>
+                                                <td>${formatIndianNumber(item.formatted_new_spareable ?? '0')}</td>
+                                                <td>${formatIndianNumber(item.formatted_used_spareable ?? '0')}</td>
                                                 <td>${formatIndianNumber(item.qty ?? 0)}</td>
                                                 <td>${item.action ?? '-'}</td>
                                                 <td>${item.reference_id ?? '-'}</td>
