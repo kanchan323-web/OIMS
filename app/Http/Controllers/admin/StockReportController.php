@@ -97,9 +97,6 @@ class StockReportController extends Controller
     }
     private function stockAdjustments($request){
         $query = Requester::query();
-        if(!empty($request->from_date) || !empty($request->to_date)) {
-            $query->whereBetween('stocks.created_at', [$request->from_date , $request->to_date]);
-        }
         $stock_adjustments = $query ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
         ->join('stocks as req', 'requesters.requester_stock_id', '=', 'req.id')
         ->join('edps', 'stocks.edp_code', '=', 'edps.id')
@@ -107,6 +104,12 @@ class StockReportController extends Controller
         ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
         ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name as req_name','requesters.requested_qty','request_status.supplier_qty',
           DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as date"),'stocks.location_name as sup_name','requesters.RID')
+        ->when($request->from_date, function ($query) use ($request) {
+            return $query->whereDate('requesters.updated_at', '>=', Carbon::parse($request->from_date)->startOfDay());
+        })
+        ->when($request->to_date, function ($query) use ($request) {
+            return $query->whereDate('requesters.updated_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+        })
         ->where('request_status.status_id', 3)
         ->orderBy('requesters.updated_at', 'desc')
         ->get();

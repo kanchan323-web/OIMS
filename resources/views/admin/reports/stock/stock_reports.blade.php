@@ -17,8 +17,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
-                                            <label for="form_date">From Date</label>
-                                            <input type="date" class="form-control" name="form_date" id="form_date">
+                                            <label for="from_date">From Date</label>
+                                            <input type="date" class="form-control" name="from_date" id="from_date">
                                         </div>
 
                                         <div class="col-md-2 mb-2">
@@ -29,7 +29,7 @@
                                         <div class="col-md-2 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('admin.stock_list') }}"
+                                            <a href="{{ route('stock_reports.index') }}"
                                                 class="btn btn-secondary ml-2">Reset</a>
                                         </div>
                                     </div>
