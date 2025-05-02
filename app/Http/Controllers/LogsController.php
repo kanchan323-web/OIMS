@@ -44,7 +44,7 @@ class LogsController extends Controller
             if ($from) $query->where('created_at', '>=', $from);
             if ($to) $query->where('created_at', '<=', $to);
         
-            $data = $query->get();
+              $data = $query->orderBy('created_at', 'desc')->get();
         
             return response()->json([
                 'success' => true,

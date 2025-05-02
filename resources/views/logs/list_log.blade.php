@@ -55,20 +55,26 @@
                         .loading-spinner {
                             animation: spin 1s linear infinite;
                         }
-                        
+
                         @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
+                            0% {
+                                transform: rotate(0deg);
+                            }
+
+                            100% {
+                                transform: rotate(360deg);
+                            }
                         }
-                        </style>
-                        
-                        <div id="loadingMessage" class="text-center my-3" style="display: none;">
-                            <img src="{{ asset('resources/images/login/gare.svg') }}" alt="Loading..." class="loading-spinner mb-2" style="width: 40px;">
-                            <div class="text-primary">Loading logs, please wait...</div>
-                        </div>
-                        
-                        
-                    
+                    </style>
+
+                    <div id="loadingMessage" class="text-center my-3" style="display: none;">
+                        <img src="{{ asset('resources/images/login/gare.svg') }}" alt="Loading..."
+                            class="loading-spinner mb-2" style="width: 40px;">
+                        <div class="text-primary">Loading logs, please wait...</div>
+                    </div>
+
+
+
                     <div class="table-responsive rounded mb-3">
                         <div id="customFilters" class="row mb-3"></div>
 
@@ -78,7 +84,7 @@
 
                         <table id="logsTable" class="table ">
                             <thead>
-                                <tr id="logsTableHead"></tr>
+                                <tr id="logsTableHead" class="text-center"></tr>
                             </thead>
                             <tbody id="logsTableBody"></tbody>
                         </table>
@@ -96,21 +102,21 @@
                 'EDP': ['ID', 'EDP Code', 'Category', 'Description', 'Section', 'Creator Type', 'Message', 'Date'],
                 'Request': ['ID', 'Request ID', 'Available Qty', 'Requested Qty', 'Stock ID', 'Message', 'Date']
             };
-    
+
             const fieldMappings = {
                 'Rigs': ['id', 'location_id', 'name', 'creater_type', 'message', 'created_at'],
                 'Users': ['id', 'user_name', 'email', 'creater_type', 'message', 'created_at'],
                 'EDP': ['id', 'edp_code', 'category', 'description', 'section', 'creater_type', 'message', 'created_at'],
                 'Request': ['id', 'RID', 'available_qty', 'requested_qty', 'stock_id', 'message', 'created_at']
             };
-    
+
             const filterableColumns = {
                 'Rigs': ['location_combined'],
                 'Users': ['user_name'],
                 'EDP': ['edp_code', 'category'],
                 'Request': ['RID']
             };
-    
+
             const filterLabels = {
                 'location_id': 'Location',
                 'name': 'Rig Name',
@@ -120,15 +126,15 @@
                 'edp_code': 'EDP Code',
                 'RID': 'Request ID'
             };
-    
+
             $('#logs_type').on('change', function () {
                 $('#filterForm').submit();
             });
-    
+
             $("#filterForm").on("submit", function (e) {
                 e.preventDefault();
                 $("#loadingMessage").show();
-    
+
                 $.ajax({
                     url: "{{ route('get.logs.filter') }}",
                     type: 'GET',
@@ -137,23 +143,24 @@
                     success: function (response) {
                         const logType = response.type;
                         const data = response.data;
+                        console.log
                         const fields = fieldMappings[logType];
-                        $('#tableTitle').text(`${logType} Logs Table`);
-    
+                        $('#tableTitle').text(`${logType} Logs `);
+
                         const thead = $("#logsTableHead");
                         const tbody = $("#logsTableBody");
-    
+
                         if ($.fn.DataTable.isDataTable('#logsTable')) {
                             $('#logsTable').DataTable().destroy();
                         }
-    
+
                         thead.empty();
                         tbody.empty();
-    
+
                         tableHeaders[logType].forEach(header => {
                             thead.append(`<th>${header}</th>`);
                         });
-    
+
                         data.forEach(log => {
                             const row = $("<tr></tr>");
                             fields.forEach(field => {
@@ -166,7 +173,7 @@
                             });
                             tbody.append(row);
                         });
-    
+
                         const edpCategoryMap = {};
                         data.forEach(item => {
                             if (!edpCategoryMap[item.category]) {
@@ -174,61 +181,69 @@
                             }
                             edpCategoryMap[item.category].push(item.edp_code);
                         });
-    
+
                         let edpCodeSelectIndex;
                         $("#customFilters").empty();
                         const filterCols = filterableColumns[logType] || [];
-    
+
                         if (logType === 'Rigs') {
                             const combinedMap = {};
+
                             data.forEach(item => {
                                 if (!combinedMap[item.location_id]) {
                                     combinedMap[item.location_id] = [];
                                 }
+
                                 if (item.name && !combinedMap[item.location_id].includes(item.name)) {
-                                    combinedMap[item.location_id].push(item.name);
+                                    combinedMap[item.location_id].unshift(item.name);
+                                    if (combinedMap[item.location_id].length > 2) {
+                                        combinedMap[item.location_id].pop();
+                                    }
                                 }
                             });
-    
+
                             const colIndexLoc = fields.indexOf('location_id');
                             const colIndexRig = fields.indexOf('name');
-    
+
                             let selectHTML = `<div class="col-md-3">
-                                <label class="small">Rig Name</label>
-                                <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
-                                    <option value="">All</option>`;
-    
+                                    <label class="small">Rig Name</label>
+                                    <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
+                                        <option value="">All</option>`;
+
+
                             Object.entries(combinedMap).forEach(([locId, rigNames]) => {
-                                const label = `${rigNames.join(', ')}&nbsp;&nbsp;(${locId})`;
+                                const label = `${rigNames.join(',')}&nbsp;&nbsp;(${locId})`;
                                 selectHTML += `<option value="${locId}">${label}</option>`;
+                                console.warn(label);
                             });
-    
+
+
                             selectHTML += `</select></div>`;
                             $("#customFilters").append(selectHTML);
                         } else {
                             filterCols.forEach(field => {
                                 const colIndex = fields.indexOf(field);
                                 if (colIndex === -1) return;
-    
+
                                 const uniqueVals = [...new Set(data.map(item => item[field]))].filter(v => v !== null);
                                 const label = filterLabels[field] || field;
-    
+
                                 let selectHTML = `<div class="col-md-3">
-                                    <label class="small">${label}</label>
-                                    <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
-                                        <option value="">All</option>`;
-    
+                                        <label class="small">${label}</label>
+                                        <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
+                                            <option value="">All</option>`;
+
                                 uniqueVals.forEach(val => {
                                     selectHTML += `<option value="${val}">${val}</option>`;
                                 });
-    
+
                                 selectHTML += `</select></div>`;
                                 $("#customFilters").append(selectHTML);
-    
+
                                 if (field === 'edp_code') edpCodeSelectIndex = colIndex;
                             });
                         }
-    
+
                         // Add select2 for Request ID filter
                         const requestIdSelect = $('select[data-field="RID"]');
                         if (requestIdSelect.length) {
@@ -243,29 +258,30 @@
                                 allowClear: true
                             });
                         }
-    
+
                         $("#customFilters").append(`
-                            <div class="col-1 d-flex align-items-end">
-                                <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                            </div>
-                        `);
-    
+                                <div class="col-1 d-flex align-items-end">
+                                    <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            `);
+
                         const datatable = $('#logsTable').DataTable({
                             paging: true,
                             searching: true,
                             ordering: true,
                             responsive: true,
-                            destroy: true
+                            destroy: true,
+                            order: [[fields.length - 1, 'desc']]
                         });
-    
+
                         $('#customFilters').on('change', '.column-filter', function () {
                             const val = $(this).val();
                             const colIndex = $(this).data('col');
                             const colLoc = $(this).data('col-location');
                             const colRig = $(this).data('col-rig');
-    
+
                             if (typeof colLoc !== 'undefined' && typeof colRig !== 'undefined') {
                                 datatable.column(colLoc).search(val).draw();
                                 datatable.column(colRig).search('').draw();
@@ -273,14 +289,14 @@
                                 datatable.column(colIndex).search(val).draw();
                             }
                         });
-    
+
                         $('#customFilters').off('click', '#resetFilters').on('click', '#resetFilters', function () {
                             $('.column-filter').each(function () {
                                 $(this).val('').trigger('change');
                                 const colIndex = $(this).data('col');
                                 const colLoc = $(this).data('col-location');
                                 const colRig = $(this).data('col-rig');
-    
+
                                 if (typeof colLoc !== 'undefined' && typeof colRig !== 'undefined') {
                                     datatable.column(colLoc).search('').draw();
                                     datatable.column(colRig).search('').draw();
@@ -289,13 +305,13 @@
                                 }
                             });
                         });
-    
+
                         $('.select2-filter').select2({
                             width: '100%',
                             placeholder: "Select",
                             allowClear: true
                         });
-    
+
                         $('#customFilters').on('change', 'select[data-field="edp_code"]', function () {
                             const edpVal = $(this).val();
                             const $catSelect = $('select[data-field="category"]');
@@ -305,33 +321,33 @@
                                 $catSelect.prop('disabled', false);
                             }
                         });
-    
+
                         $('#customFilters').on('change', 'select[data-field="category"]', function () {
                             const selectedCategory = $(this).val();
                             const $edpSelect = $('select[data-field="edp_code"]');
                             let filteredEDPs = selectedCategory ? edpCategoryMap[selectedCategory] || [] : [...new Set(data.map(item => item.edp_code))];
-    
+
                             let edpOptions = `<option value="">All</option>`;
                             [...new Set(filteredEDPs)].forEach(code => {
                                 edpOptions += `<option value="${code}">${code}</option>`;
                             });
-    
+
                             $edpSelect.html(edpOptions).val('').trigger('change.select2');
                             if (datatable) {
                                 datatable.column(edpCodeSelectIndex).search('').draw();
                             }
                         });
-    
+
                         $("#loadingMessage").hide();
                     },
                     error: function (xhr) {
                         $("#logsTableBody").html(`
-                            <tr>
-                                <td colspan="100%" class="text-center text-danger">
-                                    Error loading data.
-                                </td>
-                            </tr>
-                        `);
+                                <tr>
+                                    <td colspan="100%" class="text-center text-danger">
+                                        Error loading data.
+                                    </td>
+                                </tr>
+                            `);
                         $("#loadingMessage").hide();
                         console.error("AJAX Error:", xhr.responseText);
                     }
@@ -339,11 +355,11 @@
             });
         });
     </script>
-    
-    
-    
-    
-    
+
+
+
+
+
 
 
 

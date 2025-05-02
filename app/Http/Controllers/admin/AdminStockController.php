@@ -120,6 +120,9 @@ class AdminStockController extends Controller
     public function stockSubmit(Request $request)
     {
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
+        $request->merge([
+            'qty' => str_replace(',', '', $request->qty),
+        ]);
 
         $rules = [
             // 'location_id' => 'required',
@@ -421,6 +424,10 @@ class AdminStockController extends Controller
 
     public function UpdateStock(Request $request)
     {
+        $request->merge([
+            'qty' => str_replace(',', '', $request->qty),
+        ]);
+
         $dataid = $request->id;
 
         $user = Auth::user();

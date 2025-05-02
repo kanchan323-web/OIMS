@@ -222,7 +222,7 @@ class RequestStockController extends Controller
         $rigUser = RigUser::find($user->rig_id);
         $edp_data = Edp::find($request->req_edp_id);
         $requester_stockID = Stock::where([
-            ['edp_code',  $request->req_edp_id],
+            ['edp_code', $request->req_edp_id],
             ['user_id', $user->id],
             ['rig_id', $rigUser->id]
         ])->pluck('id')->first();
@@ -230,20 +230,20 @@ class RequestStockController extends Controller
 
         if (!$requester_stockID) {
             $stock_data = Stock::create([
-                'edp_code'      => $request->req_edp_id,
-                'rig_id'        => $rigUser->id,
-                'location_id'   => $rigUser->location_id,
+                'edp_code' => $request->req_edp_id,
+                'rig_id' => $rigUser->id,
+                'location_id' => $rigUser->location_id,
                 'location_name' => $rigUser->name,
-                'description'   => $edp_data->description,
-                'section'       => $edp_data->section,
-                'category'      => $edp_data->category,
-                'qty'           => 0,
-                'initial_qty'   => 0,
+                'description' => $edp_data->description,
+                'section' => $edp_data->section,
+                'category' => $edp_data->category,
+                'qty' => 0,
+                'initial_qty' => 0,
                 'new_spareable' => 0,
                 'used_spareable' => 0,
-                'measurement'   => $edp_data->measurement,
-                'remarks'       => '',
-                'user_id'       => $user->id,
+                'measurement' => $edp_data->measurement,
+                'remarks' => '',
+                'user_id' => $user->id,
             ]);
             $requester_stockID = $stock_data->id;
         }
@@ -274,39 +274,51 @@ class RequestStockController extends Controller
                 'updated_at' => now(),
                 'expected_date' => $expected_date,
             ]);
-            $requesterid = User::where('id', $request->requester_id)->value('user_name');
-            $supplierid = User::where('id', $request->supplier_id)->value('user_name');
-            $requesterRigid = RigUser::where('id', $request->requester_rig_id)->value('location_id');
-            $supplierRigid = RigUser::where('id', $request->supplier_location_id)->value('location_id');
-            LogsRequesters::create([
-                'request_id' => $request->requester_id,
-                'status' => 1,
-                'RID' => $RID,
-                'available_qty' => $request->available_qty,
-                'requested_qty' => $request->requested_qty,
-                'stock_id' => $request->stock_id,
-                'requester_stock_id' => $requester_stockID,
-                'requester_id' => $request->requester_id,
-                'requester_rig_id' => $request->requester_rig_id,
-                'supplier_id' => $request->supplier_id,
-                'supplier_rig_id' => $request->supplier_location_id,
-                'created_at' => now(),
-                'updated_at' => now(),
-                'creater_id'      => auth()->id(),
-                'creater_type'    => auth()->user()->user_type,
-                'receiver_id'     => $request->supplier_id,
-                'receiver_type'   => $user_type,
-                'message' => sprintf(
-                    'Request sent by %s to %s for %d units of stock %s',
-                    $requesterid,
-                    $supplierid,
-                    $request->requested_qty,
-                    $request->stock_id
-                ),
-                'action' => 'Request Sent',
-            ]);
+            $requesterName = User::where('id', $request->requester_id)->value('user_name');
+            $supplierName = User::where('id', $request->supplier_id)->value('user_name');
+            
+            $requesterLocation = RigUser::where('id', $request->requester_rig_id)->value('location_id');
+            $supplierLocation = RigUser::where('id', $request->supplier_location_id)->value('location_id');
+            
+            $stock = Stock::where('id', $request->stock_id)->first(); // Assumes Stock model exists
 
-            $updated_stock_status =  Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
+            $edp_codeLog = Edp::where('id', $stock->edp_code)->first();
+            
+            $message = sprintf(
+                'Request sent by User %s (%s) to supplier rig (%s) for Material Edp (%s), with description (%s) for quantity %d',
+                $requesterName,
+                $requesterLocation,
+                $supplierLocation,
+                $edp_codeLog->edp_code ?? 'N/A',
+                $stock->description ?? 'N/A',
+                $request->requested_qty
+            );
+            
+            LogsRequesters::create([
+                'request_id'        => $request->requester_id,
+                'status'            => 1,
+                'RID'               => $RID,
+                'available_qty'     => $request->available_qty,
+                'requested_qty'     => $request->requested_qty,
+                'stock_id'          => $request->stock_id,
+                'requester_stock_id'=> $requester_stockID,
+                'requester_id'      => $request->requester_id,
+                'requester_rig_id'  => $request->requester_rig_id,
+                'supplier_id'       => $request->supplier_id,
+                'supplier_rig_id'   => $request->supplier_location_id,
+                'created_at'        => now(),
+                'updated_at'        => now(),
+                'creater_id'        => auth()->id(),
+                'creater_type'      => auth()->user()->user_type,
+                'receiver_id'       => $request->supplier_id,
+                'receiver_type'     => $user_type,
+                'message'           => $message,
+                'action'            => 'Request Sent',
+            ]);
+            
+
+
+            $updated_stock_status = Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
 
             $supplierData = User::where('id', $request->supplier_id)->first();
 
@@ -452,7 +464,7 @@ class RequestStockController extends Controller
             ->select('edps.edp_code')
             ->get();
 
-//
+        //
         $moduleName = "Incoming Request List";
         return view('request_stock.list_request_stock', compact('data', 'moduleName', 'datarig', 'EDP_Code_ID'));
     }
@@ -532,8 +544,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $request->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id()
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id()
             ]);
 
             LogsRequestStatus::create([
@@ -546,8 +558,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => $request->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id(),
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id(),
                 'created_at' => now(),
                 'updated_at' => now(),
                 'creater_id' => auth()->id(),
@@ -624,8 +636,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id()
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id()
             ]);
 
             LogsRequestStatus::create([
@@ -638,8 +650,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id(),
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id(),
                 'created_at' => now(),
                 'updated_at' => now(),
                 'creater_id' => auth()->id(),
@@ -717,8 +729,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id()
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id()
             ]);
 
             LogsRequestStatus::create([
@@ -731,8 +743,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id(),
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id(),
                 'created_at' => now(),
                 'updated_at' => now(),
                 'creater_id' => auth()->id(),
@@ -1008,61 +1020,61 @@ class RequestStockController extends Controller
             $edpCode = Edp::where('id', $stock->edp_code)->value('edp_code');
             $user = Auth::user();
             LogsStocks::create([
-                'stock_id'        => $stock->id,
-                'location_id'     => $stock->location_id,
-                'location_name'   => $stock->location_name,
-                'edp_code'        => $stock->edp_code,
-                'category'        => $stock->category,
-                'description'     => $stock->description,
-                'section'         => $stock->section,
-                'qty'             => $stock->qty,
-                'initial_qty'     => $stock->qty,
-                'measurement'     => $stock->measurement,
-                'new_spareable'   => $stock->new_spareable,
-                'used_spareable'  => $stock->used_spareable,
-                'remarks'         => $stock->remarks,
-                'user_id'         => $stock->user_id,
-                'rig_id'          => $stock->rig_id,
-                'req_status'      => "Inactive",
-                'created_at'      => now(),
-                'updated_at'      => now(),
-                'creater_id'      => $requesterStock->rig_id,
-                'creater_type'    => null,
-                'receiver_id'     => $stock->rig_id,
-                'receiver_type'   => null,
-                'message'         => "Stock Transfered from EDP Code: {$edpCode}.",
-                'action'          => "Transfered from",
-                'reference_id'    => $requester->RID,
+                'stock_id' => $stock->id,
+                'location_id' => $stock->location_id,
+                'location_name' => $stock->location_name,
+                'edp_code' => $stock->edp_code,
+                'category' => $stock->category,
+                'description' => $stock->description,
+                'section' => $stock->section,
+                'qty' => $stock->qty,
+                'initial_qty' => $stock->qty,
+                'measurement' => $stock->measurement,
+                'new_spareable' => $stock->new_spareable,
+                'used_spareable' => $stock->used_spareable,
+                'remarks' => $stock->remarks,
+                'user_id' => $stock->user_id,
+                'rig_id' => $stock->rig_id,
+                'req_status' => "Inactive",
+                'created_at' => now(),
+                'updated_at' => now(),
+                'creater_id' => $requesterStock->rig_id,
+                'creater_type' => null,
+                'receiver_id' => $stock->rig_id,
+                'receiver_type' => null,
+                'message' => "Stock Transfered from EDP Code: {$edpCode}.",
+                'action' => "Transfered from",
+                'reference_id' => $requester->RID,
             ]);
 
             LogsStocks::create([
-                'stock_id'        => $requesterStock->id,
-                'location_id'     => $requesterStock->location_id,
-                'location_name'   => $requesterStock->location_name,
-                'edp_code'        => $requesterStock->edp_code,
-                'category'        => $requesterStock->category,
-                'description'     => $requesterStock->description,
-                'section'         => $requesterStock->section,
-                'qty'             => $requesterStock->qty,
-                'initial_qty'     => $requesterStock->qty,
-                'measurement'     => $requesterStock->measurement,
-                'new_spareable'   => $requesterStock->new_spareable,
-                'used_spareable'  => $requesterStock->used_spareable,
-                'remarks'         => $requesterStock->remarks,
-                'user_id'         => $requesterStock->user_id,
-                'rig_id'          => $requesterStock->rig_id,
-                'req_status'      => "Inactive",
-                'created_at'      => now(),
-                'updated_at'      => now(),
-                'creater_id'      => $stock->rig_id,
-                'creater_type'    => null,
-                'receiver_id'     => $requesterStock->rig_id,
-                'receiver_type'   => null,
-                'message'         => "Stock Transfered to EDP Code: {$edpCode}.",
-                'action'          => "Transfered to",
-                'reference_id'    => $requester->RID,
+                'stock_id' => $requesterStock->id,
+                'location_id' => $requesterStock->location_id,
+                'location_name' => $requesterStock->location_name,
+                'edp_code' => $requesterStock->edp_code,
+                'category' => $requesterStock->category,
+                'description' => $requesterStock->description,
+                'section' => $requesterStock->section,
+                'qty' => $requesterStock->qty,
+                'initial_qty' => $requesterStock->qty,
+                'measurement' => $requesterStock->measurement,
+                'new_spareable' => $requesterStock->new_spareable,
+                'used_spareable' => $requesterStock->used_spareable,
+                'remarks' => $requesterStock->remarks,
+                'user_id' => $requesterStock->user_id,
+                'rig_id' => $requesterStock->rig_id,
+                'req_status' => "Inactive",
+                'created_at' => now(),
+                'updated_at' => now(),
+                'creater_id' => $stock->rig_id,
+                'creater_type' => null,
+                'receiver_id' => $requesterStock->rig_id,
+                'receiver_type' => null,
+                'message' => "Stock Transfered to EDP Code: {$edpCode}.",
+                'action' => "Transfered to",
+                'reference_id' => $requester->RID,
             ]);
-    
+
 
             $user = Auth::user();
             $url = route('raised_requests.index');
@@ -1199,8 +1211,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id()
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id()
             ]);
 
             LogsRequestStatus::create([
@@ -1212,8 +1224,8 @@ class RequestStockController extends Controller
                 'supplier_used_spareable' => null,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
-                'sent_to'     => $sent_to,
-                'sent_from'  => Auth::id(),
+                'sent_to' => $sent_to,
+                'sent_from' => Auth::id(),
                 'created_at' => now(),
                 'updated_at' => now(),
                 'creater_id' => auth()->id(),
@@ -1408,16 +1420,16 @@ class RequestStockController extends Controller
 
         foreach ($admins as $admin) {
             $notification = Notification::create([
-                'type'            => NewRequestNotification::class,
+                'type' => NewRequestNotification::class,
                 'notifiable_type' => User::class,
-                'notifiable_id'   => $admin->id,
-                'user_id'         => $user->id,
-                'data'            => json_encode([
+                'notifiable_id' => $admin->id,
+                'user_id' => $user->id,
+                'data' => json_encode([
                     'message' => $message,
-                    'url'     => $url ?? route('dashboard'),
+                    'url' => $url ?? route('dashboard'),
                 ]),
-                'created_at'      => now(),
-                'updated_at'      => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             // Notify all rig users of the same rig
@@ -1427,19 +1439,19 @@ class RequestStockController extends Controller
 
             foreach ($rigUsers as $rigUser) {
                 DB::table('notification_user')->insert([
-                    'user_id'         => $rigUser->id,
+                    'user_id' => $rigUser->id,
                     'notification_id' => $notification->id,
-                    'created_at'      => now(),
-                    'updated_at'      => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
 
             // Also notify the admin
             DB::table('notification_user')->insert([
-                'user_id'         => $admin->id,
+                'user_id' => $admin->id,
                 'notification_id' => $notification->id,
-                'created_at'      => now(),
-                'updated_at'      => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
     }
