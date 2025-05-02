@@ -45,7 +45,7 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
         Route::get('/log',[AdminLogsController::class,'index'])->name('get.logs');
         Route::get('/logfilter',[AdminLogsController::class,'filterdata'])->name('get.logs.filter');
 
-        
+
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
         //User Registration
@@ -140,6 +140,8 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
             Route::post('/decline-pending-request', [AdminRequestStockController::class, 'declineforRaisedRequest'])->name('admin.request.raisedrequestdecline');
             Route::get('/get-request-status/{id}', [AdminRequestStockController::class, 'getRequestStatusforEdit'])->name('admin.request-status.get');
             Route::post('/update-request-status/{id}', [AdminRequestStockController::class, 'updateRequestStatus'])->name('admin.request-status.update');
+
+            Route::get('/requestList/{status}', [AdminRequestStockController::class, 'RequestStockListStatus'])->name('admin.requestList', ['status' => 'status']);
         });
 
         //Reports
