@@ -6,6 +6,7 @@ use App\Mail\RequestAcceptedMail;
 use App\Mail\RequestDeclinedMail;
 use App\Mail\RequestQueryMail;
 use App\Models\Edp;
+use App\Models\LogsStocks;
 use App\Models\RequestStatus;
 use App\Notifications\NewRequestNotification;
 use Illuminate\Http\Request;
@@ -997,12 +998,71 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id(),
                 'created_at' => now(),
                 'updated_at' => now(),
-                'creater_id' => auth()->id(),
-                'creater_type' => auth()->user()->user_type,
-                'receiver_id' => null,
+                'creater_id' => $requesterStock->rig_id,
+                'creater_type' => null,
+                'receiver_id' => $stock->rig_id,
                 'receiver_type' => null,
                 'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
             ]);
+
+            $edpCode = Edp::where('id', $stock->edp_code)->value('edp_code');
+            $user = Auth::user();
+            LogsStocks::create([
+                'stock_id'        => $stock->id,
+                'location_id'     => $stock->location_id,
+                'location_name'   => $stock->location_name,
+                'edp_code'        => $stock->edp_code,
+                'category'        => $stock->category,
+                'description'     => $stock->description,
+                'section'         => $stock->section,
+                'qty'             => $stock->qty,
+                'initial_qty'     => $stock->qty,
+                'measurement'     => $stock->measurement,
+                'new_spareable'   => $stock->new_spareable,
+                'used_spareable'  => $stock->used_spareable,
+                'remarks'         => $stock->remarks,
+                'user_id'         => $stock->user_id,
+                'rig_id'          => $stock->rig_id,
+                'req_status'      => "Inactive",
+                'created_at'      => now(),
+                'updated_at'      => now(),
+                'creater_id'      => $requesterStock->rig_id,
+                'creater_type'    => null,
+                'receiver_id'     => $stock->rig_id,
+                'receiver_type'   => null,
+                'message'         => "Stock Transfered from EDP Code: {$edpCode}.",
+                'action'          => "Transfered from",
+                'reference_id'    => $requester->RID,
+            ]);
+
+            LogsStocks::create([
+                'stock_id'        => $requesterStock->id,
+                'location_id'     => $requesterStock->location_id,
+                'location_name'   => $requesterStock->location_name,
+                'edp_code'        => $requesterStock->edp_code,
+                'category'        => $requesterStock->category,
+                'description'     => $requesterStock->description,
+                'section'         => $requesterStock->section,
+                'qty'             => $requesterStock->qty,
+                'initial_qty'     => $requesterStock->qty,
+                'measurement'     => $requesterStock->measurement,
+                'new_spareable'   => $requesterStock->new_spareable,
+                'used_spareable'  => $requesterStock->used_spareable,
+                'remarks'         => $requesterStock->remarks,
+                'user_id'         => $requesterStock->user_id,
+                'rig_id'          => $requesterStock->rig_id,
+                'req_status'      => "Inactive",
+                'created_at'      => now(),
+                'updated_at'      => now(),
+                'creater_id'      => $stock->rig_id,
+                'creater_type'    => null,
+                'receiver_id'     => $requesterStock->rig_id,
+                'receiver_type'   => null,
+                'message'         => "Stock Transfered to EDP Code: {$edpCode}.",
+                'action'          => "Transfered to",
+                'reference_id'    => $requester->RID,
+            ]);
+    
 
             $user = Auth::user();
             $url = route('raised_requests.index');

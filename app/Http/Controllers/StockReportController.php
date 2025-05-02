@@ -27,12 +27,14 @@ use App\Models\Requester;
 
 class StockReportController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $moduleName = "Stock Reports";
         return view('reports.stock.stock_reports', compact('moduleName',));
     }
 
-    public function report_stock_filter(Request $request){
+    public function report_stock_filter(Request $request)
+    {
         $reportType = $request->input('report_type');
         if (!$reportType) {
             return response()->json(['error' => 'Missing report type'], 400);
@@ -56,13 +58,14 @@ class StockReportController extends Controller
         return response()->json(['data' => $data ?? []]);
     }
 
-    private function stockOverview($request){
+    private function stockOverview($request)
+    {
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
-    
+
         $from = $request->input('form_date');
         $to = $request->input('to_date');
-    
+
         if ($from && $to) {
             $query->whereBetween('stocks.updated_at', [$from, $to]);
         } elseif ($from) {
@@ -70,7 +73,7 @@ class StockReportController extends Controller
         } elseif ($to) {
             $query->whereDate('stocks.updated_at', '<=', $to);
         }
-    
+
         $stock_overview = $query->join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
             ->select(
@@ -82,11 +85,12 @@ class StockReportController extends Controller
             ->where('stocks.rig_id', $rig_id)
             ->orderBy('stocks.id', 'desc')
             ->get();
-    
+
         return $stock_overview;
     }
 
-    private function stockAdditions($request){
+    private function stockAdditions($request)
+    {
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
         $from = $request->input('form_date');
@@ -100,20 +104,28 @@ class StockReportController extends Controller
             $query->whereDate('stocks.updated_at', '<=', $to);
         }
 
-        $stock_addition = $query ->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
-        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-        ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
-        ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','requesters.RID',
-           DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as receipt_date"))
-        ->where('requesters.requester_rig_id', $rig_id)
-        ->where('request_status.status_id', 3)
-        ->orderBy('requesters.updated_at', 'desc')
-        ->get();
+        $stock_addition = $query->join('requesters', 'stocks.id', '=', 'requesters.requester_stock_id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'requesters.supplier_rig_id', '=', 'rig_users.id')
+            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+            ->select(
+                'edps.edp_code AS EDP_Code',
+                'edps.description',
+                'rig_users.name',
+                'stocks.qty',
+                'requesters.requested_qty',
+                'requesters.RID',
+                DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as receipt_date")
+            )
+            ->where('requesters.requester_rig_id', $rig_id)
+            ->where('request_status.status_id', 3)
+            ->orderBy('requesters.updated_at', 'desc')
+            ->get();
         return $stock_addition;
     }
 
-    private function stockRemovals($request){
+    private function stockRemovals($request)
+    {
         $rig_id = Auth::user()->rig_id;
         $query = Stock::query();
         $from = $request->input('form_date');
@@ -126,17 +138,25 @@ class StockReportController extends Controller
         } elseif ($to) {
             $query->whereDate('stocks.updated_at', '<=', $to);
         }
-        $stock_removal = $query ->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
-        ->join('edps', 'stocks.edp_code', '=', 'edps.id')
-        ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
-        ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
-        ->select('edps.edp_code AS EDP_Code','edps.description','rig_users.name','stocks.qty','requesters.requested_qty','requesters.RID',
-         DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as issued_date"),
-         'request_status.supplier_new_spareable','request_status.supplier_used_spareable')
-        ->where('requesters.supplier_rig_id', $rig_id)
-        ->where('request_status.status_id', 3)
-        ->orderBy('requesters.updated_at', 'desc')
-        ->get();
+        $stock_removal = $query->join('requesters', 'stocks.id', '=', 'requesters.stock_id')
+            ->join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->join('rig_users', 'requesters.requester_rig_id', '=', 'rig_users.id')
+            ->join('request_status', 'requesters.id', '=', 'request_status.request_id')
+            ->select(
+                'edps.edp_code AS EDP_Code',
+                'edps.description',
+                'rig_users.name',
+                'stocks.qty',
+                'requesters.requested_qty',
+                'requesters.RID',
+                DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as issued_date"),
+                'request_status.supplier_new_spareable',
+                'request_status.supplier_used_spareable'
+            )
+            ->where('requesters.supplier_rig_id', $rig_id)
+            ->where('request_status.status_id', 3)
+            ->orderBy('requesters.updated_at', 'desc')
+            ->get();
         return $stock_removal;
     }
 
@@ -144,9 +164,11 @@ class StockReportController extends Controller
     {
         $fromDate = $request->input('form_date');
         $toDate = $request->input('to_date');
-    
-        $query = LogsStocks::query()
+
+        $logs = LogsStocks::query()
             ->leftJoin('edps', 'logs_stocks.edp_code', '=', 'edps.id')
+            ->leftJoin('rig_users as sender', 'logs_stocks.creater_id', '=', 'sender.id')
+            ->leftJoin('rig_users as receiver', 'logs_stocks.receiver_id', '=', 'receiver.id')
             ->when($fromDate, function ($q) use ($fromDate) {
                 $q->whereDate('logs_stocks.updated_at', '>=', $fromDate);
             })
@@ -157,16 +179,64 @@ class StockReportController extends Controller
                 'logs_stocks.*',
                 'logs_stocks.qty as Quantity',
                 'edps.edp_code as EDP_Code',
-                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at_formatted")
+                'edps.description',
+                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at_formatted"),
+                DB::raw("receiver.name as receiver"),
+                DB::raw("sender.name as supplier")
             ])
-            ->get(); 
-    
-        return $query;
+            ->orderBy('logs_stocks.updated_at') // Ensure chronological order
+            ->get();
+
+        $enhancedLogs = [];
+
+        foreach ($logs as $log) {
+            $symbolNew = '';
+            $symbolUsed = '';
+
+            switch (strtolower($log->action)) {
+                case 'added':
+                    $symbolNew = '+';
+                    $symbolUsed = '+';
+                    break;
+
+                case 'transfer':
+                case 'transferred to':
+                    $symbolNew = '-';
+                    $symbolUsed = '-';
+                    break;
+
+                case 'transferred from':
+                    $symbolNew = '+';
+                    $symbolUsed = '+';
+                    break;
+
+                case 'modified':
+                    // Get the previous record with same stock_id before current log entry
+                    $previous = LogsStocks::where('stock_id', $log->stock_id)
+                        ->where('id', '<', $log->id)
+                        ->orderByDesc('id')
+                        ->first();
+
+                    if ($previous) {
+                        $symbolNew = ($log->new_spareable > $previous->new_spareable) ? '+' : (($log->new_spareable < $previous->new_spareable) ? '-' : '');
+                        $symbolUsed = ($log->used_spareable > $previous->used_spareable) ? '+' : (($log->used_spareable < $previous->used_spareable) ? '-' : '');
+                    }
+                    break;
+            }
+
+            $log->formatted_new_spareable = $symbolNew . ($log->new_spareable ?? 0);
+            $log->formatted_used_spareable = $symbolUsed . ($log->used_spareable ?? 0);
+            $enhancedLogs[] = $log;
+        }
+
+        return $enhancedLogs;
     }
 
-    public function stockPdfDownload(Request $request){
+
+    public function stockPdfDownload(Request $request)
+    {
         $reportType = $request->input('report_type');
-        $fileName='';
+        $fileName = '';
         if (!$reportType) {
             return response()->json(['error' => 'Missing report type'], 400);
         }
@@ -187,14 +257,15 @@ class StockReportController extends Controller
             default:
                 $data = json(['error' => 'Invalid report type'], 400);
         }
-      // return view('pdf.report.stock.stock_report', compact('data','request'));
+        // return view('pdf.report.stock.stock_report', compact('data','request'));
         // Generate PDF with retrieved data
-        $pdf = PDF::loadView('pdf.report.stock.stock_report', compact('data','request'));
+        $pdf = PDF::loadView('pdf.report.stock.stock_report', compact('data', 'request'));
         //return $pdf->download('Stock_Report.pdf');
         return $pdf->download($fileName);
     }
 
-    public function stockExcelDownload(Request $request){
+    public function stockExcelDownload(Request $request)
+    {
         $data = array(
             'report_type' => $request->report_type,
             'from_date' => $request->form_date,
@@ -202,85 +273,85 @@ class StockReportController extends Controller
         );
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $filename='';
+        $filename = '';
 
         $reportType = $data['report_type'];
         switch ($reportType) {
             case 'overview':
-                    $sheet->setTitle('Stock Overview Report');
-                    $sheet->setCellValue('A1', 'Sr.No');
-                    $sheet->setCellValue('B1', 'EDP Code');
-                    $sheet->setCellValue('C1', 'Section');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('F1', 'Total Qty');
-                    $sheet->setCellValue('G1', 'Creation Date');
-                    $stockDatas = $this->stockOverview($data);
+                $sheet->setTitle('Stock Overview Report');
+                $sheet->setCellValue('A1', 'Sr.No');
+                $sheet->setCellValue('B1', 'EDP Code');
+                $sheet->setCellValue('C1', 'Section');
+                $sheet->setCellValue('D1', 'Description');
+                $sheet->setCellValue('F1', 'Total Qty');
+                $sheet->setCellValue('G1', 'Creation Date');
+                $stockDatas = $this->stockOverview($data);
 
-                    $row = 2; // Start from the second row to leave space for headers
-                    $i=1;
-                    foreach ($stockDatas as $stockData) {
-                        $sheet->setCellValue('A' . $row, $i);
-                        $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('C' . $row, $stockData->section);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('F' . $row, $stockData->qty);
-                        $sheet->setCellValue('G' . $row, $stockData->creation_date);
-                        $row++;
-                        $i++;
-                    }
-                $filename='Stock Overview Report';
-            break;
+                $row = 2; // Start from the second row to leave space for headers
+                $i = 1;
+                foreach ($stockDatas as $stockData) {
+                    $sheet->setCellValue('A' . $row, $i);
+                    $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
+                    $sheet->setCellValue('C' . $row, $stockData->section);
+                    $sheet->setCellValue('D' . $row, $stockData->description);
+                    $sheet->setCellValue('F' . $row, $stockData->qty);
+                    $sheet->setCellValue('G' . $row, $stockData->creation_date);
+                    $row++;
+                    $i++;
+                }
+                $filename = 'Stock Overview Report';
+                break;
             case 'stock_receiver':
-                    $sheet->setTitle('Stock Received Report');
-                    $sheet->setCellValue('A1', 'Sr.No');
-                    $sheet->setCellValue('B1', 'Request ID');
-                    $sheet->setCellValue('C1', 'EDP Code');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Received QTY');
-                    $sheet->setCellValue('F1', 'Supplier Rig');
-                    $sheet->setCellValue('G1', 'Receipt Date');
-                    $stockDatas = $this->stockAdditions($data);
+                $sheet->setTitle('Stock Received Report');
+                $sheet->setCellValue('A1', 'Sr.No');
+                $sheet->setCellValue('B1', 'Request ID');
+                $sheet->setCellValue('C1', 'EDP Code');
+                $sheet->setCellValue('D1', 'Description');
+                $sheet->setCellValue('E1', 'Received QTY');
+                $sheet->setCellValue('F1', 'Supplier Rig');
+                $sheet->setCellValue('G1', 'Receipt Date');
+                $stockDatas = $this->stockAdditions($data);
 
-                    $row = 2; // Start from the second row to leave space for headers
-                    $i=1;
-                    foreach ($stockDatas as $stockData) {
-                        $sheet->setCellValue('A' . $row, $i);
-                        $sheet->setCellValue('B' . $row, $stockData->RID);
-                        $sheet->setCellValue('C' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->requested_qty);
-                        $sheet->setCellValue('F' . $row, $stockData->name);
-                        $sheet->setCellValue('G' . $row, $stockData->receipt_date);
-                        $row++;
-                        $i++;
-                    }
-                    $filename='Stock Received Report';
+                $row = 2; // Start from the second row to leave space for headers
+                $i = 1;
+                foreach ($stockDatas as $stockData) {
+                    $sheet->setCellValue('A' . $row, $i);
+                    $sheet->setCellValue('B' . $row, $stockData->RID);
+                    $sheet->setCellValue('C' . $row, $stockData->EDP_Code);
+                    $sheet->setCellValue('D' . $row, $stockData->description);
+                    $sheet->setCellValue('E' . $row, $stockData->requested_qty);
+                    $sheet->setCellValue('F' . $row, $stockData->name);
+                    $sheet->setCellValue('G' . $row, $stockData->receipt_date);
+                    $row++;
+                    $i++;
+                }
+                $filename = 'Stock Received Report';
                 break;
             case 'stock_issuer':
-                    $sheet->setTitle('Stock Issued Report');
-                    $sheet->setCellValue('A1', 'Sr.No');
-                    $sheet->setCellValue('B1', 'Request ID');
-                    $sheet->setCellValue('C1', 'EDP Code');
-                    $sheet->setCellValue('D1', 'Description');
-                    $sheet->setCellValue('E1', 'Issued QTY');
-                    $sheet->setCellValue('F1', 'Receiver Rig');
-                    $sheet->setCellValue('G1', 'Issued Date');
-                    $stockDatas = $this->stockRemovals($data);
+                $sheet->setTitle('Stock Issued Report');
+                $sheet->setCellValue('A1', 'Sr.No');
+                $sheet->setCellValue('B1', 'Request ID');
+                $sheet->setCellValue('C1', 'EDP Code');
+                $sheet->setCellValue('D1', 'Description');
+                $sheet->setCellValue('E1', 'Issued QTY');
+                $sheet->setCellValue('F1', 'Receiver Rig');
+                $sheet->setCellValue('G1', 'Issued Date');
+                $stockDatas = $this->stockRemovals($data);
 
-                    $row = 2; // Start from the second row to leave space for headers
-                    $i=1;
-                    foreach ($stockDatas as $stockData) {
-                        $sheet->setCellValue('A' . $row, $i);
-                        $sheet->setCellValue('B' . $row, $stockData->RID);
-                        $sheet->setCellValue('C' . $row, $stockData->EDP_Code);
-                        $sheet->setCellValue('D' . $row, $stockData->description);
-                        $sheet->setCellValue('E' . $row, $stockData->requested_qty);
-                        $sheet->setCellValue('F' . $row, $stockData->name);
-                        $sheet->setCellValue('G' . $row, $stockData->issued_date);
-                        $row++;
-                        $i++;
-                    }
-                    $filename='Stock Issued Report';
+                $row = 2; // Start from the second row to leave space for headers
+                $i = 1;
+                foreach ($stockDatas as $stockData) {
+                    $sheet->setCellValue('A' . $row, $i);
+                    $sheet->setCellValue('B' . $row, $stockData->RID);
+                    $sheet->setCellValue('C' . $row, $stockData->EDP_Code);
+                    $sheet->setCellValue('D' . $row, $stockData->description);
+                    $sheet->setCellValue('E' . $row, $stockData->requested_qty);
+                    $sheet->setCellValue('F' . $row, $stockData->name);
+                    $sheet->setCellValue('G' . $row, $stockData->issued_date);
+                    $row++;
+                    $i++;
+                }
+                $filename = 'Stock Issued Report';
                 break;
             default:
                 return response()->json(['error' => 'Invalid report type'], 400);
@@ -290,15 +361,10 @@ class StockReportController extends Controller
 
         // Set the correct headers for downloading an Excel file
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-       // header('Content-Disposition: attachment;filename="Stock_Reportff.xlsx"');
+        // header('Content-Disposition: attachment;filename="Stock_Reportff.xlsx"');
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
         header('Cache-Control: max-age=0');
 
         $writer->save('php://output');
     }
-
-
-    
-    
-
 }
