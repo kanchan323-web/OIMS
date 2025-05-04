@@ -32,9 +32,9 @@
                                             <label for="edp_code">EDP Code</label>
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
-                                                @foreach ($data as $edp_code_data)
-                                                    <option value="{{ $edp_code_data->edp_code }}">
-                                                        {{ $edp_code_data->edp_code }}
+                                                @foreach ($EDP_Code_ID as $edp)
+                                                    <option value="{{ $edp->edp_id }}">
+                                                        {{ $edp->edp_code }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -43,17 +43,6 @@
                                             <label for="Description">Description</label>
                                             <input type="text" class="form-control" placeholder="Description"
                                                 name="Description" id="Description">
-                                        </div>
-                                        <div class="col-md-2 mb-2">
-                                            <label for="edp_code">Supplier</label>
-                                            <select class="form-control" name="supplier" id="supplier_id">
-                                                <option disabled selected>Select Supplier...</option>
-                                                @foreach ($rigUsers as $rigUser)
-                                                    <option value="{{ $rigUser->id }}">
-                                                        {{ $rigUser->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">Receiver</label>
@@ -67,8 +56,19 @@
                                             </select>
                                         </div>
                                         <div class="col-md-2 mb-2">
+                                            <label for="edp_code">Supplier</label>
+                                            <select class="form-control" name="supplier" id="supplier_id">
+                                                <option disabled selected>Select Supplier...</option>
+                                                @foreach ($rigUsers as $rigUser)
+                                                    <option value="{{ $rigUser->id }}">
+                                                        {{ $rigUser->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
                                             <label for="edp_code">Status</label>
-                                            <select class="form-control" name="status" id="status">
+                                            <select class="form-control" name="status" id="status_id">
                                                 <option disabled selected>Select Status...</option>
                                                 @foreach ($mst_status as $status)
                                                     <option value="{{ $status->id }}">
@@ -79,7 +79,7 @@
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="form_date">From Date</label>
-                                            <input type="date" class="form-control" name="form_date" id="form_date">
+                                            <input type="date" class="form-control" name="from_date" id="form_date">
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
@@ -88,9 +88,11 @@
                                         <div class="col-md-2 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
-                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-danger ml-2">Reset</a>
-                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-secondary ml-2">Pending</a>
-                                            <a href="{{ route('admin.stock_list.get') }}" class="btn badge badge-purple ml-2">MIT</a>
+
+                                            <button type="reset" class="btn btn-danger ml-2">Reset</button>
+
+                                            <a href="{{ route('admin.requestList', ['status' =>1]) }}" class="btn btn-secondary ml-2">Pending</a>
+                                            <a href="{{ route('admin.requestList', ['status' =>6]) }}" class="btn badge badge-purple ml-2">MIT</a>
                                         </div>
                                     </div>
                                 </form>
@@ -109,7 +111,7 @@
                                     <th>EDP Code</th>
                                     <th>Description</th>
                                     <th>Receiver</th>
-                                    <th>Reciept Qty</th>
+                                    <th>Requested Qty</th>
                                     <th>Supplier</th>
                                     <th>Issued Qty</th>
                                     <th>Status</th>
@@ -129,7 +131,7 @@
                                                                                     <td>{{ $stockdata->reciever }}</td>
                                                                                     <td>{{ $stockdata->requested_qty }}</td>
                                                                                     <td>{{ $stockdata->supplier }}</td>
-                                                                                    <td>{{ $stockdata->requested_qty }}</td>
+                                                                                    <td>{{ $stockdata->supplier_qty ?? '-' }}</td>
                                                                                     <!-- Status with Dynamic Color -->
                                                                                     @php
                                                                                         $statusColors = [
@@ -643,20 +645,17 @@
 
 
         $(document).ready(function () {
-            // Filter Stock Data on Button Click
-            $("#filterButton").click(function () {
 
-                // console.log("hello");
+            function fetchfilter() {
+                console.log('sxcx');
                 $.ajax({
                     type: "GET",
-                    url: "{{ route('admin.incoming_request_filter.get') }}",
+                    url: "{{ route('admin.request_stock_filter.get') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
-
-
+                        console.log(response);
                         let tableBody = $("#stockTable"); // Table inside modal
                         tableBody.empty(); // Clear old data
-
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
                                 // Define status colors for different statuses
@@ -668,55 +667,42 @@
                                     'Received': 'badge-primary',
                                     'MIT': 'badge-purple'
                                 };
-
                                 // Get the correct class for the badge
                                 let badgeClass = statusColors[stockdata.status_name] || 'badge-secondary';
-
-                                // Format created_at date (assuming it's returned as ISO format)
-                                let formattedDate = new Date(stockdata.created_at).toLocaleString('en-GB', {
-                                    day: '2-digit', month: '2-digit', year: 'numeric',
-                                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                                });
-
                                 // Append row data to table
-                                tableBody.append(`
-                                                                                                <tr>
-                                                                                                    <td>${index + 1}</td>
-                                                                <td>${stockdata.Location_Name}</td>
-                                                                <td>${stockdata.edp_code}</td>
-                                                                <td>${stockdata.description}</td>
-                                                                <td>${formattedDate}</td>
-                                                                <td>
-                                                                    <span class="badge ${badgeClass}">${stockdata.status_name}</span>
-                                                                </td>
-                                                                <td>
-                                                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                        onclick="RequestStockData(${stockdata.id})"
-                                                                        data-target=".bd-example-modal-xl" data-placement="top"
-                                                                        title="Supplier Request" href="#">
-                                                                                                            <i class="ri-arrow-right-circle-line"></i>
-                                                                                                        </a>
-                                                                    <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                                        data-toggle="modal" data-placement="top"
-                                                                        title="View Request Status" href="#">
-                                                                        <i class="ri-eye-line"></i>
-                                                                    </a>
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            `);
+                                tableBody.append(`<tr><td>${index + 1}</td>
+                                                       <td>${stockdata.RID}</td>
+                                                       <td>${stockdata.edp_code}</td>
+                                                       <td>${stockdata.description}</td>
+                                                       <td>${stockdata.reciever}</td>
+                                                       <td>${stockdata.requested_qty}</td>
+                                                       <td>${stockdata.supplier}</td>
+                                                       <td>${stockdata.supplier_qty ?? '-'}</td>
+                                                       <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                       <td>${stockdata.date}</td>
+                                                       <td><a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                data-toggle="modal" data-placement="top"
+                                                                title="View Request Status" href="#">
+                                                                <i class="ri-eye-line"></i>
+                                                            </a>
+                                                        </td>
+                                                        </tr>`);
                             });
-
                         } else {
-                            tableBody.append(`
-                                                            <tr><td colspan="6" class="text-center">No records found</td></tr>
-                                                        `);
+                            tableBody.append(`<tr><td colspan="6" class="text-center">No records found</td></tr>`);
                         }
                     },
                     error: function (xhr, status, error) {
                         console.error("Error fetching data:", error);
                     }
                 });
-            });
+            }
+
+            $("#filterButton").click(fetchfilter);
+            $("#edp_code").change(fetchfilter);
+            $("#supplier_id").change(fetchfilter);
+            $("#reciever_id").change(fetchfilter);
+            $("#status_id").change(fetchfilter);
         });
 
 
