@@ -214,7 +214,7 @@ class RequestStockController extends Controller
             'requested_qty' => str_replace(',', '', $request->requested_qty),
         ]);
     
-        dd($request->all());
+        // dd($request->all());
         $request->validate([
             'available_qty' => 'required|numeric',
             'requested_qty' => 'required|numeric',
