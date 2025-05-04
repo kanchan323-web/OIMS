@@ -252,25 +252,25 @@ class DashboardController extends Controller
                     ->toArray();
 
                 // Yearly data
-                $yearlyStockData[$category] = Stock::where('category', $category)
-                    ->selectRaw("YEAR(created_at) as period, SUM(qty) as quantity")
-                    ->groupBy('period')
-                    ->orderBy('period')
-                    ->get()
-                    ->map(function ($item) {
-                        return [(string) $item->period, (int) $item->quantity];
-                    })->toArray();
-                    $countUsedAndNewStock = Stock::select('new_spareable', 'used_spareable')->get();
+                // $yearlyStockData[$category] = Stock::where('category', $category)
+                //     ->selectRaw("YEAR(created_at) as period, SUM(qty) as quantity")
+                //     ->groupBy('period')
+                //     ->orderBy('period')
+                //     ->get()
+                //     ->map(function ($item) {
+                //         return [(string) $item->period, (int) $item->quantity];
+                //     })->toArray();
+                //     $countUsedAndNewStock = Stock::select('new_spareable', 'used_spareable')->get();
 
-                    $newStock = $countUsedAndNewStock->sum('new_spareable');
-                    $usedStock = $countUsedAndNewStock->sum('used_spareable');
-                    if($newStock ||$usedStock != 0){
-                        $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
-                        $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
-                    }else{
-                        $newPercent = 0;
-                        $usedPercent = 0; 
-                    }
+                //     $newStock = $countUsedAndNewStock->sum('new_spareable');
+                //     $usedStock = $countUsedAndNewStock->sum('used_spareable');
+                //     if($newStock ||$usedStock != 0){
+                //         $newPercent = round(($newStock / ($newStock + $usedStock)) * 100, 1);
+                //         $usedPercent = round(($usedStock / ($newStock + $usedStock)) * 100, 1);
+                //     }else{
+                //         $newPercent = 0;
+                //         $usedPercent = 0; 
+                //     }
                   
                    
                     
@@ -288,10 +288,10 @@ class DashboardController extends Controller
         'monthlyStockData',
         'yearlyStockData',
         'PendingTranstion',
-        'newStock',
-        'usedStock',
-          'newPercent', 
-                  'usedPercent',
+        // 'newStock',
+        // 'usedStock',
+        //   'newPercent', 
+                //   'usedPercent',
                   'CompletedRequest',
                   'mitstatus',
                   'Received_Status',

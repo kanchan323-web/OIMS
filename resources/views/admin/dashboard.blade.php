@@ -1,101 +1,7 @@
 @extends('layouts.frontend.admin_layout')
 @section('page-content')
     <div class="content-page">
-        {{-- <div class="row">
-            <div class="col-lg-6 col-md-6">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Total Request</p>
-                                <h4>{{$totalRequester}}</h4>
-                            </div>
-                        </div>
-                        <div class="iq-progress-bar mt-2">
-                            <span class="bg-info iq-progress progress-1" data-percent="89">
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Pending Request</p>
-                                <h4>{{ $PendingTranstion }}</h4>
-                            </div>
-                        </div>
-                        @php
-                          
-                            $getDataforRequest = ($totalRequester > 0) ? round(($PendingTranstion / $totalRequester) * 100, 2) : 0;
-                        @endphp
-                            <div class="iq-progress-bar mt-2">
-                                <span class="bg-warning iq-progress progress-1" data-percent="{{ $getDataforRequest }}" 
-                                    >
-                                </span>
-                            </div>
-                    </div>
-                    
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Completed request</p>
-                                <h4>{{ $CompletedRequest }}</h4>
-                            </div>
-                        </div>
-            
-                        @php
-                            $userPercentage = ($allUsers > 0) 
-                                ? round(($totalUser / $allUsers) * 100, 2) 
-                                : 0;
-                        @endphp
-            
-                        <div class="iq-progress-bar mt-2">
-                            <span class="bg-gray iq-progress progress-1" data-percent="{{ $userPercentage }}" 
-                                >
-                            </span>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-           
-            <div class="col-lg-3 col-md-3">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Escalation (Urgent Requests)</p>
-                                <h4>{{ $PendingIncomingRequest }}</h4>
-                            </div>
-                        </div>
-            
-                        @php
-                            $EscalationPercentage = ($totalRequester > 0) 
-                                ? round(($PendingIncomingRequest / $totalRequester) * 100, 2) 
-                                : 0;
-                        @endphp
-
-                        <div class="iq-progress-bar mt-2">
-                            <span class="bg-danger iq-progress progress-1" data-percent="{{ $EscalationPercentage }}" 
-                                >
-                            </span>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-            
-    
-            
-        </div> --}}
+       
         <style>
             .hover-effect {
                 transition: all 0.3s ease;
@@ -162,7 +68,6 @@
                                         </div>
                                     </div>
 
-                                    
                                     
 
                                     
@@ -255,27 +160,7 @@
                             <div id="stockPieChart" style="width: 100%; height: 400px;"></div>
                             
                             <!-- Stock Summary Table -->
-                            <div class="mt-3">
-                                <table class="table table-sm table-borderless">
-                                    <tbody>
-                                        <tr>
-                                            <td><span class="badge" style="background-color: #ff9770">&nbsp;&nbsp;</span> Used Stock</td>
-                                            <td class="text-end">@json($usedStock) items</td>
-                                            <td class="text-end">@json($usedPercent)%</td>
-                                        </tr>
-                                        <tr>
-                                            <td><span class="badge" style="background-color: #7ee2ff">&nbsp;&nbsp;</span> New Stock</td>
-                                            <td class="text-end">@json($newStock) items</td>
-                                            <td class="text-end">@json($newPercent)%</td>
-                                        </tr>
-                                        <tr class="table-light">
-                                            <td><strong>Total Inventory</strong></td>
-                                            <td class="text-end"><strong>@json($newStock + $usedStock) items</strong></td>
-                                            <td class="text-end"><strong>100%</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                           
                         </div>
                     </div>
                 </div>
@@ -284,7 +169,7 @@
             <!-- Page end  -->
         </div>
     </div>
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Data from Laravel
             const stockData = {
@@ -458,7 +343,7 @@
 </script>
      --}}
 
-     <script>
+     {{-- <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Get data from Laravel
             const newStock = @json($newStock);
@@ -526,6 +411,6 @@
                 }
             });
         });
-    </script>
-    
+    </script> --}}
+     
 @endsection
