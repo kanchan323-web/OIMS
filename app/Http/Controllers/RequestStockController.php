@@ -288,14 +288,14 @@ class RequestStockController extends Controller
             
             $stock = Stock::where('id', $request->stock_id)->first(); // Assumes Stock model exists
 
-            $edp_codeLog = Edp::where('id', $stock->edp_code)->first();
+            $getedp = Edp::where('id', $stock->edp_code)->first();
             
             $message = sprintf(
                 'Request sent by User %s (%s) to supplier rig (%s) for Material Edp (%s), with description (%s) for quantity %d',
                 $requesterName,
                 $requesterLocation,
                 $supplierLocation,
-                $edp_codeLog->edp_code ?? 'N/A',
+                $getedp->edp_code ?? 'N/A',
                 $stock->description ?? 'N/A',
                 $request->requested_qty
             );
@@ -307,6 +307,7 @@ class RequestStockController extends Controller
                 'available_qty'     => $request->available_qty,
                 'requested_qty'     => $request->requested_qty,
                 'stock_id'          => $request->stock_id,
+                'edp_code'          => $getedp->edp_code,
                 'requester_stock_id'=> $requester_stockID,
                 'requester_id'      => $request->requester_id,
                 'requester_rig_id'  => $request->requester_rig_id,
