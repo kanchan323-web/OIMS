@@ -28,6 +28,10 @@ class LogsRequestStatus extends Model
         'creater_type',
         'receiver_id',
         'receiver_type',
+        'RID',
+        'available_qty',
+        'requested_qty',
+        'edp_code',
         'message',
     ];
 }

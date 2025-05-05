@@ -296,6 +296,8 @@ class RequestStockController extends Controller
                 'sent_to'                  => $request->supplier_id,
                 'sent_from'                => Auth::id(),
             ]);
+        
+
 
             $requesterid = User::where('id', $request->requester_id)->value('user_name');
             $supplierid = User::where('id', $request->supplier_id)->value('user_name');
@@ -341,6 +343,31 @@ class RequestStockController extends Controller
                 'receiver_type'     => $user_type,
                 'message'           => $message,
                 'action'            => 'Request Sent',
+            ]);
+
+            LogsRequestStatus::create([
+                'request_id' => $request->requester_id,
+                'status_id' => 1,
+                'available_qty'     => $request->available_qty,
+                'requested_qty'     => $request->requested_qty,
+                'RID'               => $RID,
+                'edp_code'               => $edp_codeLog->edp_code,
+                'decline_msg' => null,
+                'query_msg' => null,
+                'supplier_qty' => $request->available_qty,
+                'supplier_new_spareable' =>null,
+                'supplier_used_spareable' => null,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to' => $request->supplier_id,
+                'sent_from' => Auth::id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'creater_id' => auth()->id(),
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => $request->supplier_id,
+                'receiver_type' =>$user_type,
+                'message' => $message
             ]);
             
 
@@ -575,26 +602,53 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
-            LogsRequestStatus::create([
-                'request_id' => $request->request_id,
-                'status_id' => 6,
-                'decline_msg' => null,
-                'query_msg' => null,
-                'supplier_qty' => $supplier_total_qty,
-                'supplier_new_spareable' => $request->supplier_new_spareable,
-                'supplier_used_spareable' => $request->supplier_used_spareable,
-                'user_id' => Auth::id(),
-                'rig_id' => Auth::user()->rig_id,
-                'sent_to' => $sent_to,
-                'sent_from' => Auth::id(),
-                'created_at' => now(),
-                'updated_at' => now(),
-                'creater_id' => auth()->id(),
-                'creater_type' => auth()->user()->user_type,
-                'receiver_id' => null,
-                'receiver_type' => null,
-                'message' => "Request has been accepted for quantity {$supplier_total_qty} by user " . Auth::user()->user_name
-            ]);
+            $requesterTable = Requester::where('id',$request->request_id)->first();
+                
+            // LogsRequestStatus::create([
+            //     'request_id' =>  $requesterTable->RID,
+            //     'status_id' => 6,
+            //     'available_qty'     =>  $requesterTable->available_qty,
+            //     'requested_qty'     =>$requesterTable->available_qty,
+            //     'RID'               =>$requesterTable->requested_qty,
+            //     'edp_code'          =>,
+            //     'decline_msg' => null,
+            //     'query_msg' => null,
+            //     'supplier_qty' =>,
+            //     'supplier_new_spareable' =>null,
+            //     'supplier_used_spareable' => null,
+            //     'user_id' => ,
+            //     'rig_id' => ,
+            //     'sent_to' => ,
+            //     'sent_from' =>,
+            //     'created_at' => ,
+            //     'updated_at' =>,
+            //     'creater_id' =>,
+            //     'creater_type' => ,
+            //     'receiver_id' =>,
+            //     'receiver_type' =>,
+            //     'message' =>
+            // ]);
+
+            // LogsRequestStatus::create([
+            //     'request_id' => $request->request_id,
+            //     'status_id' => 6,
+            //     'decline_msg' => null,
+            //     'query_msg' => null,
+            //     'supplier_qty' => $supplier_total_qty,
+            //     'supplier_new_spareable' => $request->supplier_new_spareable,
+            //     'supplier_used_spareable' => $request->supplier_used_spareable,
+            //     'user_id' => Auth::id(),
+            //     'rig_id' => Auth::user()->rig_id,
+            //     'sent_to' => $sent_to,
+            //     'sent_from' => Auth::id(),
+            //     'created_at' => now(),
+            //     'updated_at' => now(),
+            //     'creater_id' => auth()->id(),
+            //     'creater_type' => auth()->user()->user_type,
+            //     'receiver_id' => null,
+            //     'receiver_type' => null,
+            //     'message' => "Request has been accepted for quantity {$supplier_total_qty} by user " . Auth::user()->user_name
+            // ]);
 
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
