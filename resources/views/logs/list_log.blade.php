@@ -3,6 +3,15 @@
     <div class="content-page">
         <div class="container-fluid">
             <div class="row">
+                <style>
+                    td.wrap-message,
+                    th.wrap-message {
+                        white-space: normal !important;
+                        word-break: break-word;
+                        max-width: 300px;
+                        /* or whatever width makes sense */
+                    }
+                </style>
                 <div class="col-lg-12">
 
                     <div class="row justify-content-between">
@@ -100,14 +109,14 @@
                 'Rigs': ['ID', 'Location ID', 'Rig Name', 'Creator Type', 'Message', 'Date'],
                 'Users': ['ID', 'User Name', 'Email', 'Creator Type', 'Message', 'Date'],
                 'EDP': ['ID', 'EDP Code', 'Category', 'Description', 'Section', 'Creator Type', 'Message', 'Date'],
-                'Request': ['ID', 'Request ID', 'Available Qty', 'Requested Qty', 'Stock ID', 'Message', 'Date']
+                'Request': ['ID', 'Request ID', 'Available Qty', 'Requested Qty', 'EDP Code', 'Message', 'Date']
             };
 
             const fieldMappings = {
                 'Rigs': ['id', 'location_id', 'name', 'creater_type', 'message', 'created_at'],
                 'Users': ['id', 'user_name', 'email', 'creater_type', 'message', 'created_at'],
                 'EDP': ['id', 'edp_code', 'category', 'description', 'section', 'creater_type', 'message', 'created_at'],
-                'Request': ['id', 'RID', 'available_qty', 'requested_qty', 'stock_id', 'message', 'created_at']
+                'Request': ['id', 'RID', 'available_qty', 'requested_qty', 'edp_code', 'message', 'created_at']
             };
 
             const filterableColumns = {
@@ -157,8 +166,9 @@
                         thead.empty();
                         tbody.empty();
 
-                        tableHeaders[logType].forEach(header => {
-                            thead.append(`<th>${header}</th>`);
+                        tableHeaders[logType].forEach((header, index) => {
+                            const wrapClass = (header === 'Message' || header === 'Description') ? 'wrap-message' : '';
+                            thead.append(`<th class="${wrapClass}">${header}</th>`);
                         });
 
                         data.forEach(log => {
@@ -169,7 +179,8 @@
                                     const d = new Date(value);
                                     value = `${("0" + d.getDate()).slice(-2)}-${("0" + (d.getMonth() + 1)).slice(-2)}-${d.getFullYear()}`;
                                 }
-                                row.append(`<td>${value}</td>`);
+                                const wrapClass = (field === 'message') ? 'wrap-message' : '';
+                                row.append(`<td class="${wrapClass}">${value}</td>`);
                             });
                             tbody.append(row);
                         });
@@ -206,9 +217,9 @@
                             const colIndexRig = fields.indexOf('name');
 
                             let selectHTML = `<div class="col-md-3">
-                                    <label class="small">Rig Name</label>
-                                    <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
-                                        <option value="">All</option>`;
+                                                <label class="small">Rig Name</label>
+                                                <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
+                                                    <option value="">All</option>`;
 
 
                             Object.entries(combinedMap).forEach(([locId, rigNames]) => {
@@ -229,9 +240,9 @@
                                 const label = filterLabels[field] || field;
 
                                 let selectHTML = `<div class="col-md-3">
-                                        <label class="small">${label}</label>
-                                        <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
-                                            <option value="">All</option>`;
+                                                    <label class="small">${label}</label>
+                                                    <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
+                                                        <option value="">All</option>`;
 
                                 uniqueVals.forEach(val => {
                                     selectHTML += `<option value="${val}">${val}</option>`;
@@ -260,12 +271,12 @@
                         }
 
                         $("#customFilters").append(`
-                                <div class="col-1 d-flex align-items-end">
-                                    <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                </div>
-                            `);
+                                            <div class="col-1 d-flex align-items-end">
+                                                <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
+                                                    <i class="fas fa-sync-alt"></i>
+                                                </button>
+                                            </div>
+                                        `);
 
                         const datatable = $('#logsTable').DataTable({
                             paging: true,
@@ -342,12 +353,12 @@
                     },
                     error: function (xhr) {
                         $("#logsTableBody").html(`
-                                <tr>
-                                    <td colspan="100%" class="text-center text-danger">
-                                        Error loading data.
-                                    </td>
-                                </tr>
-                            `);
+                                            <tr>
+                                                <td colspan="100%" class="text-center text-danger">
+                                                    Error loading data.
+                                                </td>
+                                            </tr>
+                                        `);
                         $("#loadingMessage").hide();
                         console.error("AJAX Error:", xhr.responseText);
                     }
