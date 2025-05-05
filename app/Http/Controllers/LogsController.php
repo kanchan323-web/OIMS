@@ -30,7 +30,7 @@ class LogsController extends Controller
                 'Users' => LogsUser::class,
                 'EDP' => LogsEdps::class,
                 'Stock' => LogsStocks::class,
-                'Request' => LogsRequesters::class,
+                'Request' => LogsRequestStatus::class,
                 default => null
             };
         

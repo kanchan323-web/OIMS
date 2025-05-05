@@ -167,7 +167,11 @@
                         tbody.empty();
 
                         tableHeaders[logType].forEach((header, index) => {
+<<<<<<< HEAD
                             const wrapClass = (header === 'Message') ? 'wrap-message' : '';
+=======
+                            const wrapClass = (header === 'Message' || header === 'Description') ? 'wrap-message' : '';
+>>>>>>> cd938cc413a8090452bd4041f9447f1e1611e4ca
                             thead.append(`<th class="${wrapClass}">${header}</th>`);
                         });
 
@@ -217,9 +221,15 @@
                             const colIndexRig = fields.indexOf('name');
 
                             let selectHTML = `<div class="col-md-3">
+<<<<<<< HEAD
                                             <label class="small">Rig Name</label>
                                             <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
                                                 <option value="">All</option>`;
+=======
+                                                <label class="small">Rig Name</label>
+                                                <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
+                                                    <option value="">All</option>`;
+>>>>>>> cd938cc413a8090452bd4041f9447f1e1611e4ca
 
 
                             Object.entries(combinedMap).forEach(([locId, rigNames]) => {
@@ -240,9 +250,15 @@
                                 const label = filterLabels[field] || field;
 
                                 let selectHTML = `<div class="col-md-3">
+<<<<<<< HEAD
                                                 <label class="small">${label}</label>
                                                 <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
                                                     <option value="">All</option>`;
+=======
+                                                    <label class="small">${label}</label>
+                                                    <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
+                                                        <option value="">All</option>`;
+>>>>>>> cd938cc413a8090452bd4041f9447f1e1611e4ca
 
                                 uniqueVals.forEach(val => {
                                     selectHTML += `<option value="${val}">${val}</option>`;
@@ -271,12 +287,21 @@
                         }
 
                         $("#customFilters").append(`
+<<<<<<< HEAD
                                         <div class="col-1 d-flex align-items-end">
                                             <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
                                                 <i class="fas fa-sync-alt"></i>
                                             </button>
                                         </div>
                                     `);
+=======
+                                            <div class="col-1 d-flex align-items-end">
+                                                <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
+                                                    <i class="fas fa-sync-alt"></i>
+                                                </button>
+                                            </div>
+                                        `);
+>>>>>>> cd938cc413a8090452bd4041f9447f1e1611e4ca
 
                         const datatable = $('#logsTable').DataTable({
                             paging: true,
@@ -353,12 +378,21 @@
                     },
                     error: function (xhr) {
                         $("#logsTableBody").html(`
+<<<<<<< HEAD
                                         <tr>
                                             <td colspan="100%" class="text-center text-danger">
                                                 Error loading data.
                                             </td>
                                         </tr>
                                     `);
+=======
+                                            <tr>
+                                                <td colspan="100%" class="text-center text-danger">
+                                                    Error loading data.
+                                                </td>
+                                            </tr>
+                                        `);
+>>>>>>> cd938cc413a8090452bd4041f9447f1e1611e4ca
                         $("#loadingMessage").hide();
                         console.error("AJAX Error:", xhr.responseText);
                     }
