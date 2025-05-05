@@ -214,7 +214,6 @@ class RequestStockController extends Controller
             'requested_qty' => str_replace(',', '', $request->requested_qty),
         ]);
     
-        dd($request->all());
         $request->validate([
             'available_qty' => 'required|numeric',
             'requested_qty' => 'required|numeric',
@@ -280,6 +279,28 @@ class RequestStockController extends Controller
                 'updated_at' => now(),
                 'expected_date' => $expected_date,
             ]);
+            
+            $insertedRequestID = Requester::latest('id')->value('id');
+            
+            RequestStatus::create([
+                'request_id'                => $insertedRequestID,
+                'status_id'                 => 1,
+                'decline_msg'              => null,
+                'query_msg'                => null,
+                'supplier_qty'             => null,
+                'supplier_new_spareable'   => null,
+                'supplier_used_spareable'  => null,
+                'user_id'                  => Auth::id(),
+                'rig_id'                   => $rigUser->id,
+                'is_read'                  => 0,
+                'sent_to'                  => $request->supplier_id,
+                'sent_from'                => Auth::id(),
+            ]);
+
+            $requesterid = User::where('id', $request->requester_id)->value('user_name');
+            $supplierid = User::where('id', $request->supplier_id)->value('user_name');
+            $requesterRigid = RigUser::where('id', $request->requester_rig_id)->value('location_id');
+            $supplierRigid = RigUser::where('id', $request->supplier_location_id)->value('location_id');
             $requesterName = User::where('id', $request->requester_id)->value('user_name');
             $supplierName = User::where('id', $request->supplier_id)->value('user_name');
             
