@@ -626,6 +626,7 @@
                         console.error("No valid data received.");
                         return;
                     }
+                   // console.log(response.supplier_qty);
 
                     var stockData = Array.isArray(response.data) ? response.data : [response.data];
                     if (stockData.length > 0 && stockData[0] !== null) {
@@ -654,9 +655,11 @@
                             $("#req_qty").val(formatIndianNumber(stock.requested_qty ?? ''));
                             $("#measurement").val(stock.measurement ?? '');
                             $("#new_spearable").val(formatIndianNumber(stock.new_spareable ?? ''));
-                            $("#used_spareable").val(formatIndianNumber(stock.used_spareable ?? ''));
-                            let supplierQty = stock.request_statuses?.[0]?.supplier_qty ?? '';
-                            $("#issued_qty").val(formatIndianNumber(supplierQty));
+                            $("#used_spareable").val(formatIndianNumber(stock.used_spareable ?? '0'));
+
+                           // let supplierQty = stock.request_statuses?.[0]?.supplier_qty ?? '';
+                            $("#issued_qty").val(formatIndianNumber(response.supplier_qty['supplier_qty'] ?? 0));
+
                             $("#remarks").val(stock.remarks ?? '');
                             $("#status").val(stock.status_name ?? '');
                             if (response.request_status !== null) {
@@ -669,7 +672,7 @@
                                     $('#status_msg').text(response.request_status['query_msg']).addClass('text-primary');
                                 }
                             }
-                            console.log(stock.status);
+                           // console.log(stock.status);
                             $("#request_date").val(stock.formatted_created_at ?? '');
                             //debugger;
                             if (stock.status == 4) {

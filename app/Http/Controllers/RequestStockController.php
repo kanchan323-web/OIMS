@@ -213,7 +213,7 @@ class RequestStockController extends Controller
             'available_qty' => str_replace(',', '', $request->available_qty),
             'requested_qty' => str_replace(',', '', $request->requested_qty),
         ]);
-    
+
         $request->validate([
             'available_qty' => 'required|numeric',
             'requested_qty' => 'required|numeric',
@@ -279,9 +279,9 @@ class RequestStockController extends Controller
                 'updated_at' => now(),
                 'expected_date' => $expected_date,
             ]);
-            
+
             $insertedRequestID = Requester::latest('id')->value('id');
-            
+
             RequestStatus::create([
                 'request_id'                => $insertedRequestID,
                 'status_id'                 => 1,
@@ -296,7 +296,7 @@ class RequestStockController extends Controller
                 'sent_to'                  => $request->supplier_id,
                 'sent_from'                => Auth::id(),
             ]);
-        
+
 
 
             $requesterid = User::where('id', $request->requester_id)->value('user_name');
@@ -305,14 +305,14 @@ class RequestStockController extends Controller
             $supplierRigid = RigUser::where('id', $request->supplier_location_id)->value('location_id');
             $requesterName = User::where('id', $request->requester_id)->value('user_name');
             $supplierName = User::where('id', $request->supplier_id)->value('user_name');
-            
+
             $requesterLocation = RigUser::where('id', $request->requester_rig_id)->value('location_id');
             $supplierLocation = RigUser::where('id', $request->supplier_location_id)->value('location_id');
-            
+
             $stock = Stock::where('id', $request->stock_id)->first(); // Assumes Stock model exists
 
             $getedp = Edp::where('id', $stock->edp_code)->first();
-            
+
             $message = sprintf(
                 'Request sent by User %s (%s) to supplier rig (%s) for Material Edp (%s), with description (%s) for quantity %d',
                 $requesterName,
@@ -322,7 +322,7 @@ class RequestStockController extends Controller
                 $stock->description ?? 'N/A',
                 $request->requested_qty
             );
-            
+
             LogsRequesters::create([
                 'request_id'        => $request->requester_id,
                 'status'            => 1,
@@ -370,7 +370,7 @@ class RequestStockController extends Controller
                 'receiver_type' =>$user_type,
                 'message' => $message
             ]);
-            
+
 
 
             $updated_stock_status = Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
@@ -473,8 +473,14 @@ class RequestStockController extends Controller
             ->select(['request_status.*'])
             ->first();
 
+        // Fetch the request status for the viewer
+        $supplier_qty = RequestStatus::select('request_status.supplier_qty')
+        ->where('request_id', $request->data)
+        ->orderBy('created_at', 'desc')
+        ->first();
+
         // Extract supplier quantity (null if not found)
-        $supplier_qty = $request_status->suppliers_qty ?? null;
+       // $supplier_qty = $request_status->suppliers_qty ?? null;
 
         return response()->json([
             'success' => true,
@@ -604,7 +610,7 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id',$request->request_id)->first();
-            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
 
@@ -615,7 +621,7 @@ class RequestStockController extends Controller
                 $stock->description ?? 'N/A',
                 $supplier_total_qty
             );
-             
+
             LogsRequestStatus::create([
                 'decline_msg' => null,
                 'query_msg' => null,
@@ -641,7 +647,7 @@ class RequestStockController extends Controller
                 'edp_code'          =>$getedp->edp_code,
             ]);
 
-           
+
 
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
@@ -715,7 +721,7 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id',$request->request_id)->first();
-            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
 
@@ -727,8 +733,8 @@ class RequestStockController extends Controller
                 $requesterTable->requested_qty,
                 $request->decline_msg
             );
-            
-             
+
+
             LogsRequestStatus::create([
                 'decline_msg' => null,
                 'query_msg' => null,
@@ -828,7 +834,7 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id',$request->request_id)->first();
-            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
 
@@ -840,10 +846,10 @@ class RequestStockController extends Controller
                 $requesterTable->requested_qty,
                 $request->query_msg ?? 'N/A'
             );
-            
-            
-            
-             
+
+
+
+
             LogsRequestStatus::create([
                 'decline_msg' => null,
                 'query_msg' => $request->query_msg,
