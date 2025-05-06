@@ -89,8 +89,7 @@
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
 
-                                            <button type="reset" class="btn btn-danger ml-2">Reset</button>
-
+                                            <a href="{{ route('admin.stock_list.get') }}" class="btn btn-danger ml-2">Reset</a>
                                             <a href="{{ route('admin.requestList', ['status' =>1]) }}" class="btn btn-secondary ml-2">Pending</a>
                                             <a href="{{ route('admin.requestList', ['status' =>6]) }}" class="btn badge badge-purple ml-2">MIT</a>
                                         </div>
@@ -541,7 +540,7 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 
 
     <!-- Submodal for Viewing Message -->
