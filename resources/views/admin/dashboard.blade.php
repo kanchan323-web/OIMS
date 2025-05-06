@@ -1,101 +1,7 @@
 @extends('layouts.frontend.admin_layout')
 @section('page-content')
     <div class="content-page">
-        {{-- <div class="row">
-            <div class="col-lg-6 col-md-6">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Total Request</p>
-                                <h4>{{$totalRequester}}</h4>
-                            </div>
-                        </div>
-                        <div class="iq-progress-bar mt-2">
-                            <span class="bg-info iq-progress progress-1" data-percent="89">
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Pending Request</p>
-                                <h4>{{ $PendingTranstion }}</h4>
-                            </div>
-                        </div>
-                        @php
-                          
-                            $getDataforRequest = ($totalRequester > 0) ? round(($PendingTranstion / $totalRequester) * 100, 2) : 0;
-                        @endphp
-                            <div class="iq-progress-bar mt-2">
-                                <span class="bg-warning iq-progress progress-1" data-percent="{{ $getDataforRequest }}" 
-                                    >
-                                </span>
-                            </div>
-                    </div>
-                    
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-3">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Completed request</p>
-                                <h4>{{ $CompletedRequest }}</h4>
-                            </div>
-                        </div>
-            
-                        @php
-                            $userPercentage = ($allUsers > 0) 
-                                ? round(($totalUser / $allUsers) * 100, 2) 
-                                : 0;
-                        @endphp
-            
-                        <div class="iq-progress-bar mt-2">
-                            <span class="bg-gray iq-progress progress-1" data-percent="{{ $userPercentage }}" 
-                                >
-                            </span>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-           
-            <div class="col-lg-3 col-md-3">
-                <div class="card card-block card-stretch card-height">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-4 card-total-sale">
-                            <div>
-                                <p class="mb-2">Escalation (Urgent Requests)</p>
-                                <h4>{{ $PendingIncomingRequest }}</h4>
-                            </div>
-                        </div>
-            
-                        @php
-                            $EscalationPercentage = ($totalRequester > 0) 
-                                ? round(($PendingIncomingRequest / $totalRequester) * 100, 2) 
-                                : 0;
-                        @endphp
-
-                        <div class="iq-progress-bar mt-2">
-                            <span class="bg-danger iq-progress progress-1" data-percent="{{ $EscalationPercentage }}" 
-                                >
-                            </span>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-            
-    
-            
-        </div> --}}
+   
         <style>
             .hover-effect {
                 transition: all 0.3s ease;
@@ -126,6 +32,21 @@
             }
             .status-card:hover h4 {
                 transform: scale(1.05);
+            }
+    
+            .hover-effect {
+                transition: all 0.3s ease;
+                border-radius: 10px;
+                border: 1px solid var(--bs-border-color);
+            }
+            .hover-effect:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+                border-color: var(--bs-border-color-translucent);
+            }
+            .card-title {
+                font-size: 1.1rem;
+                font-weight: 600;
             }
         </style>
         <div class="row">
@@ -161,10 +82,6 @@
                                             <h4 class="fw-bold text-info">{{$Pending_Status}}</h4>
                                         </div>
                                     </div>
-
-                                    
-                                    
-
                                     
                                     <div class="col-4">
                                         <div class="border rounded p-3 text-center status-card">
@@ -172,7 +89,6 @@
                                             <h4 class="fw-bold text-danger">{{$Approve_Status}}</h4>
                                         </div>
                                     </div>
-
                                    
                                     <div class="col-4 mb-2 ">
                                         <div class="border rounded p-3 text-center status-card">
@@ -199,34 +115,12 @@
                                             <h4 class="fw-bold text-danger">{{$Decline_Status}}</h4>
                                         </div>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <style>
-                .hover-effect {
-                    transition: all 0.3s ease;
-                    border-radius: 10px;
-                    border: 1px solid var(--bs-border-color);
-                }
-                .hover-effect:hover {
-                    transform: translateY(-5px);
-                    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-                    border-color: var(--bs-border-color-translucent);
-                }
-                .card-title {
-                    font-size: 1.1rem;
-                    font-weight: 600;
-                }
-            </style>
-            
-           
-
                 
                 <div class="col-lg-8 col-md-12 col-sm-12">
                     <div class="card card-block card-stretch card-height">
@@ -293,8 +187,6 @@
                 yearly: @json($yearlyStockData)
             };
 
-      
-            
             // Initialize chart
             const chart = Highcharts.chart('stockMovementChart', {
                 chart: {
@@ -387,76 +279,7 @@
             updateChart('weekly');
         });
         </script>
-{{-- <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Get data from Laravel
-        const totalStock = @json($totalStock);
-        const pendingRaisedRequests = @json($RaisedRequestsRequests);
 
-        // Calculate percentages
-        const availableStock = totalStock - pendingRaisedRequests;
-        const availablePercent = totalStock > 0 ? (availableStock / totalStock * 100).toFixed(1) : 0;
-        const pendingPercent = totalStock > 0 ? (pendingRaisedRequests / totalStock * 100).toFixed(1) : 0;
-
-        // Create the pie chart
-        Highcharts.chart('stockPieChart', {
-            chart: {
-                type: 'pie',
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false
-            },
-            title: {
-                text: 'Stock  Inventory Status',
-                align: 'left'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y} items)'
-            },
-            accessibility: {
-                point: {
-                    valueSuffix: '%'
-                }
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                        distance: -50,
-                        filter: {
-                            property: 'percentage',
-                            operator: '>',
-                            value: 4
-                        }
-                    },
-                    showInLegend: true
-                }
-            },
-            series: [{
-                name: 'Stock',
-                colorByPoint: true,
-                data: [{
-                    name: 'Own Inventory',
-                    y: availableStock,
-                    percentage: parseFloat(availablePercent),
-                    color: '#7ee2ff' // Green
-                }, {
-                    name: 'Suppliers Inventory',
-                    y: pendingRaisedRequests,
-                    percentage: parseFloat(pendingPercent),
-                    color: '#ff9770' // Orange
-                }]
-            }],
-            credits: {
-                enabled: true
-            }
-        });
-    });
-</script>
-     --}}
 
      <script>
         document.addEventListener("DOMContentLoaded", function () {
