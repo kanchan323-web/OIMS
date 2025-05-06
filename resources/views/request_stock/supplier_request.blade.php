@@ -435,7 +435,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive rounded mb-3">
-                        <table class="data-tables table mb-0 tbl-server-info">
+                        <table class="modal-table table mb-0 tbl-server-info">
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Status</th>
@@ -453,6 +453,7 @@
             </div>
         </div>
     </div>
+
 
 
     <!-- Submodal for Viewing Message -->
@@ -554,28 +555,28 @@
                                 }[stockdata.status_name] || 'badge-secondary';
 
                                 tableBody.append(`
-                                                            <tr>
-                                                                <td>${index + 1}</td>
-                                                                <td>${stockdata.RID}</td>
-                                                                <td>${stockdata.location_name}</td>
-                                                                <td>${stockdata.edp_code}</td>
-                                                                    <td>${stockdata.description}</td>
-                                                                <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                                <td>${stockdata.date ? stockdata.date : '-'}</td>
-                                                                <td>
-                                                                    <a class="badge badge-success mr-2" data-toggle="modal"
-                                                                            onclick="RequestStockData(${stockdata.id})"
-                                                                            data-target=".bd-example-modal-xl" data-placement="top"
-                                                                            title="Supplier Request" href="#">
-                                                                            <i class="ri-arrow-right-circle-line"></i>
-                                                                        </a>
-                                                                    <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
-                                                                            data-toggle="modal" data-placement="top" title="View Request Status" href="#">
-                                                                            <i class="ri-eye-line"></i>
-                                                                        </a>
-                                                                </td>
-                                                            </tr>
-                                                        `);
+                                                                <tr>
+                                                                    <td>${index + 1}</td>
+                                                                    <td>${stockdata.RID}</td>
+                                                                    <td>${stockdata.location_name}</td>
+                                                                    <td>${stockdata.edp_code}</td>
+                                                                        <td>${stockdata.description}</td>
+                                                                    <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
+                                                                    <td>${stockdata.date ? stockdata.date : '-'}</td>
+                                                                    <td>
+                                                                        <a class="badge badge-success mr-2" data-toggle="modal"
+                                                                                onclick="RequestStockData(${stockdata.id})"
+                                                                                data-target=".bd-example-modal-xl" data-placement="top"
+                                                                                title="Supplier Request" href="#">
+                                                                                <i class="ri-arrow-right-circle-line"></i>
+                                                                            </a>
+                                                                        <a class="badge badge-info" onclick="ViewRequestStatus(${stockdata.id})"
+                                                                                data-toggle="modal" data-placement="top" title="View Request Status" href="#">
+                                                                                <i class="ri-eye-line"></i>
+                                                                            </a>
+                                                                    </td>
+                                                                </tr>
+                                                            `);
                             });
                         } else {
                             tableBody.append(`<tr><td colspan="5" class="text-center">No records found</td></tr>`);
@@ -787,34 +788,47 @@
                 type: "GET",
                 data: { request_id: request_id },
                 success: function (response) {
-                    // console.log(request_id);
-                    // console.log(response);
                     let html = "";
+
                     if (response.length > 0) {
                         response.forEach(status => {
                             let message = status.decline_msg ? status.decline_msg : (status.query_msg ? status.query_msg : 'N/A');
-
                             let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                                                            <td><span class="badge badge-${status.status_id == 2 ? 'success' :
+                                    <td><span class="badge badge-${status.status_id == 2 ? 'success' :
                                     (status.status_id == 3 ? 'danger' :
                                         (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                                                                ${status.status_name}
-                                                                            </span></td>
-                                                                            <td>
-                                                                                <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                                                    ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                                                                </button>
-                                                                            </td>
-                                                                            <td>${status.requestor_name}</td>
-                                                                            <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                                                        </tr>`;
+                                        ${status.status_name}
+                                    </span></td>
+                                    <td>
+                                        <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                            ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                        </button>
+                                    </td>
+                                    <td>${status.requestor_name}</td>
+                                    <td>${new Date(status.updated_at).toLocaleString()}</td>
+                                </tr>`;
                         });
                     } else {
-                        html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
+                        html = `<tr><td colspan="4" class="text-center">No status updates found.</td></tr>`;
                     }
+
                     $("#requestStatusData").html(html);
+
+                    // Destroy existing DataTable if exists
+                    if ($.fn.DataTable.isDataTable('.modal-table')) {
+                        $('.modal-table').DataTable().destroy();
+                    }
+
+                    // Re-initialize DataTable
+                    $('.modal-table').DataTable({
+                        ordering: true,
+                        paging: false,
+                        searching: false,
+                        info: false
+                    });
+
                     $("#requestStatusModal").modal('show');
                 },
                 error: function () {
@@ -822,6 +836,7 @@
                 }
             });
         }
+
 
         // Event listener for message click
         $(document).on("click", ".view-message", function () {
@@ -880,7 +895,7 @@
             @else
                 console.error("Stock data is not available.");
             @endif
-                                                                                });
+                                                                                    });
 
         //For multiple modal seamless transitions
         $(document).ready(function () {
