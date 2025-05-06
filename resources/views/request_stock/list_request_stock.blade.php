@@ -530,7 +530,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive rounded mb-3">
-                        <table class="data-tables table mb-0 tbl-server-info">
+                        <table class="modal-table table mb-0 tbl-server-info">
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Status</th>
@@ -1094,34 +1094,52 @@
                 type: "GET",
                 data: { request_id: request_id },
                 success: function (response) {
-                    console.log(request_id);
-                    console.log(response);
                     let html = "";
+
                     if (response.length > 0) {
                         response.forEach(status => {
                             let message = status.decline_msg ? status.decline_msg : (status.query_msg ? status.query_msg : 'N/A');
-
-                            let unreadStyle = status.is_read == 0 ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"' : '';
+                            let unreadStyle = status.is_read == 0
+                                ? 'style="font-weight: bold; text-decoration: underline; background-color: #e9ecef;"'
+                                : '';
 
                             html += `<tr ${unreadStyle} data-status-id="${status.id}">
-                                                                            <td><span class="badge badge-${status.status_id == 2 ? 'success' :
-                                    (status.status_id == 3 ? 'danger' :
-                                        (status.status_id == 4 ? 'info' : 'secondary'))}">
-                                                                                ${status.status_name}
-                                                                            </span></td>
-                                                                            <td>
-                                                                                <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
-                                                                                    ${message.length > 20 ? message.substring(0, 20) + '...' : message}
-                                                                                </button>
-                                                                            </td>
-                                                                            <td>${status.requestor_name}</td>
-                                                                            <td>${new Date(status.updated_at).toLocaleString()}</td>
-                                                                        </tr>`;
+                                <td>
+                                    <span class="badge badge-${status.status_id == 2 ? 'success' :
+                                        (status.status_id == 3 ? 'danger' :
+                                            (status.status_id == 4 ? 'info' : 'secondary'))}">
+                                        ${status.status_name}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-link text-primary view-message" data-message="${message}" data-status-id="${status.id}">
+                                        ${message.length > 20 ? message.substring(0, 20) + '...' : message}
+                                    </button>
+                                </td>
+                                <td>${status.requestor_name}</td>
+                                <td>${new Date(status.updated_at).toLocaleString()}</td>
+                            </tr>`;
                         });
                     } else {
-                        html = `<tr><td colspan="8" class="text-center">No status updates found.</td></tr>`;
+                        html = `<tr><td colspan="4" class="text-center">No status updates found.</td></tr>`;
                     }
+
+                    // Destroy previous DataTable (if exists)
+                    if ($.fn.DataTable.isDataTable('.modal-table')) {
+                        $('.modal-table').DataTable().clear().destroy();
+                    }
+
+                    // Append new rows
                     $("#requestStatusData").html(html);
+
+                    // Reinitialize DataTable
+                    $('.modal-table').DataTable({
+                        ordering: true,
+                        paging: false,
+                        searching: false,
+                        info: false
+                    });
+
                     $("#requestStatusModal").modal('show');
                 },
                 error: function () {
