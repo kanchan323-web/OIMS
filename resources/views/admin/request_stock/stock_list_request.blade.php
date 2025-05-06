@@ -530,10 +530,7 @@
                                 <tr class="ligth ligth-data">
                                     <th>Status</th>
                                     <th>Message</th>
-                                    <th>Supplier Qty</th>
-                                    <th>New</th>
-                                    <th>Used</th>
-                                    <th>Receiver</th>
+                                    <th>Action by</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
@@ -1074,9 +1071,6 @@
                                                                                     ${message.length > 20 ? message.substring(0, 20) + '...' : message}
                                                                                 </button>
                                                                             </td>
-                                                                            <td>${status.supplier_qty || 'N/A'}</td>
-                                                                            <td>${status.supplier_new_spareable || 'N/A'}</td>
-                                                                            <td>${status.supplier_used_spareable || 'N/A'}</td>
                                                                             <td>${status.requestor_name}</td>
                                                                             <td>${new Date(status.updated_at).toLocaleString()}</td>
                                                                         </tr>`;
