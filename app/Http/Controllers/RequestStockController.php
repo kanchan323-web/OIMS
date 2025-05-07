@@ -213,7 +213,7 @@ class RequestStockController extends Controller
             'available_qty' => str_replace(',', '', $request->available_qty),
             'requested_qty' => str_replace(',', '', $request->requested_qty),
         ]);
-    
+
         $request->validate([
             'available_qty' => 'required|numeric',
             'requested_qty' => 'required|numeric',
@@ -279,9 +279,9 @@ class RequestStockController extends Controller
                 'updated_at' => now(),
                 'expected_date' => $expected_date,
             ]);
-            
+
             $insertedRequestID = Requester::latest('id')->value('id');
-            
+
             RequestStatus::create([
                 'request_id'                => $insertedRequestID,
                 'status_id'                 => 1,
@@ -296,7 +296,7 @@ class RequestStockController extends Controller
                 'sent_to'                  => $request->supplier_id,
                 'sent_from'                => Auth::id(),
             ]);
-        
+
 
 
             $requesterid = User::where('id', $request->requester_id)->value('user_name');
@@ -305,14 +305,14 @@ class RequestStockController extends Controller
             $supplierRigid = RigUser::where('id', $request->supplier_location_id)->value('location_id');
             $requesterName = User::where('id', $request->requester_id)->value('user_name');
             $supplierName = User::where('id', $request->supplier_id)->value('user_name');
-            
+
             $requesterLocation = RigUser::where('id', $request->requester_rig_id)->value('location_id');
             $supplierLocation = RigUser::where('id', $request->supplier_location_id)->value('location_id');
-            
+
             $stock = Stock::where('id', $request->stock_id)->first(); // Assumes Stock model exists
 
             $getedp = Edp::where('id', $stock->edp_code)->first();
-            
+
             $message = sprintf(
                 'Request sent by User %s (%s) to supplier rig (%s) for Material Edp (%s), with description (%s) for quantity %d',
                 $requesterName,
@@ -322,7 +322,7 @@ class RequestStockController extends Controller
                 $stock->description ?? 'N/A',
                 $request->requested_qty
             );
-            
+
             LogsRequesters::create([
                 'request_id'        => $request->requester_id,
                 'status'            => 1,
@@ -370,7 +370,7 @@ class RequestStockController extends Controller
                 'receiver_type' =>$user_type,
                 'message' => $message
             ]);
-            
+
 
 
             $updated_stock_status = Stock::where('id', $request->stock_id)->update(['req_status' => 'active']);
@@ -473,8 +473,14 @@ class RequestStockController extends Controller
             ->select(['request_status.*'])
             ->first();
 
+        // Fetch the request status for the viewer
+        $supplier_qty = RequestStatus::select('request_status.supplier_qty')
+        ->where('request_id', $request->data)
+        ->orderBy('created_at', 'desc')
+        ->first();
+
         // Extract supplier quantity (null if not found)
-        $supplier_qty = $request_status->suppliers_qty ?? null;
+       // $supplier_qty = $request_status->suppliers_qty ?? null;
 
         return response()->json([
             'success' => true,
@@ -604,18 +610,18 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id',$request->request_id)->first();
-            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
 
             $message = sprintf(
-                'Request has been accepted by Rig %s  for Material Edp (%s), with description (%s) for quantity %d',
+                'The request has been Accepted by Rig (%s). The process is now in the MIT stage for Material EDP (%s), with the description (%s) for a quantity of %d.' ,
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
                 $stock->description ?? 'N/A',
                 $supplier_total_qty
             );
-             
+
             LogsRequestStatus::create([
                 'decline_msg' => null,
                 'query_msg' => null,
@@ -641,7 +647,7 @@ class RequestStockController extends Controller
                 'edp_code'          =>$getedp->edp_code,
             ]);
 
-           
+
 
             $requester_user = User::find($requester->requester_id);
             $supplier_user = User::find($requester->supplier_id);
@@ -715,7 +721,7 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id',$request->request_id)->first();
-            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
 
@@ -727,8 +733,8 @@ class RequestStockController extends Controller
                 $requesterTable->requested_qty,
                 $request->decline_msg
             );
-            
-             
+
+
             LogsRequestStatus::create([
                 'decline_msg' => null,
                 'query_msg' => null,
@@ -828,7 +834,7 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id',$request->request_id)->first();
-            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
 
@@ -840,10 +846,10 @@ class RequestStockController extends Controller
                 $requesterTable->requested_qty,
                 $request->query_msg ?? 'N/A'
             );
-            
-            
-            
-             
+
+
+
+
             LogsRequestStatus::create([
                 'decline_msg' => null,
                 'query_msg' => $request->query_msg,
@@ -948,6 +954,43 @@ class RequestStockController extends Controller
             $requestData->status = $request->status;
             $requestData->save();
 
+            $requesterTable = Requester::where('id',$request->request_id)->first();
+            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $getedp = Edp::where('id', $stock->edp_code)->first();
+            $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
+
+            $message = sprintf(
+                'Request has been Approve  by Rig (%s)  for Material Edp (%s), with description (%s) for quantity %d',
+                $riglocation,
+                $getedp->edp_code ?? 'N/A',
+                $stock->description ?? 'N/A',
+                $requesterTable->requested_qty
+            );
+             
+            LogsRequestStatus::create([
+                'decline_msg' => null,
+                'query_msg' => null,
+                'supplier_qty' =>$requesterTable->requested_qty,
+                'supplier_new_spareable' => $request->supplier_new_spareable,
+                'supplier_used_spareable' => $request->supplier_used_spareable,
+                'request_id' => $request->request_id,
+                'status_id' => 6,
+                'user_id' => Auth::id(),
+                'rig_id' => Auth::user()->rig_id,
+                'sent_to' => null,
+                'sent_from' => Auth::id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'creater_id' => auth()->id(),
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
+                'receiver_type' => null,
+                'message' => $message,
+                'RID'               =>$requesterTable->RID,
+                'available_qty'     =>$requesterTable->available_qty,
+                'requested_qty'     =>$requesterTable->requested_qty,
+                'edp_code'          =>$getedp->edp_code,
+            ]);
             return response()->json(['success' => true]);
         }
 
@@ -1132,26 +1175,67 @@ class RequestStockController extends Controller
             ]);
 
 
+            $requesterTable = Requester::where('id',$request->request_id)->first();
+            $stock = Stock::where('id', $requesterTable->stock_id)->first(); 
+            $getedp = Edp::where('id', $stock->edp_code)->first();
+            $riglocation = RigUser::where('id',Auth::user()->rig_id)->value('location_id');
+
+            $message = sprintf(
+                'The request Has  Received  by Rig %s for material EDP (%s), with the description "%s", for a quantity of %d.',
+                $riglocation,
+                $getedp->edp_code ?? 'N/A',
+                $stock->description ?? 'N/A',
+                $requesterTable->requested_qty,
+                
+            );
+            
+ 
             LogsRequestStatus::create([
+                'decline_msg' => null,
+                'query_msg' => $request->query_msg,
+                'supplier_qty' =>$requesterTable->requested_qty,
+                'supplier_new_spareable' => null,
+                'supplier_used_spareable' => null,
                 'request_id' => $request->request_id,
                 'status_id' => 3,
-                'decline_msg' => null,
-                'query_msg' => null,
-                'supplier_qty' => $requestStatus->supplier_qty,
-                'supplier_new_spareable' => $requestStatus->supplier_new_spareable,
-                'supplier_used_spareable' => $requestStatus->supplier_used_spareable,
                 'user_id' => Auth::id(),
                 'rig_id' => Auth::user()->rig_id,
                 'sent_to' => $sent_to,
                 'sent_from' => Auth::id(),
                 'created_at' => now(),
                 'updated_at' => now(),
-                'creater_id' => $requesterStock->rig_id,
-                'creater_type' => null,
-                'receiver_id' => $stock->rig_id,
+                'creater_id' => auth()->id(),
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
                 'receiver_type' => null,
-                'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
+                'message' => $message,
+                'RID'               =>$requesterTable->RID,
+                'available_qty'     =>$requesterTable->available_qty,
+                'requested_qty'     =>$requesterTable->requested_qty,
+                'edp_code'          =>$getedp->edp_code,
             ]);
+
+
+            // LogsRequestStatus::create([
+            //     'request_id' => $request->request_id,
+            //     'status_id' => 3,
+            //     'decline_msg' => null,
+            //     'query_msg' => null,
+            //     'supplier_qty' => $requestStatus->supplier_qty,
+            //     'supplier_new_spareable' => $requestStatus->supplier_new_spareable,
+            //     'supplier_used_spareable' => $requestStatus->supplier_used_spareable,
+            //     'user_id' => Auth::id(),
+            //     'rig_id' => Auth::user()->rig_id,
+            //     'sent_to' => $sent_to,
+            //     'sent_from' => Auth::id(),
+            //     'created_at' => now(),
+            //     'updated_at' => now(),
+            //     'creater_id' => $requesterStock->rig_id,
+            //     'creater_type' => null,
+            //     'receiver_id' => $stock->rig_id,
+            //     'receiver_type' => null,
+            //     'message' => "Request id " . $request->request_id . " has been Decline  by user " . Auth::user()->user_name
+            // ]);
 
             $edpCode = Edp::where('id', $stock->edp_code)->value('edp_code');
             $user = Auth::user();

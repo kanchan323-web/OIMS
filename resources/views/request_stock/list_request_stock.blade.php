@@ -363,11 +363,12 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
+                                            <!-- Supplier vs Requester Table -->
                                             <table class="table table-bordered">
-                                                <thead>
+                                                <thead class="table-light">
                                                     <tr>
-                                                        <th>Supplier Total Quantity</th>
-                                                        <th>Requester Requested Quantity</th>
+                                                        <th scope="col">Supplier Total Quantity</th>
+                                                        <th scope="col">Requester Requested Quantity</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -377,12 +378,13 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            {{-- table change --}}
+
+                                            <!-- New vs Used Stock Table -->
                                             <table class="table table-bordered">
-                                                <thead>
+                                                <thead class="table-light">
                                                     <tr>
-                                                        <th> New </th>
-                                                        <th> Used </th>
+                                                        <th scope="col">New</th>
+                                                        <th scope="col">Used</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -392,6 +394,7 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+
 
                                             <form id="receivedRequestForm">
                                                 @csrf

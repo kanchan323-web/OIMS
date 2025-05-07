@@ -192,10 +192,11 @@ Breadcrumbs::for('Raised_Request_stock', function (BreadcrumbTrail $trail) {
 });
 //Report
 
-// Breadcrumbs::for('Stock_Report', function (BreadcrumbTrail $trail) {
-//     $trail->parent('Admin.dashboard');  // Proper parent relationship
-//     $trail->push('Stock Report', route('stock_reports.index'));
-// });
+Breadcrumbs::for('Logs_Table', function (BreadcrumbTrail $trail) {
+    $trail->parent('Admin.dashboard');  // Proper parent relationship
+    $trail->push('Logs Table', route('get.logs'));
+});
+
 // Breadcrumbs::for('request_admin_stock_list_incoming', function (BreadcrumbTrail $trail) {
 //     $trail->parent('Admin.dashboard');  // Proper parent relationship
 //     $trail->push('Request Report', route('request_report.index'));

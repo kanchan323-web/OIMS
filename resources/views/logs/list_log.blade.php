@@ -13,6 +13,12 @@
                     }
                 </style>
                 <div class="col-lg-12">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                          
+                            {{ Breadcrumbs::render('Logs_Table') }}
+                        </div>
+                    </div>
 
                     <div class="row justify-content-between">
                         <div class="col-sm-6 col-md-9">
@@ -36,7 +42,7 @@
                                         </div>
 
                                         <div class="col-md-2 mb-2">
-                                            <label for="to_date">To Date</label>
+                                            <label for="to_date">To Date</label> 
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div>
 
@@ -61,6 +67,13 @@
                         <h5 id="tableTitle" class="text-uppercase font-weight-bold text-dark"></h5>
                     </div>
                     <style>
+                        .wrap-message {
+                            white-space: normal !important;
+                            word-wrap: break-word;
+                            max-width: 200px;
+                            /* Adjust as needed */
+                        }
+
                         .loading-spinner {
                             animation: spin 1s linear infinite;
                         }
@@ -168,22 +181,29 @@
 
                         tableHeaders[logType].forEach((header, index) => {
                             const wrapClass = (header === 'Message' || header === 'Description') ? 'wrap-message' : '';
-                            thead.append(`<th class="${wrapClass}">${header}</th>`);
+                            const displayHeader = (index === 0) ? 'Sr No' : header;
+                            thead.append(`<th class="${wrapClass}">${displayHeader}</th>`);
                         });
 
-                        data.forEach(log => {
+                        data.forEach((log, index) => {
                             const row = $("<tr></tr>");
-                            fields.forEach(field => {
-                                let value = log[field] || 'N/A';
-                                if (field === 'created_at' && value !== 'N/A') {
-                                    const d = new Date(value);
-                                    value = `${("0" + d.getDate()).slice(-2)}-${("0" + (d.getMonth() + 1)).slice(-2)}-${d.getFullYear()}`;
+                            fields.forEach((field, fieldIndex) => {
+                                let value;
+                                if (fieldIndex === 0) {
+                                    value = index + 1; // Serial number starting from 1
+                                } else {
+                                    value = log[field] || 'N/A';
+                                    if (field === 'created_at' && value !== 'N/A') {
+                                        const d = new Date(value);
+                                        value = `${("0" + d.getDate()).slice(-2)}-${("0" + (d.getMonth() + 1)).slice(-2)}-${d.getFullYear()}`;
+                                    }
                                 }
                                 const wrapClass = (field === 'message') ? 'wrap-message' : '';
                                 row.append(`<td class="${wrapClass}">${value}</td>`);
                             });
                             tbody.append(row);
                         });
+
 
                         const edpCategoryMap = {};
                         data.forEach(item => {
@@ -217,9 +237,9 @@
                             const colIndexRig = fields.indexOf('name');
 
                             let selectHTML = `<div class="col-md-3">
-                                                <label class="small">Rig Name</label>
-                                                <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
-                                                    <option value="">All</option>`;
+                                                            <label class="small">Rig Name</label>
+                                                            <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
+                                                                <option value="">All</option>`;
 
 
                             Object.entries(combinedMap).forEach(([locId, rigNames]) => {
@@ -240,9 +260,9 @@
                                 const label = filterLabels[field] || field;
 
                                 let selectHTML = `<div class="col-md-3">
-                                                    <label class="small">${label}</label>
-                                                    <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
-                                                        <option value="">All</option>`;
+                                                                <label class="small">${label}</label>
+                                                                <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
+                                                                    <option value="">All</option>`;
 
                                 uniqueVals.forEach(val => {
                                     selectHTML += `<option value="${val}">${val}</option>`;
@@ -271,12 +291,12 @@
                         }
 
                         $("#customFilters").append(`
-                                            <div class="col-1 d-flex align-items-end">
-                                                <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
-                                                    <i class="fas fa-sync-alt"></i>
-                                                </button>
-                                            </div>
-                                        `);
+                                                        <div class="col-1 d-flex align-items-end">
+                                                            <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
+                                                                <i class="fas fa-sync-alt"></i>
+                                                            </button>
+                                                        </div>
+                                                    `);
 
                         const datatable = $('#logsTable').DataTable({
                             paging: true,
@@ -353,12 +373,12 @@
                     },
                     error: function (xhr) {
                         $("#logsTableBody").html(`
-                                            <tr>
-                                                <td colspan="100%" class="text-center text-danger">
-                                                    Error loading data.
-                                                </td>
-                                            </tr>
-                                        `);
+                                                        <tr>
+                                                            <td colspan="100%" class="text-center text-danger">
+                                                                Error loading data.
+                                                            </td>
+                                                        </tr>
+                                                    `);
                         $("#loadingMessage").hide();
                         console.error("AJAX Error:", xhr.responseText);
                     }
