@@ -129,7 +129,7 @@
                                                 <td>${stockdata.EDP_Code}</td>
                                                 <td>${stockdata.section}</td>
                                                 <td>${stockdata.description}</td>
-                                                <td>${stockdata.qty}</td>
+                                                <td>${formatIndianNumber(stockdata.qty ?? '0')}</td>
                                                 <td>${stockdata.date}</td>
                                             </tr>`;
                                 });
@@ -143,7 +143,7 @@
                                                 <td>${stockdata.RID}</td>
                                                 <td>${stockdata.EDP_Code}</td>
                                                 <td>${stockdata.description}</td>
-                                                <td>${stockdata.requested_qty}</td>
+                                                <td>${formatIndianNumber(stockdata.requested_qty ?? '0')}</td>
                                                 <td>${stockdata.name}</td>
                                                 <td>${stockdata.receipt_date}</td>
                                             </tr>`;
@@ -158,7 +158,7 @@
                                                 <td>${stockdata.RID}</td>
                                                 <td>${stockdata.EDP_Code}</td>
                                                 <td>${stockdata.description}</td>
-                                                <td>${stockdata.requested_qty}</td>
+                                                <td>${formatIndianNumber(stockdata.requested_qty ?? '0')}</td>
                                                 <td>${stockdata.name}</td>
                                                 <td>${stockdata.issued_date}</td>
                                             </tr>`;
