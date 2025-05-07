@@ -13,6 +13,12 @@
                     }
                 </style>
                 <div class="col-lg-12">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                          
+                            {{ Breadcrumbs::render('Logs_Table') }}
+                        </div>
+                    </div>
 
                     <div class="row justify-content-between">
                         <div class="col-sm-6 col-md-9">
@@ -36,7 +42,7 @@
                                         </div>
 
                                         <div class="col-md-2 mb-2">
-                                            <label for="to_date">To Date</label>
+                                            <label for="to_date">To Date</label> 
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div>
 
