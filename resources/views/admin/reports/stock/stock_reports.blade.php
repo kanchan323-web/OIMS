@@ -21,6 +21,18 @@
                                             </select>
                                         </div>
 
+                                        <!-- RID -->
+                                        <div class="col-md-2 mb-2">
+                                            <label for="rid">RID</label>
+                                            <select name="rid" id="rid" class="form-control select2">
+                                                <option value="">Select RID</option>
+                                                @foreach ($RIDList as $item)
+                                                    <option value="{{ $item->RID }}">{{ $item->RID }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+
                                         <!-- Receiver -->
                                         <div class="col-md-2 mb-2">
                                             <label for="receiver_id">Receiver</label>
@@ -108,6 +120,11 @@
                 width: '100%'
             });
 
+            $('#rid').select2({
+                placeholder: "Select RID...",
+                allowClear: true,
+                width: '100%'
+            });
 
             function fetchReport() {
                 let formData = $("#filterForm").serialize();
