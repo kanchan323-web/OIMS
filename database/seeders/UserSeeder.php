@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+       /*
         $users=collect(
         [
             [
@@ -69,18 +70,20 @@ class UserSeeder extends Seeder
             ]
         ]);
 
-
-
         $users->each(function($user){
             user::create($user);
         });
 
-   /*     user::create([
-            'email' => 'shubham123@gmail.com',
-            'password' => Hash::make('shubham123'),
-            'user_type' => 'rig_user',
-            'rig_id' => '2'
+    */
+
+       user::create([
+            'user_name' => 'admin',
+            'cpf_no'    => '12345',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('admin'),
+            'user_type' => 'admin',
+            'rig_id' => '1',
         ]);
-   */
+
     }
 }
