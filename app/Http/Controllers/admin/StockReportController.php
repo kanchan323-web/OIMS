@@ -39,9 +39,9 @@ class StockReportController extends Controller
             ->select('id as edp_id', 'edp_code')
             ->get();
     
-        $receivers = RigUser::all();
+        $receivers = RigUser::where('name', '!=', 'admin')->get();
     
-        $suppliers =  RigUser::all();
+        $suppliers =  RigUser::where('name', '!=', 'admin')->get();
     
         return view('admin.reports.stock.stock_reports', compact('moduleName', 'edpCodes', 'receivers', 'suppliers'));
     }
