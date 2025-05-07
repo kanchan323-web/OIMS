@@ -43,7 +43,10 @@ class StockReportController extends Controller
     
         $suppliers =  RigUser::where('name', '!=', 'admin')->get();
     
-        return view('admin.reports.stock.stock_reports', compact('moduleName', 'edpCodes', 'receivers', 'suppliers'));
+        $RIDList = Requester::select('RID')->distinct()->get();
+
+        return view('admin.reports.stock.stock_reports', compact('moduleName', 'edpCodes', 'receivers', 'suppliers', 'RIDList'));
+        
     }
     
 
@@ -157,6 +160,9 @@ class StockReportController extends Controller
             ->when($request->supplier_id, function ($query) use ($request) {
                 return $query->where('requesters.supplier_id', $request->supplier_id);
             })
+            ->when($request->rid, function ($query) use ($request) {
+                return $query->where('requesters.RID', $request->rid);
+            })            
 
             ->where('request_status.status_id', 3)
             ->orderBy('requesters.updated_at', 'desc')
