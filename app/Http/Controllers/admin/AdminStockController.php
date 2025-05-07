@@ -122,6 +122,8 @@ class AdminStockController extends Controller
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
         $request->merge([
             'qty' => str_replace(',', '', $request->qty),
+            'new_spareable' => str_replace(',', '', $request->new_spareable),
+            'used_spareable' => str_replace(',', '', $request->new_spareable),
         ]);
 
         $rules = [
@@ -417,6 +419,7 @@ class AdminStockController extends Controller
             $query->where('location_id', '!=', 'admin')
                 ->orWhere('name', '!=', 'admin');
         })->get();
+
         return view('admin.stock.edit_stock', compact('editData', 'edpCodes', 'moduleName', 'rigs'));
     }
 

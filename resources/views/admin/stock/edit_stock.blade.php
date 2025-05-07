@@ -151,20 +151,22 @@
     </div>
 
     <script>
-        function formatToIndianNumber(input) {
-            let parts = input.toString().split(".");
-            let integerPart = parts[0].replace(/\D/g, '');
-            let decimalPart = parts[1] || "";
+        function formatToIndianNumber(num) {
+            num = parseFloat(num);
+            if (isNaN(num)) return '';
+
+            let parts = num.toString().split(".");
+            let integerPart = parts[0];
+            let decimalPart = parts[1] ? '.' + parts[1] : '';
 
             let lastThree = integerPart.slice(-3);
-            let otherNumbers = integerPart.slice(0, -3);
-
-            if (otherNumbers !== "") {
-                lastThree = "," + lastThree;
+            let rest = integerPart.slice(0, -3);
+            if (rest !== '') {
+                lastThree = ',' + lastThree;
             }
 
-            let formattedInt = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-            return decimalPart ? formattedInt + "." + decimalPart : formattedInt;
+            let formatted = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return formatted + decimalPart;
         }
 
 
@@ -299,6 +301,7 @@
             function applyIndianFormat(field) {
                 let value = $(field).val().replace(/,/g, '');
                 if (!isNaN(value) && value !== '') {
+                    value = parseFloat(value); // ensure numeric
                     let formattedValue = formatToIndianNumber(value);
                     $(field).val(formattedValue);
                 }
