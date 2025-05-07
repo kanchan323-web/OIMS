@@ -320,7 +320,8 @@ class RequestStockController extends Controller
                 $supplierLocation,
                 $getedp->edp_code ?? 'N/A',
                 $stock->description ?? 'N/A',
-                $request->requested_qty
+                // IND_money_format( $request->requested_qty)
+                IND_money_format( 555555555)
             );
 
             LogsRequesters::create([
