@@ -888,32 +888,28 @@
 
             // ✅ Function to validate new & used spareable inputs
             function validateSpareableInputs() {
-                let requestedQty = parseInt($("#modal_req_qty").text().trim()) || 0;
-                let newSpareable = parseInt($("#modal_new_spareable").val()) || 0;
-                let usedSpareable = parseInt($("#modal_used_spareable").val()) || 0;
-                let totalSpareable = newSpareable + usedSpareable;
+            let requestedQty = parseInt($("#modal_req_qty").text().replace(/[^\d]/g, '')) || 0;
+            let newSpareable = parseInt($("#modal_new_spareable").val()) || 0;
+            let usedSpareable = parseInt($("#modal_used_spareable").val()) || 0;
+            let totalSpareable = newSpareable + usedSpareable;
 
-                let originalNew = parseInt($("#original_new_spareable").val()) || 0;
-                let originalUsed = parseInt($("#original_used_spareable").val()) || 0;
+            let originalNew = parseInt($("#original_new_spareable").val()) || 0;
+            let originalUsed = parseInt($("#original_used_spareable").val()) || 0;
 
-                let errorMsg = "";
+            let errorMsg = "";
 
-                if (totalSpareable > requestedQty) {
-                    errorMsg = "Total spareable quantity cannot exceed Requested Quantity.";
-                }
-
-                if (newSpareable > originalNew) {
-                    errorMsg = "Entered new spareable exceeds available new spareable quantity.";
-                }
-
-                if (usedSpareable > originalUsed) {
-                    errorMsg = "Entered used spareable exceeds available used spareable quantity.";
-                }
-
-                $("#error_message").text(errorMsg);
-
-                return errorMsg === "";
+            if (totalSpareable > requestedQty) {
+                errorMsg = "Total spareable quantity cannot exceed Requested Quantity.";
+            } else if (newSpareable > originalNew) {
+                errorMsg = "Entered new spareable exceeds available new spareable quantity.";
+            } else if (usedSpareable > originalUsed) {
+                errorMsg = "Entered used spareable exceeds available used spareable quantity.";
             }
+
+            $("#error_message").text(errorMsg);
+
+            return errorMsg === "";
+        }
 
             $("#modal_new_spareable, #modal_used_spareable").on("input", function () {
                 validateSpareableInputs();
@@ -1262,7 +1258,8 @@
             let requestId = $('#edit_request_id').val();
             let newSpareable = parseInt($('#edit_modal_new_spareable').val()) || 0;
             let usedSpareable = parseInt($('#edit_modal_used_spareable').val()) || 0;
-            let requestedQty = parseInt($('#edit_modal_req_qty').text()) || 0;
+            let requestedQtyText = $('#edit_modal_req_qty').text().replace(/[^\d]/g, ''); // remove ALL non-digits
+            let requestedQty = parseInt(requestedQtyText) || 0;
 
             if ((newSpareable + usedSpareable) > requestedQty) {
                 $('#edit_error_message').text("Total of 'New' and 'Used' cannot exceed the Requested Quantity.");
