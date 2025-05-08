@@ -108,98 +108,29 @@ class DashboardController extends Controller
         //ok
         // Approve Status
 
+        // received/decline data 
+                $results = Requester::select(
+                    'stocks.section',
+                    DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as received_count'),
+                    DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline_count')
+                )
+                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+                ->whereIn('requesters.status', [3, 5])
+                ->groupBy('stocks.section')
+                ->orderBy('stocks.section')
+                ->get();
 
+                // Prepare data for chart
+                $sections = $results->pluck('section');
+                $receivedData = $results->pluck('received_count');
+                $declineData = $results->pluck('decline_count');
+    // received/decline data 
+   
+    
+    
+          
+        //   dd($results  );
 
-
-        // In your controller:
-        $weeklyStockData = [];
-        $monthlyStockData = [];
-        $yearlyStockData = [];
-
-        $categories = ['Spares', 'Stores', 'Capital Item'];
-
-        foreach ($categories as $category) {
-            // Weekly data
-            $weeklyStockData[$category] = Stock::where('category', $category)
-                ->selectRaw('YEAR(created_at) as year, 
-                    WEEK(created_at) as week, 
-                    MONTH(created_at) as month, 
-                    SUM(qty) as quantity')
-                ->groupBy('year', 'week', 'month')
-                ->orderBy('year')
-                ->orderBy('week')
-                ->get()
-                ->map(function ($item) {
-                    $monthName = \Carbon\Carbon::create()->month($item->month)->format('M');
-                    return [
-                        'name' => "Week {$item->week}, {$monthName} {$item->year}",  // Format: "Week 23, Jun 2023"
-                        'y' => (int) $item->quantity,
-                        'week' => $item->week,
-                        'month' => $item->month,
-                        'monthName' => $monthName,
-                        'year' => $item->year
-                    ];
-                })->toArray();
-
-            // Monthly data
-            $monthlyStockData[$category] = Stock::where('category', $category)
-                ->selectRaw("
-                    YEAR(created_at) as year,
-                    MONTH(created_at) as month,
-                    DATE_FORMAT(created_at, '%Y-%m') as period,
-                    SUM(qty) as quantity
-                ")
-                ->groupBy('year', 'month', 'period')
-                ->orderBy('year', 'asc')
-                ->orderBy('month', 'asc')
-                ->get()
-                ->map(function ($item) {
-                    $date = \Carbon\Carbon::createFromFormat('!m', $item->month)->month($item->month)->year($item->year);
-
-                    return [
-                        'period' => $item->period,  // '2023-01'
-                        'name' => $date->format('F Y'),  // 'January 2023'
-                        'shortName' => $date->format('M Y'),  // 'Jan 2023'
-                        'y' => (int) $item->quantity,
-                        'month' => $item->month,
-                        'year' => $item->year,
-                        'sortKey' => $item->year * 100 + $item->month  // Creates a sortable numeric key (202301)
-                    ];
-                })
-                ->sortBy('sortKey')  // Extra sorting guarantee
-                ->values()  // Reset array keys after sorting
-                ->toArray();
-
-            // Yearly data
-            $yearlyStockData[$category] = Stock::where('category', $category)
-                ->selectRaw("YEAR(created_at) as period, SUM(qty) as quantity")
-                ->groupBy('period')
-                ->orderBy('period')
-                ->get()
-                ->map(function ($item) {
-                    return [(string) $item->period, (int) $item->quantity];
-                })->toArray();
-            $countUsedAndNewStock = Stock::select('new_spareable', 'used_spareable')->get();
-
-            $newStock = $countUsedAndNewStock->sum(function ($item) {
-                return is_numeric($item->new_spareable) ? floatval($item->new_spareable) : 0;
-            });
-
-            $usedStock = $countUsedAndNewStock->sum(function ($item) {
-                return is_numeric($item->used_spareable) ? floatval($item->used_spareable) : 0;
-            });
-
-            $total = $newStock + $usedStock;
-
-            if ($total != 0) {
-                $newPercent = round(($newStock / $total) * 100, 1);
-                $usedPercent = round(($usedStock / $total) * 100, 1);
-            } else {
-                $newPercent = 0;
-                $usedPercent = 0;
-            }
-
-        }
 
         return view('admin.dashboard', compact(
 
@@ -210,16 +141,9 @@ class DashboardController extends Controller
             'Query_Status',
             'Decline_Status',
             'Total_Incoming',
+            'sections', 'receivedData', 'declineData'
 
-            'usedStock',
-            'usedPercent',
-            'newStock',
-            'newPercent',
-
-            'weeklyStockData',
-            'monthlyStockData',
-            'yearlyStockData',
-
+       
         ));
     }
 
