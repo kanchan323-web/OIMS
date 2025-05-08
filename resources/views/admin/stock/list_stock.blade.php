@@ -35,7 +35,7 @@
                                             <select class="form-control" name="edp_code" id="edp_code">
                                                 <option disabled selected>Select EDP Code...</option>
                                                 @foreach ($stockData as $stock)
-                                                    <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
+                                                <option value="{{ $stock->edp_code }}">{{ $stock->EDP_Code }}</option>
                                                 @endforeach
                                             </select>
                                         </div> --}}
@@ -49,7 +49,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        
+
 
                                         <div class="col-md-2 mb-2">
                                             <label for="Description">Description</label>
@@ -302,8 +302,8 @@
                             </div>
                         </div>
                         <!-- <button class="btn btn-primary" type="submit">Submit form</button>
-                                                                              <button type="reset" class="btn btn-danger">Reset</button>
-                                                                              <a href="" class="btn btn-light">Go Back</a> -->
+                                                                                  <button type="reset" class="btn btn-danger">Reset</button>
+                                                                                  <a href="" class="btn btn-light">Go Back</a> -->
                         <!-- </form> -->
                     </div>
                 </div>
@@ -316,6 +316,26 @@
     </div>
 
     <script>
+
+        function formatToIndianNumber(num) {
+            num = parseFloat(num);
+            if (isNaN(num)) return '';
+
+            let parts = num.toString().split(".");
+            let integerPart = parts[0];
+            let decimalPart = parts[1] ? '.' + parts[1] : '';
+
+            let lastThree = integerPart.slice(-3);
+            let rest = integerPart.slice(0, -3);
+            if (rest !== '') {
+                lastThree = ',' + lastThree;
+            }
+
+            let formatted = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return formatted + decimalPart;
+        }
+
+
         function viewstockdata(id) {
             var id = id;
             // console.log(id);
@@ -333,7 +353,7 @@
                     data: id
                 },
                 success: function (response) {
-                
+
                     console.log(response.viewdata['edp_code']);
                     $("#location_id").val(response.viewdata['location_id']);
                     $("#location_name1").val(response.viewdata['location_name']);
@@ -349,10 +369,10 @@
                     $("#hidden_category").val(categoryValue);
 
 
-                    $("#qty").val(response.viewdata['qty']);
+                    $("#qty").val(formatToIndianNumber(response.viewdata['qty']));
                     $("#measurement").val(response.viewdata['measurement']);
-                    $("#new_spareable").val(response.viewdata['new_spareable']);
-                    $("#used_spareable").val(response.viewdata['used_spareable']);
+                    $("#new_spareable").val(formatToIndianNumber(response.viewdata['new_spareable']));
+                    $("#used_spareable").val(formatToIndianNumber(response.viewdata['used_spareable']));
                     $("#remarks").val(response.viewdata['remarks']);
                     $("#description").val(response.viewdata['description']);
                 }
@@ -377,29 +397,29 @@
                             $.each(response.data, function (index, stockdata) {
                                 // Edit button is now available for all records
                                 let editButton = `
-                                <a class="badge bg-success mr-2" href="/OIMS/admin/edit_stock/${stockdata.id}">
-                                    <i class="ri-pencil-line mr-0"></i>
-                                </a>`;
+                                    <a class="badge bg-success mr-2" href="/OIMS/admin/edit_stock/${stockdata.id}">
+                                        <i class="ri-pencil-line mr-0"></i>
+                                    </a>`;
 
                                 tableBody.append(`
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${stockdata.location_name}</td>
-                                    <td>${stockdata.EDP_Code}</td>
-                                    <td>${stockdata.category}</td>
-                                    <td>${stockdata.section}</td>
-                                    <td>${stockdata.description}</td>
-                                    <td>${stockdata.qty}
-                                    <span class="text-muted small">${stockdata.measurement}</span>
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${stockdata.location_name}</td>
+                                        <td>${stockdata.EDP_Code}</td>
+                                        <td>${stockdata.category}</td>
+                                        <td>${stockdata.section}</td>
+                                        <td>${stockdata.description}</td>
+                                        <td>${stockdata.qty}
+                                        <span class="text-muted small">${stockdata.measurement}</span>
+                                            </td>
+                                        <td>
+                                            <a class="badge badge-info mr-2" data-toggle="modal"
+                                                onclick="viewstockdata(${stockdata.id})" data-target=".bd-example-modal-xl"
+                                                data-placement="top" title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
+                                            ${editButton} 
                                         </td>
-                                    <td>
-                                        <a class="badge badge-info mr-2" data-toggle="modal"
-                                            onclick="viewstockdata(${stockdata.id})" data-target=".bd-example-modal-xl"
-                                            data-placement="top" title="View" href="#"><i class="ri-eye-line mr-0"></i></a>
-                                        ${editButton} 
-                                    </td>
-                                </tr>
-                            `);
+                                    </tr>
+                                `);
                             });
                         } else {
                             tableBody.append(
@@ -458,16 +478,16 @@
             }, 3000);
         });
     </script>
-<script>
-    $(document).ready(function () {
-        $('#edp_code').select2({
-            theme: 'bootstrap4', // match Bootstrap styling
-            placeholder: "Select EDP Code...",
-            allowClear: true,
-            width: '100%' // ensures it matches .form-control width
+    <script>
+        $(document).ready(function () {
+            $('#edp_code').select2({
+                theme: 'bootstrap4', // match Bootstrap styling
+                placeholder: "Select EDP Code...",
+                allowClear: true,
+                width: '100%' // ensures it matches .form-control width
+            });
         });
-    });
-</script>
+    </script>
 
 
 
