@@ -119,7 +119,7 @@
 
         <div class="container-fluid mt-3">
             <div class="row">
-                <div class="col-lg-6 col-md-12">
+                <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <style>
@@ -166,10 +166,11 @@
                                     font-weight: bold;
                                 }
                             </style>
-        
-                            <h5 class="card-title mb-3">Section Acceptance/Decline Report</h5>
+                
+                            <h5 class="card-title mb-2">Section Acceptance/Decline Report</h5>
                             
-                            <div class="compact-filter-container">
+                            <!-- Filter Section -->
+                            {{-- <div class="compact-filter-container">
                                 <div class="compact-filter-group">
                                     <label for="compact-preset-filter">Time Range</label>
                                     <select id="compact-preset-filter" class="form-control form-control-sm">
@@ -194,21 +195,15 @@
                                 
                                 <button id="compact-apply-filter" class="compact-btn">Apply</button>
                                 <button id="compact-reset-filter" class="compact-btn reset">Reset</button>
-                            </div>
+                            </div> --}}
                             
                             <div id="compact-chart-container"></div>
-        
+                
+                       
                             <script>
-                                // Sample data
-                                const compactSampleData = [
-                                    { section: 'Section 1', accept: 12, decline: 15, date: '2023-05-01' },
-                                    { section: 'Section 2', accept: 10, decline: 10, date: '2023-05-02' },
-                                    { section: 'Section 3', accept: 6, decline: 9, date: '2023-05-03' },
-                                    { section: 'Section 4', accept: 5, decline: 6, date: '2023-05-04' },
-                                    { section: 'Section 1', accept: 8, decline: 12, date: '2023-05-05' },
-                                    { section: 'Section 2', accept: 14, decline: 7, date: '2023-05-08' }
-                                ];
-        
+                                // Dynamic data from controller
+                                const compactSampleData = @json($chartData);
+                                
                                 // Initialize date pickers
                                 const compactStartDatePicker = flatpickr("#compact-start-date", {
                                     dateFormat: "Y-m-d",
@@ -219,91 +214,55 @@
                                     dateFormat: "Y-m-d",
                                     maxDate: new Date()
                                 });
-        
+                
                                 // Initialize compact chart
                                 const compactChart = Highcharts.chart('compact-chart-container', {
                                     chart: { 
                                         type: 'bar',
                                         height: 280,
-                                        spacing: [10, 10, 10, 10] // Reduce padding
+                                        spacing: [10, 10, 10, 10]
                                     },
                                     title: { text: '' },
                                     credits: { enabled: false },
-                                    exporting: { enabled: false }, // Disable context menu
+                                    exporting: { enabled: false },
                                     xAxis: {
                                         categories: [],
                                         title: { 
                                             text: 'Sections',
-                                            style: {
-                                                fontSize: '12px',
-                                                fontWeight: 'bold'
-                                            }
+                                            style: { fontSize: '12px', fontWeight: 'bold' }
                                         },
-                                        labels: {
-                                            style: {
-                                                fontSize: '11px'
-                                            }
-                                        }
+                                        labels: { style: { fontSize: '11px' } }
                                     },
                                     yAxis: {
                                         min: 0,
                                         title: { 
                                             text: 'Count',
-                                            style: {
-                                                fontSize: '12px',
-                                                fontWeight: 'bold'
-                                            }
+                                            style: { fontSize: '12px', fontWeight: 'bold' }
                                         },
-                                        labels: {
-                                            style: {
-                                                fontSize: '11px'
-                                            }
-                                        }
+                                        labels: { style: { fontSize: '11px' } }
                                     },
                                     legend: { 
                                         reversed: true,
                                         align: 'right',
                                         verticalAlign: 'top',
-                                        itemStyle: {
-                                            fontSize: '11px'
-                                        }
+                                        itemStyle: { fontSize: '11px' }
                                     },
                                     plotOptions: {
                                         series: { 
                                             stacking: 'normal',
                                             dataLabels: {
                                                 enabled: true,
-                                                formatter: function() {
-                                                    return this.y;
-                                                },
-                                                style: {
-                                                    fontSize: '10px',
-                                                    textOutline: 'none'
-                                                }
+                                                formatter: function() { return this.y; },
+                                                style: { fontSize: '10px', textOutline: 'none' }
                                             },
                                             pointWidth: 18,
-                                            events: {
-                                                // Disable context menu on right click
-                                                contextmenu: function(e) {
-                                                    e.preventDefault();
-                                                }
-                                            }
+                                            events: { contextmenu: function(e) { e.preventDefault(); } }
                                         },
-                                        bar: {
-                                            borderWidth: 0
-                                        }
+                                        bar: { borderWidth: 0 }
                                     },
                                     series: [
-                                        {
-                                            name: 'Declined',
-                                            data: [],
-                                            color: '#ff6b6b'
-                                        },
-                                        {
-                                            name: 'Accepted',
-                                            data: [],
-                                            color: '#51cf66'
-                                        }
+                                        { name: 'Declined', data: [], color: '#ff6b6b' },
+                                        { name: 'Received', data: [], color: '#51cf66' }
                                     ],
                                     tooltip: {
                                         formatter: function() {
@@ -313,8 +272,8 @@
                                         }
                                     }
                                 });
-        
-                                // Function to update compact chart
+                
+                                // Function to update compact chart with date filtering
                                 function updateCompactChart(startDate = null, endDate = null) {
                                     let filteredData = compactSampleData;
                                     
@@ -325,33 +284,39 @@
                                         });
                                     }
                                     
-                                    // Group by section
-                                    const sections = [...new Set(filteredData.map(item => item.section))];
-                                    const acceptData = [];
-                                    const declineData = [];
+                                    // Group by section and sum counts
+                                    const sectionTotals = {};
                                     
-                                    sections.forEach(section => {
-                                        const sectionData = filteredData.filter(item => item.section === section);
-                                        acceptData.push(sectionData.reduce((sum, item) => sum + item.accept, 0));
-                                        declineData.push(sectionData.reduce((sum, item) => sum + item.decline, 0));
+                                    filteredData.forEach(item => {
+                                        if (!sectionTotals[item.section]) {
+                                            sectionTotals[item.section] = {
+                                                accept: 0,
+                                                decline: 0
+                                            };
+                                        }
+                                        sectionTotals[item.section].accept += parseInt(item.accept);
+                                        sectionTotals[item.section].decline += parseInt(item.decline);
                                     });
+                                    
+                                    // Prepare data for chart
+                                    const sections = Object.keys(sectionTotals);
+                                    const acceptData = sections.map(section => sectionTotals[section].accept);
+                                    const declineData = sections.map(section => sectionTotals[section].decline);
                                     
                                     // Update chart
                                     compactChart.update({
-                                        xAxis: {
-                                            categories: sections
-                                        },
+                                        xAxis: { categories: sections },
                                         series: [
                                             { data: declineData },
                                             { data: acceptData }
                                         ]
                                     });
                                 }
-        
+                
                                 // Initial chart load
                                 updateCompactChart();
-        
-                                // Event listeners
+                
+                                // Event listeners for filters
                                 document.getElementById('compact-preset-filter').addEventListener('change', function() {
                                     const preset = this.value;
                                     const today = new Date();
@@ -367,23 +332,26 @@
                                     let startDate = new Date(today);
                                     
                                     switch(preset) {
-                                        case 'today':
+                                        case 'today': 
                                             break;
-                                        case 'week':
-                                            startDate.setDate(today.getDate() - 7);
+                                        case 'week': 
+                                            startDate.setDate(today.getDate() - 7); 
                                             break;
-                                        case 'month':
-                                            startDate.setDate(today.getDate() - 30);
+                                        case 'month': 
+                                            startDate.setDate(today.getDate() - 30); 
                                             break;
-                                        case 'year':
-                                            startDate.setFullYear(today.getFullYear() - 1);
+                                        case 'year': 
+                                            startDate.setFullYear(today.getFullYear() - 1); 
                                             break;
                                     }
                                     
                                     compactStartDatePicker.setDate(startDate);
                                     compactEndDatePicker.setDate(today);
+                                    
+                                    // Auto-apply when preset is selected
+                                    document.getElementById('compact-apply-filter').click();
                                 });
-        
+                
                                 document.getElementById('compact-apply-filter').addEventListener('click', function() {
                                     const startDate = document.getElementById('compact-start-date').value;
                                     const endDate = document.getElementById('compact-end-date').value;
@@ -394,17 +362,18 @@
                                         alert('Please select both start and end dates');
                                     }
                                 });
-        
+                
                                 document.getElementById('compact-reset-filter').addEventListener('click', function() {
                                     document.getElementById('compact-preset-filter').value = '';
                                     compactStartDatePicker.clear();
                                     compactEndDatePicker.clear();
-                                    updateCompactChart();
+                                    updateCompactChart(); // Show all data
                                 });
                             </script>
                         </div>
                     </div>
                 </div>
+        
                 <div class="col-lg-6">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body">
@@ -431,7 +400,7 @@
                                     margin-bottom: 10px;
                                 }
                             </style>
-        
+                
                             <div class="dual-chart-container">
                                 <!-- New Sections Chart -->
                                 <div class="chart-box">
@@ -445,23 +414,12 @@
                                     <div id="used-sections-chart"></div>
                                 </div>
                             </div>
-        
+                
                             <script>
-                                // Sample data - replace with your Laravel data
-                                const newSections = [
-                                    { name: 'SEC-1 (New)', y: 52, color: '#4285F4' },
-                                    { name: 'SEC-2 (New)', y: 30, color: '#34A853' },
-                                    { name: 'SEC-3 (New)', y: 50, color: '#FBBC05' },
-                                    { name: 'SEC-4 (New)', y: 40, color: '#EA4335' }
-                                ];
-        
-                                const usedSections = [
-                                    { name: 'SEC-1 (Used)', y: 28, color: '#8AB4F8' },
-                                    { name: 'SEC-2 (Used)', y: 15, color: '#81C995' },
-                                    { name: 'SEC-3 (Used)', y: 22, color: '#FDE293' },
-                                    { name: 'SEC-4 (Used)', y: 18, color: '#F28B82' }
-                                ];
-        
+                                // Use Laravel data instead of sample data
+                                const newSections = @json($newSections);
+                                const usedSections = @json($usedSections);
+                
                                 // Common chart configuration
                                 const donutConfig = {
                                     chart: { type: 'pie' },
@@ -490,7 +448,7 @@
                                     credits: { enabled: false },
                                     exporting: { enabled: false }
                                 };
-        
+                
                                 // Initialize charts
                                 Highcharts.chart('new-sections-chart', {
                                     ...donutConfig,
@@ -499,7 +457,7 @@
                                         data: newSections
                                     }]
                                 });
-        
+                
                                 Highcharts.chart('used-sections-chart', {
                                     ...donutConfig,
                                     series: [{

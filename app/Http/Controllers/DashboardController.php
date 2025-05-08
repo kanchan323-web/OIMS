@@ -135,39 +135,47 @@ class DashboardController extends Controller
                 ->count('status');
 
 
-            // Weekly/Monthly/Yearly Stock
-            $weeklyStockData = [];
-            $monthlyStockData = [];
-            $yearlyStockData = [];
+                // Testing
 
-            $categories = ['Spares', 'Stores', 'Capital Item'];
+                 // received/decline data 
+        $results = Requester::select(
+            'stocks.section',
+            DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
+            DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
+            DB::raw('DATE(requesters.updated_at) as date')
+        )
+        ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        ->whereIn('requesters.status', [3, 5])
+        ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
+        ->orderBy('date', 'desc')
+        ->get();
+    
+        // Prepare chart data in required format
+        $chartData = $results->map(function ($item) {
+            return [
+                'section' => $item->section,
+                'accept' => $item->accept,
+                'decline' => $item->decline,
+                'date' => $item->date
+            ];
+        })->toArray();
+          
+        //   dd($results  ); 
 
-            foreach ($categories as $category) {
-                // same logic for weeklyStockData, monthlyStockData, yearlyStockData
-            }
+        $newSections = [
+            ['name' => 'SEC-1 (New)', 'y' => 52, 'color' => '#4285F4'],
+            ['name' => 'SEC-2 (New)', 'y' => 30, 'color' => '#34A853'],
+            ['name' => 'SEC-3 (New)', 'y' => 50, 'color' => '#F0BC05'],
+            ['name' => 'SEC-4 (New)', 'y' => 50, 'color' => '#FBB805'],
+            ['name' => 'SEC-5 (New)', 'y' => 50, 'color' => '#FBBC05'],
+        ];
 
-            $countUsedAndNewStock = Stock::where('rig_id', $rig_id)
-                ->select('new_spareable', 'used_spareable')
-                ->get();
-
-            $newStock = $countUsedAndNewStock->sum(function ($item) {
-                return is_numeric($item->new_spareable) ? floatval($item->new_spareable) : 0;
-            });
-
-            $usedStock = $countUsedAndNewStock->sum(function ($item) {
-                return is_numeric($item->used_spareable) ? floatval($item->used_spareable) : 0;
-            });
-
-            $total = $newStock + $usedStock;
-
-            if ($total > 0) {
-                $newPercent = round(($newStock / $total) * 100, 1);
-                $usedPercent = round(($usedStock / $total) * 100, 1);
-            } else {
-                $newPercent = 0;
-                $usedPercent = 0;
-            }
-
+        $usedSections = [
+            ['name' => 'SEC-1 (Used)', 'y' => 28, 'color' => '#8AB4F8'],
+            ['name' => 'SEC-2 (Used)', 'y' => 15, 'color' => '#81C995'],
+            ['name' => 'SEC-3 (Used)', 'y' => 22, 'color' => '#FDE293'],
+        ];
+                // Testing
 
             return view('user.dashboard', compact(
                 'Total_Incoming',
@@ -184,14 +192,13 @@ class DashboardController extends Controller
                 'Decline_raised',
                 'Approve_raised',
                 'Query_raised',
-                'weeklyStockData',
-                'monthlyStockData',
-                'yearlyStockData',
-                'newStock',
-                'usedStock',
-                'newPercent',
-                'usedPercent'
-            ));
+                'chartData'
+
+       
+            ),[
+                'newSections' => $newSections,
+                'usedSections' => $usedSections
+            ]);
         } else {
             return redirect()->route('user.login');
         }

@@ -109,27 +109,43 @@ class DashboardController extends Controller
         // Approve Status
 
         // received/decline data 
-                $results = Requester::select(
-                    'stocks.section',
-                    DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as received_count'),
-                    DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline_count')
-                )
-                ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
-                ->whereIn('requesters.status', [3, 5])
-                ->groupBy('stocks.section')
-                ->orderBy('stocks.section')
-                ->get();
-
-                // Prepare data for chart
-                $sections = $results->pluck('section');
-                $receivedData = $results->pluck('received_count');
-                $declineData = $results->pluck('decline_count');
-    // received/decline data 
-   
+        $results = Requester::select(
+            'stocks.section',
+            DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
+            DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
+            DB::raw('DATE(requesters.updated_at) as date')
+        )
+        ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        ->whereIn('requesters.status', [3, 5])
+        ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
+        ->orderBy('date', 'desc')
+        ->get();
     
-    
+        // Prepare chart data in required format
+        $chartData = $results->map(function ($item) {
+            return [
+                'section' => $item->section,
+                'accept' => $item->accept,
+                'decline' => $item->decline,
+                'date' => $item->date
+            ];
+        })->toArray();
           
-        //   dd($results  );
+        //   dd($results  ); 
+
+        $newSections = [
+            ['name' => 'SEC-1 (New)', 'y' => 52, 'color' => '#4285F4'],
+            ['name' => 'SEC-2 (New)', 'y' => 30, 'color' => '#34A853'],
+            ['name' => 'SEC-3 (New)', 'y' => 50, 'color' => '#F0BC05'],
+            ['name' => 'SEC-4 (New)', 'y' => 50, 'color' => '#FBB805'],
+            ['name' => 'SEC-5 (New)', 'y' => 50, 'color' => '#FBBC05'],
+        ];
+
+        $usedSections = [
+            ['name' => 'SEC-1 (Used)', 'y' => 28, 'color' => '#8AB4F8'],
+            ['name' => 'SEC-2 (Used)', 'y' => 15, 'color' => '#81C995'],
+            ['name' => 'SEC-3 (Used)', 'y' => 22, 'color' => '#FDE293'],
+        ];
 
 
         return view('admin.dashboard', compact(
@@ -141,15 +157,39 @@ class DashboardController extends Controller
             'Query_Status',
             'Decline_Status',
             'Total_Incoming',
-            'sections', 'receivedData', 'declineData'
+        'chartData'
 
        
-        ));
+        ),[
+            'newSections' => $newSections,
+            'usedSections' => $usedSections
+        ]);
     }
 
-    public function get_stock()
+    public function getSectionData(Request $request)
     {
-        return view('admin.dashboard');
+        $results = Requester::select(
+            'stocks.section',
+            DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
+            DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline')
+        )
+        ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        ->whereIn('requesters.status', [3, 5])
+        ->groupBy('stocks.section')
+        ->orderBy('stocks.section')
+        ->get();
+
+        // Format for chart
+        $chartData = $results->map(function ($item) {
+            return [
+                'section' => $item->section,
+                'accept' => $item->accept,
+                'decline' => $item->decline,
+                'date' => date('Y-m-d') // Using current date for simplicity
+            ];
+        });
+
+        return response()->json($chartData);
     }
 
 }
