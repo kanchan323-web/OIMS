@@ -22,6 +22,10 @@
       <script src="{{ asset('resources/js/exporting.js') }}"></script>
       <script src="{{ asset('resources/js/variable-pie.js') }}"></script>
 
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
         {{-- datatable --}}
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="{{ asset('resources/css/dataTables.bootstrap5.min.css') }}">

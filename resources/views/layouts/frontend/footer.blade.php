@@ -1,6 +1,6 @@
   </div>
     <!-- Wrapper End-->
-    <footer class="iq-footer">
+    {{-- <footer class="iq-footer">
             <div class="container-fluid">
             <div class="card">
                 <div class="card-body">
@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </footer> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sessionLifetime = 1800; // 30 minutes
