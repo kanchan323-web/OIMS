@@ -1209,7 +1209,8 @@
             let requestId = $('#edit_request_id').val();
             let newSpareable = parseInt($('#edit_modal_new_spareable').val()) || 0;
             let usedSpareable = parseInt($('#edit_modal_used_spareable').val()) || 0;
-            let requestedQty = parseInt($('#edit_modal_req_qty').text()) || 0; 
+            let requestedQtyText = $('#edit_modal_req_qty').text().replace(/[^\d]/g, ''); // remove ALL non-digits
+            let requestedQty = parseInt(requestedQtyText) || 0;
 
             if ((newSpareable + usedSpareable) > requestedQty) {
                 $('#edit_error_message').text("Total of 'New' and 'Used' cannot exceed the Requested Quantity.");
