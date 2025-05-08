@@ -148,6 +148,8 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
         Route::prefix('reports')->group(function () {
             Route::get('/stocks', [AdminStockReportController::class, 'index'])->name('stock_reports.index');
             Route::get('/report_stock_filter', [AdminStockReportController::class, 'report_stock_filter'])->name('admin.report_stock_filter');
+
+            Route::get('/transaction', [AdminStockReportController::class, 'transactions'])->name('admin.transaction');
         });
 
         //request stocks reports

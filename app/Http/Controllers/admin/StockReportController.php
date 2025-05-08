@@ -12,6 +12,7 @@ use App\Models\Requester;
 use App\Models\Edp;
 use App\Models\User;
 use App\Models\RigUser;
+use App\Models\LogsStocks;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
@@ -28,27 +29,27 @@ class StockReportController extends Controller
     public function index(Request $request)
     {
         $moduleName = "Stock Reports";
-    
+
         // Step 1: Get unique edp_code IDs from stocks
         $stockEdpIds = Stock::select('edp_code')
             ->distinct()
             ->pluck('edp_code');
-    
+
         // Step 2: Use those IDs to fetch edp_code values from edps table
         $edpCodes = Edp::whereIn('id', $stockEdpIds)
             ->select('id as edp_id', 'edp_code')
             ->get();
-    
+
         $receivers = RigUser::where('name', '!=', 'admin')->get();
-    
+
         $suppliers =  RigUser::where('name', '!=', 'admin')->get();
-    
+
         $RIDList = Requester::select('RID')->distinct()->get();
 
         return view('admin.reports.stock.stock_reports', compact('moduleName', 'edpCodes', 'receivers', 'suppliers', 'RIDList'));
-        
+
     }
-    
+
 
     public function report_stock_filter(Request $request)
     {
@@ -162,7 +163,7 @@ class StockReportController extends Controller
             })
             ->when($request->rid, function ($query) use ($request) {
                 return $query->where('requesters.RID', $request->rid);
-            })            
+            })
 
             ->where('request_status.status_id', 3)
             ->orderBy('requesters.updated_at', 'desc')
@@ -196,5 +197,15 @@ class StockReportController extends Controller
             ->where('request_status.status_id', 3)
             ->get();
         return $stock_consumption;
+    }
+
+
+    public function transactions(Request $request){
+        //dd('sfsdf');
+        $moduleName = "Transaction Reports";
+
+        return view('admin.reports.stock.transaction_reports', compact('moduleName'));
+
+
     }
 }
