@@ -23,6 +23,8 @@ class LogsStocks extends Model
         'measurement',
         'new_spareable',
         'used_spareable',
+        'new_value',
+        'used_value',
         'remarks',
         'user_id',
         'rig_id',

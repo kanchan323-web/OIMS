@@ -61,7 +61,7 @@ class StockController extends Controller
             ->orderBy('stocks.updated_at', 'desc')
             ->get();
         $moduleName = "Stock List";
-        
+
         return view('user.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
@@ -186,6 +186,8 @@ class StockController extends Controller
             'measurement'     => $stock->measurement,
             'new_spareable'   => $stock->new_spareable,
             'used_spareable'  => $stock->used_spareable,
+            'new_value'       => $stock->new_spareable,
+            'used_value'      => $stock->used_spareable,
             'remarks'         => $stock->remarks,
             'user_id'         => $stock->user_id,
             'rig_id'          => $stock->rig_id,
@@ -337,6 +339,8 @@ class StockController extends Controller
                     'measurement'     => $edp->measurement,
                     'new_spareable'   => $qtyNew,
                     'used_spareable'  => $qtyUsed,
+                    'new_value'       => $qtyNew,
+                    'used_value'      => $qtyUsed,
                     'remarks'         => 'nill',
                     'user_id'         => $user->id,
                     'rig_id'          => $user->rig_id,
@@ -470,6 +474,8 @@ class StockController extends Controller
             'measurement'     => $request->measurement,
             'new_spareable'   => $stock->new_spareable,
             'used_spareable'  => $stock->used_spareable,
+            'new_value'       => $stock->new_spareable,
+            'used_value'      => $stock->used_spareable,
             'remarks'         => $request->remarks,
             'user_id'         => $stock->user_id,
             'rig_id'          => $stock->rig_id,
