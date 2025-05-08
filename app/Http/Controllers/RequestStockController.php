@@ -334,7 +334,7 @@ class RequestStockController extends Controller
                 'requested_qty' => $request->requested_qty,
                 'stock_id' => $request->stock_id,
                 'edp_code' => $getedp->edp_code,
-                'requester_stock_id' => $requester_stockID,
+                'requester_stock_id'  => $requester_stockID,
                 'requester_id' => $request->requester_id,
                 'requester_rig_id' => $request->requester_rig_id,
                 'supplier_id' => $request->supplier_id,
@@ -370,7 +370,7 @@ class RequestStockController extends Controller
                 'creater_id' => auth()->id(),
                 'creater_type' => auth()->user()->user_type,
                 'receiver_id' => $request->supplier_id,
-                'receiver_type' => $user_type,
+                'receiver_type' =>  $user_type,
                 'message' => $message
             ]);
 
@@ -478,12 +478,12 @@ class RequestStockController extends Controller
 
         // Fetch the request status for the viewer
         $supplier_qty = RequestStatus::select('request_status.supplier_qty')
-            ->where('request_id', $request->data)
-            ->orderBy('created_at', 'desc')
-            ->first();
+                ->where('request_id', $request->data)
+                ->orderBy('created_at', 'desc')
+                ->first();
 
         // Extract supplier quantity (null if not found)
-        // $supplier_qty = $request_status->suppliers_qty ?? null;
+         // $supplier_qty = $request_status->suppliers_qty ?? null;
 
         return response()->json([
             'success' => true,
@@ -613,11 +613,14 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id', $request->request_id)->first();
+            $requesterTable = Requester::where('id', $request->request_id)->first();
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
+            $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
 
             $message = sprintf(
+                'The request has been Accepted by Rig (%s). The process is now in the MIT stage for Material EDP (%s), with the description (%s) for a quantity of %d.',
                 'The request has been Accepted by Rig (%s). The process is now in the MIT stage for Material EDP (%s), with the description (%s) for a quantity of %d.',
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
@@ -644,10 +647,10 @@ class RequestStockController extends Controller
                 'receiver_id' => null,
                 'receiver_type' => null,
                 'message' => $message,
-                'RID' => $requesterTable->RID,
-                'available_qty' => $requesterTable->available_qty,
-                'requested_qty' => $requesterTable->requested_qty,
-                'edp_code' => $getedp->edp_code,
+                'RID' =>  $requesterTable->RID,
+                'available_qty' =>  $requesterTable->available_qty,
+                'requested_qty' =>  $requesterTable->requested_qty,
+                'edp_code' =>  $getedp->edp_code,
             ]);
 
 
@@ -724,8 +727,10 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id', $request->request_id)->first();
+            $requesterTable = Requester::where('id', $request->request_id)->first();
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
+            $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
 
             $message = sprintf(
@@ -741,6 +746,7 @@ class RequestStockController extends Controller
             LogsRequestStatus::create([
                 'decline_msg' => null,
                 'query_msg' => null,
+                'supplier_qty' => $requesterTable->requested_qty,
                 'supplier_qty' => $requesterTable->requested_qty,
                 'supplier_new_spareable' => null,
                 'supplier_used_spareable' => null,
@@ -836,6 +842,7 @@ class RequestStockController extends Controller
                 'sent_from' => Auth::id()
             ]);
 
+            $requesterTable = Requester::where('id', $request->request_id)->first();
             $requesterTable = Requester::where('id', $request->request_id)->first();
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
@@ -939,6 +946,8 @@ class RequestStockController extends Controller
             $requestData->status = $request->status;
             $requestData->save();
 
+            $requesterTable = Requester::where('id', $request->request_id)->first();
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $requesterTable = Requester::where('id', $request->request_id)->first();
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
@@ -1173,7 +1182,10 @@ class RequestStockController extends Controller
 
             $requesterTable = Requester::where('id', $request->request_id)->first();
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
+            $requesterTable = Requester::where('id', $request->request_id)->first();
+            $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
+            $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
 
             $message = sprintf(
@@ -1248,6 +1260,8 @@ class RequestStockController extends Controller
                 'measurement' => $stock->measurement,
                 'new_spareable' => $stock->new_spareable,
                 'used_spareable' => $stock->used_spareable,
+                'new_value'       => $requestStatus->new_spareable,
+                'used_value'      => $requestStatus->used_spareable,
                 'remarks' => $stock->remarks,
                 'user_id' => $stock->user_id,
                 'rig_id' => $stock->rig_id,
@@ -1276,6 +1290,8 @@ class RequestStockController extends Controller
                 'measurement' => $requesterStock->measurement,
                 'new_spareable' => $requesterStock->new_spareable,
                 'used_spareable' => $requesterStock->used_spareable,
+                'new_value'       => $requestStatus->new_spareable,
+                'used_value'      => $requestStatus->used_spareable,
                 'remarks' => $requesterStock->remarks,
                 'user_id' => $requesterStock->user_id,
                 'rig_id' => $requesterStock->rig_id,

@@ -122,6 +122,8 @@ class AdminStockController extends Controller
         $unit = UnitOfMeasurement::where('abbreviation', $request->measurement)->first();
         $request->merge([
             'qty' => str_replace(',', '', $request->qty),
+            'new_spareable' => str_replace(',', '', $request->new_spareable),
+            'used_spareable' => str_replace(',', '', $request->new_spareable),
         ]);
 
         $rules = [
@@ -211,6 +213,8 @@ class AdminStockController extends Controller
             'measurement'     => $stock->measurement,
             'new_spareable'   => $stock->new_spareable,
             'used_spareable'  => $stock->used_spareable,
+            'new_value'       => $request->new_spareable,
+            'used_value'      => $request->used_spareable,
             'remarks'         => $stock->remarks,
             'user_id'         => $stock->user_id,
             'rig_id'          => $stock->rig_id,
@@ -222,7 +226,8 @@ class AdminStockController extends Controller
             'receiver_id'     => null,
             'receiver_type'   => null,
             'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
-            'action'          => "ADD",
+            'action'          => "Added",
+            'reference_id'    => $user->cpf_no,
         ]);
 
 
@@ -255,7 +260,7 @@ class AdminStockController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
-       
+
         try {
             $file = $request->file('file');
             $filePath = $file->storeAs('temp', $file->getClientOriginalName());
@@ -270,19 +275,19 @@ class AdminStockController extends Controller
                 'Qty New',
                 'Qty Used'
             ];
-           
+
 
             // Ensure the uploaded file matches the expected headers
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
-            
+
 
             if ($actualHeaders !== $expectedHeaders) {
                 Storage::delete($filePath);
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
                 return redirect()->back();
             }
-            
-           
+
+
 
             $user = Auth::user();
             $errors = [];
@@ -293,10 +298,10 @@ class AdminStockController extends Controller
                     continue;
                 }
 
-               
+
                 $locationId = trim($row[0]);
                 $locationName = RigUser::where('location_id', $locationId)->value('name');
-               
+
                 $new_spareable = (int) $row[2];
                 $used_spareable = (int) $row[3];
                 $totalqty =  $new_spareable +   $used_spareable;
@@ -312,7 +317,7 @@ class AdminStockController extends Controller
                     $errors[] = "Row " . ($index + 2) . ": EDP code {$row[1]} not found in the Edp table.";
                     continue;
                 }
-               
+
 
                 $rig = RigUser::where('location_id', $locationId)->first();
                 if (!$rig) {
@@ -329,7 +334,7 @@ class AdminStockController extends Controller
                     }
                 }
 
-              
+
                 // Check if stock for the same EDP code already exists
                 $existingStock = Stock::where('edp_code', $edp->id)
                     ->where('rig_id', $rig->id)
@@ -417,6 +422,7 @@ class AdminStockController extends Controller
             $query->where('location_id', '!=', 'admin')
                 ->orWhere('name', '!=', 'admin');
         })->get();
+
         return view('admin.stock.edit_stock', compact('editData', 'edpCodes', 'moduleName', 'rigs'));
     }
 
@@ -472,7 +478,7 @@ class AdminStockController extends Controller
                 ->withErrors(['measurement' => 'Invalid measurement unit selected.'])
                 ->withInput();
         }
-       
+
         $rigUser = RigUser::find($request->rig_id);
         if (!$rigUser) {
             return redirect()->back()
@@ -493,6 +499,8 @@ class AdminStockController extends Controller
             'measurement'     => $request->measurement,
             'new_spareable'   => $stock->new_spareable,
             'used_spareable'  => $stock->used_spareable,
+            'new_value'       => $stock->new_spareable,
+            'used_value'      => $stock->used_spareable,
             'remarks'         => $request->remarks,
             'user_id'         => $stock->user_id,
             'rig_id'          => $request->rig_id,
@@ -504,18 +512,19 @@ class AdminStockController extends Controller
             'receiver_id'     => null,
             'receiver_type'   => null,
             'message'         => "Stock Updated for EDP Code: {$request->edp_code}.",
-            'action'          => "Update",
+            'action'          => "Modified",
+            'reference_id'    => $user->cpf_no,
         ]);
-        
+
         $validatedData = $request->validate($rules);
         $validatedData['location_id'] = $rigUser->location_id;
         $validatedData['location_name'] = $rigUser->name;
         $validatedData['rig_id'] = $request->rig_id;
         $validatedData['new_spareable'] = $request->new_spareable;
         $validatedData['used_spareable'] = $request->used_spareable;
-        
+
         $stock->update($validatedData);
-        
+
         $user = Auth::user();
         $url = route('stock_list');
         $this->notifyAdmins(

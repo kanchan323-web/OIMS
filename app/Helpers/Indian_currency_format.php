@@ -2,26 +2,30 @@
 
 function IND_money_format($number)
 {
-    $decimal = (string)($number - floor($number));
-    $money = floor($number);
-    $length = strlen($money);
-    $delimiter = '';
-    $money = strrev($money);
+    $number = (float)$number;
 
-    for ($i = 0; $i < $length; $i++) {
-        if (($i == 3 || ($i > 3 && ($i - 1) % 2 == 0)) && $i != $length) {
-            $delimiter .= ',';
+    $decimal = $number - floor($number);
+    $money = floor($number);
+
+    $moneyStr = strrev((string)$money);
+    $formatted = '';
+
+    for ($i = 0; $i < strlen($moneyStr); $i++) {
+        if ($i == 3 || ($i > 3 && ($i - 1) % 2 == 0)) {
+            $formatted .= ',';
         }
-        $delimiter .= $money[$i];
+        $formatted .= $moneyStr[$i];
     }
 
-    $result = strrev($delimiter);
-    $decimal = preg_replace("/0\./i", ".", $decimal);
-    $decimal = substr($decimal, 0, 3);
+    $result = strrev($formatted);
 
-    if ($decimal != '0') {
-        $result = $result . $decimal;
+    // Format decimal if present
+    if ($decimal > 0) {
+        $decimalFormatted = number_format($decimal, 2);
+        $decimalFormatted = substr($decimalFormatted, 1); // remove leading 0
+        $result .= $decimalFormatted;
     }
 
     return $result;
 }
+
