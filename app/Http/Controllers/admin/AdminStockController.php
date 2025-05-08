@@ -226,7 +226,8 @@ class AdminStockController extends Controller
             'receiver_id'     => null,
             'receiver_type'   => null,
             'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
-            'action'          => "ADD",
+            'action'          => "Added",
+            'reference_id'    => $user->cpf_no,
         ]);
 
 
@@ -511,7 +512,8 @@ class AdminStockController extends Controller
             'receiver_id'     => null,
             'receiver_type'   => null,
             'message'         => "Stock Updated for EDP Code: {$request->edp_code}.",
-            'action'          => "Update",
+            'action'          => "Modified",
+            'reference_id'    => $user->cpf_no,
         ]);
 
         $validatedData = $request->validate($rules);
