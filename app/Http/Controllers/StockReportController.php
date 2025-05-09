@@ -164,13 +164,13 @@ class StockReportController extends Controller
     {
         $fromDate = $request->input('form_date');
         $toDate = $request->input('to_date');
-        $rigId = auth()->user()->rig_id; 
-    
+        $rigId = auth()->user()->rig_id;
+
         $logs = LogsStocks::query()
             ->leftJoin('edps', 'logs_stocks.edp_code', '=', 'edps.id')
             ->leftJoin('rig_users as sender', 'logs_stocks.creater_id', '=', 'sender.id')
             ->leftJoin('rig_users as receiver', 'logs_stocks.receiver_id', '=', 'receiver.id')
-            ->where('logs_stocks.rig_id', $rigId) 
+            ->where('logs_stocks.rig_id', $rigId)
             ->when($fromDate, function ($q) use ($fromDate) {
                 $q->whereDate('logs_stocks.updated_at', '>=', $fromDate);
             })
@@ -185,54 +185,61 @@ class StockReportController extends Controller
                 DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at_formatted"),
                 DB::raw("receiver.name as receiver"),
                 DB::raw("sender.name as supplier")
-            ])            
+            ])
             ->orderBy('logs_stocks.updated_at', 'desc')
             ->get();
-    
+
         $enhancedLogs = [];
-    
+
         foreach ($logs as $log) {
             $symbolNew = '';
             $symbolUsed = '';
-    
+
             switch (strtolower($log->action)) {
+
                 case 'added':
                     $symbolNew = '+';
                     $symbolUsed = '+';
                     break;
-    
-                case 'transfer':
-                case 'transferred to':
+
+                case 'transferred_to':
                     $symbolNew = '-';
                     $symbolUsed = '-';
                     break;
-    
-                case 'transferred from':
+
+                case 'transferred_from':
                     $symbolNew = '+';
                     $symbolUsed = '+';
                     break;
-    
+
                 case 'modified':
                     $previous = LogsStocks::where('stock_id', $log->stock_id)
                         ->where('id', '<', $log->id)
-                        ->orderByDesc('id')
+                        ->orderByDesc('id',)
                         ->first();
-    
+
                     if ($previous) {
                         $symbolNew = ($log->new_spareable > $previous->new_spareable) ? '+' : (($log->new_spareable < $previous->new_spareable) ? '-' : '');
+
                         $symbolUsed = ($log->used_spareable > $previous->used_spareable) ? '+' : (($log->used_spareable < $previous->used_spareable) ? '-' : '');
+                    } else {
+                        $symbolNew = '+';
+                        $symbolUsed = '+';
                     }
+
                     break;
             }
-    
+
             $log->formatted_new_value = $symbolNew . ($log->new_value ?? 0);
             $log->formatted_used_value = $symbolUsed . ($log->used_value ?? 0);
+            // dd($symbolNew, $symbolUsed);
+
             $enhancedLogs[] = $log;
         }
-    
+
         return $enhancedLogs;
     }
-    
+
 
 
 
