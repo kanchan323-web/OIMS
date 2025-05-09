@@ -1230,6 +1230,7 @@ class RequestStockController extends Controller
 
             $edpCode = Edp::where('id', $stock->edp_code)->value('edp_code');
             $user = Auth::user();
+           
             LogsStocks::create([
                 'stock_id' => $stock->id,
                 'location_id' => $stock->location_id,
@@ -1243,8 +1244,8 @@ class RequestStockController extends Controller
                 'measurement' => $stock->measurement,
                 'new_spareable' => $stock->new_spareable,
                 'used_spareable' => $stock->used_spareable,
-                'new_value' => $requestStatus->new_spareable,
-                'used_value' => $requestStatus->used_spareable,
+                'new_value' => $requestStatus->supplier_new_spareable,
+                'used_value' => $requestStatus->supplier_used_spareable,
                 'remarks' => $stock->remarks,
                 'user_id' => $stock->user_id,
                 'rig_id' => $stock->rig_id,
@@ -1273,8 +1274,8 @@ class RequestStockController extends Controller
                 'measurement' => $requesterStock->measurement,
                 'new_spareable' => $requesterStock->new_spareable,
                 'used_spareable' => $requesterStock->used_spareable,
-                'new_value' => $requestStatus->new_spareable,
-                'used_value' => $requestStatus->used_spareable,
+                'new_value' => $requestStatus->supplier_new_spareable,
+                'used_value' => $requestStatus->supplier_used_spareable,
                 'remarks' => $requesterStock->remarks,
                 'user_id' => $requesterStock->user_id,
                 'rig_id' => $requesterStock->rig_id,
