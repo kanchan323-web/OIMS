@@ -22,6 +22,12 @@ class DatabaseSeeder extends Seeder
         $this->call([
             MasterStatusSeeder::class
         ]);
+        $this->call([
+            UnitOfMeasurementSeeder::class
+        ]);
+        $this->call([
+            SectionSeeder::class
+        ]);
 
         // \App\Models\User::factory(10)->create();
 

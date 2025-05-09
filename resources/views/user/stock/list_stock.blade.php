@@ -294,6 +294,25 @@
     </div>
 
     <script>
+
+        function formatToIndianNumber(num) {
+            num = parseFloat(num);
+            if (isNaN(num)) return '';
+
+            let parts = num.toString().split(".");
+            let integerPart = parts[0];
+            let decimalPart = parts[1] ? '.' + parts[1] : '';
+
+            let lastThree = integerPart.slice(-3);
+            let rest = integerPart.slice(0, -3);
+            if (rest !== '') {
+                lastThree = ',' + lastThree;
+            }
+
+            let formatted = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+            return formatted + decimalPart;
+        }
+
         $(document).ready(function() {
             $('[data-toggle="modal"]').tooltip(); // this enables tooltip on modal trigger
         });
@@ -328,11 +347,10 @@
                     $("#category_id").val(response.viewdata['category']);
                     $("#hidden_category").val(categoryValue);
 
-
-                    $("#qty").val(response.viewdata['qty']);
+                    $("#qty").val(formatToIndianNumber(response.viewdata['qty']));
                     $("#measurement").val(response.viewdata['measurement']);
-                    $("#new_spareable").val(response.viewdata['new_spareable']);
-                    $("#used_spareable").val(response.viewdata['used_spareable']);
+                    $("#new_spareable").val(formatToIndianNumber(response.viewdata['new_spareable']));
+                    $("#used_spareable").val(formatToIndianNumber(response.viewdata['used_spareable']));
                     $("#remarks").val(response.viewdata['remarks']);
                     $("#description").val(response.viewdata['description']);
                 }

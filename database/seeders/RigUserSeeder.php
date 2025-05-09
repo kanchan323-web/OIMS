@@ -16,10 +16,11 @@ class RigUserSeeder extends Seeder
     {
        $rigUsers = collect(
             [
-                [
+           /*     [
                     'location_id' => 'admin',
                     'name' => 'admin',
                 ],
+            */
                 [
                     'location_id' => 'RP06',
                     'name' => 'Sagar Bhushan',
