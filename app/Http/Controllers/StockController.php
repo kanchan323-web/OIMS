@@ -56,7 +56,7 @@ class StockController extends Controller
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-            ->select('stocks.*', DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date"),'edps.edp_code', 'rig_users.name')
+            ->select('stocks.*', DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date"), 'edps.edp_code', 'rig_users.name')
             ->where('rig_id', $rig_id)
             ->orderBy('stocks.updated_at', 'desc')
             ->get();
@@ -80,16 +80,16 @@ class StockController extends Controller
                 ->when($request->Description, function ($query, $description) {
                     return $query->where('stocks.description', 'LIKE', "%{$description}%");
                 });
-                // ->when($request->form_date, function ($query) use ($request) {
-                //     return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
-                // })
-                // ->when($request->to_date, function ($query) use ($request) {
-                //     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-                // });
+            // ->when($request->form_date, function ($query) use ($request) {
+            //     return $query->whereDate('stocks.created_at', '>=', Carbon::parse($request->form_date)->startOfDay());
+            // })
+            // ->when($request->to_date, function ($query) use ($request) {
+            //     return $query->whereDate('stocks.created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+            // });
 
             $data = $data->join('edps', 'stocks.edp_code', '=', 'edps.id')
                 ->join('rig_users', 'stocks.rig_id', '=', 'rig_users.id')
-                ->select('stocks.*', DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date"),'edps.edp_code AS EDP_Code', 'rig_users.name')
+                ->select('stocks.*', DB::raw("DATE_FORMAT(stocks.updated_at, '%d-%m-%Y') as date"), 'edps.edp_code AS EDP_Code', 'rig_users.name')
                 ->where('rig_id', $rig_id)
                 ->orderBy('stocks.updated_at', 'desc')
                 ->get();
@@ -278,10 +278,10 @@ class StockController extends Controller
                 }
 
 
-                     // Convert quantities to integers
-                        $qtyNew = (int)$row[1];
-                        $qtyUsed = (int)$row[2];
-                        $totalQty = $qtyNew + $qtyUsed;
+                // Convert quantities to integers
+                $qtyNew = (int)$row[1];
+                $qtyUsed = (int)$row[2];
+                $totalQty = $qtyNew + $qtyUsed;
 
 
 
@@ -347,7 +347,7 @@ class StockController extends Controller
                     'req_status'      => "Inactive",
                     'created_at'      => now(),
                     'updated_at'      => now(),
-                    'creater_id'      => $user->rig_id,
+                    'creater_id'      => null,
                     'creater_type'    => null,
                     'receiver_id'     => null,
                     'receiver_type'   => null,
@@ -454,6 +454,15 @@ class StockController extends Controller
                 ->withInput();
         }
 
+        $oldNewSpareable = $stock->new_spareable;
+        $oldUsedSpareable = $stock->used_spareable;
+
+        $newNewSpareable = $request->new_spareable;
+        $newUsedSpareable = $request->used_spareable;
+
+        $newValueDiff = $newNewSpareable - $oldNewSpareable;
+        $usedValueDiff = $newUsedSpareable - $oldUsedSpareable;
+
         Stock::where('id', $dataid)->update([
             'new_spareable' => $request->new_spareable,
             'used_spareable' => $request->used_spareable,
@@ -472,17 +481,17 @@ class StockController extends Controller
             'qty'             => $request->qty,
             'initial_qty'     => $stock->qty,
             'measurement'     => $request->measurement,
-            'new_spareable'   => $stock->new_spareable,
-            'used_spareable'  => $stock->used_spareable,
-            'new_value'       => $stock->new_spareable,
-            'used_value'      => $stock->used_spareable,
+            'new_spareable'   => $newNewSpareable,
+            'used_spareable'  => $newUsedSpareable,
+            'new_value'       => $newValueDiff,
+            'used_value'      => $usedValueDiff,
             'remarks'         => $request->remarks,
             'user_id'         => $stock->user_id,
             'rig_id'          => $stock->rig_id,
             'req_status'      => "Inactive",
             'created_at'      => now(),
             'updated_at'      => now(),
-            'creater_id'      => $stock->rig_id,
+            'creater_id'      => null,
             'creater_type'    => null,
             'receiver_id'     => null,
             'receiver_type'   => null,
