@@ -38,7 +38,6 @@
                 <div class="container-fluid py-4">
                     <!-- Stats Cards -->
                     <div class="row g-4">
-    
                         <div class="col-lg-6 col-md-6">
                             <div class="card border-0 shadow-sm h-100 hover-effect">
                                 <div class="card-body p-2">
@@ -46,7 +45,7 @@
                                         <h3 class="h3 card-title text-muted mb-0">
                                           <a href="{{route('incoming_request_list')}}"> Incoming Requests</a> 
                                         </h3>
-                                        <div class="bg-danger bg-opacity-10 p-1 rounded status-card">
+                                        <div class="  status-card">
                                             <h5 class="card-title text-dark">{{$Total_Incoming}}</h5>
                                         </div>
                                     </div>
@@ -111,7 +110,7 @@
                                         <h5 class="card-title text-muted mb-0 text-center">
                                             <a href="{{route('raised_requests.index')}}">Raised Requests</a>
                                         </h5>
-                                        <div class="bg-info bg-opacity-10 p-1 rounded status-card">
+                                        <div class="status-card text-center">
                                             <h5 class="card-title text-dark">{{$Total_Raised}}</h5>
                                         </div>
                                     </div>
@@ -159,8 +158,6 @@
                                                 <h4 class="fw-bold text-danger">{{$Query_raised}}</h4>
                                             </div>
                                         </div>
-
-
                                     </div>
                                 </div>
                                 
@@ -222,7 +219,7 @@
                                     <h5 class="card-title mb-2">Section Acceptance/Decline Report</h5>
                                     
                                     <!-- Filter Section -->
-                                    {{-- <div class="compact-filter-container">
+                                    <div class="compact-filter-container">
                                         <div class="compact-filter-group">
                                             <label for="compact-preset-filter">Time Range</label>
                                             <select id="compact-preset-filter" class="form-control form-control-sm">
@@ -247,7 +244,7 @@
                                         
                                         <button id="compact-apply-filter" class="compact-btn">Apply</button>
                                         <button id="compact-reset-filter" class="compact-btn reset">Reset</button>
-                                    </div> --}}
+                                    </div>
                                     
                                     <div id="compact-chart-container"></div>
                         
