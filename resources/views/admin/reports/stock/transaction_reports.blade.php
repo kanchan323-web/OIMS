@@ -20,7 +20,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    
+
                                         <!-- RID -->
                                         <div class="col-md-2 mb-2">
                                             <label for="rid">RID</label>
@@ -31,7 +31,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    
+
                                         <!-- Receiver -->
                                         <div class="col-md-2 mb-2">
                                             <label for="receiver_id">Receiver</label>
@@ -42,7 +42,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    
+
                                         <!-- Supplier -->
                                         <div class="col-md-2 mb-2">
                                             <label for="supplier_id">Supplier</label>
@@ -53,27 +53,29 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    
+
                                         <!-- From Date -->
                                         <div class="col-md-2 mb-2">
                                             <label for="from_date">From Date</label>
                                             <input type="date" class="form-control" name="from_date" id="from_date">
                                         </div>
-                                    
+
                                         <!-- To Date -->
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div>
-                                    
+
                                         <!-- Buttons -->
                                         <div class="col-md-2 mb-2 d-flex">
-                                            <button type="button" class="btn btn-primary mr-2" id="filterButton">Search</button>
-                                            <button type="button" class="btn btn-secondary ml-2" id="resetButton">Reset</button>
+                                            <button type="button" class="btn btn-primary mr-2"
+                                                id="filterButton">Search</button>
+                                            <button type="button" class="btn btn-secondary ml-2"
+                                                id="resetButton">Reset</button>
                                         </div>
-                                    
+
                                     </div>
-                                    
+
                                 </form>
 
                             </div>
@@ -111,6 +113,36 @@
     </div>
 
     <script>
+
+        function formatIndianNumber(x) {
+            if (x == null || x === '') return '0';
+
+            let sign = '';
+            if (typeof x === 'string' && (x.startsWith('+') || x.startsWith('-'))) {
+                sign = x[0];
+                x = x.substring(1); // Remove the sign from the number
+            }
+
+            let number = parseFloat(x);
+            if (isNaN(number)) return '0';
+
+            let parts = number.toFixed(2).split(".");
+            let integerPart = parts[0];
+            let decimalPart = "." + parts[1];
+
+            let lastThree = integerPart.slice(-3);
+            let otherNumbers = integerPart.slice(0, -3);
+
+            if (otherNumbers !== '')
+                lastThree = ',' + lastThree;
+
+            let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + decimalPart;
+
+            return sign + formatted;
+        }
+
+
+
         $(document).ready(function () {
 
             $('#edp_code').select2({
@@ -155,18 +187,18 @@
 
                         $.each(response.data, function (index, item) {
                             rows += `<tr>
-                                <td>${index + 1}</td>
-                                <td>${item.EDP_Code ?? '-'}</td>
-                                <td>${item.description ?? '-'}</td>
-                                <td>${item.formatted_new_value ?? '0'}</td>
-                                <td>${item.formatted_used_value ?? '0'}</td>
-                                <td>${item.Quantity ?? 0}</td>
-                                <td>${item.action ?? '-'}</td>
-                                <td>${item.reference_id ?? '-'}</td>
-                                <td>${item.updated_at_formatted ?? '-'}</td>
-                                <td>${item.receiver ?? '-'}</td>
-                                <td>${item.supplier ?? '-'}</td>
-                            </tr>`;
+                                        <td>${index + 1}</td>
+                                        <td>${item.EDP_Code ?? '-'}</td>
+                                        <td>${item.description ?? '-'}</td>
+                                        <td>${formatIndianNumber(item.formatted_new_value ?? '0')}</td>
+                                        <td>${formatIndianNumber(item.formatted_used_value ?? '0')}</td>
+                                        <td>${formatIndianNumber(item.Quantity ?? 0)}</td>
+                                        <td>${item.action ?? '-'}</td>
+                                        <td>${item.reference_id ?? '-'}</td>
+                                        <td>${item.updated_at_formatted ?? '-'}</td>
+                                        <td>${item.receiver ?? '-'}</td>
+                                        <td>${item.supplier ?? '-'}</td>
+                                    </tr>`;
                         });
 
                         tableHeaders.html(headers);

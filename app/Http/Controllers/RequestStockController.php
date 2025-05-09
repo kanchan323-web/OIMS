@@ -1257,7 +1257,7 @@ class RequestStockController extends Controller
                 'receiver_id' => $stock->rig_id,
                 'receiver_type' => null,
                 'message' => "Stock Transfered from EDP Code: {$edpCode}.",
-                'action' => "Transfered from",
+                'action' => "Transferred_from",
                 'reference_id' => $requester->RID,
             ]);
 
@@ -1287,7 +1287,7 @@ class RequestStockController extends Controller
                 'receiver_id' => $requesterStock->rig_id,
                 'receiver_type' => null,
                 'message' => "Stock Transfered to EDP Code: {$edpCode}.",
-                'action' => "Transfered to",
+                'action' => "Transferred_to",
                 'reference_id' => $requester->RID,
             ]);
 

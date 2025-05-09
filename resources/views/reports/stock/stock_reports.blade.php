@@ -76,17 +76,31 @@
     <script>
         function formatIndianNumber(x) {
             if (x == null || x === '') return '0';
-            x = parseFloat(x); // Safely parse number
-            if (isNaN(x)) return '0'; // If still NaN, return 0
-            let parts = x.toFixed(2).split(".");
+
+            let sign = '';
+            if (typeof x === 'string' && (x.startsWith('+') || x.startsWith('-'))) {
+                sign = x[0];
+                x = x.substring(1); // Remove the sign from the number
+            }
+
+            let number = parseFloat(x);
+            if (isNaN(number)) return '0';
+
+            let parts = number.toFixed(2).split(".");
             let integerPart = parts[0];
-            let decimalPart = parts.length > 1 ? "." + parts[1] : "";
-            let lastThree = integerPart.substring(integerPart.length - 3);
-            let otherNumbers = integerPart.substring(0, integerPart.length - 3);
+            let decimalPart = "." + parts[1];
+
+            let lastThree = integerPart.slice(-3);
+            let otherNumbers = integerPart.slice(0, -3);
+
             if (otherNumbers !== '')
                 lastThree = ',' + lastThree;
-            return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + decimalPart;
+
+            let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + decimalPart;
+
+            return sign + formatted;
         }
+
 
 
         $(document).ready(function () {
@@ -125,13 +139,13 @@
                                 headers = "<th>Sr.No</th><th>EDP Code</th><th>Section</th><th>Category</th><th>Total Quantity</th><th>Date Updated</th>";
                                 $.each(response.data, function (index, stockdata) {
                                     rows += `<tr>
-                                                <td>${index + 1}</td>
-                                                <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.section}</td>
-                                                <td>${stockdata.description}</td>
-                                                <td>${formatIndianNumber(stockdata.qty ?? '0')}</td>
-                                                <td>${stockdata.date}</td>
-                                            </tr>`;
+                                                    <td>${index + 1}</td>
+                                                    <td>${stockdata.EDP_Code}</td>
+                                                    <td>${stockdata.section}</td>
+                                                    <td>${stockdata.description}</td>
+                                                    <td>${formatIndianNumber(stockdata.qty ?? '0')}</td>
+                                                    <td>${stockdata.date}</td>
+                                                </tr>`;
                                 });
                                 break;
 
@@ -139,14 +153,14 @@
                                 headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Received QTY</th><th>Supplier Rig</th><th>Receipt Date</th>";
                                 $.each(response.data, function (index, stockdata) {
                                     rows += `<tr>
-                                                <td>${index + 1}</td>
-                                                <td>${stockdata.RID}</td>
-                                                <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.description}</td>
-                                                <td>${formatIndianNumber(stockdata.requested_qty ?? '0')}</td>
-                                                <td>${stockdata.name}</td>
-                                                <td>${stockdata.receipt_date}</td>
-                                            </tr>`;
+                                                    <td>${index + 1}</td>
+                                                    <td>${stockdata.RID}</td>
+                                                    <td>${stockdata.EDP_Code}</td>
+                                                    <td>${stockdata.description}</td>
+                                                    <td>${formatIndianNumber(stockdata.requested_qty ?? '0')}</td>
+                                                    <td>${stockdata.name}</td>
+                                                    <td>${stockdata.receipt_date}</td>
+                                                </tr>`;
                                 });
                                 break;
 
@@ -154,14 +168,14 @@
                                 headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver Rig</th><th>Issued Date</th>";
                                 $.each(response.data, function (index, stockdata) {
                                     rows += `<tr>
-                                                <td>${index + 1}</td>
-                                                <td>${stockdata.RID}</td>
-                                                <td>${stockdata.EDP_Code}</td>
-                                                <td>${stockdata.description}</td>
-                                                <td>${formatIndianNumber(stockdata.requested_qty ?? '0')}</td>
-                                                <td>${stockdata.name}</td>
-                                                <td>${stockdata.issued_date}</td>
-                                            </tr>`;
+                                                    <td>${index + 1}</td>
+                                                    <td>${stockdata.RID}</td>
+                                                    <td>${stockdata.EDP_Code}</td>
+                                                    <td>${stockdata.description}</td>
+                                                    <td>${formatIndianNumber(stockdata.requested_qty ?? '0')}</td>
+                                                    <td>${stockdata.name}</td>
+                                                    <td>${stockdata.issued_date}</td>
+                                                </tr>`;
                                 });
                                 break;
 
@@ -170,18 +184,18 @@
 
                                 $.each(response.data, function (index, item) {
                                     rows += `<tr>
-                                                <td>${index + 1}</td>
-                                                <td>${item.EDP_Code ?? '-'}</td>
-                                                <td>${item.description ?? '-'}</td>
-                                                <td>${formatIndianNumber(item.formatted_new_spareable ?? '0')}</td>
-                                                <td>${formatIndianNumber(item.formatted_used_spareable ?? '0')}</td>
-                                                <td>${formatIndianNumber(item.qty ?? 0)}</td>
-                                                <td>${item.action ?? '-'}</td>
-                                                <td>${item.reference_id ?? '-'}</td>
-                                                <td>${item.updated_at_formatted ?? '-'}</td>
-                                                <td>${item.receiver ?? '-'}</td>
-                                                <td>${item.supplier ?? '-'}</td>
-                                            </tr>`;
+                                                    <td>${index + 1}</td>
+                                                    <td>${item.EDP_Code ?? '-'}</td>
+                                                    <td>${item.description ?? '-'}</td>
+                                                    <td>${formatIndianNumber(item.formatted_new_value ?? '0')}</td>
+                                                    <td>${formatIndianNumber(item.formatted_used_value ?? '0')}</td>
+                                                    <td>${formatIndianNumber(item.qty ?? 0)}</td>
+                                                    <td>${item.action ?? '-'}</td>
+                                                    <td>${item.reference_id ?? '-'}</td>
+                                                    <td>${item.updated_at_formatted ?? '-'}</td>
+                                                    <td>${item.receiver ?? '-'}</td>
+                                                    <td>${item.supplier ?? '-'}</td>
+                                                </tr>`;
                                 });
                                 break;
 
