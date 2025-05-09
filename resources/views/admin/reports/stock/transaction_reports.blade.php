@@ -12,62 +12,68 @@
 
                                         <!-- EDP Code -->
                                         <div class="col-md-2 mb-2">
-                                            <label for="receiver_id">EDP Code</label>
-                                            <select name="receiver_id" id="receiver_id" class="form-control">
+                                            <label for="edp_code">EDP Code</label>
+                                            <select name="edp_code" id="edp_code" class="form-control">
                                                 <option value="">Select EDP Code</option>
-
+                                                @foreach ($edpCodes as $code)
+                                                    <option value="{{ $code->edp_id }}">{{ $code->edp_code }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
-
+                                    
                                         <!-- RID -->
-
                                         <div class="col-md-2 mb-2">
-                                            <label for="receiver_id">RID</label>
-                                            <select name="receiver_id" id="receiver_id" class="form-control">
+                                            <label for="rid">RID</label>
+                                            <select name="rid" id="rid" class="form-control">
                                                 <option value="">Select RID</option>
-
+                                                @foreach ($RIDList as $rid)
+                                                    <option value="{{ $rid->RID }}">{{ $rid->RID }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
-
-
+                                    
                                         <!-- Receiver -->
                                         <div class="col-md-2 mb-2">
                                             <label for="receiver_id">Receiver</label>
                                             <select name="receiver_id" id="receiver_id" class="form-control">
                                                 <option value="">Select Receiver</option>
-
+                                                @foreach ($receivers as $receiver)
+                                                    <option value="{{ $receiver->id }}">{{ $receiver->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
-
+                                    
                                         <!-- Supplier -->
                                         <div class="col-md-2 mb-2">
                                             <label for="supplier_id">Supplier</label>
                                             <select name="supplier_id" id="supplier_id" class="form-control">
                                                 <option value="">Select Supplier</option>
-
+                                                @foreach ($suppliers as $supplier)
+                                                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
-
+                                    
                                         <!-- From Date -->
                                         <div class="col-md-2 mb-2">
                                             <label for="from_date">From Date</label>
                                             <input type="date" class="form-control" name="from_date" id="from_date">
                                         </div>
-
+                                    
                                         <!-- To Date -->
                                         <div class="col-md-2 mb-2">
                                             <label for="to_date">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div>
-
+                                    
                                         <!-- Buttons -->
                                         <div class="col-md-2 mb-2 d-flex">
-                                            <button type="button" class="btn btn-primary mr-2"
-                                                id="filterButton">Search</button>
-                                            <button type="button" class="btn btn-secondary ml-2"
-                                                id="resetButton">Reset</button>
+                                            <button type="button" class="btn btn-primary mr-2" id="filterButton">Search</button>
+                                            <button type="button" class="btn btn-secondary ml-2" id="resetButton">Reset</button>
                                         </div>
+                                    
                                     </div>
+                                    
                                 </form>
 
                             </div>
@@ -121,7 +127,7 @@
 
             function fetchReport() {
                 let formData = $("#filterForm").serialize();
-                let reportType = "adjustments";
+                let reportType = "transaction_history"; // Force report type
 
                 $.ajax({
                     type: "GET",
@@ -140,25 +146,27 @@
                         tableHeaders.empty();
 
                         if (!response.data || response.data.length === 0) {
-                            tableBody.html('<tr><td colspan="10" class="text-center">No records found</td></tr>');
+                            tableBody.html('<tr><td colspan="11" class="text-center">No records found</td></tr>');
                             return;
                         }
 
-                        let headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Receiver</th><th>Reciept QTY</th><th>Supplier</th><th>Issued QTY</th><th>Date</th>";
+                        let headers = "<th>Sr.No</th><th>EDP</th><th>Description</th><th>Change in New</th><th>Change in Used</th><th>Qty</th><th>Transaction</th><th>Reference ID</th><th>Transaction Date</th><th>Receiver</th><th>Supplier</th>";
                         let rows = "";
 
-                        $.each(response.data, function (index, stockdata) {
+                        $.each(response.data, function (index, item) {
                             rows += `<tr>
-                                        <td>${index + 1}</td>
-                                        <td>${stockdata.RID}</td>
-                                        <td>${stockdata.EDP_Code}</td>
-                                        <td>${stockdata.description}</td>
-                                        <td>${stockdata.req_name}</td>
-                                        <td>${stockdata.requested_qty}</td>
-                                        <td>${stockdata.sup_name}</td>
-                                        <td>${stockdata.supplier_qty}</td>
-                                        <td>${stockdata.date}</td>
-                                    </tr>`;
+                                <td>${index + 1}</td>
+                                <td>${item.EDP_Code ?? '-'}</td>
+                                <td>${item.description ?? '-'}</td>
+                                <td>${item.formatted_new_value ?? '0'}</td>
+                                <td>${item.formatted_used_value ?? '0'}</td>
+                                <td>${item.Quantity ?? 0}</td>
+                                <td>${item.action ?? '-'}</td>
+                                <td>${item.reference_id ?? '-'}</td>
+                                <td>${item.updated_at_formatted ?? '-'}</td>
+                                <td>${item.receiver ?? '-'}</td>
+                                <td>${item.supplier ?? '-'}</td>
+                            </tr>`;
                         });
 
                         tableHeaders.html(headers);
@@ -175,6 +183,7 @@
                     }
                 });
             }
+
 
             $("#filterButton").click(fetchReport);
 

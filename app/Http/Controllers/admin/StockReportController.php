@@ -47,8 +47,9 @@ class StockReportController extends Controller
         $RIDList = Requester::select('RID')->distinct()->get();
 
         return view('admin.reports.stock.stock_reports', compact('moduleName', 'edpCodes', 'receivers', 'suppliers', 'RIDList'));
-
     }
+
+
 
 
     public function report_stock_filter(Request $request)
@@ -72,6 +73,9 @@ class StockReportController extends Controller
                 break;
             case 'consumptions':
                 $data = $this->stockConsumptions($request);
+                break;
+            case 'transaction_history':
+                $data = $this->transactionHistory($request);
                 break;
             default:
                 return response()->json(['error' => 'Invalid report type'], 400);
@@ -200,12 +204,105 @@ class StockReportController extends Controller
     }
 
 
-    public function transactions(Request $request){
-        //dd('sfsdf');
+    public function transactions(Request $request)
+    {
         $moduleName = "Transaction Reports";
 
-        return view('admin.reports.stock.transaction_reports', compact('moduleName'));
+        $stockEdpIds = Stock::select('edp_code')->distinct()->pluck('edp_code');
+
+        $edpCodes = Edp::whereIn('id', $stockEdpIds)
+            ->select('id as edp_id', 'edp_code')
+            ->get();
+
+        $receivers = RigUser::where('name', '!=', 'admin')->get();
+        $suppliers = RigUser::where('name', '!=', 'admin')->get();
+        $RIDList = Requester::select('RID')->distinct()->get();
+
+        return view('admin.reports.stock.transaction_reports', compact('moduleName', 'edpCodes', 'receivers', 'suppliers', 'RIDList'));
+    }
 
 
+    private function transactionHistory(Request $request)
+    {
+        $fromDate = $request->input('form_date');
+        $toDate = $request->input('to_date');
+        $rigId = $request->input('rig_id'); // Optional: fallback to auth user's rig_id
+        $edpCode = $request->input('edp_code');
+        $category = $request->input('category');
+        $section = $request->input('section');
+        $receiverId = $request->input('receiver_id');
+        $supplierId = $request->input('supplier_id');
+        $action = $request->input('action');
+
+        $logs = LogsStocks::query()
+            ->leftJoin('edps', 'logs_stocks.edp_code', '=', 'edps.id')
+            ->leftJoin('rig_users as sender', 'logs_stocks.creater_id', '=', 'sender.id')
+            ->leftJoin('rig_users as receiver', 'logs_stocks.receiver_id', '=', 'receiver.id')
+
+            ->when($fromDate, fn($q) => $q->whereDate('logs_stocks.updated_at', '>=', $fromDate))
+            ->when($toDate, fn($q) => $q->whereDate('logs_stocks.updated_at', '<=', $toDate))
+
+            ->when($rigId, fn($q) => $q->where('logs_stocks.rig_id', $rigId))
+            ->when($edpCode, fn($q) => $q->where('logs_stocks.edp_code', $edpCode))
+            ->when($category, fn($q) => $q->where('edps.category', $category))
+            ->when($section, fn($q) => $q->where('edps.section', $section))
+            ->when($receiverId, fn($q) => $q->where('logs_stocks.receiver_id', $receiverId))
+            ->when($supplierId, fn($q) => $q->where('logs_stocks.creater_id', $supplierId))
+            ->when($action, fn($q) => $q->where('logs_stocks.action', $action))
+
+            ->select([
+                'logs_stocks.*',
+                DB::raw('(logs_stocks.new_value + logs_stocks.used_value) as qty'),
+                'edps.edp_code as EDP_Code',
+                'edps.description',
+                DB::raw("DATE_FORMAT(logs_stocks.updated_at, '%d-%m-%Y') as updated_at_formatted"),
+                DB::raw("receiver.name as receiver"),
+                DB::raw("sender.name as supplier")
+            ])
+            ->orderBy('logs_stocks.updated_at', 'desc')
+            ->get();
+
+        $enhancedLogs = [];
+
+        foreach ($logs as $log) {
+            $symbolNew = '';
+            $symbolUsed = '';
+
+            switch (strtolower($log->action)) {
+                case 'added':
+                    $symbolNew = '+';
+                    $symbolUsed = '+';
+                    break;
+
+                case 'transfer':
+                case 'transferred to':
+                    $symbolNew = '-';
+                    $symbolUsed = '-';
+                    break;
+
+                case 'transferred from':
+                    $symbolNew = '+';
+                    $symbolUsed = '+';
+                    break;
+
+                case 'modified':
+                    $previous = LogsStocks::where('stock_id', $log->stock_id)
+                        ->where('id', '<', $log->id)
+                        ->orderByDesc('id')
+                        ->first();
+
+                    if ($previous) {
+                        $symbolNew = ($log->new_spareable > $previous->new_spareable) ? '+' : (($log->new_spareable < $previous->new_spareable) ? '-' : '');
+                        $symbolUsed = ($log->used_spareable > $previous->used_spareable) ? '+' : (($log->used_spareable < $previous->used_spareable) ? '-' : '');
+                    }
+                    break;
+            }
+
+            $log->formatted_new_value = $symbolNew . ($log->new_value ?? 0);
+            $log->formatted_used_value = $symbolUsed . ($log->used_value ?? 0);
+            $enhancedLogs[] = $log;
+        }
+
+        return $enhancedLogs;
     }
 }
