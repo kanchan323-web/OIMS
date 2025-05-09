@@ -95,47 +95,66 @@ class RigUserController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'max:60',
-            Rule::unique('rig_users', 'name')->ignore($id),
-        ],
-        'location_id' => [
-            'required',
-            'string',
-            'size:4',
-            'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4}$/',
-            Rule::unique('rig_users', 'location_id')->ignore($id),
-        ],
-    ], [
-        'name.unique' => 'This rig name is already in use. Please choose a different name.',
-        'location_id.unique' => 'This location ID is already assigned to another rig. Location IDs must be unique.',
-    ]);
-
-    $rigUser = RigUser::findOrFail($id);
-
-    $rigUser->update([
-        'name' => $request->name,
-        'location_id' => $request->location_id,
-    ]);
-
-    LogsRigUsers::create([
-        'location_id' => $request->location_id,
-        'name' => $request->name,
-        'created_at' => now(),
-        'updated_at' => now(),
-        'creater_id' => auth()->id(),
-        'creater_type' => auth()->user()->user_type,
-        'receiver_id' => null,
-        'receiver_type' => null,
-        'message' => 'Rig Updated by ' . auth()->user()->user_name . ' (' . auth()->user()->user_type . '): ' . $request->name . ' (' . $request->location_id . ')',
-    ]);
-
-    return redirect()->route('admin.rig_users.index')->with('success', 'Rig User updated successfully.');
-}
+    {
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:60',
+                Rule::unique('rig_users', 'name')->ignore($id),
+            ],
+            'location_id' => [
+                'required',
+                'string',
+                'size:4',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4}$/',
+                Rule::unique('rig_users', 'location_id')->ignore($id),
+            ],
+        ], [
+            'name.unique' => 'This rig name is already in use. Please choose a different name.',
+            'location_id.unique' => 'This location ID is already assigned to another rig. Location IDs must be unique.',
+        ]);
+    
+        $rigUser = RigUser::findOrFail($id);
+    
+        // Build change message
+        $changes = [];
+        if ($rigUser->getOriginal('name') !== $request->name) {
+            $changes[] = "Rig Name changed from '{$rigUser->getOriginal('name')}' to '{$request->name}'";
+        }
+        if ($rigUser->getOriginal('location_id') !== $request->location_id) {
+            $changes[] = "Location ID changed from '{$rigUser->getOriginal('location_id')}' to '{$request->location_id}'";
+        }
+    
+        $message = 'Rig Updated by ' . auth()->user()->user_name . ' (' . auth()->user()->user_type . ')';
+        if (!empty($changes)) {
+            $message .= ': ' . implode('; ', $changes);
+        } else {
+            $message .= ': No actual changes made.';
+        }
+    
+        // Update the record
+        $rigUser->update([
+            'name' => $request->name,
+            'location_id' => $request->location_id,
+        ]);
+    
+        // Log the update
+        LogsRigUsers::create([
+            'location_id' => $request->location_id,
+            'name' => $request->name,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'creater_id' => auth()->id(),
+            'creater_type' => auth()->user()->user_type,
+            'receiver_id' => null,
+            'receiver_type' => null,
+            'message' => $message,
+        ]);
+    
+        return redirect()->route('admin.rig_users.index')->with('success', 'Rig User updated successfully.');
+    }
+    
 
     // public function destroy(Request $request)
     // {

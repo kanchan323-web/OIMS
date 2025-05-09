@@ -15,35 +15,38 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
 
-class EdpController extends Controller{
+class EdpController extends Controller
+{
 
     public function index(Request $request)
-{
-    $moduleName = "EDP List";
+    {
+        $moduleName = "EDP List";
 
-    if ($request->ajax()) {
-        $data = Edp::orderBy('id', 'desc')->get();
+        if ($request->ajax()) {
+            $data = Edp::orderBy('id', 'desc')->get();
 
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->make(true);
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->make(true);
+        }
+
+        return view('admin.edp.index', compact('moduleName'));
     }
 
-    return view('admin.edp.index', compact('moduleName'));
-}
-
-    public function create(){
+    public function create()
+    {
         $category_list = Category::get();
         $moduleName = "Create EDP";
         $UoM = UnitOfMeasurement::get();
         $section_list = Section::get();
-        return view('admin.edp.create', compact('moduleName', 'category_list', 'UoM','section_list'));
+        return view('admin.edp.create', compact('moduleName', 'category_list', 'UoM', 'section_list'));
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $moduleName = "Create EDP";
         $validate = $request->validate([
-            'edp_code' => ['required','unique:edps', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
-            'section'  => 'required|string',
+            'edp_code' => ['required', 'unique:edps', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
+            'section' => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
         ]);
@@ -89,27 +92,29 @@ class EdpController extends Controller{
             'creater_type' => auth()->user()->user_type,
             'receiver_id' => null,
             'receiver_type' => null,
-            'message'       => "EDP '{$request->edp_code}' has been Created.",
+            'message' => "EDP '{$request->edp_code}' was created by " . auth()->user()->user_name . " (" . auth()->user()->user_type . "). Values - Category: '{$category}', Material Group: '{$materialGroup}', Section: '{$request->section}', Measurement: '{$request->measurement}', Description: '{$request->description}'.",
         ]);
 
-       // return redirect()->back()->with('success', 'EDP created successfully!');
+        // return redirect()->back()->with('success', 'EDP created successfully!');
         return redirect()->route('admin.edp.index')
             ->with('success', 'EDP created successfully.');
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $moduleName = "Edit EDP";
         $category_list = Category::all();
         $editData = Edp::findOrFail($id);
         $UoM = UnitOfMeasurement::get();
         $section_list = Section::get();
-        return view('admin.edp.edit', compact('category_list', 'editData', 'moduleName', 'UoM','section_list'));
+        return view('admin.edp.edit', compact('category_list', 'editData', 'moduleName', 'UoM', 'section_list'));
     }
 
-    public function update(Request $request){
+    public function update(Request $request)
+    {
         $validate = $request->validate([
-            'edp_code' => ['required','regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
-            'section'  => 'required|string',
+            'edp_code' => ['required', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
+            'section' => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
         ]);
@@ -119,44 +124,56 @@ class EdpController extends Controller{
         if ($edp) {
             $oldData = $edp->toArray(); // If you want to log old values
 
-                $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
-                // Determine category based on material group
-                if ($materialGroup === 'OC') {
-                    $category = 'capital';
-                } elseif (ctype_digit($materialGroup)) {
-                    $groupNum = intval($materialGroup);
-                    if ($groupNum >= 1 && $groupNum <= 20) {
-                        $category = 'store';
-                    } elseif ($groupNum >= 21 && $groupNum <= 42) {
-                        $category = 'spares';
-                    } else {
-                        $category = 'unknown';
-                    }
+            $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
+            // Determine category based on material group
+            if ($materialGroup === 'OC') {
+                $category = 'capital';
+            } elseif (ctype_digit($materialGroup)) {
+                $groupNum = intval($materialGroup);
+                if ($groupNum >= 1 && $groupNum <= 20) {
+                    $category = 'store';
+                } elseif ($groupNum >= 21 && $groupNum <= 42) {
+                    $category = 'spares';
                 } else {
                     $category = 'unknown';
                 }
+            } else {
+                $category = 'unknown';
+            }
             $edp->update([
-                'edp_code'     => $request->edp_code,
-                'category'     => $category,
+                'edp_code' => $request->edp_code,
+                'category' => $category,
                 'material_group' => $materialGroup,
-                'description'  => $request->description,
-                'section'      => $request->section,
-                'measurement'  => $request->measurement,
+                'description' => $request->description,
+                'section' => $request->section,
+                'measurement' => $request->measurement,
             ]);
 
-            // Optional logging
+            // Detect changes
+            $changes = [];
+            $fields = ['edp_code', 'category', 'material_group', 'description', 'section', 'measurement'];
+
+            foreach ($fields as $field) {
+                if ($oldData[$field] != $edp->$field) {
+                    $changes[] = ucfirst(str_replace('_', ' ', $field)) . " changed from '{$oldData[$field]}' to '{$edp->$field}'";
+                }
+            }
+
+            $changedFieldsMessage = count($changes) > 0 ? implode(', ', $changes) : 'No changes detected.';
+
             LogsEdps::create([
-                'edp_code'      => $request->edp_code,
-                'category'      => $category,
-                'material_group' => $materialGroup,
-                'description'   => $request->description,
-                'section'       => $request->section,
-                'measurement'   => $request->measurement,
-                'creater_id'    => auth()->id(),
-                'creater_type'  => auth()->user()->user_type,
-                'receiver_id'   => null,
+                'edp_code' => $edp->edp_code,
+                'category' => $edp->category,
+                'material_group' => $edp->material_group,
+                'description' => $edp->description,
+                'section' => $edp->section,
+                'measurement' => $edp->measurement,
+                'creater_id' => auth()->id(),
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
                 'receiver_type' => null,
-                'message'       => "EDP '{$oldData['edp_code']}' has been updated.",
+                'message' => "EDP '{$oldData['edp_code']}' was updated by " . auth()->user()->user_name .
+                    " (" . auth()->user()->user_type . "). " . $changedFieldsMessage,
             ]);
         } else {
             // Optional error handling
@@ -166,7 +183,8 @@ class EdpController extends Controller{
             ->with('success', 'EDP Updated successfully.');
     }
 
-    public function destroy(Request $request){
+    public function destroy(Request $request)
+    {
         $edp = Edp::find($request->delete_id);
 
         if ($edp) {
@@ -174,17 +192,20 @@ class EdpController extends Controller{
 
             // Optional: log the deletion
             LogsEdps::create([
-                'edp_code'      => $edp->edp_code,
-                'category'      => $edp->category,
-                'description'   => $edp->description,
-                'section'       => $edp->section,
-                'measurement'   => $edp->measurement,
-                'creater_id'    => auth()->id(),
-                'creater_type'  => auth()->user()->user_type,
-                'receiver_id'   => null,
+                'edp_code' => $edp->edp_code,
+                'category' => $edp->category,
+                'material_group' => $edp->material_group,
+                'description' => $edp->description,
+                'section' => $edp->section,
+                'measurement' => $edp->measurement,
+                'creater_id' => auth()->id(),
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
                 'receiver_type' => null,
-                'message'       => "EDP '{$edp->edp_code}' has been deleted.",
+                'message' => "EDP '{$edp->edp_code}' was deleted by " . auth()->user()->user_name .
+                    " (" . auth()->user()->user_type . ").",
             ]);
+
         } else {
             return response()->json(['error' => 'EDP not found'], 404);
         }
@@ -192,16 +213,19 @@ class EdpController extends Controller{
         return redirect()->route('admin.edp.index')
             ->with('success', 'EDP Deleted successfully.');
     }
-    public function showImportForm(){
+    public function showImportForm()
+    {
         $moduleName = "Import Bulk EDP";
         return view('admin.edp.import_bulk_edp', compact('moduleName'));
     }
-    public function downloadSample(){
+    public function downloadSample()
+    {
         $filePath = public_path('sample-files/sample_edp_admin.xlsx');
         return Response::download($filePath, 'Sample_Edp_File_Admin.xlsx');
     }
 
-    public function import(Request $request){
+    public function import(Request $request)
+    {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
@@ -230,7 +254,8 @@ class EdpController extends Controller{
 
             // Step 1: Validate all rows first
             foreach (array_slice($rows, 1) as $index => $row) {
-                if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
+                if (empty(array_filter($row, fn($value) => trim($value) !== '')))
+                    continue;
 
                 $edpCode = trim($row[0] ?? '');
                 $uom = strtoupper(trim($row[2] ?? ''));
@@ -273,12 +298,13 @@ class EdpController extends Controller{
 
             // Step 3: Process the validated data
             foreach (array_slice($rows, 1) as $row) {
-                if (empty(array_filter($row, fn($value) => trim($value) !== ''))) continue;
+                if (empty(array_filter($row, fn($value) => trim($value) !== '')))
+                    continue;
 
-                $edpCode     = trim($row[0]);
+                $edpCode = trim($row[0]);
                 $description = trim($row[1]);
                 $measurement = strtoupper(trim($row[2]));
-                $section     = trim($row[3]);
+                $section = trim($row[3]);
                 $materialGroup = strtoupper(substr($edpCode, 0, 2));
 
                 // Determine category based on material group
@@ -302,26 +328,28 @@ class EdpController extends Controller{
                     [
                         'description' => $description,
                         'measurement' => $measurement,
-                        'section'     => $section,
-                        'category'    => $category,
+                        'section' => $section,
+                        'category' => $category,
                         'material_group' => $materialGroup,
                     ]
                 );
 
+                $message = $edp->wasRecentlyCreated
+                    ? "EDP '{$edp->edp_code}' has been created via import by " . auth()->user()->name . "."
+                    : "EDP '{$edp->edp_code}' has been updated via import by " . auth()->user()->name . ".";
+
                 LogsEdps::create([
-                    'edp_code'      => $edp->edp_code,
-                    'category'      => $edp->category,
+                    'edp_code' => $edp->edp_code,
+                    'category' => $edp->category,
                     'material_group' => $materialGroup,
-                    'description'   => $edp->description,
-                    'section'       => $edp->section,
-                    'measurement'   => $edp->measurement,
-                    'creater_id'    => auth()->id(),
-                    'creater_type'  => auth()->user()->user_type,
-                    'receiver_id'   => null,
+                    'description' => $edp->description,
+                    'section' => $edp->section,
+                    'measurement' => $edp->measurement,
+                    'creater_id' => auth()->id(),
+                    'creater_type' => auth()->user()->user_type,
+                    'receiver_id' => null,
                     'receiver_type' => null,
-                    'message'       => $edp->wasRecentlyCreated
-                        ? "EDP {$edp->edp_code} has been created via import."
-                        : "EDP {$edp->edp_code} has been updated via import.",
+                    'message' => $message,
                 ]);
             }
 

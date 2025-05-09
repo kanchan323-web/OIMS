@@ -38,14 +38,14 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_name'    => [
+            'user_name' => [
                 'required',
                 'string',
                 'max:255',
                 'unique:users,user_name',
                 'regex:/^[A-Za-z\s]+$/',
             ],
-            'email'        => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email',
             'cpf_no' => [
                 'required',
                 'string',
@@ -54,24 +54,24 @@ class UserController extends Controller
                 'regex:/^\d+$/',
                 'unique:users,cpf_no',
             ],
-            'password'     => [
+            'password' => [
                 'required',
                 'min:8',
                 'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
             ],
-            'user_status'  => 'required|integer',
-            'user_type'    => 'required|string|in:admin,user',
-            'rig_id'       => 'nullable|integer',
+            'user_status' => 'required|integer',
+            'user_type' => 'required|string|in:admin,user',
+            'rig_id' => 'nullable|integer',
         ], [
             'user_name.required' => 'The user name is required.',
-            'user_name.string'   => 'The user name must be a valid string.',
-            'user_name.max'      => 'The user name may not be greater than 255 characters.',
-            'user_name.unique'   => 'This user name is already taken.',
-            'user_name.regex'    => 'The user name may only contain letters and spaces.',
+            'user_name.string' => 'The user name must be a valid string.',
+            'user_name.max' => 'The user name may not be greater than 255 characters.',
+            'user_name.unique' => 'This user name is already taken.',
+            'user_name.regex' => 'The user name may only contain letters and spaces.',
 
-            'email.required'     => 'The email address is required.',
-            'email.email'        => 'Please enter a valid email address.',
-            'email.unique'       => 'This email address is already registered.',
+            'email.required' => 'The email address is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email address is already registered.',
 
             'cpf_no.required' => 'The CPF number is required.',
             'cpf_no.unique' => 'This CPF number is already registered.',
@@ -80,43 +80,49 @@ class UserController extends Controller
             'cpf_no.max' => 'The CPF number must not exceed 6 digits.',
             'cpf_no.regex' => 'The CPF number must contain only digits.',
 
-            'password.required'  => 'A password is required.',
-            'password.min'       => 'The password must be at least 8 characters.',
-            'password.regex'     => 'Password must include at least one letter, one number, and one special character.',
+            'password.required' => 'A password is required.',
+            'password.min' => 'The password must be at least 8 characters.',
+            'password.regex' => 'Password must include at least one letter, one number, and one special character.',
 
             'user_status.required' => 'Please select a user status.',
-            'user_status.integer'  => 'Invalid user status selected.',
+            'user_status.integer' => 'Invalid user status selected.',
 
             'user_type.required' => 'Please select a user type.',
-            'user_type.in'       => 'User type must be either Admin or User.',
+            'user_type.in' => 'User type must be either Admin or User.',
 
-            'rig_id.integer'     => 'Invalid rig selection.',
+            'rig_id.integer' => 'Invalid rig selection.',
         ]);
 
         $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
 
         $user = User::create([
-            'user_name'   => $request->user_name,
-            'email'       => $request->email,
-            'cpf_no'      => $request->cpf_no,
-            'password'    => Hash::make($request->password),
+            'user_name' => $request->user_name,
+            'email' => $request->email,
+            'cpf_no' => $request->cpf_no,
+            'password' => Hash::make($request->password),
             'user_status' => $request->user_status,
-            'user_type'   => $request->user_type,
-            'rig_id'      => $rigId,
+            'user_type' => $request->user_type,
+            'rig_id' => $rigId,
         ]);
 
         LogsUser::create([
-            'user_name'     => $request->user_name,
-            'email'         => $request->email,
-            'cpf_no'        => $request->cpf_no,
-            'user_status'   => $request->user_status,
-            'user_type'     => $request->user_type,
-            'rig_id'        => $rigId,
-            'creater_id'    => auth()->id(),
-            'creater_type'  => auth()->user()->user_type,
-            'receiver_id'   => null,
+            'user_name' => $request->user_name,
+            'email' => $request->email,
+            'cpf_no' => $request->cpf_no,
+            'user_status' => $request->user_status,
+            'user_type' => $request->user_type,
+            'rig_id' => $rigId,
+            'creater_id' => auth()->id(),
+            'creater_type' => auth()->user()->user_type,
+            'receiver_id' => null,
             'receiver_type' => null,
-            'message'       => "User {$request->user_name} has been created.",
+            'message' => 'User created by ' . auth()->user()->user_name . ' (' . auth()->user()->user_type . '): '
+                . 'Name: ' . $request->user_name . ', '
+                . 'Email: ' . $request->email . ', '
+                . 'CPF No: ' . $request->cpf_no . ', '
+                . 'Type: ' . ucfirst($request->user_type) . ', '
+                . 'Status: ' . ($request->user_status ? 'Active' : 'Inactive') . ', '
+                . 'Rig ID: ' . ($rigId ?: 'N/A'),
         ]);
 
         return redirect()->route('admin.index')->with('success', 'User created successfully.');
@@ -144,103 +150,142 @@ class UserController extends Controller
 
     // Update user details
     public function update(Request $request, $id)
-    {
-        $user = User::findOrFail((int) $id);
+{
+    $user = User::findOrFail((int) $id);
 
-        $rules = [
-            'user_name'   => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[A-Za-z\s]+$/',
-            ],
-            'email'       => [
-                'required',
-                'email',
-                Rule::unique('users')->ignore($id),
-            ],
-            'cpf_no' => [
-                'required',
-                'string',
-                'min:5',
-                'max:6',
-                'regex:/^\d+$/',
-                Rule::unique('users')->ignore($id),
-            ],
-            'user_status' => 'required|integer',
-            'user_type'   => 'required|string|in:admin,user',
-            'rig_id'      => 'nullable|integer',
+    $rules = [
+        'user_name'   => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[A-Za-z\s]+$/',
+        ],
+        'email'       => [
+            'required',
+            'email',
+            Rule::unique('users')->ignore($id),
+        ],
+        'cpf_no' => [
+            'required',
+            'string',
+            'min:5',
+            'max:6',
+            'regex:/^\d+$/',
+            Rule::unique('users')->ignore($id),
+        ],
+        'user_status' => 'required|integer',
+        'user_type'   => 'required|string|in:admin,user',
+        'rig_id'      => 'nullable|integer',
+    ];
+
+    if (!empty($request->password)) {
+        $rules['password'] = [
+            'min:8',
+            'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
         ];
-
-        // Add password rules only if password is being changed
-        if (!empty($request->password)) {
-            $rules['password'] = [
-                'min:8',
-                'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
-            ];
-        }
-
-        $request->validate($rules, [
-            'user_name.required' => 'The user name is required.',
-            'user_name.regex'    => 'The user name must only contain letters and spaces.',
-
-            'email.required'     => 'The email address is required.',
-            'email.email'        => 'Please provide a valid email address.',
-            'email.unique'       => 'This email is already taken.',
-
-            'cpf_no.required' => 'The CPF number is required.',
-            'cpf_no.unique'   => 'This CPF number is already in use.',
-            'cpf_no.string'   => 'The CPF number must be a valid string.',
-            'cpf_no.min'      => 'The CPF number must be at least 5 digits.',
-            'cpf_no.max'      => 'The CPF number must not exceed 6 digits.',
-            'cpf_no.regex'    => 'The CPF number must contain only digits.',
-
-
-            'password.min'       => 'The password must be at least 8 characters.',
-            'password.regex'     => 'Password must include at least one letter, one number, and one special character.',
-
-            'user_status.required' => 'User status is required.',
-            'user_type.required'   => 'User type is required.',
-            'user_type.in'         => 'Invalid user type selected.',
-            'rig_id.integer'       => 'Rig ID must be a number.',
-        ]);
-
-        $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
-
-        $user->update([
-            'user_name'   => $request->user_name,
-            'email'       => $request->email,
-            'cpf_no'      => $request->cpf_no,
-            'user_status' => $request->user_status,
-            'user_type'   => $request->user_type,
-            'rig_id'      => $rigId,
-        ]);
-
-        if (!empty($request->password)) {
-            $user->update(['password' => Hash::make($request->password)]);
-        }
-
-        LogsUser::create([
-            'user_name'     => $request->user_name,
-            'email'         => $request->email,
-            'cpf_no'        => $request->cpf_no,
-            'user_status'   => $request->user_status,
-            'user_type'     => $request->user_type,
-            'rig_id'        => $rigId,
-            'creater_id'    => auth()->id(),
-            'creater_type'  => auth()->user()->user_type,
-            'receiver_id'   => null,
-            'receiver_type' => null,
-            'message'       => "User '{$request->user_name}' has been updated.",
-        ]);
-
-        if (auth()->id() == $user->id) {
-            auth()->logout();
-            return redirect()->route('login')->with('message', 'Role updated. Please log in again.');
-        }
-
-        return redirect()->route('admin.index')->with('success', 'User updated successfully.');
     }
+
+    $request->validate($rules, [
+        'user_name.required' => 'The user name is required.',
+        'user_name.regex'    => 'The user name must only contain letters and spaces.',
+
+        'email.required'     => 'The email address is required.',
+        'email.email'        => 'Please provide a valid email address.',
+        'email.unique'       => 'This email is already taken.',
+
+        'cpf_no.required' => 'The CPF number is required.',
+        'cpf_no.unique'   => 'This CPF number is already in use.',
+        'cpf_no.string'   => 'The CPF number must be a valid string.',
+        'cpf_no.min'      => 'The CPF number must be at least 5 digits.',
+        'cpf_no.max'      => 'The CPF number must not exceed 6 digits.',
+        'cpf_no.regex'    => 'The CPF number must contain only digits.',
+
+        'password.min'       => 'The password must be at least 8 characters.',
+        'password.regex'     => 'Password must include at least one letter, one number, and one special character.',
+
+        'user_status.required' => 'User status is required.',
+        'user_type.required'   => 'User type is required.',
+        'user_type.in'         => 'Invalid user type selected.',
+        'rig_id.integer'       => 'Rig ID must be a number.',
+    ]);
+
+    $rigId = $request->user_type === 'admin' ? 0 : $request->rig_id;
+
+    $original = $user->getOriginal(); // get old values
+
+    // Update user fields
+    $user->update([
+        'user_name'   => $request->user_name,
+        'email'       => $request->email,
+        'cpf_no'      => $request->cpf_no,
+        'user_status' => $request->user_status,
+        'user_type'   => $request->user_type,
+        'rig_id'      => $rigId,
+    ]);
+
+    if (!empty($request->password)) {
+        $user->update(['password' => Hash::make($request->password)]);
+    }
+
+    // Generate clear message of what changed
+    $changes = [];
+
+    if ($original['user_name'] !== $request->user_name) {
+        $changes[] = "Name changed from '{$original['user_name']}' to '{$request->user_name}'";
+    }
+
+    if ($original['email'] !== $request->email) {
+        $changes[] = "Email changed from '{$original['email']}' to '{$request->email}'";
+    }
+
+    if ($original['cpf_no'] !== $request->cpf_no) {
+        $changes[] = "CPF No changed from '{$original['cpf_no']}' to '{$request->cpf_no}'";
+    }
+
+    if ((int)$original['user_status'] !== (int)$request->user_status) {
+        $oldStatus = $original['user_status'] ? 'Active' : 'Inactive';
+        $newStatus = $request->user_status ? 'Active' : 'Inactive';
+        $changes[] = "Status changed from '{$oldStatus}' to '{$newStatus}'";
+    }
+
+    if ($original['user_type'] !== $request->user_type) {
+        $changes[] = "Type changed from '{$original['user_type']}' to '{$request->user_type}'";
+    }
+
+    if ((int)$original['rig_id'] !== (int)$rigId) {
+        $changes[] = "Rig ID changed from '{$original['rig_id']}' to '{$rigId}'";
+    }
+
+    if (!empty($request->password)) {
+        $changes[] = "Password was updated";
+    }
+
+    $logMessage = "User updated by " . auth()->user()->user_name . " (" . auth()->user()->user_type . ")";
+    $logMessage .= $changes ? ": " . implode(', ', $changes) : " but no changes detected.";
+
+    // Save to log
+    LogsUser::create([
+        'user_name'     => $request->user_name,
+        'email'         => $request->email,
+        'cpf_no'        => $request->cpf_no,
+        'user_status'   => $request->user_status,
+        'user_type'     => $request->user_type,
+        'rig_id'        => $rigId,
+        'creater_id'    => auth()->id(),
+        'creater_type'  => auth()->user()->user_type,
+        'receiver_id'   => null,
+        'receiver_type' => null,
+        'message'       => $logMessage,
+    ]);
+
+    if (auth()->id() == $user->id) {
+        auth()->logout();
+        return redirect()->route('login')->with('message', 'Role updated. Please log in again.');
+    }
+
+    return redirect()->route('admin.index')->with('success', 'User updated successfully.');
+}
+
 
 
     // Delete a user
@@ -251,16 +296,16 @@ class UserController extends Controller
         if ($user) {
             // Log before deletion
             LogsUser::create([
-                'user_name'     => $user->user_name,
-                'email'         => $user->email,
-                'cpf_no'        => $user->cpf_no,
-                'user_type'     => $user->user_type,
-                'rig_id'      => $user->rig_id,
-                'creater_id'    => auth()->id(),
-                'creater_type'  => auth()->user()->user_type,
-                'receiver_id'   => null,
+                'user_name' => $user->user_name,
+                'email' => $user->email,
+                'cpf_no' => $user->cpf_no,
+                'user_type' => $user->user_type,
+                'rig_id' => $user->rig_id,
+                'creater_id' => auth()->id(),
+                'creater_type' => auth()->user()->user_type,
+                'receiver_id' => null,
                 'receiver_type' => null,
-                'message'       => "User '{$user->user_name}' has been deleted.",
+                'message' => "User '{$user->user_name}' has been deleted.",
             ]);
             // Delete the user
             $user->delete();

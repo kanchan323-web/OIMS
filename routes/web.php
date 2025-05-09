@@ -140,7 +140,6 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
             Route::post('/decline-pending-request', [AdminRequestStockController::class, 'declineforRaisedRequest'])->name('admin.request.raisedrequestdecline');
             Route::get('/get-request-status/{id}', [AdminRequestStockController::class, 'getRequestStatusforEdit'])->name('admin.request-status.get');
             Route::post('/update-request-status/{id}', [AdminRequestStockController::class, 'updateRequestStatus'])->name('admin.request-status.update');
-
             Route::get('/requestList/{status}', [AdminRequestStockController::class, 'RequestStockListStatus'])->name('admin.requestList', ['status' => 'status']);
         });
 

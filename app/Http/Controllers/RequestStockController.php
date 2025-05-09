@@ -314,7 +314,7 @@ class RequestStockController extends Controller
             $getedp = Edp::where('id', $stock->edp_code)->first();
 
             $message = sprintf(
-                'The Request sent by User %s <strong>%s</strong> (%s) to supplier Rig <strong>%s</strong> (%s) for Material Edp (%s), with description (%s) for quantity %d',
+                'The Request sent by User %s of Rig <strong>%s</strong> (%s) to supplier Rig <strong>%s</strong> (%s) for Material Edp (%s), with description (%s) for quantity %d',
                 $requesterName,
                 $requesterLocationName,
                 $requesterLocation,
@@ -618,15 +618,21 @@ class RequestStockController extends Controller
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
+            $RequesterRigLocation = RigUser::where('id', $requesterTable->requester_rig_id)->value('location_id');
+            $RequesterRigLocationName = RigUser::where('id', $requesterTable->requester_rig_id)->value('name');
 
             $message = sprintf(
-                'The Material EDP (%s) has been dispatched by Rig <strong>%s</strong>(%s) The process is now in the MIT stage  with the description (%s) for a quantity of %d.',
+                'The material EDP (%s) has been dispatched by supplier rig <strong>%s</strong> (%s) to requester rig <strong>%s</strong> (%s). The process is now in the MIT stage with the description "%s", for a requested quantity of %d, and a quantity issued to the supplier of %s.',
                 $getedp->edp_code ?? 'N/A',
                 $riglocationName,
                 $riglocation,
+                $RequesterRigLocationName,
+                $RequesterRigLocation,
                 $stock->description ?? 'N/A',
+                $requesterTable->requested_qty,
                 $supplier_total_qty
             );
+            
 
             LogsRequestStatus::create([
                 'decline_msg' => null,
@@ -715,7 +721,7 @@ class RequestStockController extends Controller
             RequestStatus::create([
                 'request_id' => $request->request_id,
                 'status_id' => 5,
-                'decline_msg' => $request->decline_msg, 
+                'decline_msg' => $request->decline_msg,
                 'query_msg' => null,
                 'supplier_qty' => null,
                 'supplier_new_spareable' => null,
@@ -727,17 +733,21 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id', $request->request_id)->first();
-            $requesterTable = Requester::where('id', $request->request_id)->first();
+            
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
+            $requesterriglocation = RigUser::where('id', $requesterTable->requester_rig_id)->value('location_id');
+            $requesterriglocationName = RigUser::where('id', $requesterTable->requester_rig_id)->value('name');
 
             $message = sprintf(
-                'The Request has been declined by Rig <strong>%s</strong> (%s) for material EDP (%s), with description (%s), for a quantity of %d. Decline message: (%s).',
+                'The Request has been declined by supplier Rig <strong>%s</strong> (%s) for material EDP (%s) of requester Rig  <strong>%s</strong> (%s) , with description (%s) for a quantity of %d. Decline message: (%s).',
                 $riglocationName,
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
+                $requesterriglocationName ?? 'N/A',
+                $requesterriglocation  ?? 'N/A',
                 $stock->description ?? 'N/A',
                 $requesterTable->requested_qty,
                 $request->decline_msg
@@ -850,7 +860,7 @@ class RequestStockController extends Controller
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
 
-           
+
 
             $message = sprintf(
                 'The Request is under query by Rig <strong>%s</strong> (%s) for material EDP (%s), with the description "%s", for a quantity of %d. Query message: "%s".',
@@ -958,11 +968,12 @@ class RequestStockController extends Controller
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
 
             $message = sprintf(
-                'Request has been Approve  by Rig  <strong>%s</strong> (%s)  for Material Edp (%s), with description (%s)',
+                'Request has been Received by Rig <strong>%s</strong> (%s)  for Material Edp (%s), with description (%s) for quantity %s ',
                 $riglocationName,
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
                 $stock->description ?? 'N/A',
+                $requesterTable->requested_qty ?? 'N/A',
 
             );
 
@@ -1192,14 +1203,19 @@ class RequestStockController extends Controller
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
 
             $message = sprintf(
-                ' The Request has been Acknowledged and Received by Rig <strong>%s</strong>(%s) for material EDP (%s), with the description "%s", for a quantity of %d.',
+                ' The Request has been Acknowledged and Received by Rig <strong>%s</strong>(%s) for material EDP (%s), with the description "%s", for a requested quantity of %d, and a quantity issued by  supplier of %s.',
                 $riglocationName,
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
                 $stock->description ?? 'N/A',
                 $requesterTable->requested_qty,
+                $requestStatus->supplier_qty
 
             );
+
+
+
+           
 
 
             LogsRequestStatus::create([
@@ -1347,7 +1363,7 @@ class RequestStockController extends Controller
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
 
-           
+
 
             $message = sprintf(
                 'The Request is self query by Rig <strong>%s</strong> (%s) for material EDP (%s), with the description "%s", for a quantity of %d. Query message: "%s".',
