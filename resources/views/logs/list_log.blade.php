@@ -214,9 +214,24 @@
 
                                     if (field === 'created_at' && value !== 'N/A') {
                                         const d = new Date(value);
-                                        value = `${("0" + d.getDate()).slice(-2)}-${("0" + (d.getMonth() + 1)).slice(-2)}-${d.getFullYear()}`;
-                                    } else if ((field === 'available_qty' || field === 'requested_qty') && value !== 'N/A') {
-                                        value = formatIndianNumber(value);
+                                        // Convert to IST (Indian Standard Time)
+                                        const istOffset = 5.5 * 60; // IST is UTC+5:30
+                                        const localTime = new Date(d.getTime() + (istOffset * 60 * 1000));
+
+                                        const day = ("0" + localTime.getUTCDate()).slice(-2);
+                                        const month = ("0" + (localTime.getUTCMonth() + 1)).slice(-2);
+                                        const year = localTime.getUTCFullYear();
+
+                                        let hours = localTime.getUTCHours();
+                                        const minutes = ("0" + localTime.getUTCMinutes()).slice(-2);
+                                        const seconds = ("0" + localTime.getUTCSeconds()).slice(-2);
+                                        const ampm = hours >= 12 ? 'PM' : 'AM';
+
+                                        hours = hours % 12;
+                                        hours = hours ? hours : 12; // Convert '0' to '12'
+                                        hours = ("0" + hours).slice(-2);
+
+                                        value = `${day}-${month}-${year} (${hours}:${minutes}:${seconds} ${ampm})`;
                                     }
 
                                 }
@@ -259,9 +274,9 @@
                             const colIndexRig = fields.indexOf('name');
 
                             let selectHTML = `<div class="col-md-3">
-                                                                <label class="small">Rig Name</label>
-                                                                <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
-                                                                    <option value="">All</option>`;
+                                                                        <label class="small">Rig Name</label>
+                                                                        <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
+                                                                            <option value="">All</option>`;
 
 
                             Object.entries(combinedMap).forEach(([locId, rigNames]) => {
@@ -282,9 +297,9 @@
                                 const label = filterLabels[field] || field;
 
                                 let selectHTML = `<div class="col-md-3">
-                                                                    <label class="small">${label}</label>
-                                                                    <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
-                                                                        <option value="">All</option>`;
+                                                                            <label class="small">${label}</label>
+                                                                            <select class="form-control form-control-sm column-filter${(field === 'edp_code') ? ' select2-filter' : ''}" data-col="${colIndex}" data-field="${field}">
+                                                                                <option value="">All</option>`;
 
                                 uniqueVals.forEach(val => {
                                     selectHTML += `<option value="${val}">${val}</option>`;
@@ -313,12 +328,12 @@
                         }
 
                         $("#customFilters").append(`
-                                                            <div class="col-1 d-flex align-items-end">
-                                                                <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
-                                                                    <i class="fas fa-sync-alt"></i>
-                                                                </button>
-                                                            </div>
-                                                        `);
+                                                                    <div class="col-1 d-flex align-items-end">
+                                                                        <button type="button" id="resetFilters" class="btn btn-secondary btn-sm" style="height: 33.22222px; width: 33.22222px;">
+                                                                            <i class="fas fa-sync-alt"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                `);
 
                         const datatable = $('#logsTable').DataTable({
                             paging: true,
@@ -395,12 +410,12 @@
                     },
                     error: function (xhr) {
                         $("#logsTableBody").html(`
-                                                            <tr>
-                                                                <td colspan="100%" class="text-center text-danger">
-                                                                    Error loading data.
-                                                                </td>
-                                                            </tr>
-                                                        `);
+                                                                    <tr>
+                                                                        <td colspan="100%" class="text-center text-danger">
+                                                                            Error loading data.
+                                                                        </td>
+                                                                    </tr>
+                                                                `);
                         $("#loadingMessage").hide();
                         console.error("AJAX Error:", xhr.responseText);
                     }
