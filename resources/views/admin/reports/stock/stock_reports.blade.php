@@ -5,12 +5,48 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row justify-content-between">
-                        <div class="col-sm-6 col-md-9">
-                            <div id="user_list_datatable_info" class="dataTables_filter">
-                                <form id="filterForm" class="w-100">
-                                    <div class="row align-items-end">
 
-                                        <!-- EDP Code -->
+                        <div class="offset-3 col-sm-6 col-md-9">
+                            <div class="user-list-files d-flex">
+                                <a href="{{ route('report_stockPdfDownload') }}"
+                                    class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
+                                    id="downloadPdf" target="_blank">
+                                    <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                </a>
+                                <a href="{{ route('report_stockExcelDownload') }}"
+                                    class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
+                                    id="downloadexcel" target="_blank">
+                                    <i class="fas fa-file-excel mr-1"></i> Export Excel
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div id="user_list_datatable_info" class="card p-3 shadow-sm border-0 dataTables_filter">
+
+                                <form id="filterForm" class="w-100">
+                                    <div class="row g-3">
+
+                                         <!-- EDP Code -->
+                                         <style>
+                                            .select2-container--default .select2-selection--single {
+                                                height: 41px;
+                                                padding: 6px 12px;
+                                                border: 1px solid #ced4da;
+                                                border-radius: 0.375rem;
+                                                /* Bootstrap 5 border-radius */
+                                            }
+
+                                            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                                                line-height: 28px;
+                                                /* Adjust based on height */
+                                            }
+
+                                            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                                                height: 41px;
+                                            }
+                                        </style>
+
                                         <div class="col-md-2 mb-2">
                                             <label for="edp_code">EDP Code</label>
                                             <select class="form-control" name="edp_code" id="edp_code">
@@ -22,7 +58,7 @@
                                         </div>
 
                                         <!-- RID -->
-                                        <div class="col-md-2 mb-2">
+                                        <div class="col-md-2 ">
                                             <label for="rid">RID</label>
                                             <select name="rid" id="rid" class="form-control select2">
                                                 <option value="">Select RID</option>
@@ -34,7 +70,7 @@
 
 
                                         <!-- Receiver -->
-                                        <div class="col-md-2 mb-2">
+                                        <div class="col-md">
                                             <label for="receiver_id">Receiver</label>
                                             <select name="receiver_id" id="receiver_id" class="form-control">
                                                 <option value="">Select Receiver</option>
@@ -56,22 +92,22 @@
                                         </div>
 
                                         <!-- From Date -->
-                                        <div class="col-md-2 mb-2">
-                                            <label for="from_date">From Date</label>
+                                        <div class="col-md-2">
+                                            <label for="from_date"  class="form-label fw-semibold">From Date</label>
                                             <input type="date" class="form-control" name="from_date" id="from_date">
                                         </div>
 
                                         <!-- To Date -->
-                                        <div class="col-md-2 mb-2">
-                                            <label for="to_date">To Date</label>
+                                        <div class="col-md-2">
+                                            <label for="to_date"  class="form-label fw-semibold">To Date</label>
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div>
 
                                         <!-- Buttons -->
-                                        <div class="col-md-2 mb-2 d-flex">
+                                        <div class="col-12 text-end pt-2">
                                             <button type="button" class="btn btn-primary mr-2"
-                                                id="filterButton">Search</button>
-                                            <button type="button" class="btn btn-secondary ml-2"
+                                                id="filterButton">  <i class="fas fa-search me-1"></i> Search</button>
+                                                <button type="button" class="btn btn-secondary ml-2"
                                                 id="resetButton">Reset</button>
                                         </div>
                                     </div>
@@ -80,20 +116,7 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-6 col-md-3">
-                            <div class="user-list-files d-flex">
-                                <a href="{{ route('report_stockPdfDownload') }}"
-                                    class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
-                                    id="downloadPdf" target="_blank">
-                                    <i class="fas fa-file-pdf mr-1"></i> Export PDF
-                                </a>
-                                <a href="{{ route('report_stockExcelDownload') }}"
-                                    class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
-                                    id="downloadexcel" target="_blank">
-                                    <i class="fas fa-file-excel mr-1"></i> Export Excel
-                                </a>
-                            </div>
-                        </div>
+                      
                     </div>
                 </div>
 

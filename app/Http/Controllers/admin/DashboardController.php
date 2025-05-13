@@ -144,11 +144,11 @@ class DashboardController extends Controller
             ];
         })->values();
         
-        // Optional: Define color sets for new and used
-        $newColors = ['#4285F4', '#34A853', '#F4AAAA', '#B39DDB', '#FBBC05'];
-        $usedColors = ['#8AB4F8', '#81C995', '#FDE293', '#F4AAAA', '#B39DDB'];
+        // Define color palettes
+        $newColors = ['#4285F4', '#34A853', '#F4AAAA', '#B39DDB', '#FBBC05', '#00ACC1', '#FF7043', '#9575CD', '#F06292'];
+        $usedColors = ['#8AB4F8', '#81C995', '#FDE293', '#F4AAAA', '#B39DDB', '#80DEEA', '#FFAB91', '#D1C4E9', '#F8BBD0'];
         
-        // Dynamically build $newSections and $usedSections
+        // Prepare chart data
         $newSections = [];
         $usedSections = [];
         
@@ -168,6 +168,7 @@ class DashboardController extends Controller
                 'color' => $colorUsed,
             ];
         }
+        
         
         // dd([
         //     'newSections' => $newSections,
