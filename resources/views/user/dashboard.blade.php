@@ -242,7 +242,7 @@
                                                 <input type="text" id="dual-end-date" class="form-control form-control-sm" placeholder="End date">
                                             </div>
                             
-                                            <button id="dual-reset-filter" class="compact-btn reset">Reset</button>
+                                            <button id="dual-reset-filter" class="compact-btn reset"  style="background-color: #E08DB4">Reset</button>
                                         </div>
                             
                                         <!-- Dual Chart Container -->
@@ -308,8 +308,8 @@
                                                         }
                                                     },
                                                     series: [
-                                                        { name: 'Declined', data: declineData, color: '#ff6b6b' },
-                                                        { name: 'Received', data: acceptData, color: '#51cf66' }
+                                                        { name: 'Declined', data: declineData, color: '#FF9770' },
+                                                        { name: 'Received', data: acceptData, color: '#32BDEA' }
                                                     ],
                                                     tooltip: {
                                                         formatter: function () {

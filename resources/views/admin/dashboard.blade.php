@@ -193,7 +193,7 @@
                                     <input type="text" id="compact-end-date" class="form-control form-control-sm" placeholder="End date">
                                 </div>
                                 
-                                <button id="compact-reset-filter" class="compact-btn reset">Reset</button>
+                                <button id="compact-reset-filter" class="compact-btn reset" style="background-color: #E08DB4">Reset</button>
                             </div>
                 
                             <div id="compact-chart-container"></div>
@@ -248,8 +248,8 @@
                                         bar: { borderWidth: 0 }
                                     },
                                     series: [
-                                        { name: 'Declined', data: [], color: '#ff6b6b' },
-                                        { name: 'Received', data: [], color: '#51cf66' }
+                                        { name: 'Declined', data: [], color: '#FF9770' },
+                                        { name: 'Received', data: [], color: '#32BDEA' }
                                     ],
                                     tooltip: {
                                         formatter: function() {
