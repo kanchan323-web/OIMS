@@ -204,7 +204,7 @@ class AdminStockController extends Controller
             'stock_id'        => $stock->id,
             'location_id'     => $rigUser->location_id,
             'location_name'   => $rigUser->name,
-            'edp_code'        => $edpCode,
+            'edp_code'        => $stock->edp_code,
             'category'        => $stock->category,
             'description'     => $stock->description,
             'section'         => $stock->section,
@@ -221,8 +221,8 @@ class AdminStockController extends Controller
             'req_status'      => "Inactive",
             'created_at'      => now(),
             'updated_at'      => now(),
-            'creater_id'      => auth()->id(),
-            'creater_type'    => auth()->user()->user_type,
+            'creater_id'      => null,
+            'creater_type'    => null,
             'receiver_id'     => null,
             'receiver_type'   => null,
             'message'         => "Stock created for EDP Code: {$stock->edp_code}.",
@@ -276,7 +276,6 @@ class AdminStockController extends Controller
                 'Qty Used'
             ];
 
-
             // Ensure the uploaded file matches the expected headers
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
 
@@ -287,8 +286,6 @@ class AdminStockController extends Controller
                 return redirect()->back();
             }
 
-
-
             $user = Auth::user();
             $errors = [];
 
@@ -297,7 +294,6 @@ class AdminStockController extends Controller
                 if (array_filter($row, fn($value) => !is_null($value) && trim($value) !== '') === []) {
                     continue;
                 }
-
 
                 $locationId = trim($row[0]);
                 $locationName = RigUser::where('location_id', $locationId)->value('name');
@@ -318,7 +314,6 @@ class AdminStockController extends Controller
                     continue;
                 }
 
-
                 $rig = RigUser::where('location_id', $locationId)->first();
                 if (!$rig) {
                     $errors[] = "Row " . ($index + 2) . ": Rig {$locationName} not found in the Rig table.";
@@ -333,7 +328,6 @@ class AdminStockController extends Controller
                         continue 2;
                     }
                 }
-
 
                 // Check if stock for the same EDP code already exists
                 $existingStock = Stock::where('edp_code', $edp->id)
@@ -352,7 +346,7 @@ class AdminStockController extends Controller
                     ]);
                 } else {
                     // Insert new stock entry
-                    Stock::create([
+                    $existingStock = Stock::create([
                         'edp_code'      => $edp->id,
                         'rig_id'        => $rig->id,
                         'location_id'   => $locationId,
@@ -368,6 +362,36 @@ class AdminStockController extends Controller
                         'user_id'       => $user->id,
                     ]);
                 }
+
+                LogsStocks::create([
+                    'stock_id'        => $existingStock->id,
+                    'location_id'     => $rig->location_id,
+                    'location_name'   => $rig->name,
+                    'edp_code'        => $edp->id,
+                    'category'        => $edp->category,
+                    'description'     => $edp->description,
+                    'section'         => $edp->section,
+                    'qty'             => $totalqty,
+                    'initial_qty'     => $totalqty,
+                    'measurement'     => $edp->measurement,
+                    'new_spareable'   => $new_spareable,
+                    'used_spareable'  => $used_spareable,
+                    'new_value'       => $new_spareable,
+                    'used_value'      => $used_spareable,
+                    'remarks'         => 'nill',
+                    'user_id'         => $user->id,
+                    'rig_id'          => $user->rig_id,
+                    'req_status'      => "Inactive",
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                    'creater_id'      => null,
+                    'creater_type'    => null,
+                    'receiver_id'     => null,
+                    'receiver_type'   => null,
+                    'message'         => "Stock created for EDP Code: {$edp->edp_code}.",
+                    'action'          => "Added",
+                    'reference_id'    => $user->cpf_no,
+                ]);
             }
 
             Storage::delete($filePath);
@@ -486,6 +510,15 @@ class AdminStockController extends Controller
                 ->withInput();
         }
 
+        $validatedData = $request->validate($rules);
+        $validatedData['location_id'] = $rigUser->location_id;
+        $validatedData['location_name'] = $rigUser->name;
+        $validatedData['rig_id'] = $request->rig_id;
+        $validatedData['new_spareable'] = $request->new_spareable;
+        $validatedData['used_spareable'] = $request->used_spareable;
+
+        $stock->update($validatedData);
+
         LogsStocks::create([
             'stock_id'        => $stock->id,
             'location_id'     => $rigUser->location_id,
@@ -502,12 +535,12 @@ class AdminStockController extends Controller
             'new_value'       => $stock->new_spareable,
             'used_value'      => $stock->used_spareable,
             'remarks'         => $request->remarks,
-            'user_id'         => $stock->user_id,
+            'user_id'         => auth()->id(),
             'rig_id'          => $request->rig_id,
             'req_status'      => "Inactive",
             'created_at'      => now(),
             'updated_at'      => now(),
-            'creater_id'      => auth()->id(),
+            'creater_id'      => null,
             'creater_type'    => auth()->user()->user_type,
             'receiver_id'     => null,
             'receiver_type'   => null,
@@ -515,15 +548,6 @@ class AdminStockController extends Controller
             'action'          => "Modified",
             'reference_id'    => $user->cpf_no,
         ]);
-
-        $validatedData = $request->validate($rules);
-        $validatedData['location_id'] = $rigUser->location_id;
-        $validatedData['location_name'] = $rigUser->name;
-        $validatedData['rig_id'] = $request->rig_id;
-        $validatedData['new_spareable'] = $request->new_spareable;
-        $validatedData['used_spareable'] = $request->used_spareable;
-
-        $stock->update($validatedData);
 
         $user = Auth::user();
         $url = route('stock_list');
