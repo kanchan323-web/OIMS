@@ -194,7 +194,7 @@ class StockController extends Controller
             'req_status'      => "Inactive",
             'created_at'      => now(),
             'updated_at'      => now(),
-            'creater_id'      => $user->rig_id,
+            'creater_id'      => null,
             'creater_type'    => null,
             'receiver_id'     => null,
             'receiver_type'   => null,
@@ -308,7 +308,7 @@ class StockController extends Controller
                     ]);
                 } else {
                     // Insert new stock entry
-                    Stock::create([
+                   $stock = Stock::create([
                         'edp_code'      => $edp->id,
                         'rig_id'        => $user->rig_id,
                         'location_id'   => $rigUser->location_id,
