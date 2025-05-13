@@ -189,6 +189,7 @@
                     data: formData + "&report_type=" + reportType,
                     dataType: "json",
                     success: function (response) {
+                        //console.log(response.data);
                         if ($.fn.DataTable.isDataTable('#dynamicAdminTable')) {
                             $('#dynamicAdminTable').DataTable().destroy();
                         }
@@ -214,7 +215,7 @@
                                             <td>${item.description ?? '-'}</td>
                                             <td>${formatIndianNumber(item.formatted_new_value ?? '0')}</td>
                                             <td>${formatIndianNumber(item.formatted_used_value ?? '0')}</td>
-                                            <td>${formatIndianNumber(item.Quantity ?? 0)}</td>
+                                            <td>${formatIndianNumber(item.qty ?? 0)}</td>
                                             <td>${item.action ?? '-'}</td>
                                             <td>${item.reference_id ?? '-'}</td>
                                             <td>${item.updated_at_formatted ?? '-'}</td>

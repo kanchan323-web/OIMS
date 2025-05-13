@@ -293,7 +293,11 @@ class StockReportController extends Controller
 
                     if ($previous) {
                         $symbolNew = ($log->new_spareable > $previous->new_spareable) ? '+' : (($log->new_spareable < $previous->new_spareable) ? '-' : '');
+
                         $symbolUsed = ($log->used_spareable > $previous->used_spareable) ? '+' : (($log->used_spareable < $previous->used_spareable) ? '-' : '');
+                    } else {
+                        $symbolNew = '+';
+                        $symbolUsed = '+';
                     }
                     break;
             }
