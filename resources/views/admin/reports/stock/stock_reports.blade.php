@@ -112,6 +112,33 @@
     </div>
 
     <script>
+          function formatIndianNumber(x) {
+            if (x == null || x === '') return '0';
+
+            let sign = '';
+            if (typeof x === 'string' && (x.startsWith('+') || x.startsWith('-'))) {
+                sign = x[0];
+                x = x.substring(1); // Remove the sign from the number
+            }
+
+            let number = parseFloat(x);
+            if (isNaN(number)) return '0';
+
+            let parts = number.toFixed(2).split(".");
+            let integerPart = parts[0];
+            let decimalPart = "." + parts[1];
+
+            let lastThree = integerPart.slice(-3);
+            let otherNumbers = integerPart.slice(0, -3);
+
+            if (otherNumbers !== '')
+                lastThree = ',' + lastThree;
+
+            let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + decimalPart;
+
+            return sign + formatted;
+        }
+
         $(document).ready(function () {
 
             $('#edp_code').select2({
@@ -161,9 +188,9 @@
                                         <td>${stockdata.EDP_Code}</td>
                                         <td>${stockdata.description}</td>
                                         <td>${stockdata.req_name}</td>
-                                        <td>${stockdata.requested_qty}</td>
+                                         <td>${formatIndianNumber(stockdata.requested_qty ?? '0')}</td>
                                         <td>${stockdata.sup_name}</td>
-                                        <td>${stockdata.supplier_qty}</td>
+                                         <td>${formatIndianNumber(stockdata.supplier_qty ?? '0')}</td>
                                         <td>${stockdata.date}</td>
                                     </tr>`;
                         });
