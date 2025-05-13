@@ -139,14 +139,14 @@
                 'Rigs': ['ID', 'Location ID', 'Rig Name', 'Creator Type', 'Message', 'Date'],
                 'Users': ['ID', 'User Name', 'Email', 'Creator Type', 'Message', 'Date'],
                 'EDP': ['ID', 'EDP Code', 'Category', 'Description', 'Section', 'Creator Type', 'Message', 'Date'],
-                'Request': ['ID', 'Request ID', 'Available Qty', 'Requested Qty', 'EDP Code', 'Message', 'Date']
+                'Request': ['ID', 'Request ID','EDP Code', 'Available Qty', 'Requested Qty',  'Message', 'Date']
             };
 
             const fieldMappings = {
                 'Rigs': ['id', 'location_id', 'name', 'creater_type', 'message', 'created_at'],
                 'Users': ['id', 'user_name', 'email', 'creater_type', 'message', 'created_at'],
                 'EDP': ['id', 'edp_code', 'category', 'description', 'section', 'creater_type', 'message', 'created_at'],
-                'Request': ['id', 'RID', 'available_qty', 'requested_qty', 'edp_code', 'message', 'created_at']
+                'Request': ['id', 'RID', 'edp_code','available_qty', 'requested_qty',  'message', 'created_at']
             };
 
             const filterableColumns = {

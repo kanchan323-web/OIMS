@@ -167,10 +167,10 @@
                                 }
                             </style>
                 
-                            <h5 class="card-title mb-2">Section Acceptance/Decline Report</h5>
-                            
+                            <h5 class="card-title mb-2">Section Received/Decline Report</h5>
+                
                             <!-- Filter Section -->
-                            {{-- <div class="compact-filter-container">
+                            <div class="compact-filter-container">
                                 <div class="compact-filter-group">
                                     <label for="compact-preset-filter">Time Range</label>
                                     <select id="compact-preset-filter" class="form-control form-control-sm">
@@ -193,29 +193,16 @@
                                     <input type="text" id="compact-end-date" class="form-control form-control-sm" placeholder="End date">
                                 </div>
                                 
-                                <button id="compact-apply-filter" class="compact-btn">Apply</button>
                                 <button id="compact-reset-filter" class="compact-btn reset">Reset</button>
-                            </div> --}}
-                            
+                            </div>
+                
                             <div id="compact-chart-container"></div>
                 
-                       
                             <script>
                                 // Dynamic data from controller
                                 const compactSampleData = @json($chartData);
-                                
-                                // Initialize date pickers
-                                const compactStartDatePicker = flatpickr("#compact-start-date", {
-                                    dateFormat: "Y-m-d",
-                                    maxDate: new Date()
-                                });
-                                
-                                const compactEndDatePicker = flatpickr("#compact-end-date", {
-                                    dateFormat: "Y-m-d",
-                                    maxDate: new Date()
-                                });
                 
-                                // Initialize compact chart
+                                // Initialize Highcharts chart
                                 const compactChart = Highcharts.chart('compact-chart-container', {
                                     chart: { 
                                         type: 'bar',
@@ -273,37 +260,31 @@
                                     }
                                 });
                 
-                                // Function to update compact chart with date filtering
+                                // Filter logic
                                 function updateCompactChart(startDate = null, endDate = null) {
                                     let filteredData = compactSampleData;
-                                    
+                
                                     if (startDate && endDate) {
                                         filteredData = compactSampleData.filter(item => {
                                             const itemDate = new Date(item.date);
                                             return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
                                         });
                                     }
-                                    
-                                    // Group by section and sum counts
+                
                                     const sectionTotals = {};
-                                    
+                
                                     filteredData.forEach(item => {
                                         if (!sectionTotals[item.section]) {
-                                            sectionTotals[item.section] = {
-                                                accept: 0,
-                                                decline: 0
-                                            };
+                                            sectionTotals[item.section] = { accept: 0, decline: 0 };
                                         }
                                         sectionTotals[item.section].accept += parseInt(item.accept);
                                         sectionTotals[item.section].decline += parseInt(item.decline);
                                     });
-                                    
-                                    // Prepare data for chart
+                
                                     const sections = Object.keys(sectionTotals);
                                     const acceptData = sections.map(section => sectionTotals[section].accept);
                                     const declineData = sections.map(section => sectionTotals[section].decline);
-                                    
-                                    // Update chart
+                
                                     compactChart.update({
                                         xAxis: { categories: sections },
                                         series: [
@@ -313,68 +294,79 @@
                                     });
                                 }
                 
-                                // Initial chart load
+                                // Load initial chart with full data
                                 updateCompactChart();
                 
-                                // Event listeners for filters
+                                // Flatpickr setup
+                                const compactStartDatePicker = flatpickr("#compact-start-date", {
+                                    dateFormat: "Y-m-d",
+                                    maxDate: new Date(),
+                                    onChange: updateChartIfBothDatesSelected
+                                });
+                
+                                const compactEndDatePicker = flatpickr("#compact-end-date", {
+                                    dateFormat: "Y-m-d",
+                                    maxDate: new Date(),
+                                    onChange: updateChartIfBothDatesSelected
+                                });
+                
+                                function updateChartIfBothDatesSelected() {
+                                    const start = document.getElementById('compact-start-date').value;
+                                    const end = document.getElementById('compact-end-date').value;
+                                    if (start && end) {
+                                        updateCompactChart(start, end);
+                                    }
+                                }
+                
+                                // Preset time range change
                                 document.getElementById('compact-preset-filter').addEventListener('change', function() {
                                     const preset = this.value;
                                     const today = new Date();
-                                    
+                                    let startDate = new Date(today);
+                
                                     if (!preset) return;
-                                    
+                
                                     if (preset === 'custom') {
                                         compactStartDatePicker.clear();
                                         compactEndDatePicker.clear();
                                         return;
                                     }
-                                    
-                                    let startDate = new Date(today);
-                                    
-                                    switch(preset) {
-                                        case 'today': 
+                
+                                    switch (preset) {
+                                        case 'today':
                                             break;
-                                        case 'week': 
-                                            startDate.setDate(today.getDate() - 7); 
+                                        case 'week':
+                                            startDate.setDate(today.getDate() - 7);
                                             break;
-                                        case 'month': 
-                                            startDate.setDate(today.getDate() - 30); 
+                                        case 'month':
+                                            startDate.setDate(today.getDate() - 30);
                                             break;
-                                        case 'year': 
-                                            startDate.setFullYear(today.getFullYear() - 1); 
+                                        case 'year':
+                                            startDate.setFullYear(today.getFullYear() - 1);
                                             break;
                                     }
-                                    
-                                    compactStartDatePicker.setDate(startDate);
-                                    compactEndDatePicker.setDate(today);
-                                    
-                                    // Auto-apply when preset is selected
-                                    document.getElementById('compact-apply-filter').click();
+                
+                                    const formattedStart = startDate.toISOString().split('T')[0];
+                                    const formattedEnd = today.toISOString().split('T')[0];
+                
+                                    compactStartDatePicker.setDate(formattedStart);
+                                    compactEndDatePicker.setDate(formattedEnd);
+                                    updateCompactChart(formattedStart, formattedEnd);
                                 });
                 
-                                document.getElementById('compact-apply-filter').addEventListener('click', function() {
-                                    const startDate = document.getElementById('compact-start-date').value;
-                                    const endDate = document.getElementById('compact-end-date').value;
-                                    
-                                    if (startDate && endDate) {
-                                        updateCompactChart(startDate, endDate);
-                                    } else {
-                                        alert('Please select both start and end dates');
-                                    }
-                                });
-                
+                                // Reset filter
                                 document.getElementById('compact-reset-filter').addEventListener('click', function() {
                                     document.getElementById('compact-preset-filter').value = '';
                                     compactStartDatePicker.clear();
                                     compactEndDatePicker.clear();
-                                    updateCompactChart(); // Show all data
+                                    updateCompactChart();
                                 });
                             </script>
                         </div>
                     </div>
                 </div>
         
-                <div class="col-lg-6">
+                <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body">
                             <style>
@@ -416,7 +408,71 @@
                                 </div>
                 
                 
-                
+                                <script>
+                                    const newSections = @json($newSections);
+                                    const usedSections = @json($usedSections);
+                                
+                                    const donutConfig = {
+                                        chart: { type: 'pie' },
+                                        title: { text: '' },
+                                        tooltip: {
+                                            pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
+                                        },
+                                        plotOptions: {
+                                            pie: {
+                                                allowPointSelect: true,
+                                                cursor: 'pointer',
+                                                dataLabels: {
+                                                    enabled: true,
+                                                    // ✅ Show only section name inside chart
+                                                    format: '{point.name}',
+                                                    distance: -40,
+                                                    style: {
+                                                        fontWeight: 'bold',
+                                                        fontSize: '11px',
+                                                        textOutline: 'none'
+                                                    }
+                                                },
+                                                showInLegend: true,
+                                                innerSize: '60%'
+                                            }
+                                        },
+                                        legend: {
+                                            labelFormatter: function () {
+                                                // ✅ Legend shows: section name + quantity
+                                                return `${this.name}: ${this.y} units`;
+                                            },
+                                            itemStyle: {
+                                                fontWeight: 'normal',
+                                                fontSize: '12px'
+                                            }
+                                        },
+                                        credits: { enabled: false },
+                                        exporting: { enabled: false }
+                                    };
+                                
+                                    Highcharts.chart('new-sections-chart', {
+                                        ...donutConfig,
+                                        series: [{
+                                            name: 'New Sections',
+                                            data: newSections.map(item => ({
+                                                ...item,
+                                                name: item.name.split(' - ')[0] // remove " - Qty: ..."
+                                            }))
+                                        }]
+                                    });
+                                
+                                    Highcharts.chart('used-sections-chart', {
+                                        ...donutConfig,
+                                        series: [{
+                                            name: 'Used Sections',
+                                            data: usedSections.map(item => ({
+                                                ...item,
+                                                name: item.name.split(' - ')[0]
+                                            }))
+                                        }]
+                                    });
+                                </script>
                 
                         </div>
                     </div>
@@ -428,71 +484,7 @@
       
 
     </div>
-    <script>
-        const newSections = @json($newSections);
-        const usedSections = @json($usedSections);
-    
-        const donutConfig = {
-            chart: { type: 'pie' },
-            title: { text: '' },
-            tooltip: {
-                pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        // ✅ Show only section name inside chart
-                        format: '{point.name}',
-                        distance: -40,
-                        style: {
-                            fontWeight: 'bold',
-                            fontSize: '11px',
-                            textOutline: 'none'
-                        }
-                    },
-                    showInLegend: true,
-                    innerSize: '60%'
-                }
-            },
-            legend: {
-                labelFormatter: function () {
-                    // ✅ Legend shows: section name + quantity
-                    return `${this.name}: ${this.y} units`;
-                },
-                itemStyle: {
-                    fontWeight: 'normal',
-                    fontSize: '12px'
-                }
-            },
-            credits: { enabled: false },
-            exporting: { enabled: false }
-        };
-    
-        Highcharts.chart('new-sections-chart', {
-            ...donutConfig,
-            series: [{
-                name: 'New Sections',
-                data: newSections.map(item => ({
-                    ...item,
-                    name: item.name.split(' - ')[0] // remove " - Qty: ..."
-                }))
-            }]
-        });
-    
-        Highcharts.chart('used-sections-chart', {
-            ...donutConfig,
-            series: [{
-                name: 'Used Sections',
-                data: usedSections.map(item => ({
-                    ...item,
-                    name: item.name.split(' - ')[0]
-                }))
-            }]
-        });
-    </script>
+   
     
   
 @endsection
