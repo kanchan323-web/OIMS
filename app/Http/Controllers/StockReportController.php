@@ -113,7 +113,7 @@ class StockReportController extends Controller
                 'edps.description',
                 'rig_users.name',
                 'stocks.qty',
-                'requesters.requested_qty',
+                'request_status.supplier_qty as requested_qty',
                 'requesters.RID',
                 DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as receipt_date")
             )
@@ -147,7 +147,7 @@ class StockReportController extends Controller
                 'edps.description',
                 'rig_users.name',
                 'stocks.qty',
-                'requesters.requested_qty',
+                'request_status.supplier_qty as requested_qty',
                 'requesters.RID',
                 DB::raw("DATE_FORMAT(request_status.updated_at, '%d-%m-%Y') as issued_date"),
                 'request_status.supplier_new_spareable',
