@@ -63,7 +63,7 @@ class AdminStockController extends Controller
 
         $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code', 'edps.section', 'edps.description')
-            ->orderBy('stocks.id', 'desc')
+            ->orderBy('stocks.updated_at', 'desc')
             ->get();
 
         $moduleName = "Stock";
@@ -123,7 +123,7 @@ class AdminStockController extends Controller
         $request->merge([
             'qty' => str_replace(',', '', $request->qty),
             'new_spareable' => str_replace(',', '', $request->new_spareable),
-            'used_spareable' => str_replace(',', '', $request->new_spareable),
+            'used_spareable' => str_replace(',', '', $request->used_spareable),
         ]);
 
         $rules = [
