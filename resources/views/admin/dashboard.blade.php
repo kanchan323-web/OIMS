@@ -61,9 +61,9 @@
                                     <h3 class="h3 card-title text-muted mb-0">
                                       <a href="{{route('admin.stock_list.get')}}">  Requests</a> 
                                     </h3>
-                                    <div class="bg-danger bg-opacity-10  rounded status-card">
+                                    <div class="">
                                         
-                                        <a href="{{route('admin.stock_list.get')}}">  <h5 class="card-title p-1 text-dark">{{$Total_Incoming}}</h5></a> 
+                                        <a href="{{route('admin.stock_list.get')}}">  <h5 class=" p-1 text-dark">{{$Total_Incoming}}</h5></a> 
                                     </div>
                                 </div>
                                 
@@ -401,71 +401,23 @@
                                 }
                             </style>
                 
-                            <div class="dual-chart-container">
-                                <!-- New Sections Chart -->
-                                <div class="chart-box">
-                                    <div class="chart-title">New Sections Distribution</div>
-                                    <div id="new-sections-chart"></div>
+                                <div class="dual-chart-container">
+                                    <!-- New Sections Chart -->
+                                    <div class="chart-box">
+                                        <div class="chart-title">New Sections Distribution</div>
+                                        <div id="new-sections-chart"></div>
+                                    </div>
+                                    
+                                    <!-- Used Sections Chart -->
+                                    <div class="chart-box">
+                                        <div class="chart-title">Used Sections Distribution</div>
+                                        <div id="used-sections-chart"></div>
+                                    </div>
                                 </div>
-                                
-                                <!-- Used Sections Chart -->
-                                <div class="chart-box">
-                                    <div class="chart-title">Used Sections Distribution</div>
-                                    <div id="used-sections-chart"></div>
-                                </div>
-                            </div>
                 
-                            <script>
-                                // Use Laravel data instead of sample data
-                                const newSections = @json($newSections);
-                                const usedSections = @json($usedSections);
                 
-                                // Common chart configuration
-                                const donutConfig = {
-                                    chart: { type: 'pie' },
-                                    title: { text: '' },
-                                    tooltip: { 
-                                        pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
-                                    },
-                                    plotOptions: {
-                                        pie: {
-                                            allowPointSelect: true,
-                                            cursor: 'pointer',
-                                            dataLabels: {
-                                                enabled: true,
-                                                format: '{point.name}',
-                                                distance: -40,
-                                                style: {
-                                                    fontWeight: 'bold',
-                                                    fontSize: '10px',
-                                                    textOutline: 'none'
-                                                }
-                                            },
-                                            showInLegend: true,
-                                            innerSize: '60%'
-                                        }
-                                    },
-                                    credits: { enabled: false },
-                                    exporting: { enabled: false }
-                                };
                 
-                                // Initialize charts
-                                Highcharts.chart('new-sections-chart', {
-                                    ...donutConfig,
-                                    series: [{
-                                        name: 'New Sections',
-                                        data: newSections
-                                    }]
-                                });
                 
-                                Highcharts.chart('used-sections-chart', {
-                                    ...donutConfig,
-                                    series: [{
-                                        name: 'Used Sections',
-                                        data: usedSections
-                                    }]
-                                });
-                            </script>
                         </div>
                     </div>
                 </div>
@@ -476,6 +428,71 @@
       
 
     </div>
+    <script>
+        const newSections = @json($newSections);
+        const usedSections = @json($usedSections);
+    
+        const donutConfig = {
+            chart: { type: 'pie' },
+            title: { text: '' },
+            tooltip: {
+                pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        // ✅ Show only section name inside chart
+                        format: '{point.name}',
+                        distance: -40,
+                        style: {
+                            fontWeight: 'bold',
+                            fontSize: '11px',
+                            textOutline: 'none'
+                        }
+                    },
+                    showInLegend: true,
+                    innerSize: '60%'
+                }
+            },
+            legend: {
+                labelFormatter: function () {
+                    // ✅ Legend shows: section name + quantity
+                    return `${this.name}: ${this.y} units`;
+                },
+                itemStyle: {
+                    fontWeight: 'normal',
+                    fontSize: '12px'
+                }
+            },
+            credits: { enabled: false },
+            exporting: { enabled: false }
+        };
+    
+        Highcharts.chart('new-sections-chart', {
+            ...donutConfig,
+            series: [{
+                name: 'New Sections',
+                data: newSections.map(item => ({
+                    ...item,
+                    name: item.name.split(' - ')[0] // remove " - Qty: ..."
+                }))
+            }]
+        });
+    
+        Highcharts.chart('used-sections-chart', {
+            ...donutConfig,
+            series: [{
+                name: 'Used Sections',
+                data: usedSections.map(item => ({
+                    ...item,
+                    name: item.name.split(' - ')[0]
+                }))
+            }]
+        });
+    </script>
     
   
 @endsection

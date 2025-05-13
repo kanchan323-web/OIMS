@@ -219,7 +219,7 @@
                                     <h5 class="card-title mb-2">Section Acceptance/Decline Report</h5>
                                     
                                     <!-- Filter Section -->
-                                    <div class="compact-filter-container">
+                                    {{-- <div class="compact-filter-container">
                                         <div class="compact-filter-group">
                                             <label for="compact-preset-filter">Time Range</label>
                                             <select id="compact-preset-filter" class="form-control form-control-sm">
@@ -245,185 +245,95 @@
                                         <button id="compact-apply-filter" class="compact-btn">Apply</button>
                                         <button id="compact-reset-filter" class="compact-btn reset">Reset</button>
                                     </div>
-                                    
-                                    <div id="compact-chart-container"></div>
+                                     --}}
+                                    {{-- <div id="compact-chart-container"></div> --}}
                         
                                
-                                    <script>
-                                        // Dynamic data from controller
-                                        const compactSampleData = @json($chartData);
-                                        
-                                        // Initialize date pickers
-                                        const compactStartDatePicker = flatpickr("#compact-start-date", {
-                                            dateFormat: "Y-m-d",
-                                            maxDate: new Date()
+                                  <!-- Dual Chart Container -->
+                                 
+
+                                  <div id="incoming-chart-container" style="height: 250px; margin-bottom: 30px;"></div>
+                                  <div id="raised-chart-container" style="height: 250px;"></div>
+
+                                  <script>
+                                    const incomingData = @json($incomingChartData);
+                                    const raisedData = @json($raisedChartData);
+                                
+                                    function buildChart(containerId, data, chartTitle) {
+                                        const sectionTotals = {};
+                                
+                                        data.forEach(item => {
+                                            if (!sectionTotals[item.section]) {
+                                                sectionTotals[item.section] = { accept: 0, decline: 0 };
+                                            }
+                                            sectionTotals[item.section].accept += parseInt(item.accept);
+                                            sectionTotals[item.section].decline += parseInt(item.decline);
                                         });
-                                        
-                                        const compactEndDatePicker = flatpickr("#compact-end-date", {
-                                            dateFormat: "Y-m-d",
-                                            maxDate: new Date()
-                                        });
-                        
-                                        // Initialize compact chart
-                                        const compactChart = Highcharts.chart('compact-chart-container', {
-                                            chart: { 
+                                
+                                        const sections = Object.keys(sectionTotals);
+                                        const acceptData = sections.map(section => sectionTotals[section].accept);
+                                        const declineData = sections.map(section => sectionTotals[section].decline);
+                                
+                                        Highcharts.chart(containerId, {
+                                            chart: {
                                                 type: 'bar',
-                                                height: 280,
-                                                spacing: [10, 10, 10, 10]
+                                                height: 280
                                             },
-                                            title: { text: '' },
+                                            title: { text: chartTitle },
                                             credits: { enabled: false },
                                             exporting: { enabled: false },
                                             xAxis: {
-                                                categories: [],
-                                                title: { 
-                                                    text: 'Sections',
-                                                    style: { fontSize: '12px', fontWeight: 'bold' }
-                                                },
+                                                categories: sections,
+                                                title: { text: 'Sections' },
                                                 labels: { style: { fontSize: '11px' } }
                                             },
                                             yAxis: {
                                                 min: 0,
-                                                title: { 
-                                                    text: 'Count',
-                                                    style: { fontSize: '12px', fontWeight: 'bold' }
-                                                },
+                                                title: { text: 'Count' },
                                                 labels: { style: { fontSize: '11px' } }
                                             },
-                                            legend: { 
+                                            legend: {
                                                 reversed: true,
                                                 align: 'right',
                                                 verticalAlign: 'top',
                                                 itemStyle: { fontSize: '11px' }
                                             },
                                             plotOptions: {
-                                                series: { 
+                                                series: {
                                                     stacking: 'normal',
                                                     dataLabels: {
                                                         enabled: true,
-                                                        formatter: function() { return this.y; },
+                                                        formatter: function () {
+                                                            return this.y;
+                                                        },
                                                         style: { fontSize: '10px', textOutline: 'none' }
-                                                    },
-                                                    pointWidth: 18,
-                                                    events: { contextmenu: function(e) { e.preventDefault(); } }
-                                                },
-                                                bar: { borderWidth: 0 }
+                                                    }
+                                                }
                                             },
                                             series: [
-                                                { name: 'Declined', data: [], color: '#ff6b6b' },
-                                                { name: 'Received', data: [], color: '#51cf66' }
+                                                { name: 'Declined', data: declineData, color: '#ff6b6b' },
+                                                { name: 'Accepted', data: acceptData, color: '#51cf66' }
                                             ],
                                             tooltip: {
-                                                formatter: function() {
+                                                formatter: function () {
                                                     return `<b>${this.x}</b><br/>
                                                             ${this.series.name}: ${this.y}<br/>
                                                             Total: ${this.point.stackTotal}`;
                                                 }
                                             }
                                         });
-                        
-                                        // Function to update compact chart with date filtering
-                                        function updateCompactChart(startDate = null, endDate = null) {
-                                            let filteredData = compactSampleData;
-                                            
-                                            if (startDate && endDate) {
-                                                filteredData = compactSampleData.filter(item => {
-                                                    const itemDate = new Date(item.date);
-                                                    return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
-                                                });
-                                            }
-                                            
-                                            // Group by section and sum counts
-                                            const sectionTotals = {};
-                                            
-                                            filteredData.forEach(item => {
-                                                if (!sectionTotals[item.section]) {
-                                                    sectionTotals[item.section] = {
-                                                        accept: 0,
-                                                        decline: 0
-                                                    };
-                                                }
-                                                sectionTotals[item.section].accept += parseInt(item.accept);
-                                                sectionTotals[item.section].decline += parseInt(item.decline);
-                                            });
-                                            
-                                            // Prepare data for chart
-                                            const sections = Object.keys(sectionTotals);
-                                            const acceptData = sections.map(section => sectionTotals[section].accept);
-                                            const declineData = sections.map(section => sectionTotals[section].decline);
-                                            
-                                            // Update chart
-                                            compactChart.update({
-                                                xAxis: { categories: sections },
-                                                series: [
-                                                    { data: declineData },
-                                                    { data: acceptData }
-                                                ]
-                                            });
-                                        }
-                        
-                                        // Initial chart load
-                                        updateCompactChart();
-                        
-                                        // Event listeners for filters
-                                        document.getElementById('compact-preset-filter').addEventListener('change', function() {
-                                            const preset = this.value;
-                                            const today = new Date();
-                                            
-                                            if (!preset) return;
-                                            
-                                            if (preset === 'custom') {
-                                                compactStartDatePicker.clear();
-                                                compactEndDatePicker.clear();
-                                                return;
-                                            }
-                                            
-                                            let startDate = new Date(today);
-                                            
-                                            switch(preset) {
-                                                case 'today': 
-                                                    break;
-                                                case 'week': 
-                                                    startDate.setDate(today.getDate() - 7); 
-                                                    break;
-                                                case 'month': 
-                                                    startDate.setDate(today.getDate() - 30); 
-                                                    break;
-                                                case 'year': 
-                                                    startDate.setFullYear(today.getFullYear() - 1); 
-                                                    break;
-                                            }
-                                            
-                                            compactStartDatePicker.setDate(startDate);
-                                            compactEndDatePicker.setDate(today);
-                                            
-                                            // Auto-apply when preset is selected
-                                            document.getElementById('compact-apply-filter').click();
-                                        });
-                        
-                                        document.getElementById('compact-apply-filter').addEventListener('click', function() {
-                                            const startDate = document.getElementById('compact-start-date').value;
-                                            const endDate = document.getElementById('compact-end-date').value;
-                                            
-                                            if (startDate && endDate) {
-                                                updateCompactChart(startDate, endDate);
-                                            } else {
-                                                alert('Please select both start and end dates');
-                                            }
-                                        });
-                        
-                                        document.getElementById('compact-reset-filter').addEventListener('click', function() {
-                                            document.getElementById('compact-preset-filter').value = '';
-                                            compactStartDatePicker.clear();
-                                            compactEndDatePicker.clear();
-                                            updateCompactChart(); // Show all data
-                                        });
-                                    </script>
+                                    }
+                                
+                                    // Initialize both charts
+                                    buildChart('incoming-chart-container', incomingData, 'Incoming Requests');
+                                    buildChart('raised-chart-container', raisedData, 'Raised Requests');
+                                </script>
+                                
                                 </div>
                             </div>
                         </div>
                 
-                        <div class="col-lg-6">
+                        <div class="col-lg-6"> 
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body">
                                     <style>
@@ -450,71 +360,23 @@
                                         }
                                     </style>
                         
-                                    <div class="dual-chart-container">
-                                        <!-- New Sections Chart -->
-                                        <div class="chart-box">
-                                            <div class="chart-title">New Sections Distribution</div>
-                                            <div id="new-sections-chart"></div>
+                                        <div class="dual-chart-container">
+                                            <!-- New Sections Chart -->
+                                            <div class="chart-box">
+                                                <div class="chart-title">New Sections Distribution</div>
+                                                <div id="new-sections-chart"></div>
+                                            </div>
+                                            
+                                            <!-- Used Sections Chart -->
+                                            <div class="chart-box">
+                                                <div class="chart-title">Used Sections Distribution</div>
+                                                <div id="used-sections-chart"></div>
+                                            </div>
                                         </div>
-                                        
-                                        <!-- Used Sections Chart -->
-                                        <div class="chart-box">
-                                            <div class="chart-title">Used Sections Distribution</div>
-                                            <div id="used-sections-chart"></div>
-                                        </div>
-                                    </div>
                         
-                                    <script>
-                                        // Use Laravel data instead of sample data
-                                        const newSections = @json($newSections);
-                                        const usedSections = @json($usedSections);
                         
-                                        // Common chart configuration
-                                        const donutConfig = {
-                                            chart: { type: 'pie' },
-                                            title: { text: '' },
-                                            tooltip: { 
-                                                pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
-                                            },
-                                            plotOptions: {
-                                                pie: {
-                                                    allowPointSelect: true,
-                                                    cursor: 'pointer',
-                                                    dataLabels: {
-                                                        enabled: true,
-                                                        format: '{point.name}',
-                                                        distance: -40,
-                                                        style: {
-                                                            fontWeight: 'bold',
-                                                            fontSize: '10px',
-                                                            textOutline: 'none'
-                                                        }
-                                                    },
-                                                    showInLegend: true,
-                                                    innerSize: '60%'
-                                                }
-                                            },
-                                            credits: { enabled: false },
-                                            exporting: { enabled: false }
-                                        };
                         
-                                        // Initialize charts
-                                        Highcharts.chart('new-sections-chart', {
-                                            ...donutConfig,
-                                            series: [{
-                                                name: 'New Sections',
-                                                data: newSections
-                                            }]
-                                        });
                         
-                                        Highcharts.chart('used-sections-chart', {
-                                            ...donutConfig,
-                                            series: [{
-                                                name: 'Used Sections',
-                                                data: usedSections
-                                            }]
-                                        });
-                                    </script>
                                 </div>
                             </div>
                         </div>
@@ -526,6 +388,72 @@
 
         </div>
     </div>
+
+    <script>
+        const newSections = @json($newSections);
+        const usedSections = @json($usedSections);
+    
+        const donutConfig = {
+            chart: { type: 'pie' },
+            title: { text: '' },
+            tooltip: {
+                pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        // ✅ Show only section name inside chart
+                        format: '{point.name}',
+                        distance: -40,
+                        style: {
+                            fontWeight: 'bold',
+                            fontSize: '11px',
+                            textOutline: 'none'
+                        }
+                    },
+                    showInLegend: true,
+                    innerSize: '60%'
+                }
+            },
+            legend: {
+                labelFormatter: function () {
+                    // ✅ Legend shows: section name + quantity
+                    return `${this.name}: ${this.y} units`;
+                },
+                itemStyle: {
+                    fontWeight: 'normal',
+                    fontSize: '12px'
+                }
+            },
+            credits: { enabled: false },
+            exporting: { enabled: false }
+        };
+    
+        Highcharts.chart('new-sections-chart', {
+            ...donutConfig,
+            series: [{
+                name: 'New Sections',
+                data: newSections.map(item => ({
+                    ...item,
+                    name: item.name.split(' - ')[0] // remove " - Qty: ..."
+                }))
+            }]
+        });
+    
+        Highcharts.chart('used-sections-chart', {
+            ...donutConfig,
+            series: [{
+                name: 'Used Sections',
+                data: usedSections.map(item => ({
+                    ...item,
+                    name: item.name.split(' - ')[0]
+                }))
+            }]
+        });
+    </script>
 
 
 
