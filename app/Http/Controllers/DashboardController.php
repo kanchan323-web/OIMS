@@ -135,8 +135,7 @@ class DashboardController extends Controller
 
                 // Testing
 
-                 // received/decline data 
-                 $incomingChartData = Requester::select(
+                $incomingChartData = Requester::select(
                     'stocks.section',
                     DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
                     DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
@@ -148,7 +147,7 @@ class DashboardController extends Controller
                 ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
                 ->orderBy('date', 'desc')
                 ->get();
-
+                
                 $raisedChartData = Requester::select(
                     'stocks.section',
                     DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
@@ -161,6 +160,7 @@ class DashboardController extends Controller
                 ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
                 ->orderBy('date', 'desc')
                 ->get();
+                
             
           
         //   dd($results  ); 

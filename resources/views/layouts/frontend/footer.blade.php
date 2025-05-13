@@ -175,7 +175,7 @@
                     loginRoute = "{{ route('user.login') }}";
                 }
                 
-                window.location.href = isTimeout ? `${loginRoute}?timeout=1` : loginRoute;
+                window.location.href = isTimeout ? `${loginRoute}` : loginRoute;
             }
         
             // Reset on activity
