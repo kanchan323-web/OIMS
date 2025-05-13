@@ -128,7 +128,7 @@
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
                                                                                     <td>{{ $stockdata->reciever }}</td>
-                                                                                    <td>{{ $stockdata->requested_qty }}</td>
+                                                                                    <td>{{ IND_money_format($stockdata->requested_qty) }}</td>
                                                                                     <td>{{ $stockdata->supplier }}</td>
                                                                                     <td>{{ $stockdata->supplier_qty ?? '-' }}</td>
                                                                                     <!-- Status with Dynamic Color -->
@@ -636,19 +636,46 @@
 
     <script>
 
+        function formatIndianNumber(x) {
+            if (x == null || x === '') return '0';
+
+            let sign = '';
+            if (typeof x === 'string' && (x.startsWith('+') || x.startsWith('-'))) {
+                sign = x[0];
+                x = x.substring(1); // Remove the sign from the number
+            }
+
+            let number = parseFloat(x);
+            if (isNaN(number)) return '0';
+
+            let parts = number.toFixed(2).split(".");
+            let integerPart = parts[0];
+            let decimalPart = "." + parts[1];
+
+            let lastThree = integerPart.slice(-3);
+            let otherNumbers = integerPart.slice(0, -3);
+
+            if (otherNumbers !== '')
+                lastThree = ',' + lastThree;
+
+            let formatted = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + decimalPart;
+
+            return sign + formatted;
+        }
+
         //ajax filter for incomming request stock
 
 
         $(document).ready(function () {
 
             function fetchfilter() {
-                console.log('sxcx');
+               // console.log('sxcx');
                 $.ajax({
                     type: "GET",
                     url: "{{ route('admin.request_stock_filter.get') }}",
                     data: $("#filterForm").serialize(),
                     success: function (response) {
-                        console.log(response);
+                        //console.log(response);
                         let tableBody = $("#stockTable"); // Table inside modal
                         tableBody.empty(); // Clear old data
                         if (response.data && response.data.length > 0) {
@@ -670,7 +697,7 @@
                                                        <td>${stockdata.edp_code}</td>
                                                        <td>${stockdata.description}</td>
                                                        <td>${stockdata.reciever}</td>
-                                                       <td>${stockdata.requested_qty}</td>
+                                                       <td>${formatIndianNumber(stockdata.requested_qty ?? 0)}</td>
                                                        <td>${stockdata.supplier}</td>
                                                        <td>${stockdata.supplier_qty ?? '-'}</td>
                                                        <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
