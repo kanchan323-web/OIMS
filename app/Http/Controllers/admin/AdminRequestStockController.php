@@ -44,7 +44,7 @@ class AdminRequestStockController extends Controller
             'sr.name as supplier',
             'requesters.*',
             'mst_status.status_name',
-            'request_status.id as supplier_qty',
+            'request_status.supplier_qty as supplier_qty',
             'stocks.id as stock_id',
             'stocks.description',
             'edps.edp_code',
@@ -59,6 +59,8 @@ class AdminRequestStockController extends Controller
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->orderBy('requesters.updated_at', 'desc')
             ->get();
+
+        //dd($data);
 
         $EDP_Code_ID = Requester::join('stocks', 'requesters.stock_id', '=', 'stocks.id')
             ->join('edps', 'stocks.edp_code', '=', 'edps.id')
@@ -82,7 +84,7 @@ class AdminRequestStockController extends Controller
                     'sr.name as supplier',
                     'requesters.*',
                     'mst_status.status_name',
-                    'request_status.id as supplier_qty',
+                    'request_status.supplier_qty as supplier_qty',
                     'stocks.id as stock_id',
                     'stocks.description',
                     'edps.edp_code',
