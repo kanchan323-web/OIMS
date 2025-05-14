@@ -5,7 +5,6 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row justify-content-between">
-
                         <div class="offset-3 col-sm-6 col-md-9">
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('report_stockPdfDownload') }}"
@@ -105,10 +104,10 @@
 
                                         <!-- Buttons -->
                                         <div class="col-12 text-end pt-2">
-                                            <button type="button" class="btn btn-primary mr-2"
+                                            <button type="button" class="btn btn-primary "
                                                 id="filterButton">  <i class="fas fa-search me-1"></i> Search</button>
-                                                <button type="button" class="btn btn-secondary ml-2"
-                                                id="resetButton">Reset</button>
+                                                <button type="button" class="btn btn-outline-secondary "
+                                                id="resetButton"><i class="fas fa-undo me-1"></i>Reset</button>
                                         </div>
                                     </div>
                                 </form>

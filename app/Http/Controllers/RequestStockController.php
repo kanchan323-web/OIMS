@@ -228,7 +228,7 @@ class RequestStockController extends Controller
         $edp_data = Edp::find($request->req_edp_id);
         $requester_stockID = Stock::where([
             ['edp_code', $request->req_edp_id],
-            ['user_id', $user->id],
+            // ['user_id', $user->id],    
             ['rig_id', $rigUser->id]
         ])->pluck('id')->first();
         $user_type = User::where('id', $request->supplier_id)->value('user_type');
