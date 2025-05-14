@@ -199,10 +199,8 @@
                             <div id="compact-chart-container"></div>
                 
                             <script>
-                                // Dynamic data from controller
                                 const compactSampleData = @json($chartData);
-                
-                                // Initialize Highcharts chart
+                            
                                 const compactChart = Highcharts.chart('compact-chart-container', {
                                     chart: { 
                                         type: 'bar',
@@ -249,6 +247,7 @@
                                     },
                                     series: [
                                         { name: 'Declined', data: [], color: '#FF9770' },
+                                        { name: 'Pending', data: [], color: '#FCD34D' },
                                         { name: 'Received', data: [], color: '#32BDEA' }
                                     ],
                                     tooltip: {
@@ -259,57 +258,59 @@
                                         }
                                     }
                                 });
-                
-                                // Filter logic
+                            
                                 function updateCompactChart(startDate = null, endDate = null) {
                                     let filteredData = compactSampleData;
-                
+                            
                                     if (startDate && endDate) {
                                         filteredData = compactSampleData.filter(item => {
                                             const itemDate = new Date(item.date);
                                             return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
                                         });
                                     }
-                
+                            
                                     const sectionTotals = {};
-                
+                            
                                     filteredData.forEach(item => {
                                         if (!sectionTotals[item.section]) {
-                                            sectionTotals[item.section] = { accept: 0, decline: 0 };
+                                            sectionTotals[item.section] = { accept: 0, decline: 0, pending: 0 };
                                         }
                                         sectionTotals[item.section].accept += parseInt(item.accept);
                                         sectionTotals[item.section].decline += parseInt(item.decline);
+                                        sectionTotals[item.section].pending += parseInt(item.pending);
                                     });
-                
+                            
                                     const sections = Object.keys(sectionTotals);
                                     const acceptData = sections.map(section => sectionTotals[section].accept);
                                     const declineData = sections.map(section => sectionTotals[section].decline);
-                
+                                    const pendingData = sections.map(section => sectionTotals[section].pending);
+                            
                                     compactChart.update({
                                         xAxis: { categories: sections },
                                         series: [
                                             { data: declineData },
+                                            { data: pendingData },
                                             { data: acceptData }
                                         ]
                                     });
                                 }
-                
+                            
                                 // Load initial chart with full data
                                 updateCompactChart();
-                
+                            
                                 // Flatpickr setup
                                 const compactStartDatePicker = flatpickr("#compact-start-date", {
                                     dateFormat: "Y-m-d",
                                     maxDate: new Date(),
                                     onChange: updateChartIfBothDatesSelected
                                 });
-                
+                            
                                 const compactEndDatePicker = flatpickr("#compact-end-date", {
                                     dateFormat: "Y-m-d",
                                     maxDate: new Date(),
                                     onChange: updateChartIfBothDatesSelected
                                 });
-                
+                            
                                 function updateChartIfBothDatesSelected() {
                                     const start = document.getElementById('compact-start-date').value;
                                     const end = document.getElementById('compact-end-date').value;
@@ -317,21 +318,20 @@
                                         updateCompactChart(start, end);
                                     }
                                 }
-                
-                                // Preset time range change
+                            
                                 document.getElementById('compact-preset-filter').addEventListener('change', function() {
                                     const preset = this.value;
                                     const today = new Date();
                                     let startDate = new Date(today);
-                
+                            
                                     if (!preset) return;
-                
+                            
                                     if (preset === 'custom') {
                                         compactStartDatePicker.clear();
                                         compactEndDatePicker.clear();
                                         return;
                                     }
-                
+                            
                                     switch (preset) {
                                         case 'today':
                                             break;
@@ -345,16 +345,15 @@
                                             startDate.setFullYear(today.getFullYear() - 1);
                                             break;
                                     }
-                
+                            
                                     const formattedStart = startDate.toISOString().split('T')[0];
                                     const formattedEnd = today.toISOString().split('T')[0];
-                
+                            
                                     compactStartDatePicker.setDate(formattedStart);
                                     compactEndDatePicker.setDate(formattedEnd);
                                     updateCompactChart(formattedStart, formattedEnd);
                                 });
-                
-                                // Reset filter
+                            
                                 document.getElementById('compact-reset-filter').addEventListener('click', function() {
                                     document.getElementById('compact-preset-filter').value = '';
                                     compactStartDatePicker.clear();
@@ -362,6 +361,7 @@
                                     updateCompactChart();
                                 });
                             </script>
+                            
                         </div>
                     </div>
                 </div>

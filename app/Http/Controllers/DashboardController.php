@@ -139,24 +139,27 @@ class DashboardController extends Controller
                     'stocks.section',
                     DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
                     DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
+                    DB::raw('SUM(CASE WHEN requesters.status = 1 THEN 1 ELSE 0 END) as pending'),
                     DB::raw('DATE(requesters.updated_at) as date')
                 )
                 ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
-                ->whereIn('requesters.status', [3, 5])
-                ->where('requesters.supplier_rig_id', $rig_id) // Incoming to this rig
+                ->whereIn('requesters.status', [1, 3, 5]) // Include Pending
+                ->where('requesters.supplier_rig_id', $rig_id)
                 ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
                 ->orderBy('date', 'desc')
                 ->get();
                 
+                // Raised by this rig
                 $raisedChartData = Requester::select(
                     'stocks.section',
                     DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
                     DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
+                    DB::raw('SUM(CASE WHEN requesters.status = 1 THEN 1 ELSE 0 END) as pending'),
                     DB::raw('DATE(requesters.updated_at) as date')
                 )
                 ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
-                ->whereIn('requesters.status', [3, 5])
-                ->where('requesters.requester_rig_id', $rig_id) // Raised by this rig
+                ->whereIn('requesters.status', [1, 3, 5]) // Include Pending
+                ->where('requesters.requester_rig_id', $rig_id)
                 ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
                 ->orderBy('date', 'desc')
                 ->get();
@@ -171,38 +174,13 @@ class DashboardController extends Controller
         ->get()
         ->groupBy('section');
 
-        $newdata = $results->map(function ($items, $section) {
+        $combinedSections = $results->map(function ($items, $section) {
             return [
                 'section' => $section,
-                'new_spareable' => $items->sum('new_spareable'),
-                'used_spareable' => $items->sum('used_spareable'),
+                'new' => $items->sum('new_spareable'),
+                'used' => $items->sum('used_spareable'),
             ];
         })->values();
-        
-        // Optional: Define color sets for new and used
-        $newColors = ['#4285F4', '#34A853', '#F4AAAA', '#B39DDB', '#FBBC05'];
-        $usedColors = ['#8AB4F8', '#81C995', '#FDE293', '#F4AAAA', '#B39DDB'];
-        
-        // Dynamically build $newSections and $usedSections
-        $newSections = [];
-        $usedSections = [];
-        
-        foreach ($newdata as $index => $item) {
-            $colorNew = $newColors[$index % count($newColors)];
-            $colorUsed = $usedColors[$index % count($usedColors)];
-        
-            $newSections[] = [
-                'name' => $item['section'] . ' (New)',
-                'y' => $item['new_spareable'],
-                'color' => $colorNew,
-            ];
-        
-            $usedSections[] = [
-                'name' => $item['section'] . ' (Used)',
-                'y' => $item['used_spareable'],
-                'color' => $colorUsed,
-            ];
-        }
 
      
                 // Testing
@@ -225,12 +203,10 @@ class DashboardController extends Controller
               
                 'incomingChartData',
                 'raisedChartData',
+                'combinedSections',
 
        
-            ),[
-                'newSections' => $newSections,
-                'usedSections' => $usedSections
-            ]);
+            ));
         } else {
             return redirect()->route('user.login');
         }
