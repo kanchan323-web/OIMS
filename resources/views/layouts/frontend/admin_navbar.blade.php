@@ -140,27 +140,36 @@
                                     style="display: none;">0</span>
                             </a>
 
-                            <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <div class="card shadow-none m-0">
-                                    <div class="card-body p-0">
-                                        <div class="cust-title p-3">
+                            <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton" style="min-width: 320px;">
+                                <div class="card shadow-sm m-0 border-0">
+                                    <div class="card-body p-1">
+                                        <div class="cust-title p-2 bg-dark text-white rounded-top">
                                             <div class="d-flex align-items-center justify-content-between">
-                                                <h5 class="mb-0">Notifications</h5>
-                                                <a class="badge badge-primary badge-card"
-                                                    id="notification-count-badge">0</a>
+                                                <h5 class="mb-0 font-weight-200" style="
+                                                padding-left: 77px;
+                                            ">
+                                                    <i class="fas fa-bell mr-2 opacity-75"></i>Notifications
+                                                </h5>
+                                                <span class="badge badge-light badge-pill badge-card ml-2 px-2" 
+                                                      id="notification-count-badge">0</span>
                                             </div>
                                         </div>
-                                        <div class="px-3 pt-0 pb-0 sub-card" id="notification-list">
-                                            <p class="text-center py-3">No new notifications</p>
+                                        <div class="px-3 pt-3 pb-2 sub-card border-bottom" id="notification-list">
+                                            <div class="d-flex flex-column align-items-center justify-content-center py-2">
+                                                <i class="far fa-bell-slash text-muted mb-2 opacity-50" style="font-size: 1.75rem;"></i>
+                                                <p class="text-muted mb-1 font-weight-500">No new notifications</p>
+                                                <small class="text-muted opacity-75">You're all caught up</small>
+                                            </div>
                                         </div>
-                                        <button class="btn btn-primary btn-block" data-toggle="modal"
-                                            data-target="#notificationModal">
-                                            View All
+                                        <button class="btn btn-outline-dark btn-block rounded-0 rounded-bottom py-2 font-weight-200" 
+                                               data-toggle="modal" data-target="#notificationModal">
+                                            <i class="fas fa-list-ul mr-2 opacity-75"></i>View All Notifications
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </li>
+                        
 
                         <li class="nav-item nav-icon dropdown caption-content">
                             <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton4"
@@ -201,9 +210,10 @@
 <!-- Notification Modal -->
 <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                
                 <h5 class="modal-title">All Notifications</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -247,10 +257,9 @@
                             <a href="javascript:void(0);" class="iq-sub-card mark-as-read ${highlightClass}"
                                data-id="${notification.id}" data-url="${notification.url}">
                                 <div class="media align-items-center cust-card py-3 border-bottom">
-                                    <div class="media-body ml-3">
+                                    <div class="media-body ">
                                         <div class="d-flex align-items-center justify-content-between">
-                                            <h6 class="mb-0">${notification.message}</h6>
-                                            <small class="text-dark"><b>${notification.created_at}</b></small>
+                                            <p style="font-size:12px;" class="">${notification.message} <small style="font-size:11px;" class="text-gray"><b>${notification.created_at}</b></small></p>
                                         </div>
                                     </div>
                                 </div>
@@ -331,3 +340,41 @@
     });
 
 </script>
+<style>
+    .notification-item {
+        transition: all 0.2s ease;
+    }
+    
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .notification-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: white;
+    }
+    
+    .notification-icon-sm {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: white;
+        font-size: 0.75rem;
+    }
+    
+    .unread-notification {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    
+    .hover-effect {
+        transition: background-color 0.3s ease;
+    }
+</style>

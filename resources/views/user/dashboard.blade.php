@@ -252,14 +252,14 @@
                                         <script>
                                             const incomingData = @json($incomingChartData);
                                             const raisedData = @json($raisedChartData);
-                            
+                                        
                                             let dualStartPicker = flatpickr("#dual-start-date", { dateFormat: "Y-m-d", maxDate: new Date() });
                                             let dualEndPicker = flatpickr("#dual-end-date", { dateFormat: "Y-m-d", maxDate: new Date() });
-                            
+                                        
                                             function parseDate(str) {
                                                 return str ? new Date(str + "T00:00:00") : null;
                                             }
-                            
+                                        
                                             function filterDataByDate(data, start, end) {
                                                 if (!start || !end) return data;
                                                 return data.filter(item => {
@@ -268,27 +268,37 @@
                                                     return date >= parseDate(start) && date <= parseDate(end);
                                                 });
                                             }
-                            
+                                        
                                             function buildChart(containerId, data, title) {
                                                 const sectionTotals = {};
                                                 data.forEach(item => {
                                                     const section = item.section || 'Unknown';
-                                                    if (!sectionTotals[section]) sectionTotals[section] = { accept: 0, decline: 0 };
+                                                    if (!sectionTotals[section]) sectionTotals[section] = { accept: 0, decline: 0, pending: 0 };
                                                     sectionTotals[section].accept += parseInt(item.accept) || 0;
                                                     sectionTotals[section].decline += parseInt(item.decline) || 0;
+                                                    sectionTotals[section].pending += parseInt(item.pending) || 0;
                                                 });
-                            
+                                        
                                                 const sections = Object.keys(sectionTotals);
                                                 const acceptData = sections.map(s => sectionTotals[s].accept);
                                                 const declineData = sections.map(s => sectionTotals[s].decline);
-                            
+                                                const pendingData = sections.map(s => sectionTotals[s].pending);
+                                        
                                                 Highcharts.chart(containerId, {
                                                     chart: { type: 'bar', height: 280 },
                                                     title: { text: title },
                                                     credits: { enabled: false },
                                                     exporting: { enabled: false },
-                                                    xAxis: { categories: sections, title: { text: 'Sections' }, labels: { style: { fontSize: '11px' } } },
-                                                    yAxis: { min: 0, title: { text: 'Count' }, labels: { style: { fontSize: '11px' } } },
+                                                    xAxis: {
+                                                        categories: sections,
+                                                        title: { text: 'Sections' },
+                                                        labels: { style: { fontSize: '11px' } }
+                                                    },
+                                                    yAxis: {
+                                                        min: 0,
+                                                        title: { text: 'Count' },
+                                                        labels: { style: { fontSize: '11px' } }
+                                                    },
                                                     legend: {
                                                         reversed: true,
                                                         align: 'right',
@@ -309,6 +319,7 @@
                                                     },
                                                     series: [
                                                         { name: 'Declined', data: declineData, color: '#FF9770' },
+                                                        { name: 'Pending', data: pendingData, color: '#FFD670' },
                                                         { name: 'Received', data: acceptData, color: '#32BDEA' }
                                                     ],
                                                     tooltip: {
@@ -320,7 +331,7 @@
                                                     }
                                                 });
                                             }
-                            
+                                        
                                             function updateDualCharts() {
                                                 const start = document.getElementById('dual-start-date').value;
                                                 const end = document.getElementById('dual-end-date').value;
@@ -329,12 +340,12 @@
                                                 buildChart('incoming-chart-container', filteredIncoming, 'Incoming Requests');
                                                 buildChart('raised-chart-container', filteredRaised, 'Raised Requests');
                                             }
-                            
+                                        
                                             document.getElementById('dual-preset-filter').addEventListener('change', function () {
                                                 const preset = this.value;
                                                 const today = new Date();
                                                 let start = new Date(today);
-                            
+                                        
                                                 switch (preset) {
                                                     case 'today': break;
                                                     case 'week': start.setDate(today.getDate() - 7); break;
@@ -345,17 +356,17 @@
                                                         dualEndPicker.clear();
                                                         return;
                                                 }
-                            
+                                        
                                                 if (preset !== 'custom') {
                                                     dualStartPicker.setDate(start);
                                                     dualEndPicker.setDate(today);
                                                     updateDualCharts();
                                                 }
                                             });
-                            
+                                        
                                             document.getElementById('dual-start-date').addEventListener('change', updateDualCharts);
                                             document.getElementById('dual-end-date').addEventListener('change', updateDualCharts);
-                            
+                                        
                                             document.getElementById('dual-reset-filter').addEventListener('click', function () {
                                                 document.getElementById('dual-preset-filter').value = '';
                                                 dualStartPicker.clear();
@@ -363,64 +374,141 @@
                                                 buildChart('incoming-chart-container', incomingData, 'Incoming Requests');
                                                 buildChart('raised-chart-container', raisedData, 'Raised Requests');
                                             });
-                            
+                                        
                                             // Initial render
                                             buildChart('incoming-chart-container', incomingData, 'Incoming Requests');
                                             buildChart('raised-chart-container', raisedData, 'Raised Requests');
                                         </script>
+                                        
                                     </div>
                                 </div>
                             </div>
                             
 
 
-                            <div class="col-lg-6"> 
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body">
-                                        <style>
-                                            .dual-chart-container { 
-                                                display: flex;
-                                                flex-wrap: wrap;
-                                                gap: 20px;
-                                                justify-content: space-between;
-                                            }
-                                            .chart-box {
-                                                height: 350px;
-                                                min-width: 48%;
-                                                flex: 1 1 45%;
-                                            }
-                                            @media (max-width: 768px) {
-                                                .chart-box {
-                                                    min-width: 100%;
-                                                }
-                                            }
-                                            .chart-title {
-                                                text-align: center;
-                                                font-weight: bold;
-                                                margin-bottom: 10px;
-                                            }
-                                        </style>
+                           <div class="col-lg-6"> 
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <style>
+                .dual-chart-container { 
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                    justify-content: space-between;
+                }
+                .chart-box {
+                    height: 350px;
+                    min-width: 100%;
+                }
+                .chart-title {
+                    text-align: center;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                    font-size: 16px;
+                }
+            </style>
 
-                                            <div class="dual-chart-container">
-                                                <!-- New Sections Chart -->
-                                                <div class="chart-box">
-                                                    <div class="chart-title">New Sections Distribution</div>
-                                                    <div id="new-sections-chart"></div>
-                                                </div>
+            <div class="dual-chart-container">
+                <div class="chart-box">
+                    <div class="chart-title">Stock Distribution by Section (New vs Used)</div>
+                    <div id="stock-bar-chart"></div>
+                </div>
+            </div>
 
-                                                <!-- Used Sections Chart -->
-                                                <div class="chart-box">
-                                                    <div class="chart-title">Used Sections Distribution</div>
-                                                    <div id="used-sections-chart"></div>
-                                                </div>
-                                            </div>
+            <script>
+                const sectionData = @json($combinedSections);
 
+                const categories = sectionData.map(item => item.section);
+                const newStockData = sectionData.map(item => item.new);
+                const usedStockData = sectionData.map(item => item.used);
 
+                // Compute total per section to calculate percentage
+                const totalPerSection = sectionData.map(item => item.new + item.used);
 
+                Highcharts.chart('stock-bar-chart', {
+                    chart: {
+                        type: 'column',
+                        height: 400
+                    },
+                    title: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: categories,
+                        title: { text: 'Section' },
+                        labels: { style: { fontSize: '11px' } }
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: { text: 'Spareable Units' },
+                        stackLabels: {
+                            enabled: true,
+                            formatter: function () {
+                                return this.total;
+                            },
+                            style: {
+                                fontWeight: 'bold',
+                                color: '#555'
+                            }
+                        }
+                    },
+                    legend: {
+                        reversed: true,
+                        itemStyle: {
+                            fontSize: '12px'
+                        }
+                    },
+                    tooltip: {
+                        shared: true,
+                        formatter: function () {
+                            let index = this.points[0].point.index;
+                            let total = totalPerSection[index] || 1;
+                            let s = `<b>${this.x}</b><br/>`;
+                            this.points.forEach(point => {
+                                const percent = ((point.y / total) * 100).toFixed(1);
+                                s += `${point.series.name}: ${point.y} (${percent}%) <br/>`;
+                            });
+                            s += `<b>Total: ${total}</b>`;
+                            return s;
+                        }
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true,
+                                formatter: function () {
+                                    const total = totalPerSection[this.point.index] || 1;
+                                    const percent = ((this.y / total) * 100).toFixed(1);
+                                    return `${percent}%`;
+                                },
+                                style: {
+                                    fontSize: '10px',
+                                    textOutline: 'none'
+                                }
+                            }
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Used',
+                            data: usedStockData,
+                            color: '#F4AAAA'
+                        },
+                        {
+                            name: 'New',
+                            data: newStockData,
+                            color: '#32BDEA'
+                        }
+                    ],
+                    credits: { enabled: false },
+                    exporting: { enabled: false }
+                });
+            </script>
+        </div>
+    </div>
+</div>
 
-                                    </div>
-                                </div>
-                            </div>
 
                         </div>
                     </div>
@@ -430,71 +518,7 @@
             </div>
         </div>
 
-        <script>
-            const newSections = @json($newSections);
-            const usedSections = @json($usedSections);
-
-            const donutConfig = {
-                chart: { type: 'pie' },
-                title: { text: '' },
-                tooltip: {
-                    pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            // ✅ Show only section name inside chart
-                            format: '{point.name}',
-                            distance: -40,
-                            style: {
-                                fontWeight: 'bold',
-                                fontSize: '11px',
-                                textOutline: 'none'
-                            }
-                        },
-                        showInLegend: true,
-                        innerSize: '60%'
-                    }
-                },
-                legend: {
-                    labelFormatter: function () {
-                        // ✅ Legend shows: section name + quantity
-                        return `${this.name}: ${this.y} units`;
-                    },
-                    itemStyle: {
-                        fontWeight: 'normal',
-                        fontSize: '12px'
-                    }
-                },
-                credits: { enabled: false },
-                exporting: { enabled: false }
-            };
-
-            Highcharts.chart('new-sections-chart', {
-                ...donutConfig,
-                series: [{
-                    name: 'New Sections',
-                    data: newSections.map(item => ({
-                        ...item,
-                        name: item.name.split(' - ')[0] // remove " - Qty: ..."
-                    }))
-                }]
-            });
-
-            Highcharts.chart('used-sections-chart', {
-                ...donutConfig,
-                series: [{
-                    name: 'Used Sections',
-                    data: usedSections.map(item => ({
-                        ...item,
-                        name: item.name.split(' - ')[0]
-                    }))
-                }]
-            });
-        </script>
+      
 
 
 

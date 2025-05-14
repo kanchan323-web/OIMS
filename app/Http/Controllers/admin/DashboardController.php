@@ -113,20 +113,22 @@ class DashboardController extends Controller
             'stocks.section',
             DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
             DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
+            DB::raw('SUM(CASE WHEN requesters.status = 1 THEN 1 ELSE 0 END) as pending'),
             DB::raw('DATE(requesters.updated_at) as date')
         )
         ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
-        ->whereIn('requesters.status', [3, 5])
+        ->whereIn('requesters.status', [1, 3, 5]) // Include Pending
         ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
         ->orderBy('date', 'desc')
         ->get();
-    
+        
         // Prepare chart data in required format
         $chartData = $results->map(function ($item) {
             return [
                 'section' => $item->section,
                 'accept' => $item->accept,
                 'decline' => $item->decline,
+                'pending' => $item->pending,
                 'date' => $item->date
             ];
         })->toArray();
@@ -169,28 +171,7 @@ class DashboardController extends Controller
             ];
         }
         
-        
-        // dd([
-        //     'newSections' => $newSections,
-        //     'usedSections' => $usedSections,
-        // ]);
-        
-
-            // dd($newdata);
-        // $newSections = [
-        //     ['name' => 'SEC-1 (New)', 'y' => 52, 'color' => '#4285F4'],
-        //     ['name' => 'SEC-2 (New)', 'y' => 30, 'color' => '#34A853'],
-        //     ['name' => 'SEC-3 (New)', 'y' => 50, 'color' => '#F0BC05'],
-        //     ['name' => 'SEC-4 (New)', 'y' => 50, 'color' => '#FBB805'],
-        //     ['name' => 'SEC-5 (New)', 'y' => 50, 'color' => '#FBBC05'],
-        // ];
-
-        // $usedSections = [
-        //     ['name' => 'SEC-1 (Used)', 'y' => 28, 'color' => '#8AB4F8'],
-        //     ['name' => 'SEC-2 (Used)', 'y' => 15, 'color' => '#81C995'],
-        //     ['name' => 'SEC-3 (Used)', 'y' => 22, 'color' => '#FDE293'],
-        // ];
-
+      
 
         return view('admin.dashboard', compact(
 
