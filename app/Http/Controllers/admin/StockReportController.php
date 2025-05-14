@@ -275,12 +275,12 @@ class StockReportController extends Controller
                     break;
 
                 case 'transfer':
-                case 'transferred to':
+                case 'transferred_to':
                     $symbolNew = '-';
                     $symbolUsed = '-';
                     break;
 
-                case 'transferred from':
+                case 'transferred_from':
                     $symbolNew = '+';
                     $symbolUsed = '+';
                     break;

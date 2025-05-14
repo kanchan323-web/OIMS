@@ -632,7 +632,7 @@ class RequestStockController extends Controller
                 $requesterTable->requested_qty,
                 $supplier_total_qty
             );
-            
+
 
             LogsRequestStatus::create([
                 'decline_msg' => null,
@@ -733,7 +733,7 @@ class RequestStockController extends Controller
             ]);
 
             $requesterTable = Requester::where('id', $request->request_id)->first();
-            
+
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
@@ -1022,7 +1022,7 @@ class RequestStockController extends Controller
         $statuses = RequestStatus::leftJoin('users as requestor', 'requestor.id', '=', 'request_status.user_id')
             ->leftJoin('mst_status as sm', 'sm.id', '=', 'request_status.status_id')
             ->where('request_status.request_id', $request->request_id)
-            ->orderBy('request_status.updated_at', 'desc')
+            ->orderBy('request_status.created_at', 'desc')
             ->select([
                 'request_status.*',
                 'sm.status_name',
@@ -1215,7 +1215,7 @@ class RequestStockController extends Controller
 
 
 
-           
+
 
 
             LogsRequestStatus::create([
@@ -1246,7 +1246,7 @@ class RequestStockController extends Controller
 
             $edpCode = Edp::where('id', $stock->edp_code)->value('edp_code');
             $user = Auth::user();
-           
+
             LogsStocks::create([
                 'stock_id' => $stock->id,
                 'location_id' => $stock->location_id,
@@ -1268,9 +1268,9 @@ class RequestStockController extends Controller
                 'req_status' => "Inactive",
                 'created_at' => now(),
                 'updated_at' => now(),
-                'creater_id' => $requesterStock->rig_id,
+                'creater_id' => $stock->rig_id,
                 'creater_type' => null,
-                'receiver_id' => $stock->rig_id,
+                'receiver_id' => $requesterStock->rig_id,
                 'receiver_type' => null,
                 'message' => "Stock Transfered from EDP Code: {$edpCode}.",
                 'action' => "Transferred_from",

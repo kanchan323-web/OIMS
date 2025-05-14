@@ -1094,6 +1094,8 @@
                 data: { request_id: request_id },
                 success: function (response) {
                     let html = "";
+                    console.log(response);
+                    response.sort((a, b) => b.id - a.id);
 
                     if (response.length > 0) {
                         response.forEach(status => {
