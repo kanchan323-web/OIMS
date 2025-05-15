@@ -190,7 +190,7 @@
     $('#edp_code_id').change(function() {
 
         var id = $(this).val();
-        console.log(id);
+        // console.log(id);
         $.ajaxSetup({headers: {'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')}});
         $.ajax({
         type: "GET",
@@ -198,7 +198,7 @@
         data:{ data: id },
         success: function(response){
             $('.edp_detail').css('display', 'block');
-                console.log(response.viewdata['category']);
+                // console.log(response.viewdata['category']);
                 $("#category_id").val(response.viewdata['category']);
                 $("#measurement").val(response.viewdata['measurement']);
                 $("#section").val(response.viewdata['section']);

@@ -184,7 +184,7 @@ Breadcrumbs::for('request_admin_stock_list', function (BreadcrumbTrail $trail) {
 });
 Breadcrumbs::for('request_admin_stock_list_incoming', function (BreadcrumbTrail $trail) {
     $trail->parent('Admin.dashboard');  // Proper parent relationship
-    $trail->push('Incoming Request', route('admin.incoming_request_list'));
+    $trail->push(' Request List', route('admin.incoming_request_list'));
 });
 Breadcrumbs::for('Raised_Request_stock', function (BreadcrumbTrail $trail) {
     $trail->parent('Admin.dashboard');  // Proper parent relationship

@@ -185,7 +185,7 @@
                     url: "{{ route('get_edp_details') }}",
                     data: { edp_code: edpCode },
                     success: function (response) {
-                        console.log("EDP Data for Edit:", response);
+                        // console.log("EDP Data for Edit:", response);
 
                         if (response.success) {
                             $("#category_id").val(response.edp.category);
@@ -288,7 +288,7 @@
                             let decimalPart = value.includes(".") ? value.split(".")[1] : "";
                             isValid = decimalPart.length <= 10;
                             errorMsg = isValid ? "" : "Max 10 decimal places allowed!";
-                            console.log("Current Value:", value);
+                            // console.log("Current Value:", value);
                         } else {
                             isValid = false;
                             errorMsg = "Invalid decimal format!";

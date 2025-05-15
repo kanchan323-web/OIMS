@@ -22,16 +22,19 @@
       <script src="{{ asset('resources/js/exporting.js') }}"></script>
       <script src="{{ asset('resources/js/variable-pie.js') }}"></script>
 
-      <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
         {{-- datatable --}}
+        
     <!-- DataTables CSS -->
+    <link rel="stylesheet" href="{{ asset('resources/css/flatpickr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('resources/css/dataTables.bootstrap5.min.css') }}">
     <!-- DataTables JS -->
+
+    <script src="{{ asset('resources/js/flatpickr.js') }}"></script>
     <script src="{{ asset('resources/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('resources/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('resources/js/highcharts.js') }}"></script>
+
     {{-- datatable --}}
       
       <meta name="csrf-token" content="{{ csrf_token() }}">

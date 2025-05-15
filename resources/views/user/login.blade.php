@@ -8,8 +8,10 @@
     <link rel="shortcut icon" href="{{ asset('resources/images/favicon.ico') }}" />
     <link rel="stylesheet" href="{{ asset('resources/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('resources/css/all.min.css') }}">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+       
     <link rel="stylesheet" href="{{ asset('resources/css/loginstyle.css') }}">
+      <script src="{{ asset('resources/js/jquery-3.4.1.min.js') }}"></script>
 
 </head>
 

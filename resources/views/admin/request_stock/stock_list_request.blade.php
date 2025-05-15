@@ -880,7 +880,7 @@
 
         //For accept
         $(document).ready(function () {
-            console.log("Script Loaded!");
+            // console.log("Script Loaded!");
 
             function validateSpareableInputs() {
                 let requestedQty = parseInt($("#modal_req_qty").text().trim()) || 0;
@@ -904,7 +904,7 @@
 
             $(document).on("click", "#confirmReceivedRequest", function (e) {
                 e.preventDefault();
-                console.log("Submit Event Triggered!");
+                // console.log("Submit Event Triggered!");
 
                 let requestId = $("#mainModalForm").find("#request_id").val();
                 let newSpareable = $("#modal_new_spareable").val();
@@ -912,7 +912,7 @@
                 let supplierTotalQty = $("#modal_total_qty").text().trim();
 
                 if (!requestId) {
-                    console.log("Request ID is missing!");
+                    // console.log("Request ID is missing!");
                     return;
                 }
 
@@ -957,7 +957,7 @@
                         decline_msg: declineMsg
                     },
                     success: function (response) {
-                        console.log("AJAX Success:", response);
+                        // console.log("AJAX Success:", response);
                         if (response.success) {
                             window.location.href = "{{ route('admin.incoming_request_list') }}";
                         }
@@ -971,7 +971,7 @@
             // Raise Query
             $(document).on("submit", "#raiseQueryForm", function (e) {
                 e.preventDefault();
-                console.log("Query Event Triggered!");
+                // console.log("Query Event Triggered!");
 
                 let requestId = $("#request_id").val();
                 let queryMsg = $("#query").val();

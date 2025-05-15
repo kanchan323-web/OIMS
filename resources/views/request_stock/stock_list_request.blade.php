@@ -583,7 +583,7 @@
                     data: id
                 },
                 success: function (response) {
-                    console.log(response.viewdata);
+                    // console.log(response.viewdata);
                     $("#location_id").val(response.viewdata['location_id']);
                     $("#location_name").val(response.viewdata['location_name']);
                     $("#edp_code_id").val(response.viewdata['edp_code']);

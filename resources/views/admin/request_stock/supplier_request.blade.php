@@ -633,7 +633,7 @@
                                     $('#status_msg').text(response.request_status['query_msg']).addClass('text-primary');
                                 }
                             }
-                            console.log(stock.status);
+                            // console.log(stock.status);
                             $("#request_date").val(stock.formatted_created_at ?? '');
                             //debugger;
                             if (stock.status == 4) {
@@ -712,7 +712,7 @@
                         request_id: requestId
                     },
                     success: function (response) {
-                        console.log(response);
+                        // console.log(response);
                         if (response.success) {
                             Swal.fire({
                                 icon: "success",
@@ -732,7 +732,7 @@
                         }
                     },
                     error: function (xhr) {
-                        console.log(xhr.responseText);
+                        // console.log(xhr.responseText);
                         Swal.fire({
                             icon: "error",
                             title: "Error!",
@@ -752,8 +752,8 @@
                 type: "GET",
                 data: { request_id: request_id },
                 success: function (response) {
-                    console.log(request_id);
-                    console.log(response);
+                    // console.log(request_id);
+                    // console.log(response);
                     let html = "";
                     if (response.length > 0) {
                         response.forEach(status => {
@@ -829,7 +829,7 @@
             @if(isset($stockdata)) // Ensure $stockdata is set
                 let stockStatus = {{ $stockdata->status }};
                 let stockId = {{ json_encode($stockdata->id) }};
-                console.log(stockId);
+                // console.log(stockId);
 
                 if (stockStatus === 2) {
                     $('#subModalQueryButton').removeClass('d-none');
@@ -976,7 +976,7 @@
                     $(".accept_confirmation").prop("disabled", true);
                 },
                 success: function (response) {
-                    console.log("Server Response:", response); // Debugging
+                    // console.log("Server Response:", response); // Debugging
 
                     Swal.fire({
                         icon: 'success',
@@ -991,7 +991,7 @@
                     });
                 },
                 error: function (xhr) { // Syntax error fixed (comma added)
-                    console.log("AJAX Error:", xhr.responseText);
+                    // console.log("AJAX Error:", xhr.responseText);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
