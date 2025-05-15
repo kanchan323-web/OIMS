@@ -354,7 +354,7 @@
                 },
                 success: function (response) {
 
-                    console.log(response.viewdata['edp_code']);
+                    // console.log(response.viewdata['edp_code']);
                     $("#location_id").val(response.viewdata['location_id']);
                     $("#location_name1").val(response.viewdata['location_name']);
                     $("#edp_code1").val(response.viewdata['edp_code']);

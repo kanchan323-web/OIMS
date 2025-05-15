@@ -771,7 +771,7 @@
                         }
                     },
                     error: function (xhr) {
-                        console.log(xhr.responseText);
+                        // console.log(xhr.responseText);
                         Swal.fire({
                             icon: "error",
                             title: "Error!",
@@ -879,7 +879,7 @@
             @if(isset($stockdata)) // Ensure $stockdata is set
                 let stockStatus = {{ $stockdata->status }};
                 let stockId = {{ json_encode($stockdata->id) }};
-                console.log(stockId);
+                // console.log(stockId);
 
                 if (stockStatus === 2) {
                     $('#subModalQueryButton').removeClass('d-none');
@@ -1026,7 +1026,7 @@
                     $(".accept_confirmation").prop("disabled", true);
                 },
                 success: function (response) {
-                    console.log("Server Response:", response); // Debugging
+                    // console.log("Server Response:", response); // Debugging
 
                     Swal.fire({
                         icon: 'success',
@@ -1041,7 +1041,7 @@
                     });
                 },
                 error: function (xhr) { // Syntax error fixed (comma added)
-                    console.log("AJAX Error:", xhr.responseText);
+                    // console.log("AJAX Error:", xhr.responseText);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',

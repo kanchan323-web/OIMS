@@ -85,7 +85,7 @@
                         // console.log("Sending AJAX request...");
                     },
                     success: function(response) {
-                         console.log("AJAX Response:", response);
+                        //  console.log("AJAX Response:", response);
                         let tableBody = $("#reportTable");
                         let tableHeaders = $("#tableHeaders");
 
@@ -217,7 +217,7 @@
                     },
                     error: function(xhr, status, error) {
                         console.error("Error fetching data:", error);
-                        console.log("Full Response:", xhr.responseText);
+                        // console.log("Full Response:", xhr.responseText);
                         alert("An error occurred. Check console for details.");
                     }
                 });

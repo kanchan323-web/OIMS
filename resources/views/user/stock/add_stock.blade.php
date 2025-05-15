@@ -265,7 +265,7 @@
                                 $("#section_hidden").val(response.edp.section);
 
                                 if (response.stock) {
-                                    console.log(response.stock);
+                                    // console.log(response.stock);
                                     $("#addStockForm").attr("action", "{{ route('update_stock') }}");
                                     $("#id").val(response.stock.id);
                                     $("#qty").val(response.stock.qty);

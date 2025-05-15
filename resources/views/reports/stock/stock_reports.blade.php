@@ -106,14 +106,14 @@
         $(document).ready(function () {
             function fetchReport() {
                 let formData = $("#filterForm").serialize();
-                console.log("Form Data:", formData);
+                // console.log("Form Data:", formData);
 
                 $.ajax({
                     type: "GET",
                     url: "{{ route('report_stock_filter') }}",
                     data: formData,
                     success: function (response) {
-                        console.log("AJAX Response:", response.data);
+                        // console.log("AJAX Response:", response.data);
 
                         if ($.fn.DataTable.isDataTable('#dynamicTable')) {
                             $('#dynamicTable').DataTable().destroy();

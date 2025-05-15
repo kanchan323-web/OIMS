@@ -182,7 +182,7 @@
                     success: function (response) {
                         const logType = response.type;
                         const data = response.data;
-                        console.log
+                      
                         const fields = fieldMappings[logType];
                         $('#tableTitle').text(`${logType} Logs `);
 

@@ -183,7 +183,7 @@
                     url: "{{ route('admin.get_edp_details') }}",
                     data: { edp_code: edpCode },
                     success: function (response) {
-                        console.log("EDP Data for Edit:", response);
+                        // console.log("EDP Data for Edit:", response);
 
                         if (response.success) {
                             $("#category_id").val(response.edp.category);
@@ -196,7 +196,7 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error("AJAX Error:", status, error);
+                        // console.error("AJAX Error:", status, error);
                     }
                 });
             }

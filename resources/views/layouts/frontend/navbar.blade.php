@@ -181,19 +181,19 @@
             url: "{{ route('fetchIncommingCount') }}",
             method: "get",
             success: function(response) {
-                console.log('response' + response.data.incoming_pending);
+                // console.log('response' + response.data.incoming_pending);
                 $("#incoming-count").text(response.data.incoming_pending);
             }
         });
     }
 
     function fetchRaisedCount() {
-        console.log('fetchIncommingCount');
+        // console.log('fetchIncommingCount');
         $.ajax({
             url: "{{ route('fetchRaisedCount') }}",
             method: "get",
             success: function(response) {
-                console.log('response' + response.data.raised_pending);
+                // console.log('response' + response.data.raised_pending);
                 $("#raised-count").text(response.data.raised_pending);
             }
         });

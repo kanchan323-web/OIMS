@@ -100,7 +100,7 @@
                     // You can add loader here
                 },
                 success: function (response) {
-                    console.log(response);
+                    // console.log(response);
                     let tableBody = $("#reportTable");
                     let tableHeaders = $("#tableHeaders");
 

@@ -587,8 +587,8 @@
                 type: "GET",
                 data: { request_id: request_id },
                 success: function (response) {
-                    console.log(request_id);
-                    console.log(response);
+                    // console.log(request_id);
+                    // console.log(response);
                     let html = "";
                     if (response.length > 0) {
                         response.forEach(status => {
@@ -663,7 +663,7 @@
         $(document).ready(function () {
             let stockStatus = {{ $stockdata->status }};
             let stockId = {{ json_encode($stockdata->id) }};
-            console.log(stockId);
+            // console.log(stockId);
             if (stockStatus === 2) {
                 $('#subModalQueryButton').removeClass('d-none');
             } else {
