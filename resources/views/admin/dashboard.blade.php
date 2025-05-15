@@ -282,7 +282,7 @@
                                     ],
                                     tooltip: {
                                         formatter: function () {
-                                            return `<b>${this.x}</b><br/>
+                                            return `<br/>
                                                             ${this.series.name}: ${this.y}<br/>
                                                             Total: ${this.point.stackTotal}`;
                                         }
@@ -484,7 +484,7 @@
                                         useHTML: true,
                                         formatter: function () {
                                             let totalQty = 0;
-                                            let tooltip = `<b>${this.x}</b><br/>`;
+                                            let tooltip = ``;
 
                                             this.points.forEach(point => {
                                                 totalQty += point.point.originalQty;
