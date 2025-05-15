@@ -136,43 +136,7 @@ class DashboardController extends Controller
         //   dd($results  ); 
 
 
-        // $results = Stock::select()->get()->groupBy('section');
-
-        // $newdata = $results->map(function ($items, $section) {
-        //     return [
-        //         'section' => $section,
-        //         'new_spareable' => $items->sum('new_spareable'),
-        //         'used_spareable' => $items->sum('used_spareable'),
-        //     ];
-        // })->values();
-        
-        // // Define color palettes
-        // $newColors = ['#4285F4', '#34A853', '#F4AAAA', '#B39DDB', '#FBBC05', '#00ACC1', '#FF7043', '#9575CD', '#F06292'];
-        // $usedColors = ['#8AB4F8', '#81C995', '#FDE293', '#F4AAAA', '#B39DDB', '#80DEEA', '#FFAB91', '#D1C4E9', '#F8BBD0'];
-        
-        // // Prepare chart data
-        // $newSections = [];
-        // $usedSections = [];
-        
-        // foreach ($newdata as $index => $item) {
-        //     $colorNew = $newColors[$index % count($newColors)];
-        //     $colorUsed = $usedColors[$index % count($usedColors)];
-        
-        //     $newSections[] = [
-        //         'name' => $item['section'] . ' (New)',
-        //         'y' => $item['new_spareable'],
-        //         'color' => $colorNew,
-        //     ];
-        
-        //     $usedSections[] = [
-        //         'name' => $item['section'] . ' (Used)',
-        //         'y' => $item['used_spareable'],
-        //         'color' => $colorUsed,
-        //     ];
-        // }
-
-
-        $results = Stock::select()
+          $results = Stock::select()
         ->get()
         ->groupBy('section');
 

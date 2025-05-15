@@ -351,8 +351,8 @@
                                                 tooltip: {
                                                     formatter: function () {
                                                         return `<b>${this.x}</b><br/>
-                                                                        ${this.series.name}: ${this.y}<br/>
-                                                                        Total: ${this.point.stackTotal}`;
+                                                                                        ${this.series.name}: ${this.y}<br/>
+                                                                                        Total: ${this.point.stackTotal}`;
                                                     }
                                                 }
                                             });
@@ -412,7 +412,7 @@
 
 
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 col-md-6 col-sm-6 ">
                             <div class="card border-0 shadow-sm">
                                 <div class="card-body">
                                     <style>
@@ -438,28 +438,40 @@
 
                                     <div class="dual-chart-container">
                                         <div class="chart-box">
-                                            <div class="chart-title">Stock Distribution by Section (New vs Used)</div>
+
                                             <div id="stock-bar-chart"></div>
+                                            <div id="stock-100-chart" style="height: 400px;"></div>
                                         </div>
                                     </div>
 
                                     <script>
+                                        function formatIndianNumber(x) {
+                                            var parts = x.toString().split(".");
+                                            var lastThree = parts[0].slice(-3);
+                                            var otherNumbers = parts[0].slice(0, -3);
+                                            if (otherNumbers !== '') {
+                                                lastThree = ',' + lastThree;
+                                            }
+                                            var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+                                            if (parts.length > 1) {
+                                                res += "." + parts[1];
+                                            }
+                                            return res;
+                                        }
+
                                         const sectionData = @json($combinedSections);
 
                                         const categories = sectionData.map(item => item.section);
                                         const newStockData = sectionData.map(item => item.new);
                                         const usedStockData = sectionData.map(item => item.used);
 
-                                        // Compute total per section to calculate percentage
-                                        const totalPerSection = sectionData.map(item => item.new + item.used);
-
-                                        Highcharts.chart('stock-bar-chart', {
+                                        Highcharts.chart('stock-100-chart', {
                                             chart: {
                                                 type: 'column',
                                                 height: 400
                                             },
                                             title: {
-                                                text: ''
+                                                text: 'Stock Distribution by Section (New vs Used)'
                                             },
                                             xAxis: {
                                                 categories: categories,
@@ -467,17 +479,15 @@
                                                 labels: { style: { fontSize: '11px' } }
                                             },
                                             yAxis: {
-                                                min: 0,
-                                                title: { text: 'Spareable Units' },
+                                                max: 100,
+                                                title: {
+                                                    text: 'Percentage'
+                                                },
+                                                labels: {
+                                                    format: '{value}%'
+                                                },
                                                 stackLabels: {
-                                                    enabled: true,
-                                                    formatter: function () {
-                                                        return this.total;
-                                                    },
-                                                    style: {
-                                                        fontWeight: 'bold',
-                                                        color: '#555'
-                                                    }
+                                                    enabled: false
                                                 }
                                             },
                                             legend: {
@@ -488,27 +498,32 @@
                                             },
                                             tooltip: {
                                                 shared: true,
+                                                useHTML: true,
                                                 formatter: function () {
-                                                    let index = this.points[0].point.index;
-                                                    let total = totalPerSection[index] || 1;
-                                                    let s = `<b>${this.x}</b><br/>`;
+                                                    let totalQty = 0;
+                                                    let tooltip = `<b>${this.x}</b><br/>`;
+
                                                     this.points.forEach(point => {
-                                                        const percent = ((point.y / total) * 100).toFixed(1);
-                                                        s += `${point.series.name}: ${point.y} (${percent}%) <br/>`;
+                                                        totalQty += point.point.originalQty;
                                                     });
-                                                    s += `<b>Total: ${total}</b>`;
-                                                    return s;
+
+                                                    this.points.forEach(point => {
+                                                        const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
+                                                        tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b> units (${percentage}%)</div>`;
+                                                    });
+
+                                                    tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)} units</b>`;
+                                                    return tooltip;
                                                 }
                                             },
                                             plotOptions: {
                                                 column: {
-                                                    stacking: 'normal',
+                                                    stacking: 'percent',
                                                     dataLabels: {
                                                         enabled: true,
                                                         formatter: function () {
-                                                            const total = totalPerSection[this.point.index] || 1;
-                                                            const percent = ((this.y / total) * 100).toFixed(1);
-                                                            return `${percent}%`;
+                                                            const percentage = this.percentage.toFixed(1);
+                                                            return `${formatIndianNumber(this.point.originalQty)} (${percentage}%)`;
                                                         },
                                                         style: {
                                                             fontSize: '10px',
@@ -517,22 +532,28 @@
                                                     }
                                                 }
                                             },
-                                            series: [
-                                                {
-                                                    name: 'Used',
-                                                    data: usedStockData,
-                                                    color: '#F4AAAA'
-                                                },
-                                                {
-                                                    name: 'New',
-                                                    data: newStockData,
-                                                    color: '#32BDEA'
-                                                }
-                                            ],
+                                            series: [{
+                                                name: 'Used',
+                                                data: usedStockData.map(qty => ({
+                                                    y: qty,
+                                                    originalQty: qty
+                                                })),
+                                                color: '#F4AAAA'
+                                            }, {
+                                                name: 'New',
+                                                data: newStockData.map(qty => ({
+                                                    y: qty,
+                                                    originalQty: qty
+                                                })),
+                                                color: '#32BDEA'
+                                            }],
                                             credits: { enabled: false },
                                             exporting: { enabled: false }
                                         });
                                     </script>
+
+
+
                                 </div>
                             </div>
                         </div>
