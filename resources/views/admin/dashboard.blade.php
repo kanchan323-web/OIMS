@@ -366,117 +366,130 @@
                     </div>
                 </div>
         
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <style>
-                                .dual-chart-container { 
-                                    display: flex;
-                                    flex-wrap: wrap;
-                                    gap: 20px;
-                                    justify-content: space-between;
-                                }
-                                .chart-box {
-                                    height: 350px;
-                                    min-width: 48%;
-                                    flex: 1 1 45%;
-                                }
-                                @media (max-width: 768px) {
-                                    .chart-box {
-                                        min-width: 100%;
-                                    }
-                                }
-                                .chart-title {
-                                    text-align: center;
-                                    font-weight: bold;
-                                    margin-bottom: 10px;
-                                }
-                            </style>
-                
-                                <div class="dual-chart-container">
-                                    <!-- New Sections Chart -->
-                                    <div class="chart-box">
-                                        <div class="chart-title">New Sections Distribution</div>
-                                        <div id="new-sections-chart"></div>
+                <div class="col-lg-6">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <style>
+                                        .dual-chart-container {
+                                            display: flex;
+                                            flex-wrap: wrap;
+                                            gap: 20px;
+                                            justify-content: space-between;
+                                        }
+
+                                        .chart-box {
+                                            height: 350px;
+                                            min-width: 100%;
+                                        }
+
+                                        .chart-title {
+                                            text-align: center;
+                                            font-weight: bold;
+                                            margin-bottom: 10px;
+                                            font-size: 16px;
+                                        }
+                                    </style>
+
+                                    <div class="dual-chart-container">
+                                        <div class="chart-box">
+                                            <div class="chart-title">Stock Distribution by Section (New vs Used)</div>
+                                            <div id="stock-bar-chart"></div>
+                                        </div>
                                     </div>
-                                    
-                                    <!-- Used Sections Chart -->
-                                    <div class="chart-box">
-                                        <div class="chart-title">Used Sections Distribution</div>
-                                        <div id="used-sections-chart"></div>
-                                    </div>
-                                </div>
-                
-                
-                                <script>
-                                    const newSections = @json($newSections);
-                                    const usedSections = @json($usedSections);
-                                
-                                    const donutConfig = {
-                                        chart: { type: 'pie' },
-                                        title: { text: '' },
-                                        tooltip: {
-                                            pointFormat: '<b>{point.percentage:.1f}%</b> ({point.y} units)'
-                                        },
-                                        plotOptions: {
-                                            pie: {
-                                                allowPointSelect: true,
-                                                cursor: 'pointer',
-                                                dataLabels: {
+
+                                    <script>
+                                        const sectionData = @json($combinedSections);
+
+                                        const categories = sectionData.map(item => item.section);
+                                        const newStockData = sectionData.map(item => item.new);
+                                        const usedStockData = sectionData.map(item => item.used);
+
+                                        // Compute total per section to calculate percentage
+                                        const totalPerSection = sectionData.map(item => item.new + item.used);
+
+                                        Highcharts.chart('stock-bar-chart', {
+                                            chart: {
+                                                type: 'column',
+                                                height: 400
+                                            },
+                                            title: {
+                                                text: ''
+                                            },
+                                            xAxis: {
+                                                categories: categories,
+                                                title: { text: 'Section' },
+                                                labels: { style: { fontSize: '11px' } }
+                                            },
+                                            yAxis: {
+                                                min: 0,
+                                                title: { text: 'Spareable Units' },
+                                                stackLabels: {
                                                     enabled: true,
-                                                    // ✅ Show only section name inside chart
-                                                    format: '{point.name}',
-                                                    distance: -40,
+                                                    formatter: function () {
+                                                        return this.total;
+                                                    },
                                                     style: {
                                                         fontWeight: 'bold',
-                                                        fontSize: '11px',
-                                                        textOutline: 'none'
+                                                        color: '#555'
                                                     }
-                                                },
-                                                showInLegend: true,
-                                                innerSize: '60%'
-                                            }
-                                        },
-                                        legend: {
-                                            labelFormatter: function () {
-                                                // ✅ Legend shows: section name + quantity
-                                                return `${this.name}: ${this.y} units`;
+                                                }
                                             },
-                                            itemStyle: {
-                                                fontWeight: 'normal',
-                                                fontSize: '12px'
-                                            }
-                                        },
-                                        credits: { enabled: false },
-                                        exporting: { enabled: false }
-                                    };
-                                
-                                    Highcharts.chart('new-sections-chart', {
-                                        ...donutConfig,
-                                        series: [{
-                                            name: 'New Sections',
-                                            data: newSections.map(item => ({
-                                                ...item,
-                                                name: item.name.split(' - ')[0] // remove " - Qty: ..."
-                                            }))
-                                        }]
-                                    });
-                                
-                                    Highcharts.chart('used-sections-chart', {
-                                        ...donutConfig,
-                                        series: [{
-                                            name: 'Used Sections',
-                                            data: usedSections.map(item => ({
-                                                ...item,
-                                                name: item.name.split(' - ')[0]
-                                            }))
-                                        }]
-                                    });
-                                </script>
-                
+                                            legend: {
+                                                reversed: true,
+                                                itemStyle: {
+                                                    fontSize: '12px'
+                                                }
+                                            },
+                                            tooltip: {
+                                                shared: true,
+                                                formatter: function () {
+                                                    let index = this.points[0].point.index;
+                                                    let total = totalPerSection[index] || 1;
+                                                    let s = `<b>${this.x}</b><br/>`;
+                                                    this.points.forEach(point => {
+                                                        const percent = ((point.y / total) * 100).toFixed(1);
+                                                        s += `${point.series.name}: ${point.y} (${percent}%) <br/>`;
+                                                    });
+                                                    s += `<b>Total: ${total}</b>`;
+                                                    return s;
+                                                }
+                                            },
+                                            plotOptions: {
+                                                column: {
+                                                    stacking: 'normal',
+                                                    dataLabels: {
+                                                        enabled: true,
+                                                        formatter: function () {
+                                                            const total = totalPerSection[this.point.index] || 1;
+                                                            const percent = ((this.y / total) * 100).toFixed(1);
+                                                            return `${percent}%`;
+                                                        },
+                                                        style: {
+                                                            fontSize: '10px',
+                                                            textOutline: 'none'
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            series: [
+                                                {
+                                                    name: 'Used',
+                                                    data: usedStockData,
+                                                    color: '#F4AAAA'
+                                                },
+                                                {
+                                                    name: 'New',
+                                                    data: newStockData,
+                                                    color: '#32BDEA'
+                                                }
+                                            ],
+                                            credits: { enabled: false },
+                                            exporting: { enabled: false }
+                                        });
+                                    </script>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
                
             </div>
         </div>
