@@ -458,6 +458,7 @@
                                             }
                                             return res;
                                         }
+                                        //now
 
                                         const sectionData = @json($combinedSections);
 
