@@ -283,8 +283,8 @@
                                     tooltip: {
                                         formatter: function () {
                                             return `<br/>
-                                                            ${this.series.name}: ${this.y}<br/>
-                                                            Total: ${this.point.stackTotal}`;
+                                                                        ${this.series.name}: ${this.y}<br/>
+                                                                        Total: ${this.point.stackTotal}`;
                                         }
                                     }
                                 });
@@ -445,8 +445,22 @@
                                 const sectionData = @json($combinedSections);
 
                                 const categories = sectionData.map(item => item.section);
-                                const newStockData = sectionData.map(item => item.new);
-                                const usedStockData = sectionData.map(item => item.used);
+
+                                const usedStockData = sectionData.map(item => {
+                                    const total = item.new + item.used;
+                                    return {
+                                        y: total === 0 ? 0.0001 : item.used,  // prevent zero-stack issue
+                                        originalQty: item.used
+                                    };
+                                });
+
+                                const newStockData = sectionData.map(item => {
+                                    const total = item.new + item.used;
+                                    return {
+                                        y: total === 0 ? 0.0001 : item.new,  // prevent zero-stack issue
+                                        originalQty: item.new
+                                    };
+                                });
 
                                 Highcharts.chart('stock-100-chart', {
                                     chart: {
@@ -468,9 +482,6 @@
                                         },
                                         labels: {
                                             format: '{value}%'
-                                        },
-                                        stackLabels: {
-                                            enabled: false
                                         }
                                     },
                                     legend: {
@@ -490,12 +501,17 @@
                                                 totalQty += point.point.originalQty;
                                             });
 
-                                            this.points.forEach(point => {
-                                                const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
-                                                tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b> units (${percentage}%)</div>`;
-                                            });
+                                            if (totalQty === 0) {
+                                                tooltip += `<div style="margin-left: 10px; color: #888;"><i>This section has no quantity.</i></div>`;
 
-                                            tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)} units</b>`;
+                                            } else {
+                                                this.points.forEach(point => {
+                                                    const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
+                                                    tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b> units (${percentage}%)</div>`;
+                                                });
+                                                tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)} units</b>`;
+                                            }
+
                                             return tooltip;
                                         }
                                     },
@@ -505,6 +521,7 @@
                                             dataLabels: {
                                                 enabled: true,
                                                 formatter: function () {
+                                                    if (this.point.originalQty === 0) return null;
                                                     const percentage = this.percentage.toFixed(1);
                                                     return `${formatIndianNumber(this.point.originalQty)} (${percentage}%)`;
                                                 },
@@ -515,25 +532,24 @@
                                             }
                                         }
                                     },
-                                    series: [{
-                                        name: 'Used',
-                                        data: usedStockData.map(qty => ({
-                                            y: qty,
-                                            originalQty: qty
-                                        })),
-                                        color: '#F4AAAA'
-                                    }, {
-                                        name: 'New',
-                                        data: newStockData.map(qty => ({
-                                            y: qty,
-                                            originalQty: qty
-                                        })),
-                                        color: '#32BDEA'
-                                    }],
+                                    series: [
+                                        {
+                                            name: 'Used',
+                                            data: usedStockData,
+                                            color: '#F4AAAA'
+                                        },
+                                        {
+                                            name: 'New',
+                                            data: newStockData,
+                                            color: '#32BDEA'
+                                        }
+                                    ],
                                     credits: { enabled: false },
                                     exporting: { enabled: false }
                                 });
                             </script>
+
+
 
                         </div>
                     </div>
