@@ -173,11 +173,9 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
 Route::get('/user/login', [LoginController::class, 'index'])->name('user.login');
 Route::post('/user/authenticate', [LoginController::class, 'authenticate'])->name('user.authenticate');
 
-
 Route::middleware(['auth', 'user.session'])->group(function () {
 
     Route::prefix('/user')->group(function () {
-
 
         Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
         Route::get('/profile', [LoginController::class, 'profile'])->name('user.profile');
@@ -191,8 +189,6 @@ Route::middleware(['auth', 'user.session'])->group(function () {
         Route::post('/registration', [LoginController::class, 'registerSubmit'])->name('user.registerSubmit');
         //Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
-
-
         //Stocks
         Route::any('/add_stock', [StockController::class, 'add_stock'])->name('add_stock');
         Route::post('/stockSubmit', [StockController::class, 'stockSubmit'])->name('stockSubmit');
