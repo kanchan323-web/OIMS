@@ -108,20 +108,21 @@ class DashboardController extends Controller
         //ok
         // Approve Status
 
-        // received/decline data 
+        // received/decline data
         $results = Requester::select(
             'stocks.section',
             DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
             DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
-            DB::raw('SUM(CASE WHEN requesters.status = 1 THEN 1 ELSE 0 END) as pending'),
+            DB::raw('SUM(CASE WHEN requesters.status IN (1, 2, 4, 6) THEN 1 ELSE 0 END) as pending'),
+
             DB::raw('DATE(requesters.updated_at) as date')
         )
         ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
-        ->whereIn('requesters.status', [1, 3, 5]) // Include Pending
+        ->whereIn('requesters.status', [1, 2,3,4,5,6]) // Include Pending
         ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
         ->orderBy('date', 'desc')
         ->get();
-        
+
         // Prepare chart data in required format
         $chartData = $results->map(function ($item) {
             return [
@@ -132,8 +133,8 @@ class DashboardController extends Controller
                 'date' => $item->date
             ];
         })->toArray();
-          
-        //   dd($results  ); 
+
+        //   dd($results  );
 
 
           $results = Stock::select()
@@ -147,8 +148,8 @@ class DashboardController extends Controller
                 'used' => $items->sum('used_spareable'),
             ];
         })->values();
-        
-      
+
+
 
         return view('admin.dashboard', compact(
 
@@ -162,7 +163,7 @@ class DashboardController extends Controller
         'chartData',
         'combinedSections'
 
-       
+
         ));
     }
 

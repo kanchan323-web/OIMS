@@ -139,34 +139,34 @@ class DashboardController extends Controller
                     'stocks.section',
                     DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
                     DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
-                    DB::raw('SUM(CASE WHEN requesters.status = 1 THEN 1 ELSE 0 END) as pending'),
+                    DB::raw('SUM(CASE WHEN requesters.status IN (1, 2, 4, 6) THEN 1 ELSE 0 END) as pending'),
                     DB::raw('DATE(requesters.updated_at) as date')
                 )
                 ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
-                ->whereIn('requesters.status', [1, 3, 5]) // Include Pending
+                ->whereIn('requesters.status', [1,2,3,4,5,6]) // Include Pending
                 ->where('requesters.supplier_rig_id', $rig_id)
                 ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
                 ->orderBy('date', 'desc')
                 ->get();
-                
+
                 // Raised by this rig
                 $raisedChartData = Requester::select(
                     'stocks.section',
                     DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
                     DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
-                    DB::raw('SUM(CASE WHEN requesters.status = 1 THEN 1 ELSE 0 END) as pending'),
+                    DB::raw('SUM(CASE WHEN requesters.status IN (1, 2, 4, 6) THEN 1 ELSE 0 END) as pending'),
                     DB::raw('DATE(requesters.updated_at) as date')
                 )
                 ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
-                ->whereIn('requesters.status', [1, 3, 5]) // Include Pending
+                ->whereIn('requesters.status', [1,2,3,4,5,6]) // Include Pending
                 ->where('requesters.requester_rig_id', $rig_id)
                 ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
                 ->orderBy('date', 'desc')
                 ->get();
-                
-            
-          
-        //   dd($results  ); 
+
+
+
+        //   dd($results  );
 
 
         $results = Stock::select()
@@ -182,7 +182,7 @@ class DashboardController extends Controller
             ];
         })->values();
 
-     
+
                 // Testing
 
             return view('user.dashboard', compact(
@@ -200,12 +200,12 @@ class DashboardController extends Controller
                 'Decline_raised',
                 'Approve_raised',
                 'Query_raised',
-              
+
                 'incomingChartData',
                 'raisedChartData',
                 'combinedSections',
 
-       
+
             ));
         } else {
             return redirect()->route('user.login');
