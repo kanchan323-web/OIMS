@@ -18,6 +18,7 @@ class UserController extends Controller
         if ($request->ajax()) {
             $users = User::where('users.user_name', '!=', 'admin')
                 ->leftJoin('rig_users', 'users.rig_id', '=', 'rig_users.id')
+                ->orderBy('users.created_at', 'desc')
                 ->select([
                     'users.id',
                     'users.user_name',
