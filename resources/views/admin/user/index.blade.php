@@ -33,13 +33,13 @@
                         @endif
 
                         <div class="table-responsive rounded mb-3">
-                            <table id="usersTable" class="data-tables table mb-0 tbl-server-info">
+                            <table id="userTable" class="table mb-0 tbl-server-info data-tables">
                                 <thead class="bg-white text-uppercase">
                                     <tr class="ligth ligth-data">
                                         <th>
                                             <div class="checkbox d-inline-block">
-                                                <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                                <label for="checkbox1" class="mb-0"></label>
+                                                <input type="checkbox" class="checkbox-input" id="checkboxAll">
+                                                <label for="checkboxAll" class="mb-0"></label>
                                             </div>
                                         </th>
                                         <th>#</th>
@@ -52,51 +52,9 @@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="ligth-body">
-                                    @foreach($users as $key => $user)
-                                    <tr>
-                                        <td>
-                                            <div class="checkbox d-inline-block">
-                                                <input type="checkbox" class="checkbox-input" id="checkbox{{ $user->id }}">
-                                                <label for="checkbox{{ $user->id }}" class="mb-0"></label>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div>{{ $loop->iteration }}</div>
-                                            </div>
-                                        </td>
-                                        <td>{{ $user->user_name }}</td>
-                                        <td>{{ $user->rig_name }}</td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>{{ $user->cpf_no }}</td>
-                                        <td>{{ ucfirst($user->user_type) }}</td>
-                                        <td>{{ $user->user_status ? 'Active' : 'Inactive' }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center list-action">
-                                                <a class="badge badge-info mr-2" data-toggle="modal" title="View"
-                                                    data-target="#userViewModal" onclick="viewtoclick({{ json_encode($user) }})">
-                                                    <i class="ri-eye-line mr-0"></i>
-                                                </a>
-
-                                                <a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit"
-                                                    href="{{ route('admin.edit', $user->id) }}">
-                                                    <i class="ri-pencil-line mr-0"></i>
-                                                </a>
-                                                <a href="javascript:void(0);"
-                                                    class="badge bg-warning mr-2 border-0 delete-btn"
-                                                    data-toggle="tooltip" title="Delete" data-id="{{ $user->id }}"
-                                                    data-action="{{ route('admin.destroy', $user->id) }}">
-                                                    <i class="ri-delete-bin-line mr-0"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -104,7 +62,7 @@
     </div>
 </div>
 
-<!-- View User Modal (Inline) -->
+<!-- Modal: View User -->
 <div class="modal fade" id="userViewModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -150,7 +108,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
-
         </div>
     </div>
 </div>
@@ -183,44 +140,107 @@
 
 <script>
     $(document).ready(function () {
-        // Initialize DataTables on your table with theme-compatible pagination
-        $('#usersTable').DataTable({
-            // You can configure options here, e.g., paging, lengthChange, etc.
-            "lengthMenu": [5, 10, 25, 50],
-            "pageLength": 10,
-            "order": [], // no initial order
-            "language": {
-                "paginate": {
-                    "previous": "<i class='ri-arrow-left-s-line'></i>",
-                    "next": "<i class='ri-arrow-right-s-line'></i>"
-                }
-            },
-            "dom": '<"top"f>rt<"bottom"lp><"clear">'
-        });
-
-        // Auto fade alert messages
+        // Auto fade alerts
         setTimeout(function () {
             $(".alert").fadeOut("slow");
         }, 3000);
 
-        // Delete button handler
-        $('.delete-btn').on('click', function () {
+        // Check and destroy if DataTable is already initialized
+        if ($.fn.DataTable.isDataTable('#userTable')) {
+            $('#userTable').DataTable().clear().destroy();
+        }
+
+        // Initialize DataTable
+        var userTable = $('#userTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('admin.index') }}",
+            columns: [
+                {
+                    data: 'id',
+                    orderable: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        return `<div class="checkbox d-inline-block">
+                                    <input type="checkbox" class="checkbox-input" id="checkbox${data}">
+                                    <label for="checkbox${data}" class="mb-0"></label>
+                                </div>`;
+                    }
+                },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'user_name', name: 'users.user_name' }, // explicitly use table.column
+                { data: 'rig_name', name: 'rig_users.name' },   // FIXED: real DB column for search/sort
+                { data: 'email', name: 'users.email' },
+                { data: 'cpf_no', name: 'users.cpf_no' },
+                {
+                    data: 'user_type', name: 'users.user_type',
+                    render: function (data) {
+                        return data.charAt(0).toUpperCase() + data.slice(1);
+                    }
+                },
+                {
+                    data: 'user_status', name: 'users.user_status',
+                    render: function (data) {
+                        return data == 1 ? 'Active' : 'Inactive';
+                    }
+                },
+                {
+                    data: 'id',
+                    orderable: false,
+                    searchable: false,
+                    render: function (data, type, row) {
+                        var baseUrl = "{{ url('OIMS/admin/user') }}";
+                        var rowData = JSON.stringify(row).replace(/'/g, "&apos;");
+
+                        var viewBtn = `<a class="badge badge-info mr-2" data-toggle="modal" title="View"
+                                data-target="#userViewModal" onclick='viewtoclick(${rowData})'>
+                                <i class="ri-eye-line mr-0"></i></a>`;
+
+                        var editBtn = `<a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit"
+                                href="${baseUrl}/${data}/edit">
+                                <i class="ri-pencil-line mr-0"></i></a>`;
+
+                        var deleteBtn = `<a href="javascript:void(0);"
+                                class="badge bg-warning mr-2 border-0 delete-btn"
+                                data-toggle="tooltip" title="Delete"
+                                data-id="${data}"
+                                data-action="${baseUrl}/${data}">
+                                <i class="ri-delete-bin-line mr-0"></i></a>`;
+
+                        return viewBtn + editBtn + deleteBtn;
+                    }
+                }
+            ],
+            order: [[1, 'asc']]
+        });
+
+        // Delete button click handler
+        $('#userTable tbody').off('click', '.delete-btn').on('click', '.delete-btn', function () {
             const userId = $(this).data('id');
             const actionUrl = $(this).data('action');
-
             $('#deleteForm').attr('action', actionUrl);
             $('#deleteConfirmationModal').modal('show');
         });
     });
 
-    // View modal fill function
     function viewtoclick(data) {
-        $('#UserName').val(data.user_name);
-        $('#Email').val(data.email);
-        $('#CpfNo').val(data.cpf_no);
-        $('#UserStatus').val(data.user_status ? 'Active' : 'Inactive');
-        $('#UserType').val(data.user_type.charAt(0).toUpperCase() + data.user_type.slice(1));
-        $('#RigName').val(data.rig_name);
+        const rigNameInput = document.getElementById("RigName");
+        const rigNameLabel = document.querySelector('label[for="RigName"]');
+
+        if (data.user_type === "admin") {
+            rigNameInput.style.display = "none";
+            rigNameLabel.style.display = "none";
+        } else {
+            rigNameInput.style.display = "block";
+            rigNameLabel.style.display = "block";
+            rigNameInput.value = data.rig_name || "";
+        }
+
+        document.getElementById("UserName").value = data.user_name;
+        document.getElementById("Email").value = data.email;
+        document.getElementById("CpfNo").value = data.cpf_no;
+        document.getElementById("UserStatus").value = data.user_status == 1 ? "Active" : "Inactive";
+        document.getElementById("UserType").value = data.user_type.charAt(0).toUpperCase() + data.user_type.slice(1);
     }
 </script>
 
