@@ -38,12 +38,12 @@ class UserController extends Controller
                     <i class="ri-eye-line mr-0"></i></a>';
 
                     $editBtn = '<a class="badge bg-success mr-2" data-toggle="tooltip" title="Edit"
-                    href="' . url('OIMS/admin/user/' . $row->id . '/edit') . '">
+                    href="' . route('admin.edit', $row->id) . '">
                     <i class="ri-pencil-line mr-0"></i></a>';
 
                     $deleteBtn = '<a href="javascript:void(0);" class="badge bg-warning mr-2 border-0 delete-btn"
                     data-toggle="tooltip" title="Delete" data-id="' . $row->id . '"
-                    data-action="' . url('OIMS/admin/user/' . $row->id) . '">
+                    data-action="' . route('admin.destroy', $row->id) . '">
                     <i class="ri-delete-bin-line mr-0"></i></a>';
 
                     return $viewBtn . $editBtn . $deleteBtn;
@@ -56,7 +56,7 @@ class UserController extends Controller
         $rigUsers = RigUser::pluck('name', 'id');
         return view('admin.user.index', compact('moduleName', 'rigUsers'));
     }
-    
+
     // Show form for creating a new user
     public function create()
     {
@@ -165,10 +165,21 @@ class UserController extends Controller
     // Show a specific user
     public function show($id)
     {
-        $user = User::findOrFail($id);
-        $moduleName = "View Users";
-        return view('admin.user.show', compact('user', 'moduleName'));
+        $user = User::where('users.id', $id)
+            ->leftJoin('rig_users', 'users.rig_id', '=', 'rig_users.id')
+            ->select(
+                'users.user_name',
+                'users.email',
+                'users.cpf_no',
+                'users.user_type',
+                'users.user_status',
+                'rig_users.name as rig_name'
+            )
+            ->firstOrFail();
+
+        return response()->json($user);
     }
+
 
     // Show form for editing a user
     public function edit($id)
