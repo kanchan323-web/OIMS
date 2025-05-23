@@ -16,19 +16,19 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class
         ]);
 
-        $this->call([
+     /*   $this->call([
             RigUserSeeder::class
-        ]);
+        ]); */
         $this->call([
             MasterStatusSeeder::class
         ]);
         $this->call([
             UnitOfMeasurementSeeder::class
         ]);
-        $this->call([
+    /*    $this->call([
             SectionSeeder::class
         ]);
-
+    */
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
