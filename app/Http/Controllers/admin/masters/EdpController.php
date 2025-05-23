@@ -45,7 +45,7 @@ class EdpController extends Controller
     {
         $moduleName = "Create EDP";
         $validate = $request->validate([
-            'edp_code' => ['required', 'unique:edps', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
+            'edp_code' => ['required', 'unique:edps', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d[A-Za-z]\d{7}|\d{9})$/'],
             'section' => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
@@ -57,7 +57,7 @@ class EdpController extends Controller
 
         $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
         // Determine category based on material group
-        if ($materialGroup === 'OC') {
+        if ($materialGroup === '0C') {
             $category = 'capital';
         } elseif (ctype_digit($materialGroup)) {
             $groupNum = intval($materialGroup);
@@ -66,7 +66,7 @@ class EdpController extends Controller
             } elseif ($groupNum >= 21 && $groupNum <= 42) {
                 $category = 'spares';
             } else {
-                $category = 'unknown';
+                $category = 'unknown'; 
             }
         } else {
             $category = 'unknown';
