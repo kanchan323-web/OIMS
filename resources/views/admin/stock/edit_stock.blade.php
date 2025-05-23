@@ -121,7 +121,7 @@
                             
                                     <!-- New Spareable -->
                                     <div class="col-md-4 mb-3">
-                                        <label for="new_spareable">New Spareable</label>
+                                        <label for="new_spareable">New </label>
                                         <input type="text" class="form-control @error('new_spareable') is-invalid @enderror" name="new_spareable" id="new_spareable" value="{{ old('new_spareable', IND_money_format($editData->new_spareable)) }}" required>
                                         @error('new_spareable')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -130,7 +130,7 @@
                             
                                     <!-- Used Spareable -->
                                     <div class="col-md-4 mb-3">
-                                        <label for="used_spareable">Used Spareable</label>
+                                        <label for="used_spareable">Used </label>
                                         <input type="text" class="form-control @error('used_spareable') is-invalid @enderror" name="used_spareable" id="used_spareable" value="{{ old('used_spareable', IND_money_format($editData->used_spareable)) }}" required>
                                         @error('used_spareable')
                                             <div class="invalid-feedback">{{ $message }}</div>

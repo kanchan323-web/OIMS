@@ -277,19 +277,19 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="">New Spareable </label>
-                                <input type="text" class="form-control" placeholder=" New Spareable" name="new_spareable"
+                                <label for="">New  </label>
+                                <input type="text" class="form-control" placeholder=" New " name="new_spareable"
                                     id="new_spareable" readonly>
                                 <div class="invalid-feedback">
-                                    Enter New Spareable
+                                    Enter New 
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="">Used Spareable </label>
-                                <input type="text" class="form-control" placeholder=" Used Spareable" name="used_spareable"
+                                <label for="">Used  </label>
+                                <input type="text" class="form-control" placeholder=" Used " name="used_spareable"
                                     id="used_spareable" readonly>
                                 <div class="invalid-feedback">
-                                    Enter Used Spareable
+                                    Enter Used 
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
