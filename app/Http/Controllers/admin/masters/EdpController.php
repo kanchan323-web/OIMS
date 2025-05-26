@@ -126,7 +126,7 @@ class EdpController extends Controller
 
             $materialGroup = strtoupper(substr($request->edp_code, 0, 2));
             // Determine category based on material group
-            if ($materialGroup === 'OC') {
+            if ($materialGroup === '0C') {
                 $category = 'capital';
             } elseif (ctype_digit($materialGroup)) {
                 $groupNum = intval($materialGroup);
@@ -308,7 +308,7 @@ class EdpController extends Controller
                 $materialGroup = strtoupper(substr($edpCode, 0, 2));
 
                 // Determine category based on material group
-                if ($materialGroup === 'OC') {
+                if ($materialGroup === '0C') {
                     $category = 'capital';
                 } elseif (ctype_digit($materialGroup)) {
                     $groupNum = intval($materialGroup);
