@@ -25,14 +25,14 @@
                     @endif
                     <div class="card">
                         <!-- @if ($errors->any())
-    <div class="alert alert-danger">
-                                                                                                <ul>
-                                                                                                    @foreach ($errors->all() as $error)
-    <li>{{ $error }}</li>
-    @endforeach
-                                                                                                </ul>
-                                                                                            </div>
-    @endif -->
+        <div class="alert alert-danger">
+                                                                                                    <ul>
+                                                                                                        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+                                                                                                    </ul>
+                                                                                                </div>
+        @endif -->
 
 
                         <div class="card-header d-flex justify-content-between">
@@ -41,8 +41,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('admin.edp.store') }}" method="POST" class="needs-validation"
-                                novalidate>
+                            <form action="{{ route('admin.edp.store') }}" method="POST" class="needs-validation" novalidate>
                                 @csrf
                                 <div class="form-row">
                                     <div class="col-md-6 mb-3">
@@ -92,15 +91,15 @@
         </div>
     </div>
     <script>
-        $(document).ready(function() {
-            $("form").on("submit", function(e) {
+        $(document).ready(function () {
+            $("form").on("submit", function (e) {
                 let edpCode = $("input[name='edp_code']").val();
-               let regex = /^(?:\d{9}|\d[A-Za-z]\d{7})$/;
+                let regex = /^(?:\d{9}|\d[A-Za-z]\d{7})$/;
 
                 if (!regex.test(edpCode)) {
                     e.preventDefault(); // Stop form submission
                     $("#edpError").text(
-                            "EDP Code must be either exactly 9 digits or start with 1 digit, followed by 1 letter, and then 7 digits. E.g., 123456789 or 0C5103000.")
+                        "EDP Code must be either exactly 9 digits or start with 1 digit, followed by 1 letter, and then 7 digits. E.g., 123456789 or 0C5103000.")
                         .show();
                 } else {
                     $("#edpError").hide();
@@ -109,9 +108,10 @@
         });
 
 
-        $(document).ready(function() {
+
+        $(document).ready(function () {
             // Automatically fade out alerts after 3 seconds
-            setTimeout(function() {
+            setTimeout(function () {
                 $(".alert").fadeOut("slow");
             }, 3000);
         });
