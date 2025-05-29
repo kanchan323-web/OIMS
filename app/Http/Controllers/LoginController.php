@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Hash;
 use App\Models\RigUser;
+//use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Validator;
 
 
 class LoginController extends Controller
@@ -184,7 +186,7 @@ class LoginController extends Controller
         ]);
     }
 
-
+    //update password through mail
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -221,7 +223,38 @@ class LoginController extends Controller
         }
     }
 
+     public function changePassword(Request $request){
+       $user = User::findOrFail((int) $request->user_id);
 
+      $validator = Validator::make($request->all(), [
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$/',
+                'confirmed',
+                ],
+            ],
+            [
+                'password.regex' => 'Password must include at least one letter, one number, and one special character.',
+                'password.required' => 'Password is required.',
+                'password.min' => 'The password must be at least 8 characters.',
+                'password.confirmed' => 'Password confirmation does not match.',
+            ]);
+
+         if ($validator->fails()) {
+             return response()->json(['errors' => $validator->errors()], 422);
+         }
+
+        if (!empty($request->password)) {
+            $user->update(['password' => Hash::make($request->password)]);
+        }
+           return response()->json([
+            'status' => 'success',
+            'message' => 'Password Updated successfully!',
+            'redirect' => route('user.login')
+        ]);
+
+     }
     // private function notifyAdmins($message)
     // {
     //     $admins = User::where('user_type', 'admin')->get();

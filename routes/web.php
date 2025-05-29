@@ -179,6 +179,7 @@ Route::middleware(['auth', 'user.session'])->group(function () {
 
         Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
         Route::get('/profile', [LoginController::class, 'profile'])->name('user.profile');
+        Route::post('/changePassword', [LoginController::class, 'changePassword'])->name('changePassword.userProfile');
 
          //user Logs
          Route::get('/user_log',[UserLogsController::class,'index'])->name('user.get.logs');
