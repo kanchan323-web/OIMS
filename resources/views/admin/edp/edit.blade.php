@@ -103,12 +103,12 @@
         $(document).ready(function() {
             $("form").on("submit", function(e) {
                 let edpCode = $("input[name='edp_code']").val();
-                let regex = /^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/; // 9 digits OR 2-3 letters + 6-7 digits
+                 let regex = /^(?:\d{9}|\d[A-Za-z]\d{7})$/;
 
                 if (!regex.test(edpCode)) {
                     e.preventDefault(); // Stop form submission
                     $("#edpError").text(
-                            "EDP Code must be 9 digits OR start with 2-3 letters followed by 6-7 digits.")
+                            "EDP Code must be either exactly 9 digits or start with 1 digit, followed by 1 letter, and then 7 digits. E.g., 123456789 or 0C5103000.")
                         .show();
                 } else {
                     $("#edpError").hide();

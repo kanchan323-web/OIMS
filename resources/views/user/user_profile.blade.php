@@ -90,16 +90,16 @@
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
                                     <label for="password">New Password</label>
-                                    <input type="password" class="form-control pass"
-                                           name="password">
-                                    <div class="error" id="password-error" style="color:red;"></div>
+                                    <input type="password" class="form-control" id="passId"
+                                           name="password" minlength="8"  pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$" required>
+                                    <div class="error" id="password-error" style="color:#e08db4;"></div>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <label for="password">Confirm Password</label>
                                     <input type="password" class="form-control conPass"
-                                           name="password_confirmation">
-                                     <div class="error" id="password_confirmation-error" style="color:red;"></div>
+                                           name="password_confirmation" minlength="8"  pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$" required>
+                                     <div class="error" id="password_confirmation-error" style="color:#e08db4;"></div>
                                 </div>
                             </div>
                             <button class="btn btn-success" id="changePassword" type="submit">Submit</button>
@@ -120,24 +120,18 @@
             $.ajaxSetup({
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
             });
-
             $('#changePasswordForm').on('submit', function (e) {
                 e.preventDefault();
-
                 $('.error').text(''); 
-               // $('.conPass').removeClass('is-invalid');
-               //  $('.pass').removeClass('is-invalid');
                 $.ajax({
                     url: "{{ route('changePassword.userProfile') }}",
                     type: "POST",
                     data: $(this).serialize(),
                     success: function (response) {
-                         $('#changePassword-modal').modal('hide');
-                        $('#changePasswordForm')[0].reset();
                         Swal.fire({
                         icon: 'success',
                         title: 'Password Updated!',
-                        text: 'Your password has been successfully updated.',
+                        text: 'Please log in again using your new password.',
                         confirmButtonText: 'OK'
                         }).then((result) => {
                         if (result.isConfirmed) {
@@ -150,8 +144,6 @@
                         if (xhr.status === 422) {
                             let errors = xhr.responseJSON.errors;
                             $.each(errors, function(key, value) {
-                               // $('.pss').addClass('is-invalid');
-                               //  $('.conPass').addClass('is-invalid');
                                 $('#' + key + '-error').text(value[0]);
                             });
                         }
