@@ -113,7 +113,7 @@ class EdpController extends Controller
     public function update(Request $request)
     {
         $validate = $request->validate([
-            'edp_code' => ['required', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d{9})$/'],
+            'edp_code' => ['required', 'regex:/^(?:[A-Za-z]{2,3}\d{6,7}|\d[A-Za-z]\d{7}|\d{9})$/'],
             'section' => 'required|string',
             'measurement' => 'required',
             'description' => 'required',
