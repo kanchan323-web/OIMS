@@ -303,8 +303,8 @@ class AdminStockController extends Controller
                 $totalqty =  $new_spareable +   $used_spareable;
 
                 // Validate EDP code (Column Index 2)
-                if (!isset($row[1]) || !preg_match('/^\d{9}$/', $row[1])) {
-                    $errors[] = "Row " . ($index + 2) . ": EDP code must be a 9-digit number.";
+                if (!isset($row[1]) || !preg_match('/^(?:[A-Za-z]{2,3}\d{6,7}|\d[A-Za-z]\d{7}|\d{9})$/', $row[1])) {
+                    $errors[] = "Row " . ($index + 2) . ": EDP code must be either exactly 9 digits or start with 1 digit, followed by 1 letter, and then 7 digits.";
                     continue;
                 }
 
