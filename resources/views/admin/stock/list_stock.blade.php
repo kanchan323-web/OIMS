@@ -26,7 +26,7 @@
                     @endif
 
                     <div class="row justify-content-between">
-                        <div class="col-sm-6 col-md-9">
+                        <div class="col-sm-8 col-md-8">
                             <div id="user_list_datatable_info" class="dataTables_filter">
                                 <form id="filterForm" class="mr-3 position-relative">
                                     <div class="row">
@@ -78,7 +78,7 @@
                                                 id="filterButton">Search</button>
                                             <a href="{{ route('admin.stock_list') }}"
                                                 class="btn btn-secondary ml-2">Reset</a>
-                                            <a href="{{ route('stock_list_pdf') }}"
+                                            <a href="{{ route('admin.stock_list_pdf') }}"
                                                 class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
                                                 id="downloadPdf" target="_blank">
                                                 <i class="fas fa-file-pdf mr-1"></i> Export PDF
@@ -90,12 +90,12 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-6 col-md-3">
+                        <div class="col-sm-4 col-md-4">
                             <div class="user-list-files d-flex">
                                 <a href="{{ route('admin.add_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Add/Edit Stock</a>
+                                        class="las la-plus mr-1"></i>Add or Edit Stock</a>
                                 <a href="{{ route('admin.import_stock') }}" class="btn btn-primary add-list"><i
-                                        class="las la-plus mr-3"></i>Import Bulk Stocks </a>
+                                        class="las la-plus mr-1"></i>Import Bulk Stocks </a>
                             </div>
                         </div>
                     </div>
@@ -107,11 +107,13 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
-                                    <th>Location Name</th>
+                                    <th>Location Name(RID)</th>
                                     <th>EDP</th>
                                     <th>Category</th>
                                     <th>Section</th>
                                     <th>Description</th>
+                                    <th>New Qty</th>
+                                    <th>Used Qty</th>
                                     <th>Quantity</th>
                                     <th>Action</th>
                                 </tr>
@@ -121,11 +123,13 @@
                                     @foreach($data as $index => $stockdata)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $stockdata->location_name }}</td>
+                                            <td>{{ $stockdata->location_name }} ({{ $stockdata->location_id }})</td>
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->category }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
+                                            <td>{{ IND_money_format($stockdata->new_spareable) }}
+                                            <td>{{ IND_money_format($stockdata->used_spareable) }}
                                             <td>{{ IND_money_format($stockdata->qty) }}
                                                 <span class="text-muted small">{{ $stockdata->measurement }}</span>
                                             </td>
@@ -404,11 +408,13 @@
                                 tableBody.append(`
                                     <tr>
                                         <td>${index + 1}</td>
-                                        <td>${stockdata.location_name}</td>
+                                        <td>${stockdata.location_name} (${stockdata.location_id})</td>
                                         <td>${stockdata.EDP_Code}</td>
                                         <td>${stockdata.category}</td>
                                         <td>${stockdata.section}</td>
                                         <td>${stockdata.description}</td>
+                                        <td>${stockdata.new_spareable}
+                                        <td>${stockdata.used_spareable}
                                         <td>${stockdata.qty}
                                         <span class="text-muted small">${stockdata.measurement}</span>
                                             </td>
@@ -458,7 +464,7 @@
             $("#downloadPdf").click(function (e) {
                 e.preventDefault();
 
-                let baseUrl = "{{ route('stock_list_pdf') }}";
+                let baseUrl = "{{ route('admin.stock_list_pdf') }}";
                 let formData = $("#filterForm").serializeArray();
 
                 let filteredParams = formData

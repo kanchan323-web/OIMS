@@ -708,4 +708,36 @@ class AdminStockController extends Controller
             ]);
         }
     }
+
+    public function downloadPdf(Request $request)
+    {
+        $query = Stock::query()
+            ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code')
+            ->orderBy('stocks.id', 'desc');
+
+        $filtersApplied = false;
+
+        if ($request->has('edp_code') && $request->edp_code) {
+            $query->where('stocks.edp_code', $request->edp_code);
+            $filtersApplied = true;
+        }
+
+        if ($request->has('Description') && $request->Description) {
+            $query->where('stocks.description', 'LIKE', '%' . $request->Description . '%');
+            $filtersApplied = true;
+        }
+
+        if ($request->has('form_date') && $request->has('to_date')) {
+            $query->whereBetween('stocks.created_at', [$request->form_date, $request->to_date]);
+            $filtersApplied = true;
+        }
+
+        $stockData = $query->orderBy('stocks.updated_at', 'desc')->get();
+
+        // Generate PDF with retrieved data
+        $pdf = PDF::loadView('pdf.admin_stock_report', compact('stockData'));
+
+        return $pdf->download('Admin_Stock_Report.pdf');
+    }
 }
