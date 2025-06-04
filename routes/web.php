@@ -109,6 +109,7 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
         Route::get('/stock_list', [AdminStockController::class, 'stock_list'])->name('admin.stock_list');
         Route::get('/stock_filter', [AdminStockController::class, 'stock_filter'])->name('admin.stock_filter');
         Route::get('/check-edp-stock', [AdminStockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
+        Route::get('/stock-list/pdf', [AdminStockController::class, 'downloadPdf'])->name('admin.stock_list_pdf');
 
         //Request Stock
         Route::prefix('request-stock')->group(function () {
@@ -257,7 +258,8 @@ Route::middleware(['auth', 'user.session'])->group(function () {
           //  Route::get('/stock', [StockReportController::class, 'index'])->name('stock_report.index');
             Route::get('/stockPdfDownload', [StockReportController::class, 'stockPdfDownload'])->name('report_stockPdfDownload');
             Route::get('/stockExcelDownload', [StockReportController::class, 'stockExcelDownload'])->name('report_stockExcelDownload');
-
+            //PDF Section
+            Route::get('/stock-list/pdf', [StockController::class, 'downloadPdf'])->name('stock_list_pdf');
         });
 
         //Request stocks Reports
@@ -277,9 +279,6 @@ Route::middleware(['auth', 'user.session'])->group(function () {
         })->name('user.extend-session');
     });
 });
-
-//PDF Section
-Route::get('/stock-list/pdf', [StockController::class, 'downloadPdf'])->name('stock_list_pdf');
 
 //Reset Password (No Auth Required)
 Route::get('/forgotpassword', [LoginController::class, 'forgotpassword'])->name('forgotpassword');

@@ -571,7 +571,7 @@ class StockController extends Controller
             $filtersApplied = true;
         }
 
-        $stockData = $query->orderBy('stocks.created_at', 'desc')->get();
+        $stockData = $query->orderBy('stocks.updated_at', 'desc')->get();
 
         // Generate PDF with retrieved data
         $pdf = PDF::loadView('pdf.stock_report', compact('stockData'));

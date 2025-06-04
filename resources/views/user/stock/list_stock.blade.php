@@ -89,10 +89,12 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
-                                    <!--   <th>Location Name</th> -->
+                                    <th>Location Name(RID)</th> 
                                     <th>EDP</th>
                                     <th>Section</th>
                                     <th>Description</th>
+                                    <th>New Qty</th>
+                                    <th>Used Qty</th>
                                     <th>Quantity</th>
                                     <th>Date Updated</th>
                                     <th>Action</th>
@@ -103,10 +105,12 @@
                                     @foreach ($data as $index => $stockdata)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <!--    <td>{{ $stockdata->name }}</td> -->
+                                            <td>{{ $stockdata->location_name }} ({{ $stockdata->location_id }})</td> 
                                             <td>{{ $stockdata->edp_code }}</td>
                                             <td>{{ $stockdata->section }}</td>
                                             <td>{{ $stockdata->description }}</td>
+                                            <td>{{ IND_money_format($stockdata->new_spareable) }}
+                                            <td>{{ IND_money_format($stockdata->used_spareable) }}
                                             <td>
                                                 {{ IND_money_format($stockdata->qty) }}
                                                 <span class="text-muted small">{{ $stockdata->measurement }}</span>
@@ -385,9 +389,12 @@
                                 tableBody.append(`
                                 <tr>
                                     <td>${index + 1}</td>
+                                     <td>${stockdata.location_name} (${stockdata.location_id})</td>
                                     <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
+                                    <td>${stockdata.new_spareable}
+                                    <td>${stockdata.used_spareable}
                                     <td>${stockdata.qty}
                                         <span class="text-muted small">${stockdata.measurement}</span>
                                     </td>
