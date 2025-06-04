@@ -393,9 +393,9 @@
                                     <td>${stockdata.EDP_Code}</td>
                                     <td>${stockdata.section}</td>
                                     <td>${stockdata.description}</td>
-                                    <td>${stockdata.new_spareable}
-                                    <td>${stockdata.used_spareable}
-                                    <td>${stockdata.qty}
+                                    <td>${formatToIndianNumber(stockdata.new_spareable ?? 0)}
+                                    <td>${formatToIndianNumber(stockdata.used_spareable ?? 0)}
+                                    <td>${formatToIndianNumber(stockdata.qty ?? 0)}
                                         <span class="text-muted small">${stockdata.measurement}</span>
                                     </td>
                                     <td>${stockdata.date}</td>
