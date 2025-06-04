@@ -79,11 +79,15 @@
                                             <a href="{{ route('admin.stock_list') }}"
                                                 class="btn btn-secondary ml-2">Reset</a>
                                             <a href="{{ route('admin.stock_list_pdf') }}"
-                                                class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
+                                                class="btn btn-danger ml-1 d-flex align-items-center justify-content-center"
                                                 id="downloadPdf" target="_blank">
-                                                <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                                <i class="fas fa-file-pdf mr-1"></i>  PDF
                                             </a>
-
+                                            <a href="{{ route('admin.stock_list_pdf') }}"
+                                                class="btn btn-success ml-1 d-flex align-items-center justify-content-center"
+                                                id="downloadPdf" target="_blank">
+                                                <i class="fas fa-file-excel mr-1"></i>  Excel
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -413,9 +417,9 @@
                                         <td>${stockdata.category}</td>
                                         <td>${stockdata.section}</td>
                                         <td>${stockdata.description}</td>
-                                        <td>${stockdata.new_spareable}
-                                        <td>${stockdata.used_spareable}
-                                        <td>${stockdata.qty}
+                                        <td>${formatToIndianNumber(stockdata.new_spareable ?? 0)}
+                                        <td>${formatToIndianNumber(stockdata.used_spareable ?? 0)}
+                                        <td>${formatToIndianNumber(stockdata.qty ?? 0)}
                                         <span class="text-muted small">${stockdata.measurement}</span>
                                             </td>
                                         <td>

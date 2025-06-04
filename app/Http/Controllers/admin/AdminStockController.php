@@ -272,14 +272,13 @@ class AdminStockController extends Controller
             $expectedHeaders = [
                 'Location ID',
                 'EDP',
-                'Qty New',
-                'Qty Used'
+                'Qty New'
             ];
+           // dd($expectedHeaders);        
+            // 'Qty Used'
 
             // Ensure the uploaded file matches the expected headers
             $actualHeaders = array_map(fn($header) => trim((string) $header), $rows[0]);
-
-
             if ($actualHeaders !== $expectedHeaders) {
                 Storage::delete($filePath);
                 session()->flash('error', 'Invalid file format! Headers do not match the expected format.');
@@ -299,8 +298,8 @@ class AdminStockController extends Controller
                 $locationName = RigUser::where('location_id', $locationId)->value('name');
 
                 $new_spareable = (int) $row[2];
-                $used_spareable = (int) $row[3];
-                $totalqty =  $new_spareable +   $used_spareable;
+               // $used_spareable = (int) $row[3];
+               // $totalqty =  $new_spareable +   $used_spareable;
 
                 // Validate EDP code (Column Index 2)
                 if (!isset($row[1]) || !preg_match('/^(?:[A-Za-z]{2,3}\d{6,7}|\d[A-Za-z]\d{7}|\d{9})$/', $row[1])) {
@@ -321,7 +320,7 @@ class AdminStockController extends Controller
                 }
 
                 // Validate required fields
-                $requiredFields = range(0, 3);
+                $requiredFields = range(0, 2);
                 foreach ($requiredFields as $fieldIndex) {
                     if (!isset($row[$fieldIndex]) || trim($row[$fieldIndex]) === '') {
                         $errors[] = "Row " . ($index + 2) . ": Missing required field '" . $expectedHeaders[$fieldIndex] . "'.";
@@ -333,15 +332,18 @@ class AdminStockController extends Controller
                 $existingStock = Stock::where('edp_code', $edp->id)
                     ->where('rig_id', $rig->id)
                     ->first();
+               // dd($existingStock->used_spareable);
 
                 if ($existingStock) {
+                    $totalqty =  $new_spareable + $existingStock->used_spareable;
+                   // dd($totalqty);
                     // Update existing stock
                     $existingStock->update([
                         'location_id'   => $locationId,
                         'location_name' => $locationName,
                         'qty'           =>  $totalqty,
                         'new_spareable' => $new_spareable,
-                        'used_spareable' => $used_spareable,
+                        'used_spareable' => $existingStock->used_spareable,
                         'user_id'       => $user->id,
                     ]);
                 } else {
@@ -356,7 +358,7 @@ class AdminStockController extends Controller
                         'category'      => $edp->category,
                         'qty'           => $totalqty,
                         'new_spareable' => $new_spareable,
-                        'used_spareable' => $used_spareable,
+                        'used_spareable' => 0,
                         'measurement'   => $edp->measurement,
                         'remarks'       => 'nill',
                         'user_id'       => $user->id,
@@ -375,9 +377,9 @@ class AdminStockController extends Controller
                     'initial_qty'     => $totalqty,
                     'measurement'     => $edp->measurement,
                     'new_spareable'   => $new_spareable,
-                    'used_spareable'  => $used_spareable,
+                    'used_spareable'  => $existingStock->used_spareable,
                     'new_value'       => $new_spareable,
-                    'used_value'      => $used_spareable,
+                    'used_value'      =>$existingStock->used_spareable,
                     'remarks'         => 'nill',
                     'user_id'         => $user->id,
                     'rig_id'          => $user->rig_id,
