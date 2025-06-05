@@ -40,7 +40,7 @@
                                             </select>
                                         </div> --}}
 
-                                        <div class="col-md-2 mb-2">
+                                        <div class="col-md-3 mb-2">
                                             <label for="edp_code">EDP Code</label>
                                             <select class="form-control select2" name="edp_code" id="edp_code" required>
                                                 <option disabled selected>Select EDP Code...</option>
@@ -51,13 +51,13 @@
                                         </div>
 
 
-                                        <div class="col-md-2 mb-2">
+                                        <div class="col-md-3 mb-2">
                                             <label for="Description">Description</label>
                                             <input type="text" class="form-control" placeholder="Description"
                                                 name="Description" id="Description">
                                         </div>
 
-                                        <div class="col-md-2 mb-2">
+                                        <div class="col-md-3 mb-2">
                                             <label for="Location Name">Location Name</label>
                                             <input type="text" class="form-control" placeholder="Location Name"
                                                 name="location_name" id="location_name">
@@ -73,14 +73,15 @@
                                             <input type="date" class="form-control" name="to_date" id="to_date">
                                         </div> --}}
 
-                                        <div class="col-md-4 mb-2 d-flex align-items-end">
+                                        <div class="col-md-3 mb-2 d-flex align-items-end">
                                             <button type="button" class="btn btn-primary mr-2"
                                                 id="filterButton">Search</button>
                                             <a href="{{ route('admin.stock_list') }}"
                                                 class="btn btn-secondary ml-2">Reset</a>
                                             <a href="{{ route('admin.stock_list_pdf') }}"
                                                 class="btn btn-danger ml-1 d-flex align-items-center justify-content-center"
-                                                id="downloadPdf" target="_blank">
+                                                id="downloadPdf" target="_blank" data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Export PDF">
                                                 <i class="fas fa-file-pdf mr-1"></i>  PDF
                                             </a>
                                              <a href="{{ route('admin.stock_list_excel') }}"
