@@ -18,6 +18,8 @@ use App\Models\User;
 use App\Models\rig_users;
 use App\Models\RigUser;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Models\RequestStock;
@@ -716,7 +718,7 @@ class AdminStockController extends Controller
         $query = Stock::query()
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code')
-            ->orderBy('stocks.id', 'desc');
+            ->orderBy('stocks.updated_at', 'desc');
 
         $filtersApplied = false;
 
@@ -730,10 +732,16 @@ class AdminStockController extends Controller
             $filtersApplied = true;
         }
 
-        if ($request->has('form_date') && $request->has('to_date')) {
+        if ($request->has('location_name') && $request->location_name) {
+            $query->where('stocks.location_name', 'LIKE', '%' . $request->location_name . '%');
+            $filtersApplied = true;
+        }
+
+    /*    if ($request->has('form_date') && $request->has('to_date')) {
             $query->whereBetween('stocks.created_at', [$request->form_date, $request->to_date]);
             $filtersApplied = true;
         }
+        */
 
         $stockData = $query->orderBy('stocks.updated_at', 'desc')->get();
 
@@ -741,5 +749,73 @@ class AdminStockController extends Controller
         $pdf = PDF::loadView('pdf.admin_stock_report', compact('stockData'));
 
         return $pdf->download('Admin_Stock_Report.pdf');
+    }
+
+    public function downloadExcel(Request $request)
+    {
+        $query = Stock::query()
+            ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.*', 'edps.edp_code')
+            ->orderBy('stocks.updated_at', 'desc');
+
+        $filtersApplied = false;
+
+        if ($request->has('edp_code') && $request->edp_code) {
+            $query->where('stocks.edp_code', $request->edp_code);
+            $filtersApplied = true;
+        }
+
+        if ($request->has('Description') && $request->Description) {
+            $query->where('stocks.description', 'LIKE', '%' . $request->Description . '%');
+            $filtersApplied = true;
+        }
+
+        if ($request->has('location_name') && $request->location_name) {
+            $query->where('stocks.location_name', 'LIKE', '%' . $request->location_name . '%');
+            $filtersApplied = true;
+        }
+
+    /*    if ($request->has('form_date') && $request->has('to_date')) {
+            $query->whereBetween('stocks.created_at', [$request->form_date, $request->to_date]);
+            $filtersApplied = true;
+        }
+    */
+        $stockDatas = $query->orderBy('stocks.updated_at', 'desc')->get();
+
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Stock List Report');
+        $sheet->setCellValue('A1', 'Sr.No');
+        $sheet->setCellValue('B1', 'Location Name(RID)');
+        $sheet->setCellValue('C1', 'EDP Code');
+        $sheet->setCellValue('D1', 'Section');
+        $sheet->setCellValue('E1', 'Description');
+        $sheet->setCellValue('F1', 'New Qty');
+        $sheet->setCellValue('G1', 'Used Qty');
+        $sheet->setCellValue('H1', 'Quantity');
+        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+        $row = 2; // Start from the second row to leave space for headers
+        $i = 1;
+        foreach ($stockDatas as $stockData) {
+            $sheet->setCellValue('A' . $row, $i);
+            $sheet->setCellValue('B' . $row, $stockData->location_name.' ('. $stockData->location_id.') ');
+            $sheet->setCellValue('C' . $row, $stockData->edp_code);
+            $sheet->setCellValue('D' . $row, $stockData->section);
+            $sheet->setCellValue('E' . $row, $stockData->description);
+            $sheet->setCellValue('F' . $row, IND_money_format($stockData->new_spareable));
+            $sheet->setCellValue('G' . $row, IND_money_format($stockData->used_spareable));
+            $sheet->setCellValue('H' . $row, IND_money_format($stockData->qty));
+            $row++;
+            $i++;
+        }
+        $filename = 'Stock List Report';
+        $writer = new Xlsx($spreadsheet);
+        // Set the correct headers for downloading an Excel file
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        // header('Content-Disposition: attachment;filename="Stock_Reportff.xlsx"');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
     }
 }

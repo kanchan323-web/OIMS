@@ -110,6 +110,7 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
         Route::get('/stock_filter', [AdminStockController::class, 'stock_filter'])->name('admin.stock_filter');
         Route::get('/check-edp-stock', [AdminStockController::class, 'checkEdpStock'])->name('admin.check_edp_stock');
         Route::get('/stock-list/pdf', [AdminStockController::class, 'downloadPdf'])->name('admin.stock_list_pdf');
+        Route::get('/stock-list/excel', [AdminStockController::class, 'downloadExcel'])->name('admin.stock_list_excel');
 
         //Request Stock
         Route::prefix('request-stock')->group(function () {
@@ -260,6 +261,7 @@ Route::middleware(['auth', 'user.session'])->group(function () {
             Route::get('/stockExcelDownload', [StockReportController::class, 'stockExcelDownload'])->name('report_stockExcelDownload');
             //PDF Section
             Route::get('/stock-list/pdf', [StockController::class, 'downloadPdf'])->name('stock_list_pdf');
+            Route::get('/stock-list/excel', [StockController::class, 'downloadExcel'])->name('stock_list_excel');
         });
 
         //Request stocks Reports

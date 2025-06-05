@@ -71,15 +71,14 @@
                         <td>{{ $stock->edp_code }}</td>
                         <td>{{ $stock->section }}</td>
                         <td>{{ $stock->description }}</td>
-                        <td>{{ $stock->new_spareable }}</td>
-                        <td>{{ $stock->used_spareable }}</td>
-                        <td>{{ $stock->qty }}</td>
+                        <td>{{ IND_money_format($stock->new_spareable) }}</td>
+                        <td>{{ IND_money_format($stock->used_spareable) }}</td>
+                        <td>{{ IND_money_format($stock->qty) }}</td>
                     </tr>
                 @endforeach
             @endif
         </tbody>
     </table>
-
 </body>
 
 </html>
