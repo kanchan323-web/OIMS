@@ -83,10 +83,11 @@
                                                 id="downloadPdf" target="_blank">
                                                 <i class="fas fa-file-pdf mr-1"></i>  PDF
                                             </a>
-                                            <a href="{{ route('admin.stock_list_pdf') }}"
-                                                class="btn btn-success ml-1 d-flex align-items-center justify-content-center"
-                                                id="downloadPdf" target="_blank">
-                                                <i class="fas fa-file-excel mr-1"></i>  Excel
+                                             <a href="{{ route('admin.stock_list_excel') }}"
+                                                class="btn btn-success ml-2 d-flex align-items-center justify-content-center"
+                                                id="downloadExcel" target="_blank" data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Export Excel">
+                                                <i class="fas fa-file-excel mr-1"></i> Excel
                                             </a>
                                         </div>
                                     </div>
@@ -487,6 +488,24 @@
                 $(".alert").fadeOut("slow");
             }, 3000);
         });
+
+         $(document).ready(function() {
+            $("#downloadExcel").click(function(e) {
+                e.preventDefault();
+
+                let baseUrl = "{{ route('admin.stock_list_excel') }}";
+                let formData = $("#filterForm").serializeArray();
+
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
+
     </script>
     <script>
         $(document).ready(function () {

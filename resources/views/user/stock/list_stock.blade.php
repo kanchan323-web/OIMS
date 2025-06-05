@@ -62,10 +62,16 @@
                                             <a href="{{ route('stock_list') }}" class="btn btn-secondary ml-2">Reset</a>
                                             <a href="{{ route('stock_list_pdf') }}"
                                                 class="btn btn-danger ml-2 d-flex align-items-center justify-content-center"
-                                                id="downloadPdf" target="_blank">
-                                                <i class="fas fa-file-pdf mr-1"></i> Export PDF
+                                                id="downloadPdf" target="_blank" data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Export PDF">
+                                                <i class="fas fa-file-pdf mr-1"></i> PDF
                                             </a>
-
+                                            <a href="{{ route('stock_list_excel') }}"
+                                                class="btn btn-success ml-2 d-flex align-items-center justify-content-center"
+                                                id="downloadExcel" target="_blank" data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Export Excel">
+                                                <i class="fas fa-file-excel mr-1"></i> Excel
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -447,6 +453,23 @@
                 e.preventDefault();
 
                 let baseUrl = "{{ route('stock_list_pdf') }}";
+                let formData = $("#filterForm").serializeArray();
+
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
+
+         $(document).ready(function() {
+            $("#downloadExcel").click(function(e) {
+                e.preventDefault();
+
+                let baseUrl = "{{ route('stock_list_excel') }}";
                 let formData = $("#filterForm").serializeArray();
 
                 let filteredParams = formData
