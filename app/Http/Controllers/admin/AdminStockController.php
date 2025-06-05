@@ -335,7 +335,7 @@ class AdminStockController extends Controller
                     ->where('rig_id', $rig->id)
                     ->first();
                // dd($existingStock->used_spareable);
-
+                $totalqty;
                 if ($existingStock) {
                     $totalqty =  $new_spareable + $existingStock->used_spareable;
                    // dd($totalqty);
@@ -349,6 +349,7 @@ class AdminStockController extends Controller
                         'user_id'       => $user->id,
                     ]);
                 } else {
+                    $totalqty =  $new_spareable + 0;
                     // Insert new stock entry
                     $existingStock = Stock::create([
                         'edp_code'      => $edp->id,
