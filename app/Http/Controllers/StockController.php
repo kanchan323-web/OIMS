@@ -551,6 +551,7 @@ class StockController extends Controller
 
     public function downloadPdf(Request $request)
     {
+        $rig_id = Auth::user()->rig_id;
         $query = Stock::query()
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code');
@@ -573,7 +574,7 @@ class StockController extends Controller
             $filtersApplied = true;
         }
 
-        $stockData = $query->orderBy('stocks.updated_at', 'desc')->get();
+        $stockData = $query->where('rig_id', $rig_id)->orderBy('stocks.updated_at', 'desc')->get();
 
         // Generate PDF with retrieved data
         $pdf = PDF::loadView('pdf.stock_report', compact('stockData'));
@@ -652,10 +653,11 @@ class StockController extends Controller
 
     public function downloadExcel(Request $request)
     {
+        $rig_id = Auth::user()->rig_id;
         $query = Stock::query()
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.*', 'edps.edp_code')
-            ->orderBy('stocks.id', 'desc');
+            ->select('stocks.*', 'edps.edp_code');
+           // ->orderBy('stocks.id', 'desc');
 
         $filtersApplied = false;
 
@@ -674,7 +676,7 @@ class StockController extends Controller
             $filtersApplied = true;
         }
     */
-        $stockDatas = $query->orderBy('stocks.updated_at', 'desc')->get();
+        $stockDatas = $query->where('rig_id', $rig_id)->orderBy('stocks.updated_at', 'desc')->get();
 
 
         $spreadsheet = new Spreadsheet();
