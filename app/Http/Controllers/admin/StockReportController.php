@@ -360,4 +360,59 @@ class StockReportController extends Controller
         header('Cache-Control: max-age=0');
         $writer->save('php://output');
     }
+
+    public function transaction_reportPdf(Request $request){
+       //  dd($request->edp_code);
+        $stockData = $this->transactionHistory($request);
+        $stockData = collect($stockData);
+        // Generate PDF with retrieved data
+        $pdf = PDF::loadView('pdf.admin_reports.stock.stock_transaction_report', compact('stockData'))->setPaper('A4', 'landscape');
+        return $pdf->download('Admin_Stock_Transaction_Report.pdf');
+    }
+
+    
+    public function transaction_reportExcel(Request $request){
+        $stockDatas = $this->transactionHistory($request);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Stock Transaction Report');
+        $sheet->setCellValue('A1', 'Sr.No');
+        $sheet->setCellValue('B1', 'EDP');
+        $sheet->setCellValue('C1', 'Description');
+        $sheet->setCellValue('D1', 'Change in New');
+        $sheet->setCellValue('E1', 'Change in Used');
+        $sheet->setCellValue('F1', 'Qty');
+        $sheet->setCellValue('G1', 'Transaction');
+        $sheet->setCellValue('H1', 'Reference ID');
+        $sheet->setCellValue('I1', 'Transaction Date');
+        $sheet->setCellValue('J1', 'Receiver');
+        $sheet->setCellValue('K1', 'Supplier');
+        $sheet->getStyle('A1:K1')->getFont()->setBold(true);
+        $row = 2; // Start from the second row to leave space for headers
+        $i = 1;
+        foreach ($stockDatas as $stockData) {
+            $sheet->setCellValue('A' . $row, $i);
+            $sheet->setCellValue('B' . $row, $stockData->EDP_Code);
+            $sheet->setCellValue('C' . $row, $stockData->description);
+            $sheet->setCellValue('D' . $row, IND_money_format($stockData->formatted_new_value ?? '0'));
+            $sheet->setCellValue('E' . $row, IND_money_format($stockData->formatted_used_value ?? '0'));
+            $sheet->setCellValue('F' . $row, IND_money_format($stockData->qty ?? '0'));
+            $sheet->setCellValue('G' . $row, $stockData->action ?? '-');
+            $sheet->setCellValue('H' . $row, $stockData->reference_id ?? '-');
+            $sheet->setCellValue('I' . $row, $stockData->updated_at_formatted ?? '-');
+            $sheet->setCellValue('J' . $row, $stockData->receiver ?? '-');
+            $sheet->setCellValue('K' . $row, $stockData->supplier ?? '-');
+            $row++;
+            $i++;
+        }
+        $filename = 'Stock Transaction Report';
+        $writer = new Xlsx($spreadsheet);
+        // Set the correct headers for downloading an Excel file
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        // header('Content-Disposition: attachment;filename="Stock_Reportff.xlsx"');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+    }
+
 }
