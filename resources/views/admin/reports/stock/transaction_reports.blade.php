@@ -8,14 +8,14 @@
 
                         <div class="offset-3 col-sm-6 col-md-9">
                             <div class="user-list-files d-flex">
-                                <a href="{{ route('report_stockPdfDownload') }}"
+                                <a href="{{ route('admin.transaction_reportPdf') }}"
                                     class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
-                                    id="downloadPdf" target="_blank">
+                                    id="downloadPDF" target="_blank">
                                     <i class="fas fa-file-pdf mr-1"></i> Export PDF
                                 </a>
-                                <a href="{{ route('report_stockExcelDownload') }}"
+                                <a href="{{ route('admin.transaction_reportExcel') }}"
                                     class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
-                                    id="downloadexcel" target="_blank">
+                                    id="downloadExcel" target="_blank">
                                     <i class="fas fa-file-excel mr-1"></i> Export Excel
                                 </a>
                             </div>
@@ -255,5 +255,40 @@
 
 
         });
+
+        $(document).ready(function () {
+            $("#downloadPDF").click(function (e) {
+                e.preventDefault();
+
+                let baseUrl = "{{ route('admin.transaction_reportPdf') }}";
+                let formData = $("#filterForm").serializeArray();
+
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
+
+         $(document).ready(function() {
+            $("#downloadExcel").click(function(e) {
+                e.preventDefault();
+
+                let baseUrl = "{{ route('admin.transaction_reportExcel') }}";
+                let formData = $("#filterForm").serializeArray();
+
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
+
     </script>
 @endsection

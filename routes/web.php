@@ -153,6 +153,9 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
             Route::get('/transaction', [AdminStockReportController::class, 'transactions'])->name('admin.transaction');
             Route::get('/transfer_report', [AdminStockReportController::class, 'transfer_reportPdf'])->name('admin.transfer_reportPdf');
             Route::get('/transfer_reportExcel', [AdminStockReportController::class, 'transfer_reportExcel'])->name('admin.transfer_reportExcel');
+
+            Route::get('/transactionPdf', [AdminStockReportController::class, 'transaction_reportPdf'])->name('admin.transaction_reportPdf');
+            Route::get('/transactionExcel', [AdminStockReportController::class, 'transaction_reportExcel'])->name('admin.transaction_reportExcel');
         });
 
         //request stocks reports
