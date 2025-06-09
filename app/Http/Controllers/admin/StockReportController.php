@@ -14,6 +14,8 @@ use App\Models\User;
 use App\Models\RigUser;
 use App\Models\LogsStocks;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Session;
 use App\Models\RequestStock;
@@ -308,5 +310,54 @@ class StockReportController extends Controller
         }
 
         return $enhancedLogs;
+    }
+
+    public function transfer_reportPdf(Request $request)
+    {
+        $stockData = $this->stockAdjustments($request);
+        // Generate PDF with retrieved data
+        $pdf = PDF::loadView('pdf.admin_reports.stock.stock_transfer_report', compact('stockData'));
+        return $pdf->download('Admin_Stock_Transfer_Report.pdf');
+    }
+
+    
+    public function transfer_reportExcel(Request $request){
+        $stockDatas = $this->stockAdjustments($request);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Stock Transfer Report');
+        $sheet->setCellValue('A1', 'Sr.No');
+        $sheet->setCellValue('B1', 'Request ID');
+        $sheet->setCellValue('C1', 'EDP Code');
+        $sheet->setCellValue('D1', 'Description');
+        $sheet->setCellValue('E1', 'Receiver');
+        $sheet->setCellValue('F1', 'Reciept QTY');
+        $sheet->setCellValue('G1', 'Supplier');
+        $sheet->setCellValue('H1', 'Issued QTY');
+        $sheet->setCellValue('I1', 'Date');
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $row = 2; // Start from the second row to leave space for headers
+        $i = 1;
+        foreach ($stockDatas as $stockData) {
+            $sheet->setCellValue('A' . $row, $i);
+            $sheet->setCellValue('B' . $row, $stockData->RID);
+            $sheet->setCellValue('C' . $row, $stockData->EDP_Code);
+            $sheet->setCellValue('D' . $row, $stockData->description);
+            $sheet->setCellValue('E' . $row, $stockData->req_name);
+            $sheet->setCellValue('F' . $row, IND_money_format($stockData->requested_qty ?? '0'));
+            $sheet->setCellValue('G' . $row, $stockData->sup_name);
+            $sheet->setCellValue('H' . $row, IND_money_format($stockData->supplier_qty ?? '0'));
+            $sheet->setCellValue('I' . $row, $stockData->date);
+            $row++;
+            $i++;
+        }
+        $filename = 'Stock Transfer Report';
+        $writer = new Xlsx($spreadsheet);
+        // Set the correct headers for downloading an Excel file
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        // header('Content-Disposition: attachment;filename="Stock_Reportff.xlsx"');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
     }
 }

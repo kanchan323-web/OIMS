@@ -7,14 +7,14 @@
                     <div class="row justify-content-between">
                         <div class="offset-3 col-sm-6 col-md-9">
                             <div class="user-list-files d-flex">
-                                <a href="{{ route('report_stockPdfDownload') }}"
+                                <a href="{{ route('admin.transfer_reportPdf') }}"
                                     class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
                                     id="downloadPdf" target="_blank">
                                     <i class="fas fa-file-pdf mr-1"></i> Export PDF
                                 </a>
-                                <a href="{{ route('report_stockExcelDownload') }}"
+                                <a href="{{ route('admin.transfer_reportExcel') }}"
                                     class="btn btn-primary ml-2 d-flex align-items-center justify-content-center"
-                                    id="downloadexcel" target="_blank">
+                                    id="downloadexcelId" target="_blank">
                                     <i class="fas fa-file-excel mr-1"></i> Export Excel
                                 </a>
                             </div>
@@ -185,6 +185,7 @@
                     data: formData + "&report_type=" + reportType,
                     dataType: "json",
                     success: function (response) {
+                      //  console.log(response.data);
                         if ($.fn.DataTable.isDataTable('#dynamicAdminTable')) {
                             $('#dynamicAdminTable').DataTable().destroy();
                         }
@@ -260,8 +261,43 @@
             }
 
             // Pass full route URLs directly using Blade
-            handleExport("#downloadPdf", "{{ route('report_stockPdfDownload') }}");
-            handleExport("#downloadexcel", "{{ route('report_stockExcelDownload') }}");
+           // handleExport("#downloadPdf", "{{ route('report_stockPdfDownload') }}");
+           // handleExport("#downloadexcel", "{{ route('report_stockExcelDownload') }}");
         });
+
+         $(document).ready(function () {
+            $("#downloadPdf").click(function (e) {
+                e.preventDefault();
+
+                let baseUrl = "{{ route('admin.transfer_reportPdf') }}";
+                let formData = $("#filterForm").serializeArray();
+
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
+
+        $(document).ready(function() {
+            $("#downloadexcelId").click(function(e) {
+                e.preventDefault();
+
+                let baseUrl = "{{ route('admin.transfer_reportExcel') }}";
+                let formData = $("#filterForm").serializeArray();
+
+                let filteredParams = formData
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+
+                let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
+                window.open(finalUrl, '_blank');
+            });
+        });
+
     </script>
 @endsection
