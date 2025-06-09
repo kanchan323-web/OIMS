@@ -151,6 +151,8 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
             Route::get('/report_stock_filter', [AdminStockReportController::class, 'report_stock_filter'])->name('admin.report_stock_filter');
 
             Route::get('/transaction', [AdminStockReportController::class, 'transactions'])->name('admin.transaction');
+            Route::get('/transfer_report', [AdminStockReportController::class, 'transfer_reportPdf'])->name('admin.transfer_reportPdf');
+            Route::get('/transfer_reportExcel', [AdminStockReportController::class, 'transfer_reportExcel'])->name('admin.transfer_reportExcel');
         });
 
         //request stocks reports
