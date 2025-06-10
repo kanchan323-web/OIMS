@@ -69,7 +69,7 @@
                 <tbody>
                     @if ($stockData->isEmpty())
                         <tr>
-                            <td colspan="6" class="no-data">No data found</td>
+                            <td colspan="7" class="no-data">No data found</td>
                         </tr>
                     @else
                         @foreach ($stockData as $index => $stock)

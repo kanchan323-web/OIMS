@@ -302,6 +302,7 @@ class RequestStockController extends Controller
             $requesterRigid = RigUser::where('id', $request->requester_rig_id)->value('location_id');
             $supplierRigid = RigUser::where('id', $request->supplier_location_id)->value('location_id');
             $requesterName = User::where('id', $request->requester_id)->value('user_name');
+            $requesterCPFName = User::where('id', $request->requester_id)->value('cpf_no');
             $supplierName = User::where('id', $request->supplier_id)->value('user_name');
 
             $requesterLocation = RigUser::where('id', $request->requester_rig_id)->value('location_id');
@@ -314,8 +315,9 @@ class RequestStockController extends Controller
             $getedp = Edp::where('id', $stock->edp_code)->first();
 
             $message = sprintf(
-                'The Request sent by User %s of Rig <strong>%s</strong> (%s) to supplier Rig <strong>%s</strong> (%s) for Material Edp (%s), with description (%s) for quantity <strong>%d</strong>',
+                'The Request sent by User <strong>%s(%s)</strong> of Rig <strong>%s</strong> (%s) to supplier Rig <strong>%s</strong> (%s) for Material Edp (%s), with description (%s) for quantity <strong>%d</strong>',
                 $requesterName,
+                $requesterCPFName,
                 $requesterLocationName,
                 $requesterLocation,
                 $supplierLocationName,
@@ -618,14 +620,23 @@ class RequestStockController extends Controller
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
+            $supplierUser = User::select(DB::raw("CONCAT(user_name, ' (', cpf_no, ')') as supplierUser"))
+                            ->where('rig_id', Auth::user()->rig_id)
+                            ->first();
+            
             $RequesterRigLocation = RigUser::where('id', $requesterTable->requester_rig_id)->value('location_id');
             $RequesterRigLocationName = RigUser::where('id', $requesterTable->requester_rig_id)->value('name');
+            $requestorUser = User::select(DB::raw("CONCAT(user_name, ' (', cpf_no, ')') as requestorUser"))
+                    ->where('rig_id', $requesterTable->requester_rig_id)
+                    ->first();
 
             $message = sprintf(
-                'The material EDP (%s) has been dispatched by supplier rig <strong>%s</strong> (%s) to requester rig <strong>%s</strong> (%s). The process is now in the MIT stage with the description "%s", for a requested quantity of <strong>%d</strong>, and a quantity issued to the supplier of <strong>%s</strong>.',
+                'The material EDP (%s) has been dispatched by supplier user <strong>%s</strong> of rig <strong>%s</strong> (%s) to requester user <strong>%s</strong> of rig <strong>%s</strong> (%s). The process is now in the MIT stage with the description "%s", for a requested quantity of <strong>%d</strong>, and a quantity issued to the supplier of <strong>%s</strong>.',
                 $getedp->edp_code ?? 'N/A',
+                $supplierUser->supplierUser ?? '',
                 $riglocationName,
                 $riglocation,
+                $requestorUser->requestorUser ?? '',
                 $RequesterRigLocationName,
                 $RequesterRigLocation,
                 $stock->description ?? 'N/A',
@@ -736,16 +747,25 @@ class RequestStockController extends Controller
 
             $stock = Stock::where('id', $requesterTable->stock_id)->first();
             $getedp = Edp::where('id', $stock->edp_code)->first();
+            $supplier_name = User::select(DB::raw("CONCAT(user_name, ' (', cpf_no, ')') as supplier_name"))
+                    ->where('rig_id', Auth::user()->rig_id)
+                    ->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
+            $requestor_name = User::select(DB::raw("CONCAT(user_name, ' (', cpf_no, ')') as requestor_name"))
+                    ->where('rig_id', $requesterTable->requester_rig_id)
+                    ->first();
             $requesterriglocation = RigUser::where('id', $requesterTable->requester_rig_id)->value('location_id');
             $requesterriglocationName = RigUser::where('id', $requesterTable->requester_rig_id)->value('name');
+            
 
             $message = sprintf(
-                'The Request has been declined by supplier Rig <strong>%s</strong> (%s) for material EDP (%s) of requester Rig  <strong>%s</strong> (%s) , with description (%s) for a quantity of <strong>%d</strong>. Decline message: (%s).',
+                'The Request has been declined by supplier User <strong>%s</strong> of Rig <strong>%s</strong> (%s) for material EDP (%s) of requester User <strong>%s</strong> of Rig  <strong>%s</strong> (%s) , with description (%s) for a quantity of <strong>%d</strong>. Decline message: (%s).',
+                $supplier_name->supplier_name ?? '',
                 $riglocationName,
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
+                $requestor_name->requestor_name ?? '',
                 $requesterriglocationName ?? 'N/A',
                 $requesterriglocation  ?? 'N/A',
                 $stock->description ?? 'N/A',
@@ -966,9 +986,15 @@ class RequestStockController extends Controller
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
+           // $riglocationUser1 = User::where('rig_id', Auth::user()->rig_id)->value('user_name','cpf_no');
+
+            $riglocationUser = User::select(DB::raw("CONCAT(user_name, ' (', cpf_no, ')') as user"))
+                    ->where('rig_id', Auth::user()->rig_id)
+                    ->first();
 
             $message = sprintf(
-                'Request has been Received by Rig <strong>%s</strong> (%s)  for Material Edp (%s), with description (%s) for quantity <strong>%s</strong> ',
+                'Request has been Received by User <strong>%s</strong> of Rig <strong>%s</strong> (%s)  for Material Edp (%s), with description (%s) for quantity <strong>%s</strong> ',
+                $riglocationUser->user,
                 $riglocationName,
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
@@ -1201,9 +1227,13 @@ class RequestStockController extends Controller
             $getedp = Edp::where('id', $stock->edp_code)->first();
             $riglocation = RigUser::where('id', Auth::user()->rig_id)->value('location_id');
             $riglocationName = RigUser::where('id', Auth::user()->rig_id)->value('name');
+            $user_name = User::select(DB::raw("CONCAT(user_name, ' (', cpf_no, ')') as user_name"))
+                    ->where('rig_id', Auth::user()->rig_id)
+                    ->first();
 
             $message = sprintf(
-                ' The Request has been Acknowledged and Received by Rig <strong>%s</strong>(%s) for material EDP (%s), with the description "%s", for a requested quantity of <strong>%d</strong>, and a quantity issued by  supplier of <strong>%s</strong>.',
+                ' The Request has been Acknowledged and Received by User <strong>%s</strong> of Rig <strong>%s</strong>(%s) for material EDP (%s), with the description "%s", for a requested quantity of <strong>%d</strong>, and a quantity issued by  supplier of <strong>%s</strong>.',
+                $user_name->user_name,
                 $riglocationName,
                 $riglocation,
                 $getedp->edp_code ?? 'N/A',
