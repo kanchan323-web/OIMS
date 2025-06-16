@@ -114,7 +114,6 @@ class DashboardController extends Controller
             DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
             DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
             DB::raw('SUM(CASE WHEN requesters.status IN (1, 2, 4, 6) THEN 1 ELSE 0 END) as pending'),
-
             DB::raw('DATE(requesters.updated_at) as date')
         )
         ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
@@ -123,6 +122,21 @@ class DashboardController extends Controller
         ->orderBy('date', 'desc')
         ->get();
 
+
+   /*     $results = Requester::select(
+            'stocks.section',
+            'stocks.location_name',
+            DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
+            DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
+            DB::raw('SUM(CASE WHEN requesters.status IN (1, 2, 4, 6) THEN 1 ELSE 0 END) as pending'),
+            DB::raw('DATE(requesters.updated_at) as date')
+        )
+        ->join('stocks', 'requesters.stock_id', '=', 'stocks.id')
+        ->whereIn('requesters.status', [1, 2,3,4,5,6]) // Include Pending
+        ->groupBy('stocks.section','stocks.location_name', DB::raw('DATE(requesters.updated_at)'))
+        ->orderBy('date', 'desc')
+        ->get();
+*/
         // Prepare chart data in required format
         $chartData = $results->map(function ($item) {
             return [
@@ -149,6 +163,7 @@ class DashboardController extends Controller
             ];
         })->values();
 
+         $rigUsers = RigUser::all();
 
 
         return view('admin.dashboard', compact(
@@ -161,9 +176,8 @@ class DashboardController extends Controller
             'Decline_Status',
             'Total_Incoming',
         'chartData',
-        'combinedSections'
-
-
+        'combinedSections',
+        'rigUsers'
         ));
     }
 

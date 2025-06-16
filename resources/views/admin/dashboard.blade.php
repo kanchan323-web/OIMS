@@ -199,6 +199,19 @@
                             <!-- Filter Section -->
                             <div class="compact-filter-container">
                                 <div class="compact-filter-group">
+                                    <label for="rig_lable">Location</label>
+                                    <select id="rig_id" class="form-control form-control-sm">
+                                        <option value="" disabled>Select Location</option>
+                                        <option value="all">All</option>
+                                         @foreach($rigUsers as $rigUser)
+                                            <option value="{{ $rigUser->id }}">
+                                                {{ $rigUser->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="compact-filter-group">
                                     <label for="compact-preset-filter">Time Range</label>
                                     <select id="compact-preset-filter" class="form-control form-control-sm">
                                         <option value="">Select period</option>
@@ -228,9 +241,13 @@
 
                             <div id="compact-chart-container"></div>
 
-                            <script>
+
+                       <!-- js scripting here -->     
+                        <script>
                                 const compactSampleData = @json($chartData);
 
+                                console.log(compactSampleData);
+                                  
                                 const compactChart = Highcharts.chart('compact-chart-container', {
                                     chart: {
                                         type: 'bar',
@@ -290,6 +307,7 @@
                                 });
 
                                 function updateCompactChart(startDate = null, endDate = null) {
+
                                     let filteredData = compactSampleData;
 
                                     if (startDate && endDate) {
@@ -382,6 +400,13 @@
                                     compactStartDatePicker.setDate(formattedStart);
                                     compactEndDatePicker.setDate(formattedEnd);
                                     updateCompactChart(formattedStart, formattedEnd);
+                                });
+
+
+
+                                document.getElementById('rig_id').addEventListener('change', function () {
+                                    const rig = this.value;
+                                    updateCompactChart(rig);
                                 });
 
                                 document.getElementById('compact-reset-filter').addEventListener('click', function () {
