@@ -149,12 +149,9 @@ class DashboardController extends Controller
             ];
         })->toArray();
 
-        //   dd($results  );
-
-
-          $results = Stock::select()
-        ->get()
-        ->groupBy('section');
+        $results = Stock::select()
+            ->get()
+            ->groupBy('section');
 
         $combinedSections = $results->map(function ($items, $section) {
             return [
@@ -206,6 +203,27 @@ class DashboardController extends Controller
         });
 
         return response()->json($chartData);
+    }
+
+    public function getSectionWiseStock(Request $request)
+    {
+        $location = $request->input('location');
+        $query = Stock::select('section', 'location_name', 'new_spareable', 'used_spareable');
+        if (!empty($request->location)) {
+            $query->where('location_name', $location);
+        }
+        $results = $query->get()->groupBy('section');
+
+        $combined = $results->map(function ($items, $section) use ($location) {
+            return [
+                'section' => $section,
+               // 'location_name' => $location,
+                'new' => $items->sum('new_spareable'),
+                'used' => $items->sum('used_spareable'),
+            ];
+        })->values();
+
+        return response()->json($combined);
     }
 
 }

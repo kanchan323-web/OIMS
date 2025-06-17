@@ -417,6 +417,7 @@
                                     const end = document.getElementById('compact-end-date').value;
                                     console.log(rig);
                                     updateCompactChart(start, end, rig);
+                                    fetchStockChartData(rig);
                                 });
 
                                 document.getElementById('compact-reset-filter').addEventListener('click', function () {
@@ -425,6 +426,7 @@
                                     compactStartDatePicker.clear();
                                     compactEndDatePicker.clear();
                                     updateCompactChart();
+                                    fetchStockChartData();
                                 });
                             </script>
 
@@ -477,8 +479,146 @@
                                     }
                                     return res;
                                 }
+//stock destribution by section graph
+                        function fetchStockChartData(location){
+                                    $.ajaxSetup({
+                                        headers: {
+                                            'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                                        }
+                                    });
 
-                                const sectionData = @json($combinedSections);
+                                $.ajax({
+                                    url: "{{route('admin.dashboard_stock_graph')}}",
+                                    method: 'GET',
+                                    data: { location: location },
+                                    success: function (data) {
+                                        console.log('ddd'+data);
+
+                                        const categories = data.map(item => item.section);
+
+                                        const usedStockData = data.map(item => {
+                                            const total = item.new + item.used;
+                                            return {
+                                                y: total === 0 ? 0.0001 : item.used,
+                                                originalQty: item.used
+                                            };
+                                        });
+
+                                        const newStockData = data.map(item => {
+                                            const total = item.new + item.used;
+                                            return {
+                                                y: total === 0 ? 0.0001 : item.new,
+                                                originalQty: item.new
+                                            };
+                                        });
+
+                                        drawChart(categories, usedStockData, newStockData);
+                                    },
+                                    error: function (xhr) {
+                                        alert("Failed to load chart data");
+                                    }
+                                });
+                            }
+
+                            function drawChart(categories, usedStockData, newStockData) {
+                                Highcharts.chart('stock-100-chart', {
+                                    chart: {
+                                        type: 'column',
+                                        height: 400
+                                    },
+                                    title: {
+                                        text: 'Stock Distribution by Section (New vs Used)'
+                                    },
+                                    xAxis: {
+                                        categories: categories,
+                                        title: { text: 'Section' },
+                                        labels: { style: { fontSize: '11px' } }
+                                    },
+                                    yAxis: {
+                                        max: 100,
+                                        title: {
+                                            text: 'Percentage'
+                                        },
+                                        labels: {
+                                            format: '{value}%'
+                                        }
+                                    },
+                                    legend: {
+                                        reversed: true,
+                                        itemStyle: {
+                                            fontSize: '12px'
+                                        }
+                                    },
+                                    tooltip: {
+                                        shared: true,
+                                        useHTML: true,
+                                        formatter: function () {
+                                            let totalQty = 0;
+                                            let tooltip = '';
+
+                                            this.points.forEach(point => {
+                                                totalQty += point.point.originalQty;
+                                            });
+
+                                            if (totalQty === 0) {
+                                                tooltip += `<div style="margin-left: 10px; color: #888;"><i>This section has no quantity.</i></div>`;
+                                            } else {
+                                                 this.points.forEach(point => {
+                                                    const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
+                                                    tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b> units (${percentage}%)</div>`;
+                                                });
+                                                tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)} units</b>`;
+
+                                           /*     this.points.forEach(point => {
+                                                    const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
+                                                    tooltip += `<div>${point.series.name}: <b>${point.point.originalQty}</b> (${percentage}%)</div>`;
+                                                });
+                                                tooltip += `<br><b>Total: ${totalQty} units</b>`;  */
+                                            }
+                                            return tooltip;
+                                        }
+                                    },
+                                    plotOptions: {
+                                        column: {
+                                            stacking: 'percent',
+                                            dataLabels: {
+                                                enabled: true,
+                                                formatter: function () {
+                                                    if (this.point.originalQty === 0) return null;
+                                                    const percentage = this.percentage.toFixed(1);
+                                                    return `${formatIndianNumber(this.point.originalQty)} (${percentage}%)`;
+                                                },
+                                                style: {
+                                                    fontSize: '10px',
+                                                    textOutline: 'none'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    series: [
+                                        {
+                                            name: 'Used',
+                                            data: usedStockData,
+                                            color: '#F4AAAA'
+                                        },
+                                        {
+                                            name: 'New',
+                                            data: newStockData,
+                                            color: '#32BDEA'
+                                        }
+                                    ],
+                                    credits: { enabled: false },
+                                    exporting: { enabled: false }
+                                });
+                            }
+                        
+                    fetchStockChartData();
+
+//before stock distribution code commented
+
+    /*                            const sectionData = @json($combinedSections);
+
+                                console.log(sectionData);
 
                                 const categories = sectionData.map(item => item.section);
 
@@ -497,6 +637,8 @@
                                         originalQty: item.new
                                     };
                                 });
+
+
 
                                 Highcharts.chart('stock-100-chart', {
                                     chart: {
@@ -583,6 +725,9 @@
                                     credits: { enabled: false },
                                     exporting: { enabled: false }
                                 });
+
+*/
+
                             </script>
 
 
