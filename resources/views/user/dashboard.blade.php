@@ -239,7 +239,7 @@
                                         }
                                     </style>
 
-                                    <h5 class="card-title mb-2">Section Received/Decline Report</h5>
+                                    <h5 class="card-title mb-2">Section Pending/Received/Decline Report</h5>
 
                                     <!-- Filter Section -->
                                     <div class="compact-filter-container">

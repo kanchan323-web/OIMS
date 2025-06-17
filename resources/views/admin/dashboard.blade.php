@@ -194,7 +194,7 @@
                                 }
                             </style>
 
-                            <h5 class="card-title mb-2">Section Received/Decline Report</h5>
+                            <h5 class="card-title mb-2">Section Pending/Received/Decline Report</h5>
 
                             <!-- Filter Section -->
                             <div class="compact-filter-container">
@@ -202,9 +202,9 @@
                                     <label for="rig_lable">Location</label>
                                     <select id="rig_id" class="form-control form-control-sm">
                                         <option value="" disabled>Select Location</option>
-                                        <option value="all">All</option>
+                                        <option value="">All</option>
                                          @foreach($rigUsers as $rigUser)
-                                            <option value="{{ $rigUser->id }}">
+                                            <option value="{{ $rigUser->name }}">
                                                 {{ $rigUser->name }}
                                             </option>
                                         @endforeach
@@ -245,9 +245,7 @@
                        <!-- js scripting here -->     
                         <script>
                                 const compactSampleData = @json($chartData);
-
-                                console.log(compactSampleData);
-                                  
+                               //console.log(compactSampleData);                             
                                 const compactChart = Highcharts.chart('compact-chart-container', {
                                     chart: {
                                         type: 'bar',
@@ -306,7 +304,9 @@
                                     }
                                 });
 
-                                function updateCompactChart(startDate = null, endDate = null) {
+                                function updateCompactChart(startDate = null, endDate = null, location = null) {
+
+                                    //console.log(location);
 
                                     let filteredData = compactSampleData;
 
@@ -315,6 +315,11 @@
                                             const itemDate = new Date(item.date);
                                             return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
                                         });
+                                    }
+
+                                    if (location) {
+                                        //console.log('sjdfd');
+                                        filteredData = filteredData.filter(item => item.location_name === location);
                                     }
 
                                     const sectionTotals = {};
@@ -362,8 +367,9 @@
                                 function updateChartIfBothDatesSelected() {
                                     const start = document.getElementById('compact-start-date').value;
                                     const end = document.getElementById('compact-end-date').value;
+                                    const rig = document.getElementById('rig_id').value;
                                     if (start && end) {
-                                        updateCompactChart(start, end);
+                                        updateCompactChart(start, end, rig);
                                     }
                                 }
 
@@ -393,24 +399,29 @@
                                             startDate.setFullYear(today.getFullYear() - 1);
                                             break;
                                     }
-
+                                    
+                                    const rig = document.getElementById('rig_id').value;
                                     const formattedStart = startDate.toISOString().split('T')[0];
                                     const formattedEnd = today.toISOString().split('T')[0];
 
                                     compactStartDatePicker.setDate(formattedStart);
                                     compactEndDatePicker.setDate(formattedEnd);
-                                    updateCompactChart(formattedStart, formattedEnd);
+                                    updateCompactChart(formattedStart, formattedEnd, rig);
                                 });
 
 
 
                                 document.getElementById('rig_id').addEventListener('change', function () {
                                     const rig = this.value;
-                                    updateCompactChart(rig);
+                                    const start = document.getElementById('compact-start-date').value;
+                                    const end = document.getElementById('compact-end-date').value;
+                                    console.log(rig);
+                                    updateCompactChart(start, end, rig);
                                 });
 
                                 document.getElementById('compact-reset-filter').addEventListener('click', function () {
                                     document.getElementById('compact-preset-filter').value = '';
+                                    document.getElementById('rig_id').value = '';
                                     compactStartDatePicker.clear();
                                     compactEndDatePicker.clear();
                                     updateCompactChart();

@@ -109,7 +109,7 @@ class DashboardController extends Controller
         // Approve Status
 
         // received/decline data
-        $results = Requester::select(
+/*        $results = Requester::select(
             'stocks.section',
             DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
             DB::raw('SUM(CASE WHEN requesters.status = 5 THEN 1 ELSE 0 END) as decline'),
@@ -121,9 +121,9 @@ class DashboardController extends Controller
         ->groupBy('stocks.section', DB::raw('DATE(requesters.updated_at)'))
         ->orderBy('date', 'desc')
         ->get();
+*/
 
-
-   /*     $results = Requester::select(
+        $results = Requester::select(
             'stocks.section',
             'stocks.location_name',
             DB::raw('SUM(CASE WHEN requesters.status = 3 THEN 1 ELSE 0 END) as accept'),
@@ -136,7 +136,7 @@ class DashboardController extends Controller
         ->groupBy('stocks.section','stocks.location_name', DB::raw('DATE(requesters.updated_at)'))
         ->orderBy('date', 'desc')
         ->get();
-*/
+
         // Prepare chart data in required format
         $chartData = $results->map(function ($item) {
             return [
@@ -144,7 +144,8 @@ class DashboardController extends Controller
                 'accept' => $item->accept,
                 'decline' => $item->decline,
                 'pending' => $item->pending,
-                'date' => $item->date
+                'location_name' => $item->location_name,
+                'date' => $item->date, 
             ];
         })->toArray();
 
