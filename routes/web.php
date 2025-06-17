@@ -48,6 +48,7 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
 
         //Dashboard
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/dashboard_stockGraph', [AdminDashboardController::class, 'getSectionWiseStock'])->name('admin.dashboard_stock_graph');
         //User Registration
         Route::get('/index', [UserController::class, 'index'])->name('admin.index');
         Route::get('/create', [UserController::class, 'create'])->name('admin.create');
