@@ -282,11 +282,11 @@ class EdpController extends Controller
                 }
 
                 // Check for duplicate EDP codes within the file
-                if (isset($seenEdpCodes[$edpCode])) {
-                    $errors[] = "Row " . ($index + 2) . ": Duplicate EDP code '{$edpCode}' found.";
-                } else {
-                    $seenEdpCodes[$edpCode] = true;
-                }
+                // if (isset($seenEdpCodes[$edpCode])) {
+                //     $errors[] = "Row " . ($index + 2) . ": Duplicate EDP code '{$edpCode}' found.";
+                // } else {
+                //     $seenEdpCodes[$edpCode] = true;
+                // }
             }
 
             // Step 2: If any row is invalid, terminate
