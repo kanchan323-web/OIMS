@@ -90,11 +90,11 @@
                 <td>{{ $mailDataRequester['requested_qty'] }}</td>
             </tr>
             <tr>
-                <th>Requester Rig Name</th>
+                <th>Requester Location Name</th>
                 <td>{{ $mailDataRequester['requester_rig_id'] }}</td>
             </tr>
             <tr>
-                <th>Supplier Rig Name</th>
+                <th>Supplier Location Name</th>
                 <td>{{ $mailDataRequester['supplier_rig_id'] }}</td>
             </tr>
             <tr>

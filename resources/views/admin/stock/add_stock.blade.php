@@ -52,7 +52,7 @@
 
 
                                     <div class="col-md-6 mb-3" id="rigchange">
-                                        <label for="rig_id">Select Rig</label>
+                                        <label for="rig_id">Select Location</label>
 
                                         @php
                                             $selectedRigId = old('rig_id', $LocationName->rig_id ?? $stock->rig_id ?? '');
@@ -60,7 +60,7 @@
                                         @endphp
 
                                         <select class="form-control select2" name="rig_id_display" id="rig_id" {{ $isDisabled ? 'disabled' : '' }} required>
-                                            <option value="" disabled {{ $selectedRigId == '' ? 'selected' : '' }}>Select Rig
+                                            <option value="" disabled {{ $selectedRigId == '' ? 'selected' : '' }}>Select Location
                                             </option>
                                             @foreach ($rigs as $rig)
                                                 <option value="{{ $rig->id }}" {{ $selectedRigId == $rig->id ? 'selected' : '' }}>

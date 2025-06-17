@@ -88,7 +88,7 @@
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No </th>
-                                    <th>Supplier Rig</th>
+                                    <th>Supplier Location</th>
                                     <th>EDP</th>
                                     <th>Section</th>
                                     <th>Description</th>
@@ -201,7 +201,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <label for="">Supplier Rig Id</label>
+                                <label for="">Supplier Location Id</label>
                                 <input type="text" class="form-control" name="location_id" placeholder=" Location Id"
                                     id="location_id" readonly>
                                 <div class="invalid-feedback">
@@ -209,7 +209,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-4">
-                                <label for="">Supplier Rig Name</label>
+                                <label for="">Supplier Location Name</label>
                                 <input type="text" class="form-control" placeholder=" Location Name" name="location_name"
                                     id="location_name" readonly>
                                 <div class="invalid-feedback">
@@ -341,13 +341,13 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">Supplier Rig ID</label>
+                                    <label for="">Supplier Location ID</label>
                                     <input type="text" class="form-control" placeholder=" Supplier Location Name"
                                         id="supplierRigId" name="supplierRigId" required readonly>
                                 </div>
 
                                 <div class="col-md-4 mb-4">
-                                    <label for="">Supplier Rig Name</label>
+                                    <label for="">Supplier Location Name</label>
                                     <input type="text" class="form-control" placeholder=" Supplier Location Name"
                                         id="Rsupplier_location_name" name="supplier_rig_id" required readonly>
                                     <input type="hidden" class="form-control" placeholder=" Supplier Location Name"

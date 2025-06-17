@@ -95,7 +95,7 @@
         <h2>Request Stock Transaction History Report</h2>
         <table>
             <thead>
-                <tr><th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Rig Name</th><th>Created At</th></tr>
+                <tr><th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Location Name</th><th>Created At</th></tr>
             </thead>
             <tbody>
                 @if(empty($data))

@@ -96,16 +96,16 @@ Breadcrumbs::for('Admin_Profile', function (BreadcrumbTrail $trail) {
 // rig
 Breadcrumbs::for('rig_user_list', function (BreadcrumbTrail $trail) {
     $trail->parent('Admin.dashboard');  // Proper parent relationship
-    $trail->push('Rigs List', route('admin.rig_users.index'));
+    $trail->push('Locations List', route('admin.rig_users.index'));
 });
 
 Breadcrumbs::for('add_rig', function (BreadcrumbTrail $trail) {
     $trail->parent('rig_user_list');  // Proper parent relationship
-    $trail->push('Add Rig', route('admin.rig_users.create'));
+    $trail->push('Add Locations', route('admin.rig_users.create'));
 });
 Breadcrumbs::for('edit_rig', function (BreadcrumbTrail $trail,$id) {
     $trail->parent('rig_user_list');  // Proper parent relationship
-    $trail->push('Edit Rig', route('admin.rig_users.edit',$id));
+    $trail->push('Edit Locations', route('admin.rig_users.edit',$id));
 });
 
 // user 

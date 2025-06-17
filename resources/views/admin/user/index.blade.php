@@ -44,7 +44,7 @@
                                             </th>
                                             <th>#</th>
                                             <th>User Name</th>
-                                            <th>Rig Name</th>
+                                            <th>Location Name</th>
                                             <th>Email</th>
                                             <th>CPF No</th>
                                             <th>User Type</th>
@@ -98,7 +98,7 @@
                                 <input type="text" class="form-control" id="UserType" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="RigName">Rigs Name</label>
+                                <label for="RigName">Location Name</label>
                                 <input type="text" class="form-control" id="RigName" readonly>
                             </div>
                         </div>

@@ -29,7 +29,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Rigs List</h4>
+                            <h4 class="card-title">Locations List</h4>
                         </div>
                         <a href="{{ route('admin.rig_users.create') }}" class="btn btn-primary">Add New</a>
                     </div>
@@ -39,8 +39,8 @@
                                 <thead class="bg-white text-uppercase">
                                     <tr class="ligth ligth-data">
                                         <th>No.</th>
-                                        <th>Rig Name</th>
-                                        <th>Rig ID</th>
+                                        <th>Location Name</th>
+                                        <th>Location ID</th>
                                         <th>Creation Date</th>
                                         <th>Operations</th>
                                     </tr>
@@ -87,7 +87,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+                <p>Are you sure you want to delete this Location? This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
               
@@ -108,7 +108,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">View Rig</h5>
+          <h5 class="modal-title" id="exampleModalLabel">View Location</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -118,7 +118,7 @@
 
                 <div class="form-row">
                     <div class="col-md-6 mb-3">
-                        <label for="name">Rig Name</label>
+                        <label for="name">Location Name</label>
                         <input type="text" id="rigName" class="form-control @error('name') is-invalid @enderror" name="name" value="" readonly required>
                         {{-- Validation Error Message Below the Field --}}
                         @error('name')

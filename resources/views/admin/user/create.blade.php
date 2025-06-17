@@ -85,10 +85,10 @@
 
                                 <!-- Rig ID -->
                                 <div class="col-md-6 mb-3" id="rig_section">
-                                    <label for="rig_id">Select Rigs</label>
+                                    <label for="rig_id">Select Location</label>
                                     <select class="form-control @error('rig_id') is-invalid @enderror"
                                             name="rig_id" id="rig_id">
-                                        <option value="" disabled {{ old('rig_id') == '' ? 'selected' : '' }}>Select Rig User...</option>
+                                        <option value="" disabled {{ old('rig_id') == '' ? 'selected' : '' }}>Select Location...</option>
                                         @foreach($rigUsers as $rigUser)
                                             <option value="{{ $rigUser->id }}" {{ old('rig_id') == $rigUser->id ? 'selected' : '' }}>
                                                 {{ $rigUser->name }}

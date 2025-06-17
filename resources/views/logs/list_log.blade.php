@@ -29,7 +29,7 @@
                                             <label for="logs_type">Logs Type</label>
                                             <select class="form-control" name="logs_type" id="logs_type">
                                                 <option disabled selected>Select Logs Type...</option>
-                                                <option value="Rigs">Rigs Logs</option>
+                                                <option value="Rigs">Location Logs</option>
                                                 <option value="Users">Users Logs</option>
                                                 <option value="EDP">EDP Logs</option>
                                                 {{-- <option value="Stock">Stock Logs</option> --}}
@@ -136,7 +136,7 @@
 
 
             const tableHeaders = {
-                'Rigs': ['ID', 'Location ID', 'Rig Name', 'Creator Type', 'Message', 'Date'],
+                'Rigs': ['ID', 'Location ID', 'Location Name', 'Creator Type', 'Message', 'Date'],
                 'Users': ['ID', 'User Name', 'Email', 'Creator Type', 'Message', 'Date'],
                 'EDP': ['ID', 'EDP Code', 'Category', 'Description', 'Section', 'Creator Type', 'Message', 'Date'],
                 'Request': ['ID', 'Request ID','EDP Code', 'Available Qty', 'Requested Qty',  'Message', 'Date']
@@ -158,7 +158,7 @@
 
             const filterLabels = {
                 'location_id': 'Location',
-                'name': 'Rig Name',
+                'name': 'Location Name',
                 'user_name': 'User Name',
                 'category': 'Category',
                 'section': 'Section',
@@ -274,7 +274,7 @@
                             const colIndexRig = fields.indexOf('name');
 
                             let selectHTML = `<div class="col-md-3">
-                                                                        <label class="small">Rig Name</label>
+                                                                        <label class="small">Location Name</label>
                                                                         <select class="form-control form-control-sm column-filter" data-col-location="${colIndexLoc}" data-col-rig="${colIndexRig}">
                                                                             <option value="">All</option>`;
 
