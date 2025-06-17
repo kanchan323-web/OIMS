@@ -150,7 +150,7 @@
                                 break;
 
                             case "stock_receiver":
-                                headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Received QTY</th><th>Supplier Rig</th><th>Receipt Date</th>";
+                                headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Received QTY</th><th>Supplier Location</th><th>Receipt Date</th>";
                                 $.each(response.data, function (index, stockdata) {
                                     rows += `<tr>
                                                     <td>${index + 1}</td>
@@ -165,7 +165,7 @@
                                 break;
 
                             case "stock_issuer":
-                                headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver Rig</th><th>Issued Date</th>";
+                                headers = "<th>Sr.No</th><th>Request ID</th><th>Edp Code</th><th>Description</th><th>Issued QTY</th><th>Receiver Location</th><th>Issued Date</th>";
                                 $.each(response.data, function (index, stockdata) {
                                     rows += `<tr>
                                                     <td>${index + 1}</td>

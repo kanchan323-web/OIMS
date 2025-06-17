@@ -46,7 +46,7 @@
                                             placeholder="User Type" id="" value="{{Auth::user()->user_type}}" required readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="">RIG Id</label>
+                                        <label for="">Location Id</label>
                                         <input type="text" class="form-control" name="rig_id"
                                             placeholder="User Type" id="" value="({{$RigUser->location_id}})&nbsp;&nbsp; {{$RigUser->name}}" required readonly>
                                             <input type="hidden" class="form-control" name="rig_id"

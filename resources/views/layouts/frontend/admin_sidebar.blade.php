@@ -34,7 +34,7 @@
                             <path d="M12 21c-4.97-4.97-8-8.92-8-13a8 8 0 1 1 16 0c0 4.08-3.03 8.03-8 13z"></path>
                             <circle cx="12" cy="10" r="3"></circle>
                         </svg>
-                        <span class="ml-4">Rigs</span>
+                        <span class="ml-4">Locations</span>
                     </a>
                 </li>
 

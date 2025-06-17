@@ -94,7 +94,7 @@
                                                                         </th> -->
 
                                     <th>Sr.No</th>
-                                    <th>Requester Rig Name</th>
+                                    <th>Requester Location Name</th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
                                     <th>Request Date</th>
@@ -206,11 +206,11 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="">Requester Rig Name</label>
+                                    <label for="">Requester Location Name</label>
                                     <input type="text" class="form-control" placeholder="Requester Rig Name" name=""
                                         id="requester_Id" readonly>
                                     <div class="invalid-feedback">
-                                        Enter Requester Rig Name
+                                        Enter Requester Location Name
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -222,11 +222,11 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="">Supplier Rig Name</label>
+                                    <label for="">Supplier Location Name</label>
                                     <input type="text" class="form-control" name="" placeholder="Supplier Rig Name"
                                         id="Supplier_Location_Name" readonly>
                                     <div class="invalid-feedback">
-                                        Supplier Rig Name
+                                        Supplier Location Name
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">

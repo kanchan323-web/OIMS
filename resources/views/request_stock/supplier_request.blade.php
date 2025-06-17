@@ -83,7 +83,7 @@
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
                                     <th>Request Id</th>
-                                    <th>Supplier Rig </th>
+                                    <th>Supplier Location </th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
                                     <th>Status</th>
@@ -198,11 +198,11 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">Supplier Rig Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Supplier Rig Name"
+                                    <label for="">Supplier Location Name</label>
+                                    <input type="text" class="form-control" name="" placeholder="Supplier Location Name"
                                         id="Supplier_Location_Name" readonly>
                                     <div class="invalid-feedback">
-                                        Supplier Rig Name
+                                        Supplier Location Name
                                     </div>
                                 </div>
 

@@ -49,9 +49,9 @@
                             
                                     <!-- Rig -->
                                     <div class="col-md-4 mb-3">
-                                        <label for="rig_id">Select Rig</label>
+                                        <label for="rig_id">Select Location</label>
                                         <select class="form-control select2 @error('rig_id') is-invalid @enderror" disabled>
-                                            <option value="" disabled>Select Rig</option>
+                                            <option value="" disabled>Select Location</option>
                                             @foreach ($rigs as $rig)
                                                 <option value="{{ $rig->id }}" {{ old('rig_id', $editData->rig_id) == $rig->id ? 'selected' : '' }}>
                                                     {{ $rig->name }}

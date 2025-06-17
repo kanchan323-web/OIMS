@@ -131,7 +131,7 @@
 
                             case "rejected":
                                 headers =
-                                    "<th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Rig Name</th><th>Created At</th>";
+                                    "<th>Sr.No</th><th>Quantity</th><th>Status</th><th>Processed By</th><th>Location Name</th><th>Created At</th>";
 
                                 if (Array.isArray(response.data)) {
                                     response.data.forEach((item, index) => {

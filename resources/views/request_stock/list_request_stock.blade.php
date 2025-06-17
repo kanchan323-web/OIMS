@@ -96,7 +96,7 @@
 
                                     <th>Sr.No</th>
                                     <th>Request ID</th>
-                                    <th>Requester Rig</th>
+                                    <th>Requester Location</th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
                                     <th>Request Date</th>
@@ -216,13 +216,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
-                                    <label for="">Requester Rig Name</label>
-                                    <input type="text" class="form-control" placeholder="Requester Rig Name" name=""
+                                    <label for="">Requester Location Name</label>
+                                    <input type="text" class="form-control" placeholder="Requester Location Name" name=""
                                         id="requester_Id" readonly>
                                     <input type="hidden" class="form-control" name="" placeholder="Supplier Name" id="Supplier_Location_Id" readonly>
-                                    <input type="hidden" class="form-control" name="" placeholder="Supplier Rig Name" id="Supplier_Location_Name" readonly>
+                                    <input type="hidden" class="form-control" name="" placeholder="Supplier Location Name" id="Supplier_Location_Name" readonly>
                                     <div class="invalid-feedback">
-                                        Enter Requester Rig Name
+                                        Enter Requester Location Name
                                     </div>
                                 </div>
                                 {{-- <div class="col-md-6 mb-3">

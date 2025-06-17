@@ -40,7 +40,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
                         <div class="header-title">
-                            <h4 class="card-title">Add Rig</h4>
+                            <h4 class="card-title">Add Location</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -48,7 +48,7 @@
                             @csrf
                             <div class="form-row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="name">Rig Name</label>
+                                    <label for="name">Location Name</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required>
                                     {{-- Validation Error Message Below the Field --}}
                                     @error('name')

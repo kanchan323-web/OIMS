@@ -92,7 +92,7 @@
                         <th>EDP Code</th>
                         <th>Description</th>
                         <th>Received QTY</th>
-                        <th>Supplier Rig</th>
+                        <th>Supplier Location</th>
                         <th>Receipt Date</th>
                     </tr>
                 </thead>
@@ -128,7 +128,7 @@
                         <th>EDP Code</th>
                         <th>Description</th>
                         <th>Issued QTY</th>
-                        <th>Receiver Rig </th>
+                        <th>Receiver Location </th>
                         <th>Issued Date</th>
                     </tr>
                 </thead>

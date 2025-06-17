@@ -98,7 +98,7 @@
                         <th>Description</th>
                         <!--  <th>Total </th> -->
                         <th>Add</th>
-                        <th>Supplier Rig</th>
+                        <th>Supplier Location</th>
                         <th> Date</th>
                     </tr>
                 </thead>
@@ -134,7 +134,7 @@
                         <th>Description</th>
                         <!-- <th>Total </th> -->
                         <th>Remove</th>
-                        <th>Rig Name</th>
+                        <th>Location Name</th>
                         <th> Date</th>
                     </tr>
                 </thead>
@@ -169,7 +169,7 @@
                         <th>EDP Code</th>
                         <th>Description</th>
                         <th>Adjustments</th>
-                        <th>Rig Name</th>
+                        <th>Location Name</th>
                         <th>Date</th>
                     </tr>
                 </thead>
