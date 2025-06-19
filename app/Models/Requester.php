@@ -11,6 +11,7 @@ class Requester extends Model
 
     protected $fillable = [
         'status',
+        'dn_no',
         'available_qty',
         'requested_qty',
         'stock_id',
@@ -18,6 +19,7 @@ class Requester extends Model
         'requester_rig_id',
         'supplier_id',
         'supplier_rig_id',
+        'remarks',
     ];
 
     public function requestStatuses()

@@ -209,6 +209,7 @@ class RequestStockController extends Controller
 
     public function RequestStockAddPost(Request $request)
     {
+       // return $request->dn_no;
         $request->merge([
             'available_qty' => str_replace(',', '', $request->available_qty),
             'requested_qty' => str_replace(',', '', $request->requested_qty),
@@ -275,6 +276,8 @@ class RequestStockController extends Controller
                 'supplier_id' => $request->supplier_id,
                 'supplier_rig_id' => $request->supplier_location_id,
                 'RID' => $RID,
+                'dn_no' -> $request->dn_no,
+                'remarks' => $request->remark,
                 'created_at' => now(),
                 'updated_at' => now(),
                 'expected_date' => $expected_date,
@@ -332,6 +335,7 @@ class RequestStockController extends Controller
                 'request_id' => $request->requester_id,
                 'status' => 1,
                 'RID' => $RID,
+                'dn_no' -> $request->dn_no,
                 'available_qty' => $request->available_qty,
                 'requested_qty' => $request->requested_qty,
                 'stock_id' => $request->stock_id,
@@ -341,6 +345,7 @@ class RequestStockController extends Controller
                 'requester_rig_id' => $request->requester_rig_id,
                 'supplier_id' => $request->supplier_id,
                 'supplier_rig_id' => $request->supplier_location_id,
+                'remarks' -> $request->remark,
                 'created_at' => now(),
                 'updated_at' => now(),
                 'creater_id' => auth()->id(),
