@@ -14,6 +14,7 @@ class LogRequester extends Model
     public $fillable = [
         'request_id',
         'RID',
+        'dn_no',
         'status',
         'available_qty',
         'requested_qty',
@@ -22,6 +23,7 @@ class LogRequester extends Model
         'requester_rig_id',
         'supplier_id',
         'supplier_rig_id',
+        'remarks',
         'creator_id',
         'creator_type',
         'receiver_id',

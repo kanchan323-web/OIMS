@@ -426,6 +426,24 @@
                                         <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
                                 </div>
 
+                                <div class="col-md-4 mb-4">
+                                    <label for="">DN No</label>
+                                    <input type="text" class="form-control" placeholder="Enter 8-digit DN number"
+                                        id="dn_no" name="dn_no" pattern="\d{8}" maxlength="8" minlength="8">
+                                    <small id="dnError" class="text-danger" style="display: none;"></small>
+                                    @error("dn_no")
+                                        <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                 <div class="col-md-4 mb-4">
+                                    <label for="">Remarks</label>
+                                    <textarea class="form-control" id="remark" name="remark" placeholder="Remarks"></textarea>
+                                    @error("remark")
+                                        <small class="text-danger">{{$message}}</small>
+                                    @enderror
+                                </div>
+                                
+
                             </div>
                             <button class="btn btn-success" id="AddRequestStock" type="submit">Submit Request</button>
                             <a href="{{route('stock_list.get')}}" class="btn btn-light">Go Back</a>
@@ -477,6 +495,18 @@
                 lastThree = ',' + lastThree;
             return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
         }
+
+        $('#dn_no').on('keypress', function (e) {
+             let dn_no  = $('#dn_no').val();
+              if (/^\d{8}$/.test(dn_no)) {
+                    $(this).removeClass("is-invalid");
+                    $("#dnError").hide();
+                    $(this).addClass("is-valid");
+                } else {
+                     $(this).addClass("is-invalid");
+                     $("#dnError").text("Enter 8-digit DN number!").show();
+                }
+        });
 
         function addRequest(id) {
             $.ajaxSetup({
@@ -557,13 +587,25 @@
         // Final validation before form submission
         $("#AddRequestStock").on("submit", function (e) {
             let requestQty = $("#RequestQTY").val().trim();
+     /*       
+            let dn_value = $("#dn_no").val();
+             if (empty(dn_value)) {
+                const event = jQuery.Event('keypress');
+                event.key = '5';  // Simulate pressing key '5'
+                event.which = 53; // ASCII code for '5'
+                event.keyCode = 53;
+                $('#dn_no').trigger(event); // Trigger keypress
+                console.log('dddd');
+                e.preventDefault();
+            }
+    */
             if (!requestQty) {
                 e.preventDefault();
                 $("#RequestQTY").addClass("is-invalid");
                 $("#qtyError").text("Requested quantity is required!").show();
                 $("#AddRequestStock button[type='submit']").prop("disabled", true);
                 return false;
-            }
+            }          
         });
 
 
