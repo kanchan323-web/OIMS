@@ -496,18 +496,6 @@
             return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
         }
 
-        $('#dn_no').on('keypress', function (e) {
-             let dn_no  = $('#dn_no').val();
-              if (/^\d{8}$/.test(dn_no)) {
-                    $(this).removeClass("is-invalid");
-                    $("#dnError").hide();
-                    $(this).addClass("is-valid");
-                } else {
-                     $(this).addClass("is-invalid");
-                     $("#dnError").text("Enter 8-digit DN number!").show();
-                }
-        });
-
         function addRequest(id) {
             $.ajaxSetup({
                 headers: {
@@ -754,6 +742,30 @@
                     .join("&");
                 let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
                 window.open(finalUrl, '_blank');
+            });
+        });
+
+        $(document).ready(function () {
+            $('#dn_no').on('input', function (e) {
+                let dn_no  = $('#dn_no').val().trim();
+                let RequestQTY  = $('#RequestQTY').val().trim();
+                if (dn_no === '') {
+                     $(this).removeClass("is-invalid").removeClass("is-valid");
+                     $("#dnError").hide();
+                } else if (/^\d{8}$/.test(dn_no)) {
+                     $(this).removeClass("is-invalid").addClass("is-valid");
+                     $("#dnError").hide();
+                     $("#AddRequestStock button[type='submit']").prop("disabled", false);
+                } else {
+                      $(this).addClass("is-invalid");
+                        $("#dnError").text("Enter 8-digit DN number!").show();                       
+                }
+
+                if (RequestQTY !== '' && /^\d{8}$/.test(dn_no)) {
+                    $("#AddRequestStock button[type='submit']").prop("disabled", false);
+                }else{
+                     $("#AddRequestStock button[type='submit']").prop("disabled", true);
+                }
             });
         });
 
