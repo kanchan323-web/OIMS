@@ -114,6 +114,12 @@
                                                                                     <td><span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span></td>
                                                                                     <td>{{ $stockdata->updated_at->format('d-m-Y') }}</td>
                                                                                     <td>
+                                                                                        <a class="badge badge-warning mr-2" data-toggle="modal"
+                                                                                            onclick="RequestStockData({{ json_encode($stockdata->id) }})"
+                                                                                            data-target=".bd-example-modal-xl" data-placement="top"
+                                                                                            title="Download Invoice">
+                                                                                            <i class="fas fa-file-pdf mr-1"></i>
+                                                                                        </a>
                                                                                         <a class="badge badge-success mr-2" data-toggle="modal"
                                                                                             onclick="RequestStockData({{ json_encode($stockdata->id) }})"
                                                                                             data-target=".bd-example-modal-xl" data-placement="top"
