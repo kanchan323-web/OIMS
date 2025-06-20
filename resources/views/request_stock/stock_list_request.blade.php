@@ -420,13 +420,7 @@
                                         Enter Used
                                     </div>
                                 </div>
-                                <div class="col-md-4 mb-4">
-                                    <label for="">Expected Delivery Date</label>
-                                    <input type="date" class="form-control" name="expected_date" id="expected_date">
-                                        <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
-                                </div>
-
-                                <div class="col-md-4 mb-4">
+                                 <div class="col-md-4 mb-4">
                                     <label for="">DN No</label>
                                     <input type="text" class="form-control" placeholder="Enter 8-digit DN number"
                                         id="dn_no" name="dn_no" pattern="\d{8}" maxlength="8" minlength="8">
@@ -435,6 +429,11 @@
                                         <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Expected Delivery Date</label>
+                                    <input type="date" class="form-control" name="expected_date" id="expected_date">
+                                        <small class="text-primary">If date is not selected, system will automatically select 15 days from today as 'Expected Date'.</small>
+                                </div>
                                  <div class="col-md-4 mb-4">
                                     <label for="">Remarks</label>
                                     <textarea class="form-control" id="remark" name="remark" placeholder="Remarks"></textarea>
@@ -442,8 +441,6 @@
                                         <small class="text-danger">{{$message}}</small>
                                     @enderror
                                 </div>
-                                
-
                             </div>
                             <button class="btn btn-success" id="AddRequestStock" type="submit">Submit Request</button>
                             <a href="{{route('stock_list.get')}}" class="btn btn-light">Go Back</a>
@@ -575,18 +572,6 @@
         // Final validation before form submission
         $("#AddRequestStock").on("submit", function (e) {
             let requestQty = $("#RequestQTY").val().trim();
-     /*       
-            let dn_value = $("#dn_no").val();
-             if (empty(dn_value)) {
-                const event = jQuery.Event('keypress');
-                event.key = '5';  // Simulate pressing key '5'
-                event.which = 53; // ASCII code for '5'
-                event.keyCode = 53;
-                $('#dn_no').trigger(event); // Trigger keypress
-                console.log('dddd');
-                e.preventDefault();
-            }
-    */
             if (!requestQty) {
                 e.preventDefault();
                 $("#RequestQTY").addClass("is-invalid");
@@ -746,12 +731,13 @@
         });
 
         $(document).ready(function () {
-            $('#dn_no').on('input', function (e) {
+            $('#dn_no').on('blur input', function (e) {
                 let dn_no  = $('#dn_no').val().trim();
                 let RequestQTY  = $('#RequestQTY').val().trim();
                 if (dn_no === '') {
                      $(this).removeClass("is-invalid").removeClass("is-valid");
                      $("#dnError").hide();
+                    $("#AddRequestStock button[type='submit']").prop("disabled", false);
                 } else if (/^\d{8}$/.test(dn_no)) {
                      $(this).removeClass("is-invalid").addClass("is-valid");
                      $("#dnError").hide();
@@ -763,6 +749,9 @@
 
                 if (RequestQTY !== '' && /^\d{8}$/.test(dn_no)) {
                     $("#AddRequestStock button[type='submit']").prop("disabled", false);
+                }else if(RequestQTY !== '' && dn_no === ''){
+                   
+                    console.log('dsd');
                 }else{
                      $("#AddRequestStock button[type='submit']").prop("disabled", true);
                 }
