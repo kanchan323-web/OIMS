@@ -250,6 +250,9 @@ Route::middleware(['auth', 'user.session'])->group(function () {
             Route::get('/RequestStockListFilter', [RequestStockController::class, 'CommanRequestStockFilter'])->name('CommanRequestStockFilter.get');
             Route::get('/fetchIncommingCount', [RequestStockController::class, 'fetchIncommingCount'])->name('fetchIncommingCount');
             Route::get('/fetchRaisedCount', [RequestStockController::class, 'fetchRaisedCount'])->name('fetchRaisedCount');
+
+            Route::get('/incomingInvoice', [RequestStockController::class, 'incomingInvoicePdfDownload'])->name('incomingInvoice.pdf');
+            Route::get('/raisedInvoice', [RequestStockController::class, 'raisedInvoicePdfDownload'])->name('raisedInvoice.pdf');
         });
 
         //User mapping

@@ -1958,4 +1958,12 @@ class RequestStockController extends Controller
             ->whereIn('requesters.status', [1, 2, 4, 6])->first();
         return response()->json(['data' => $data]);
     }
+
+    public function incomingInvoicePdfDownload(){
+        echo 'incomingInvoicePdfDownload';
+    }
+
+     public function raisedInvoicePdfDownload(){
+        echo 'raisedInvoicePdfDownload';
+    }
 }
