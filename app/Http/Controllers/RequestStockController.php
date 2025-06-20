@@ -25,6 +25,7 @@ use App\Mail\requestor_stock_mail;
 use App\Mail\supplier_stock_mail;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Session;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class RequestStockController extends Controller
@@ -1964,6 +1965,9 @@ class RequestStockController extends Controller
     }
 
      public function raisedInvoicePdfDownload(){
-        echo 'raisedInvoicePdfDownload';
+       //  return view('pdf.raised_reqPdf');
+         $pdf = PDF::loadView('pdf.incomming_reqPdf');
+        return $pdf->download('Stock_Report.pdf');
+      //  return $pdf->download($fileName);
     }
 }
