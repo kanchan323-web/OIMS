@@ -251,8 +251,7 @@ Route::middleware(['auth', 'user.session'])->group(function () {
             Route::get('/fetchIncommingCount', [RequestStockController::class, 'fetchIncommingCount'])->name('fetchIncommingCount');
             Route::get('/fetchRaisedCount', [RequestStockController::class, 'fetchRaisedCount'])->name('fetchRaisedCount');
 
-            Route::get('/incomingInvoice', [RequestStockController::class, 'incomingInvoicePdfDownload'])->name('incomingInvoice.pdf');
-          //  Route::get('/raisedInvoice/{id}', [RequestStockController::class, 'raisedInvoicePdfDownload'])->name('raisedInvoice');
+            Route::get('/incomingInvoice/{id}', [RequestStockController::class, 'incomingInvoicePdfDownload'])->name('incomingInvoice');
             Route::get('/raisedInvoice/{id}', [RequestStockController::class, 'raisedInvoicePdfDownload'])->name('raisedInvoice');
 
         });

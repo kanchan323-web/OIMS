@@ -1960,8 +1960,42 @@ class RequestStockController extends Controller
         return response()->json(['data' => $data]);
     }
 
-    public function incomingInvoicePdfDownload(){
-        echo 'incomingInvoicePdfDownload';
+    public function incomingInvoicePdfDownload(Request $request, $id){
+                    $requestStock = Requester::leftJoin('users as request', 'request.id', '=', 'requesters.requester_id')
+            ->leftJoin('users as suppliers', 'suppliers.id', '=', 'requesters.supplier_id')
+            ->leftJoin('rig_users as request_rig', 'request.rig_id', '=', 'request_rig.id')
+            ->leftJoin('stocks', 'stocks.id', '=', 'requesters.stock_id')
+            ->leftJoin('rig_users as supply_rig', 'suppliers.rig_id', '=', 'supply_rig.id')
+            ->leftJoin('edps', 'edps.id', '=', 'stocks.edp_code')
+            ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
+            ->where('requesters.id', $id)
+            ->with('requestStatuses')
+            ->select(
+                'requesters.*',
+                'request.id as requester_id',
+                'request.user_name as requester_name',
+                'suppliers.id as supplier_id',
+                'suppliers.user_name as supplier_name',
+                'request_rig.name as requesters_rig',
+                'supply_rig.name as suppliers_rig',
+                'stocks.category',
+                'stocks.section',
+                'stocks.description',
+                'stocks.measurement',
+                'edps.edp_code as edp_code',
+                'mst_status.status_name',
+                DB::raw("DATE_FORMAT(requesters.created_at, '%d-%m-%Y') as formatted_created_at"),
+            )
+            ->first();
+
+         $issue_details = RequestStatus::select('supplier_qty', DB::raw("DATE_FORMAT(updated_at, '%d-%m-%Y') as issue_date"))
+            ->where('request_id', $id)
+            ->orderBy('updated_at', 'desc') 
+            ->first();
+
+        // return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
+         $pdf = PDF::loadView('pdf.raised_reqPdf',compact('requestStock','issue_details'));
+         return $pdf->download('reciever_invoice.pdf');
     }
 
      public function raisedInvoicePdfDownload(Request $request, $id){

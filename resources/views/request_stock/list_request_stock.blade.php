@@ -134,6 +134,12 @@
                                                                                     </td>
                                                                                     <td class="text-center">
                                                                                         <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
+                                                                                            <a href="{{ route('incomingInvoice', $stockdata->id) }}" class="badge badge-warning mr-2" data-toggle="tooltip" 
+                                                                                                data-placement="top" data-original-title="Download Invoice"
+                                                                                                    target="_blank" id="downloadPdf" style="color: #70a9ff">
+                                                                                                    <i class="fas fa-file-pdf mr-1"></i>
+                                                                                            </a>
+
                                                                                             <a class="badge badge-success" data-toggle="modal"
                                                                                                 onclick="RequestStockData({{ json_encode($stockdata->id) }})"
                                                                                                 data-target=".bd-example-modal-xl" data-placement="top" title="Requestor's Request">
