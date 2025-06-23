@@ -75,7 +75,7 @@
     <td>{{ $issue_details->supplier_qty ? $issue_details->supplier_qty . ' (' . $requestStock->measurement . ')' : '-' }}</td>
   </tr>
   <tr>
-    <th>Signature of the issuer</th>
+    <th>Signature of the Reciever</th>
     <td></td>
     <th>Status</th>
     <td>{{$requestStock->status_name}}</td>   
