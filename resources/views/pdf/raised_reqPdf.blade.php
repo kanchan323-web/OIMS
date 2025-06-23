@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>PDF Form Layout Without Borders</title>
+  <title>Two-Part PDF Form Layout</title>
   <style>
     body {
       font-family: DejaVu Sans, Arial, sans-serif;
       font-size: 14px;
       margin: 20px;
-      color: #000;
     }
 
     table.form-table {
@@ -19,14 +18,16 @@
 
     .form-table th,
     .form-table td {
+      border: 1px solid #000;
       padding: 8px 10px;
       text-align: left;
       vertical-align: top;
     }
 
     .form-table th {
-      width: 25%;
+      background-color: #f2f2f2;
       font-weight: bold;
+      width: 25%;
     }
 
     .form-table td {
@@ -35,33 +36,50 @@
   </style>
 </head>
 <body>
-
-<h2 style="text-align:center;">Request Details</h2>
-
+{{$issue_details->issue_date}}
+<h2 style="text-align:center;">Issuer Request Details</h2>
 <table class="form-table">
   <tr>
     <th>Request ID</th>
-    <td>INV20250610</td>
+    <td>{{$requestStock->RID}}</td>
+    <th>DN Number</th>
+    <td>{{ $requestStock->dn_no ? $requestStock->dn_no : '-' }}</td>
+  </tr>
+  <tr>
+    <th>Receiver Location</th>
+    <td>{{$requestStock->requesters_rig}}</td>
+    <th>Supplier Location</th>
+    <td>{{$requestStock->suppliers_rig}}</td>
+  </tr>
+  <tr>
     <th>Request Date</th>
-    <td>10 June 2025</td>
+    <td>{{$requestStock->formatted_created_at}}</td>
+    <th>Issue Date</th>
+    <td>{{ $issue_details->issue_date ? $issue_details->issue_date : '-' }}</td>
   </tr>
   <tr>
-    <th>Customer Name</th>
-    <td>John Doe</td>
-    <th>Email</th>
-    <td>john@example.com</td>
+    <th>EDP</th>
+    <td>{{$requestStock->edp_code}}</td>
+    <th>Description</th>
+    <td>{{$requestStock->description}}</td>
+  </tr>
+   <tr>
+    <th>Category</th>
+    <td>{{$requestStock->category}}</td>
+    <th>Section</th>
+    <td>{{$requestStock->section}}</td>
+  </tr>
+   <tr>
+    <th>Requested quantity(unit)  </th>
+    <td>{{$requestStock->requested_qty}}({{$requestStock->measurement}})</td>
+    <th>Issued quantity(unit)</th>
+    <td>{{ $issue_details->supplier_qty ? $issue_details->supplier_qty . ' (' . $requestStock->measurement . ')' : '-' }}</td>
   </tr>
   <tr>
-    <th>Location</th>
-    <td>New Delhi</td>
-    <th>Department</th>
-    <td>IT</td>
-  </tr>
-  <tr>
-    <th>Item Name</th>
-    <td>Wireless Mouse</td>
-    <th>Quantity</th>
-    <td>5</td>
+    <th>Signature of the issuer</th>
+    <td></td>
+    <th>Status</th>
+    <td>{{$requestStock->status_name}}</td>   
   </tr>
 </table>
 

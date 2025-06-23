@@ -252,7 +252,9 @@ Route::middleware(['auth', 'user.session'])->group(function () {
             Route::get('/fetchRaisedCount', [RequestStockController::class, 'fetchRaisedCount'])->name('fetchRaisedCount');
 
             Route::get('/incomingInvoice', [RequestStockController::class, 'incomingInvoicePdfDownload'])->name('incomingInvoice.pdf');
-            Route::get('/raisedInvoice', [RequestStockController::class, 'raisedInvoicePdfDownload'])->name('raisedInvoice.pdf');
+          //  Route::get('/raisedInvoice/{id}', [RequestStockController::class, 'raisedInvoicePdfDownload'])->name('raisedInvoice');
+            Route::get('/raisedInvoice/{id}', [RequestStockController::class, 'raisedInvoicePdfDownload'])->name('raisedInvoice');
+
         });
 
         //User mapping

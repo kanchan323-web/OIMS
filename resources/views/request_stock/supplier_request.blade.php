@@ -114,7 +114,7 @@
                                                                                     <td><span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span></td>
                                                                                     <td>{{ $stockdata->updated_at->format('d-m-Y') }}</td>
                                                                                     <td>
-                                                                                        <a href="{{ route('raisedInvoice.pdf') }}" class="badge badge-warning mr-2" data-toggle="tooltip" 
+                                                                                        <a href="{{ route('raisedInvoice', $stockdata->id) }}" class="badge badge-warning mr-2" data-toggle="tooltip" 
                                                                                            data-placement="top" data-original-title="Download Invoice"
                                                                                             target="_blank" id="downloadPdf" style="color: #70a9ff">
                                                                                             <i class="fas fa-file-pdf mr-1"></i>
