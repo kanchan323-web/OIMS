@@ -1994,12 +1994,11 @@ class RequestStockController extends Controller
 
          $issue_details = RequestStatus::select('supplier_qty', DB::raw("DATE_FORMAT(updated_at, '%d-%m-%Y') as issue_date"))
             ->where('request_id', $id)
+            ->orderBy('updated_at', 'desc') 
             ->first();
 
-
-         return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
-       //  $pdf = PDF::loadView('pdf.raised_reqPdf',compact('requestStock'));
-      //  return $pdf->download('Stock_Report.pdf');
-      //  return $pdf->download($fileName);
+        // return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
+         $pdf = PDF::loadView('pdf.raised_reqPdf',compact('requestStock','issue_details'));
+         return $pdf->download('issuer_invoice.pdf');
     }
 }

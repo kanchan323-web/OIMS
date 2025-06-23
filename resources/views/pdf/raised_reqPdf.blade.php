@@ -36,8 +36,7 @@
   </style>
 </head>
 <body>
-{{$issue_details->issue_date}}
-<h2 style="text-align:center;">Issuer Request Details</h2>
+<h2 style="text-align:center;">Issuer Invoice Details</h2>
 <table class="form-table">
   <tr>
     <th>Request ID</th>
@@ -55,7 +54,7 @@
     <th>Request Date</th>
     <td>{{$requestStock->formatted_created_at}}</td>
     <th>Issue Date</th>
-    <td>{{ $issue_details->issue_date ? $issue_details->issue_date : '-' }}</td>
+    <td>{{ $issue_details->supplier_qty !== null ? $issue_details->issue_date : '-' }}</td>
   </tr>
   <tr>
     <th>EDP</th>
