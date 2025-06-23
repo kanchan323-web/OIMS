@@ -1960,8 +1960,9 @@ class RequestStockController extends Controller
         return response()->json(['data' => $data]);
     }
 
-    public function incomingInvoicePdfDownload(Request $request, $id){
-                    $requestStock = Requester::leftJoin('users as request', 'request.id', '=', 'requesters.requester_id')
+    public function incomingInvoicePdfDownload(Request $request, $id)
+    {
+        $requestStock = Requester::leftJoin('users as request', 'request.id', '=', 'requesters.requester_id')
             ->leftJoin('users as suppliers', 'suppliers.id', '=', 'requesters.supplier_id')
             ->leftJoin('rig_users as request_rig', 'request.rig_id', '=', 'request_rig.id')
             ->leftJoin('stocks', 'stocks.id', '=', 'requesters.stock_id')
@@ -1984,7 +1985,7 @@ class RequestStockController extends Controller
                 'stocks.measurement',
                 'edps.edp_code as edp_code',
                 'mst_status.status_name',
-                DB::raw("DATE_FORMAT(requesters.created_at, '%d-%m-%Y') as formatted_created_at"),
+                DB::raw("DATE_FORMAT(requesters.created_at, '%d-%m-%Y') as formatted_created_at")
             )
             ->first();
 
@@ -1994,7 +1995,7 @@ class RequestStockController extends Controller
             ->first();
 
         // return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
-         $pdf = PDF::loadView('pdf.raised_reqPdf',compact('requestStock','issue_details'));
+         $pdf = PDF::loadView('pdf.incomming_reqPdf',compact('requestStock','issue_details'));
          return $pdf->download('reciever_invoice.pdf');
     }
 
