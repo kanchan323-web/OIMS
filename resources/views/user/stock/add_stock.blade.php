@@ -27,7 +27,7 @@
                                         <select class="form-control select2" name="edp_code" id="edp_code_id" required>
                                             <option value="" disabled selected>Select EDP Code</option>
                                             @foreach ($edpCodes as $edp)
-                                                <option value="{{ $edp->id }}">{{ $edp->edp_code }}</option>
+                                                <option value="{{ $edp->id }}">{{ $edp->edp_code .' (' . $edp->description .')'}}</option>
                                             @endforeach
                                         </select>
                                         @error('edp_code')
@@ -338,9 +338,15 @@
         $(document).ready(function () {
             $('#edp_code_id').select2({
                 theme: 'bootstrap4', // Optional, for Bootstrap look
-                placeholder: "Select EDP Code",
+                placeholder: "Select EDP Code",             
+                 templateSelection: function (data) {
+                        if (data.text) {
+                            return data.text.split(' (')[0]; 
+                        }
+                        return data.text;
+                    },
                 allowClear: true,
-                width: '100%' // Matches form-control width
+                width: '100%' ,
             });
         });
     </script>
