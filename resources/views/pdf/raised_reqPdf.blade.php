@@ -36,7 +36,7 @@
   </style>
 </head>
 <body>
-<h2 style="text-align:center;">Issuer Invoice Details</h2>
+<h2 style="text-align:center;">Receiver Invoice Details</h2>
 <table class="form-table">
   <tr>
     <th>Request ID</th>

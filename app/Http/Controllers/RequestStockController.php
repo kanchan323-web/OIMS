@@ -1964,9 +1964,9 @@ class RequestStockController extends Controller
     {
         $requestStock = Requester::leftJoin('users as request', 'request.id', '=', 'requesters.requester_id')
             ->leftJoin('users as suppliers', 'suppliers.id', '=', 'requesters.supplier_id')
-            ->leftJoin('rig_users as request_rig', 'request.rig_id', '=', 'request_rig.id')
+            ->leftJoin('rig_users as request_rig', 'requesters.requester_rig_id', '=', 'request_rig.id')
             ->leftJoin('stocks', 'stocks.id', '=', 'requesters.stock_id')
-            ->leftJoin('rig_users as supply_rig', 'suppliers.rig_id', '=', 'supply_rig.id')
+            ->leftJoin('rig_users as supply_rig', 'requesters.supplier_rig_id', '=', 'supply_rig.id')
             ->leftJoin('edps', 'edps.id', '=', 'stocks.edp_code')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.id', $id)
@@ -2002,9 +2002,9 @@ class RequestStockController extends Controller
      public function raisedInvoicePdfDownload(Request $request, $id){
             $requestStock = Requester::leftJoin('users as request', 'request.id', '=', 'requesters.requester_id')
             ->leftJoin('users as suppliers', 'suppliers.id', '=', 'requesters.supplier_id')
-            ->leftJoin('rig_users as request_rig', 'request.rig_id', '=', 'request_rig.id')
+            ->leftJoin('rig_users as request_rig', 'requesters.requester_rig_id', '=', 'request_rig.id')
             ->leftJoin('stocks', 'stocks.id', '=', 'requesters.stock_id')
-            ->leftJoin('rig_users as supply_rig', 'suppliers.rig_id', '=', 'supply_rig.id')
+            ->leftJoin('rig_users as supply_rig', 'requesters.supplier_rig_id', '=', 'supply_rig.id')
             ->leftJoin('edps', 'edps.id', '=', 'stocks.edp_code')
             ->leftJoin('mst_status', 'requesters.status', '=', 'mst_status.id')
             ->where('requesters.id', $id)
