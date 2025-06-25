@@ -496,8 +496,11 @@
                                         console.log('ddd'+data);
 
                                         const categories = data.map(item => item.section);
+                                        const sumStockData = data.map(item => item.edp_count);
+                                        const usedStockData = data.map(item => item.used_count);
+                                        const newStockData = data.map(item => item.new_count);
 
-                                        const usedStockData = data.map(item => {
+                      /*                  const usedStockData = data.map(item => {
                                             const total = item.new + item.used;
                                             return {
                                                 y: total === 0 ? 0.0001 : item.used,
@@ -512,17 +515,8 @@
                                                 originalQty: item.new
                                             };
                                         });
-
-                                        const totalLabels = data.map(item => {
-                                            return {
-                                                y: 100, // Always on top of stacked column
-                                             //   dataLabel: `${item.edp_count} units`,
-                                                edp_count: item.edp_count
-                                            };
-                                        });
-
-
-                                        drawChart(categories, usedStockData, newStockData, totalLabels);
+                        */
+                                        drawChart(categories, usedStockData, newStockData);
                                     },
                                     error: function (xhr) {
                                         alert("Failed to load chart data");
@@ -530,7 +524,10 @@
                                 });
                             }
 
-                            function drawChart(categories, usedStockData, newStockData, totalLabels) {
+                            function drawChart(categories, usedStockData, newStockData) {
+
+                                console.log(categories+' '+usedStockData +''+newStockData);
+
                                 Highcharts.chart('stock-100-chart', {
                                     chart: {
                                         type: 'column',
@@ -574,10 +571,10 @@
                                                 tooltip += `<div style="margin-left: 10px; color: #888;"><i>This section has no quantity.</i></div>`;
                                             } else {
                                                  this.points.forEach(point => {
-                                                   // const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
-                                                    tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b></div>`;
+                                                    const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
+                                                    tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b> units (${percentage}%)</div>`;
                                                 });
-                                                tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)}</b>`;
+                                                tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)} units</b>`;
                                             }
                                             return tooltip;
                                         }
@@ -589,8 +586,8 @@
                                                 enabled: true,
                                                 formatter: function () {
                                                     if (this.point.originalQty === 0) return null;
-                                                    //const percentage = this.percentage.toFixed(1);
-                                                    return `${formatIndianNumber(this.point.originalQty)}`;
+                                                    const percentage = this.percentage.toFixed(1);
+                                                    return `${formatIndianNumber(this.point.originalQty)} (${percentage}%)`;
                                                 },
                                                 style: {
                                                     fontSize: '10px',

@@ -207,6 +207,7 @@ class DashboardController extends Controller
 
     public function getSectionWiseStock(Request $request)
     {
+       /*
         $location = $request->input('location');
         $query = Stock::select('section', 'location_name', 'new_spareable', 'used_spareable');
         if (!empty($request->location)) {
@@ -224,6 +225,23 @@ class DashboardController extends Controller
         })->values();
 
         return response()->json($combined);
+        */
+
+        $data = DB::table('stocks')
+                ->select(
+                    'section',
+                    DB::raw("COUNT(CASE WHEN new_spareable > 0 OR used_spareable > 0 THEN 1 END) AS edp_count"),
+                    DB::raw("COUNT(CASE WHEN new_spareable > 0 THEN 1 END) AS new"),
+                    DB::raw("COUNT(CASE WHEN used_spareable > 0 THEN 1 END) AS used")
+                )
+                ->when($request->location, function ($query, $location) {
+                    $query->where('location_name', $location);
+                })
+                ->groupBy('section')
+                ->get();
+        
+            return response()->json($data);
+        dd($data);
     }
 
 }
