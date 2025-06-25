@@ -586,7 +586,9 @@ class AdminStockController extends Controller
             return response()->json(['success' => false, 'error' => 'EDP Code is missing'], 400);
         }
 
-        $edp = Edp::where('id', $edpCode)->first();
+        $edp = EDP::where('id', $edpCode)
+                    ->orWhere('description', 'like', "%$edpCode%")
+                    ->first();
 
         if (!$edp) {
             return response()->json(['success' => false, 'error' => 'EDP not found'], 404);

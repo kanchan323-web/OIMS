@@ -1996,7 +1996,7 @@ class RequestStockController extends Controller
 
         // return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
          $pdf = PDF::loadView('pdf.incomming_reqPdf',compact('requestStock','issue_details'));
-         return $pdf->download('reciever_invoice.pdf');
+         return $pdf->download('Issuer_Invoice.pdf');
     }
 
      public function raisedInvoicePdfDownload(Request $request, $id){
@@ -2034,6 +2034,6 @@ class RequestStockController extends Controller
 
         // return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
          $pdf = PDF::loadView('pdf.raised_reqPdf',compact('requestStock','issue_details'));
-         return $pdf->download('issuer_invoice.pdf');
+         return $pdf->download('Reciever_Invoice.pdf');
     }
 }
