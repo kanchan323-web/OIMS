@@ -493,10 +493,7 @@
                                     method: 'GET',
                                     data: { location: location },
                                     success: function (data) {
-                                        //console.log('ddd'+data);
-
                                         const categories = data.map(item => item.section);
-
                                         const usedStockData = data.map(item => {
                                             const total = item.new + item.used;
                                             return {
@@ -522,8 +519,6 @@
                                                 edp_count: item.edp_count
                                             };
                                         });
-
-
                                         drawChart(categories, usedStockData, newStockData, totalLabels);
                                     },
                                     error: function (xhr) {
@@ -568,7 +563,6 @@
                                             let totalQty = 0;
                                             let tooltip = '';
                                             let totalEdp = 0;
-
                                             this.points.forEach(point => {
                                                 console.log(point.point.edp_count);
                                                 totalQty += point.point.originalQty;

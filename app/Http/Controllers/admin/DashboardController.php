@@ -239,9 +239,7 @@ class DashboardController extends Controller
                 })
                 ->groupBy('section')
                 ->get();
-        
             return response()->json($data);
-        dd($data);
     }
 
 }
