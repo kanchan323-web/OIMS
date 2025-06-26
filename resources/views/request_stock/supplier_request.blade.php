@@ -83,6 +83,7 @@
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
                                     <th>Request Id</th>
+                                    <th>DN No</th>
                                     <th>Supplier Location </th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
@@ -97,6 +98,7 @@
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
                                                                                     <td>{{ $stockdata->RID }}</td>
+                                                                                    <td>{{ $stockdata->dn_no }}</td>
                                                                                     <td>{{ $stockdata->location_name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
@@ -170,28 +172,20 @@
                         <form id="mainModalForm">
                             <input type="hidden" id="request_id" name="request_id">
                             <div class="form-row">
-                                {{-- <div class="col-md-6 mb-3">
-                                    <label for="">Requester Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Requester Name"
-                                        id="location_id" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter EDP Code
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="">Requester Rig Name</label>
-                                    <input type="text" class="form-control" placeholder="Requester Rig Name" name=""
-                                        id="requester_Id" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Requester Rig Name
-                                    </div>
-                                </div> --}}
-                                <div class="col-md-4 mb-4">
-                                    <label for="">EDP Code</label>
-                                    <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
+                                 <div class="col-md-4 mb-4">
+                                    <label for="">Request ID</label>
+                                    <input type="text" class="form-control" name="" placeholder="Request ID" id="r_id"
                                         readonly>
                                     <div class="invalid-feedback">
-                                        Enter EDP Code
+                                        Enter Request ID
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">DN No</label>
+                                    <input type="text" class="form-control" name="" placeholder="DN No" id="dn_id"
+                                        readonly>
+                                    <div class="invalid-feedback">
+                                        Enter DN No
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
@@ -202,21 +196,28 @@
                                         Supplier Name
                                     </div>
                                 </div>
-                                <div class="col-md-4 mb-4">
-                                    <label for="">Supplier Location Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Supplier Location Name"
-                                        id="Supplier_Location_Name" readonly>
+                                 <div class="col-md-4 mb-4">
+                                    <label for="">EDP Code</label>
+                                    <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
+                                        readonly>
                                     <div class="invalid-feedback">
-                                        Supplier Location Name
+                                        Enter EDP Code
                                     </div>
                                 </div>
-
                                 <div class="col-md-4 mb-4">
                                     <label for="category">Category</label>
                                     <input type="text" class="form-control" placeholder="Category" id="category_id"
                                         name="category" readonly>
                                     <div class="invalid-feedback">
                                         Enter Category Name
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Supplier Location Name</label>
+                                    <input type="text" class="form-control" name="" placeholder="Supplier Location Name"
+                                        id="Supplier_Location_Name" readonly>
+                                    <div class="invalid-feedback">
+                                        Supplier Location Name
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
@@ -242,23 +243,7 @@
                                     <div class="invalid-feedback">
                                         Enter Description
                                     </div>
-                                </div>
-                                <div class="col-md-4 mb-4">
-                                    <label for="">New </label>
-                                    <input type="text" class="form-control" placeholder="New Spearable "
-                                        name="new_spareable" id="new_spearable" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter New
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-4">
-                                    <label for="">Used </label>
-                                    <input type="text" class="form-control" placeholder="Used Spareable"
-                                        name="used_spareable" id="used_spareable" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Used
-                                    </div>
-                                </div>
+                                </div>  
                                 <div class="col-md-4 mb-4">
                                     <label for="">Supplier Total Quantity</label>
                                     <input type="text" class="form-control" placeholder="Supplier Total Quantity"
@@ -284,7 +269,22 @@
                                         Enter Supplied new materials
                                     </div>
                                 </div>
-
+                                <div class="col-md-4 mb-4">
+                                    <label for="">New </label>
+                                    <input type="text" class="form-control" placeholder="New Spearable "
+                                        name="new_spareable" id="new_spearable" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter New
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">Used </label>
+                                    <input type="text" class="form-control" placeholder="Used Spareable"
+                                        name="used_spareable" id="used_spareable" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Used
+                                    </div>
+                                </div>
                                 <div class="col-md-4 mb-4">
                                     <label for="">Status </label>
                                     <input type="text" class="form-control" name="status" id="status" readonly>
@@ -646,8 +646,10 @@
                                 $(".acceptanc_button").hide();
                             }
                             //  711 working here
-
+                            
                             $("#request_id").val(stock.id ?? '');
+                            $("#r_id").val(stock.RID ?? '');
+                            $("#dn_id").val(stock.dn_no ?? '');
                             $("#location_id").val(stock.requester_name ?? '');
                             $("#Supplier_Location_Id").val(stock.supplier_name ?? '');
                             $("#requester_Id").val(stock.requesters_rig ?? '');

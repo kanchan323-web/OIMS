@@ -96,6 +96,7 @@
 
                                     <th>Sr.No</th>
                                     <th>Request ID</th>
+                                    <th>DN No</th>
                                     <th>Requester Location</th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
@@ -110,6 +111,7 @@
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
                                                                                     <td>{{ $stockdata->RID }}</td>
+                                                                                    <td>{{ $stockdata->dn_no }}</td>
                                                                                     <td>{{ $stockdata->Location_Name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
@@ -206,11 +208,19 @@
                             <input type="hidden" id="request_id" name="request_id">
                             <div class="form-row">
                                 <div class="col-md-4 mb-4">
-                                    <label for="">EDP Code</label>
-                                    <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
+                                    <label for="">Request ID</label>
+                                    <input type="text" class="form-control" name="" placeholder="Request ID" id="r_id"
                                         readonly>
                                     <div class="invalid-feedback">
-                                        Enter EDP Code
+                                        Enter Request ID
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="">DN No</label>
+                                    <input type="text" class="form-control" name="" placeholder="DN No" id="dn_id"
+                                        readonly>
+                                    <div class="invalid-feedback">
+                                        Enter DN No
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
@@ -222,6 +232,22 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
+                                    <label for="">EDP Code</label>
+                                    <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
+                                        readonly>
+                                    <div class="invalid-feedback">
+                                        Enter EDP Code
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <label for="category">Category</label>
+                                    <input type="text" class="form-control" placeholder="Category" id="category_id"
+                                        name="category" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Category Name
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
                                     <label for="">Requester Location Name</label>
                                     <input type="text" class="form-control" placeholder="Requester Location Name" name=""
                                         id="requester_Id" readonly>
@@ -229,38 +255,6 @@
                                     <input type="hidden" class="form-control" name="" placeholder="Supplier Location Name" id="Supplier_Location_Name" readonly>
                                     <div class="invalid-feedback">
                                         Enter Requester Location Name
-                                    </div>
-                                </div>
-                                {{-- <div class="col-md-6 mb-3">
-                                    <label for="">Supplier Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Supplier Name"
-                                        id="Supplier_Location_Id" readonly>
-                                    <div class="invalid-feedback">
-                                        Supplier Name
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="col-md-6 mb-3">
-                                    <label for="">Supplier Rig Name</label>
-                                    <input type="text" class="form-control" name="" placeholder="Supplier Rig Name"
-                                        id="Supplier_Location_Name" readonly>
-                                    <div class="invalid-feedback">
-                                        Supplier Rig Name
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="col-md-6 mb-3">
-                                    <label for="">EDP Code</label>
-                                    <input type="text" class="form-control" name="" placeholder="EDP Code" id="EDP_Code"
-                                        readonly>
-                                    <div class="invalid-feedback">
-                                        Enter EDP Code
-                                    </div>
-                                </div> --}}
-                                <div class="col-md-4 mb-4">
-                                    <label for="category">Category</label>
-                                    <input type="text" class="form-control" placeholder="Category" id="category_id"
-                                        name="category" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Category Name
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
@@ -303,6 +297,13 @@
                                         Enter Requested Quantity
                                     </div>
                                 </div>
+                                 <div class="col-md-4 mb-4">
+                                    <label for="">Status </label>
+                                    <input type="text" class="form-control" name="status" id="status" readonly>
+                                    <div class="invalid-feedback">
+                                        Enter Status
+                                    </div>
+                                </div>
                                 <div class="col-md-4 mb-4">
                                     <label for="">New </label>
                                     <input type="text" class="form-control" placeholder="New Spearable "
@@ -311,20 +312,12 @@
                                         Enter New
                                     </div>
                                 </div>
-
                                 <div class="col-md-4 mb-4">
                                     <label for="">Used </label>
                                     <input type="text" class="form-control" placeholder="Used Spareable"
                                         name="used_spareable" id="used_spareable" readonly>
                                     <div class="invalid-feedback">
                                         Enter Used
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-4">
-                                    <label for="">Status </label>
-                                    <input type="text" class="form-control" name="status" id="status" readonly>
-                                    <div class="invalid-feedback">
-                                        Enter Status
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-4">
@@ -767,6 +760,8 @@
 
                         if (typeof stock === "object") {
                             $("#request_id").val(stock.id ?? '');
+                            $("#r_id").val(stock.RID ?? '');
+                            $("#dn_id").val(stock.dn_no ?? '');
                             $("#location_id").val(stock.requester_name ?? '');
                             $("#Supplier_Location_Id").val(stock.supplier_name ?? '');
                             $("#requester_Id").val(stock.requesters_rig ?? '');
