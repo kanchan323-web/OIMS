@@ -1,6 +1,20 @@
 @extends('layouts.frontend.layout')
 @section('page-content')
 
+<style>
+
+.badge-custom-blue {
+    background-color: #70a9ff !important;
+    color: white !important;
+    border: none !important;
+}
+
+.badge-custom-blue:hover {
+    background-color: #5598f0 !important; /* darker blue on hover */
+    color: white !important;
+}
+</style>
+
     <div class="content-page">
         <div class="container-fluid">
             <div class="row">
@@ -116,9 +130,9 @@
                                                                                     <td><span class="badge {{ $badgeClass }}">{{ $stockdata->status_name }}</span></td>
                                                                                     <td>{{ $stockdata->updated_at->format('d-m-Y') }}</td>
                                                                                     <td>
-                                                                                        <a href="{{ route('raisedInvoice', $stockdata->id) }}" class="badge badge-warning mr-2" data-toggle="tooltip" 
+                                                                                        <a href="{{ route('raisedInvoice', $stockdata->id) }}" class="badge badge-custom-blue mr-2" data-toggle="tooltip" 
                                                                                            data-placement="top" data-original-title="Download Invoice"
-                                                                                            target="_blank" id="downloadPdf" style="color: #70a9ff">
+                                                                                            target="_blank" id="downloadPdf">
                                                                                             <i class="fas fa-file-pdf mr-1"></i>
                                                                                         </a>
                                                                                         <a class="badge badge-success mr-2" data-toggle="modal"
@@ -646,7 +660,7 @@
                                 $(".acceptanc_button").hide();
                             }
                             //  711 working here
-                            
+
                             $("#request_id").val(stock.id ?? '');
                             $("#r_id").val(stock.RID ?? '');
                             $("#dn_id").val(stock.dn_no ?? '');
