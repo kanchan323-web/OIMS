@@ -587,8 +587,8 @@
                                                 enabled: true,
                                                 formatter: function () {
                                                     if (this.point.originalQty === 0) return null;
-                                                    //const percentage = this.percentage.toFixed(1);
-                                                    return `${formatIndianNumber(this.point.originalQty)}`;
+                                                    const percentage = this.percentage.toFixed(1);
+                                                    return `${formatIndianNumber(this.point.originalQty)} (${percentage}%)`;
                                                 },
                                                 style: {
                                                     fontSize: '10px',
