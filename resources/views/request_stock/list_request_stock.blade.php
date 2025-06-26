@@ -1,5 +1,19 @@
 @extends('layouts.frontend.layout')
 @section('page-content')
+
+<style>
+.badge-custom-blue {
+    background-color: #70a9ff !important;
+    color: white !important;
+    border: none !important;
+}
+
+.badge-custom-blue:hover {
+    background-color: #5598f0 !important; /* darker blue on hover */
+    color: white !important;
+}
+</style>
+
     <div class="content-page">
         <div class="container-fluid">
             <div class="row">
@@ -136,7 +150,7 @@
                                                                                     </td>
                                                                                     <td class="text-center">
                                                                                         <div class="d-flex justify-content-center align-items-center" style="gap: 10px;">
-                                                                                            <a href="{{ route('incomingInvoice', $stockdata->id) }}" class="badge badge-warning mr-2" data-toggle="tooltip" 
+                                                                                            <a href="{{ route('incomingInvoice', $stockdata->id) }}" class="badge badge-custom-blue mr-2" data-toggle="tooltip" 
                                                                                                 data-placement="top" data-original-title="Download Invoice"
                                                                                                     target="_blank" id="downloadPdf" style="color: #70a9ff">
                                                                                                     <i class="fas fa-file-pdf mr-1"></i>
