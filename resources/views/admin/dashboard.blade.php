@@ -493,7 +493,7 @@
                                     method: 'GET',
                                     data: { location: location },
                                     success: function (data) {
-                                        console.log('ddd'+data);
+                                        //console.log('ddd'+data);
 
                                         const categories = data.map(item => item.section);
 
@@ -501,7 +501,8 @@
                                             const total = item.new + item.used;
                                             return {
                                                 y: total === 0 ? 0.0001 : item.used,
-                                                originalQty: item.used
+                                                originalQty: item.used,
+                                                edp_count: item.edp_count
                                             };
                                         });
 
@@ -509,14 +510,15 @@
                                             const total = item.new + item.used;
                                             return {
                                                 y: total === 0 ? 0.0001 : item.new,
-                                                originalQty: item.new
+                                                originalQty: item.new,
+                                                edp_count: item.edp_count
                                             };
                                         });
 
                                         const totalLabels = data.map(item => {
+                                            console.log(item.edp_count);
                                             return {
-                                                y: 100, // Always on top of stacked column
-                                             //   dataLabel: `${item.edp_count} units`,
+                                                y: 100, 
                                                 edp_count: item.edp_count
                                             };
                                         });
@@ -565,9 +567,12 @@
                                         formatter: function () {
                                             let totalQty = 0;
                                             let tooltip = '';
+                                            let totalEdp = 0;
 
                                             this.points.forEach(point => {
+                                                console.log(point.point.edp_count);
                                                 totalQty += point.point.originalQty;
+                                                totalEdp = point.point.edp_count;
                                             });
 
                                             if (totalQty === 0) {
@@ -577,7 +582,7 @@
                                                    // const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
                                                     tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b></div>`;
                                                 });
-                                                tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)}</b>`;
+                                                tooltip += `<br/><b>Total EDP: ${formatIndianNumber(totalEdp)}</b>`;
                                             }
                                             return tooltip;
                                         }
@@ -606,7 +611,7 @@
                                             color: '#F4AAAA'
                                         },
                                         {
-                                            name: 'New',
+                                            name: 'Count of New',
                                             data: newStockData,
                                             color: '#32BDEA'
                                         }
