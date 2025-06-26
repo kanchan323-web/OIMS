@@ -564,7 +564,6 @@
                                             let tooltip = '';
                                             let totalEdp = 0;
                                             this.points.forEach(point => {
-                                                console.log(point.point.edp_count);
                                                 totalQty += point.point.originalQty;
                                                 totalEdp = point.point.edp_count;
                                             });
@@ -573,10 +572,10 @@
                                                 tooltip += `<div style="margin-left: 10px; color: #888;"><i>This section has no quantity.</i></div>`;
                                             } else {
                                                  this.points.forEach(point => {
-                                                   // const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
-                                                    tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b></div>`;
+                                                    const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
+                                                    tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b> units (${percentage}%)</div>`;
                                                 });
-                                                tooltip += `<br/><b>Total EDP: ${formatIndianNumber(totalEdp)}</b>`;
+                                                tooltip += `<br/><b>Total EDP: ${formatIndianNumber(totalEdp)} units</b>`;
                                             }
                                             return tooltip;
                                         }
@@ -605,7 +604,7 @@
                                             color: '#F4AAAA'
                                         },
                                         {
-                                            name: 'Count of New',
+                                            name: 'New',
                                             data: newStockData,
                                             color: '#32BDEA'
                                         }

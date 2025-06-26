@@ -168,7 +168,7 @@ class DashboardController extends Controller
 
         //   dd($results  );
 
-
+/*
         $results = Stock::select()
         ->where('rig_id', $rig_id)
         ->get()
@@ -181,7 +181,17 @@ class DashboardController extends Controller
                 'used' => $items->sum('used_spareable'),
             ];
         })->values();
-
+*/
+        $combinedSections = DB::table('stocks')
+            ->select(
+                'section',
+                DB::raw("COUNT(CASE WHEN new_spareable > 0 OR used_spareable > 0 THEN 1 END) AS edp_count"),
+                DB::raw("COUNT(CASE WHEN new_spareable > 0 THEN 1 END) AS new"),
+                DB::raw("COUNT(CASE WHEN used_spareable > 0 THEN 1 END) AS used")
+            )
+            ->where('rig_id', $rig_id)
+            ->groupBy('section')
+            ->get();
 
                 // Testing
 
@@ -200,7 +210,6 @@ class DashboardController extends Controller
                 'Decline_raised',
                 'Approve_raised',
                 'Query_raised',
-
                 'incomingChartData',
                 'raisedChartData',
                 'combinedSections',

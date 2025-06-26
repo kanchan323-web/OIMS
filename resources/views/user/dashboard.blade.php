@@ -351,8 +351,8 @@
                                                 tooltip: {
                                                     formatter: function () {
                                                         return `<br/>
-                                                                                                ${this.series.name}: ${this.y}<br/>
-                                                                                                Total: ${this.point.stackTotal}`;
+                                                            ${this.series.name}: ${this.y}<br/>
+                                                            Total: ${this.point.stackTotal}`;
                                                     }
                                                 }
                                             });
@@ -459,15 +459,16 @@
                                             return res;
                                         }
 
+                                        //start Stock Distribution by Section (New vs Used)
                                         const sectionData = @json($combinedSections);
-
                                         const categories = sectionData.map(item => item.section);
 
                                         const usedStockData = sectionData.map(item => {
                                             const total = item.new + item.used;
                                             return {
                                                 y: total === 0 ? 0.0001 : item.used,  // prevent zero-stack issue
-                                                originalQty: item.used
+                                                originalQty: item.used,
+                                                edp_count: item.edp_count
                                             };
                                         });
 
@@ -475,7 +476,8 @@
                                             const total = item.new + item.used;
                                             return {
                                                 y: total === 0 ? 0.0001 : item.new,  // prevent zero-stack issue
-                                                originalQty: item.new
+                                                originalQty: item.new,
+                                                edp_count: item.edp_count
                                             };
                                         });
 
@@ -513,9 +515,11 @@
                                                 formatter: function () {
                                                     let totalQty = 0;
                                                     let tooltip = ``;
+                                                    let totalEdp = 0;
 
                                                     this.points.forEach(point => {
                                                         totalQty += point.point.originalQty;
+                                                        totalEdp = point.point.edp_count;
                                                     });
 
                                                     if (totalQty === 0) {
@@ -525,7 +529,7 @@
                                                             const percentage = ((point.point.originalQty / totalQty) * 100).toFixed(1);
                                                             tooltip += `<div style="margin-left: 10px">${point.series.name}: <b>${formatIndianNumber(point.point.originalQty)}</b> units (${percentage}%)</div>`;
                                                         });
-                                                        tooltip += `<br/><b>Total: ${formatIndianNumber(totalQty)} units</b>`;
+                                                        tooltip += `<br/><b>Total EDP: ${formatIndianNumber(totalEdp)} units</b>`;
                                                     }
 
                                                     return tooltip;
