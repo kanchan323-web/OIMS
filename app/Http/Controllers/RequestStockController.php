@@ -1994,9 +1994,10 @@ class RequestStockController extends Controller
             ->orderBy('updated_at', 'desc') 
             ->first();
 
+         $fileName = 'IssuerInvoice_'.$requestStock->RID.'.pdf';     
         // return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
          $pdf = PDF::loadView('pdf.incomming_reqPdf',compact('requestStock','issue_details'));
-         return $pdf->download('Issuer_Invoice.pdf');
+          return $pdf->download($fileName);
     }
 
      public function raisedInvoicePdfDownload(Request $request, $id){
@@ -2031,9 +2032,10 @@ class RequestStockController extends Controller
             ->where('request_id', $id)
             ->orderBy('updated_at', 'desc') 
             ->first();
-
+        
+        $fileName = 'RecieverInvoice_'.$requestStock->RID.'.pdf';  
         // return view('pdf.raised_reqPdf',compact('requestStock','issue_details'));
          $pdf = PDF::loadView('pdf.raised_reqPdf',compact('requestStock','issue_details'));
-         return $pdf->download('Reciever_Invoice.pdf');
+         return $pdf->download($fileName);
     }
 }
