@@ -554,12 +554,12 @@
                                             },
                                             series: [
                                                 {
-                                                    name: 'Used',
+                                                    name: 'Count of Used',
                                                     data: usedStockData,
                                                     color: '#F4AAAA'
                                                 },
                                                 {
-                                                    name: 'New',
+                                                    name: 'Count of New',
                                                     data: newStockData,
                                                     color: '#32BDEA'
                                                 }
