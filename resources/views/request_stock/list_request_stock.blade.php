@@ -125,7 +125,7 @@
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
                                                                                     <td>{{ $stockdata->RID }}</td>
-                                                                                    <td>{{ $stockdata->dn_no }}</td>
+                                                                                    <td>{{ $stockdata->dn_no ?? '-'}}</td>
                                                                                     <td>{{ $stockdata->Location_Name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
@@ -705,7 +705,7 @@
                                 // Append row data to table
                                 tableBody.append(`<tr><td>${index + 1}</td>
                                                         <td>${stockdata.RID}</td>
-                                                        <td>${stockdata.dn_no}</td>
+                                                        <td>${stockdata.dn_no ?? '-'}</td>
                                                         <td>${stockdata.Location_Name}</td>
                                                         <td>${stockdata.edp_code}</td>
                                                         <td>${stockdata.description}</td>

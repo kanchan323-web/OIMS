@@ -112,7 +112,7 @@
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
                                                                                     <td>{{ $stockdata->RID }}</td>
-                                                                                    <td>{{ $stockdata->dn_no }}</td>
+                                                                                    <td>{{ $stockdata->dn_no ?? '-'}}</td>
                                                                                     <td>{{ $stockdata->location_name }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
@@ -582,7 +582,7 @@
                                                                 <tr>
                                                                     <td>${index + 1}</td>
                                                                     <td>${stockdata.RID}</td>
-                                                                    <td>${stockdata.dn_no}</td>
+                                                                    <td>${stockdata.dn_no ?? '-'}</td>
                                                                     <td>${stockdata.location_name}</td>
                                                                     <td>${stockdata.edp_code}</td>
                                                                         <td>${stockdata.description}</td>
