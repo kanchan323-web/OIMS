@@ -107,6 +107,7 @@
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
                                     <th>Request ID</th>
+                                    <th>DN No</th>
                                     <th>EDP Code</th>
                                     <th>Description</th>
                                     <th>Receiver</th>
@@ -123,8 +124,8 @@
                                                         @if(!in_array($stockdata->user_id, $datarig))
                                                                                 <tr>
                                                                                     <td>{{ $index + 1 }}</td>
-
                                                                                     <td>{{ $stockdata->RID }}</td>
+                                                                                     <td>{{ $stockdata->dn_no ?? '-' }}</td>
                                                                                     <td>{{ $stockdata->edp_code }}</td>
                                                                                     <td>{{ $stockdata->description }}</td>
                                                                                     <td>{{ $stockdata->reciever }}</td>
@@ -694,6 +695,7 @@
                                 // Append row data to table
                                 tableBody.append(`<tr><td>${index + 1}</td>
                                                        <td>${stockdata.RID}</td>
+                                                       <td>${stockdata.dn_no ?? '-'}</td>
                                                        <td>${stockdata.edp_code}</td>
                                                        <td>${stockdata.description}</td>
                                                        <td>${stockdata.reciever}</td>
