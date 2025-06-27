@@ -562,8 +562,13 @@
                         let tableBody = $("#stockTable");
                         tableBody.empty();
 
+                        const raisedInvoiceUrl = "{{ route('raisedInvoice', ['id' => '__ID__']) }}";
+
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
+
+                                let finalUrl = raisedInvoiceUrl.replace('__ID__', stockdata.id);
+
                                 let badgeClass = {
                                     'Pending': 'badge-warning',
                                     'Approve': 'badge-success',
@@ -577,12 +582,18 @@
                                                                 <tr>
                                                                     <td>${index + 1}</td>
                                                                     <td>${stockdata.RID}</td>
+                                                                    <td>${stockdata.dn_no}</td>
                                                                     <td>${stockdata.location_name}</td>
                                                                     <td>${stockdata.edp_code}</td>
                                                                         <td>${stockdata.description}</td>
                                                                     <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
                                                                     <td>${stockdata.date ? stockdata.date : '-'}</td>
                                                                     <td>
+                                                                        <a href="${finalUrl}" class="badge badge-custom-blue mr-2" data-toggle="tooltip" 
+                                                                            data-placement="top" data-original-title="Download Invoice"
+                                                                            target="_blank" id="downloadPdf">
+                                                                            <i class="fas fa-file-pdf mr-1"></i>
+                                                                        </a>
                                                                         <a class="badge badge-success mr-2" data-toggle="modal"
                                                                                 onclick="RequestStockData(${stockdata.id})"
                                                                                 data-target=".bd-example-modal-xl" data-placement="top"

@@ -678,9 +678,11 @@
                     success: function (response) {
                         let tableBody = $("#stockTable"); // Table inside modal
                         tableBody.empty(); // Clear old data
+                        const incomingInvoiceUrl = "{{ route('incomingInvoice', ['id' => '__ID__']) }}";
 
                         if (response.data && response.data.length > 0) {
                             $.each(response.data, function (index, stockdata) {
+                                let finalUrl = incomingInvoiceUrl.replace('__ID__', stockdata.id);
                                 // Define status colors for different statuses
                                 let statusColors = {
                                     'Pending': 'badge-warning',
@@ -703,12 +705,19 @@
                                 // Append row data to table
                                 tableBody.append(`<tr><td>${index + 1}</td>
                                                         <td>${stockdata.RID}</td>
+                                                        <td>${stockdata.dn_no}</td>
                                                         <td>${stockdata.Location_Name}</td>
                                                         <td>${stockdata.edp_code}</td>
                                                         <td>${stockdata.description}</td>
                                                         <td>${stockdata.creation_date}</td>
                                                         <td><span class="badge ${badgeClass}">${stockdata.status_name}</span></td>
-                                                        <td><a class="badge badge-success mr-2" data-toggle="modal"
+                                                        <td>
+                                                            <a href="${finalUrl}" class="badge badge-custom-blue mr-2" data-toggle="tooltip" 
+                                                                data-placement="top" data-original-title="Download Invoice"
+                                                                    target="_blank" id="downloadPdf" style="color: #70a9ff">
+                                                                    <i class="fas fa-file-pdf mr-1"></i>
+                                                            </a>
+                                                            <a class="badge badge-success mr-2" data-toggle="modal"
                                                                 onclick="RequestStockData(${stockdata.id})"
                                                                 data-target=".bd-example-modal-xl" data-placement="top"
                                                                 title="Supplier Request" href="#"><i class="ri-arrow-right-circle-line"></i>
