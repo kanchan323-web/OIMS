@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Response;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use DataTables;
 
 class AdminStockController extends Controller
 {
@@ -73,7 +74,55 @@ class AdminStockController extends Controller
         return view('admin.stock.list_stock', compact('data', 'moduleName', 'stockData', 'datarig'));
     }
 
+    public function stock_list_latest(Request $request)
+    {
+        $moduleName = "Stock";
 
+        if ($request->ajax()) {
+            $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+            ->select('stocks.id','stocks.location_id','stocks.location_name','stocks.qty','stocks.measurement','stocks.new_spareable',
+                'used_spareable','edps.edp_code','edps.category','edps.description','edps.section')
+            ->orderBy('stocks.updated_at', 'desc');
+
+
+            if ($request->location_name) {
+                $data->where('stocks.location_name', 'like', '%' . $request->location_name . '%');
+            }
+
+            if ($request->category) {
+                $data->where('stocks.category', 'like', '%' . $request->category . '%');
+            }
+
+            if ($request->section) {
+                $data->where('stocks.section', 'like', '%' . $request->section . '%');
+            }
+
+            if ($request->edp_code) {
+                $data->where('edps.edp_code', 'like', '%' . $request->edp_code . '%');
+            }
+        
+            $data->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('location_name', function ($row) {
+                        return $row->location_name . ' (' . $row->location_id . ')';
+                    })
+                ->editColumn('new_spareable', function ($row) {
+                        return IND_money_format($row->new_spareable);
+                    })
+                ->editColumn('used_spareable', function ($row) {
+                        return IND_money_format($row->used_spareable);
+                    })
+                ->editColumn('qty', function ($row) {
+                        return IND_money_format($row->qty) . '<span class="text-muted small">'.' ' . $row->measurement . '</span>';
+                    })
+                ->rawColumns(['qty'])
+                ->make(true);
+        }
+
+        return view('admin.stock.latest_stock_list', compact('moduleName'));
+    }
 
     public function stock_filter(Request $request)
     {
