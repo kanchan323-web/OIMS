@@ -113,6 +113,8 @@ Route::middleware(['admin.auth','admin.session'])->group(function () {
         Route::get('/stock-list/pdf', [AdminStockController::class, 'downloadPdf'])->name('admin.stock_list_pdf');
         Route::get('/stock-list/excel', [AdminStockController::class, 'downloadExcel'])->name('admin.stock_list_excel');
 
+        Route::get('/stock_list_latest', [AdminStockController::class, 'stock_list_latest'])->name('admin.stock_list_latest');
+
         //Request Stock
         Route::prefix('request-stock')->group(function () {
             Route::get('/request_stockList', [AdminRequestStockController::class, 'RequestStockList'])->name('admin.stock_list.get');
