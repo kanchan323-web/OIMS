@@ -91,7 +91,7 @@
 
                 <div class="col-lg-12">
                     <div class="table-responsive rounded mb-3">
-                        <table class="data-tables table mb-0 tbl-server-info">
+                        <table class="data-tables table mb-0 tbl-server-info" id="example">
                             <thead class="bg-white text-uppercase">
                                 <tr class="ligth ligth-data">
                                     <th>Sr.No</th>
@@ -104,6 +104,19 @@
                                     <th>Quantity</th>
                                     <th>Date Updated</th>
                                     <th>Action</th>
+                                </tr>
+                                <tr>
+                                    <!-- Filter textboxes under headers -->
+                                    <th></th>
+                                    <th></th>
+                                    <th><input type="text" placeholder="Search Case ID" /></th>
+                                    <th><input type="text" placeholder="Search Client Name" /></th>
+                                    <th><input type="text" placeholder="Search Status" /></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody class="ligth-body" id="stockTable">
@@ -426,6 +439,25 @@
                 });
             });
         });
+
+    $(document).ready(function() {
+        var table = $('#example').DataTable();
+        // Apply search only on Client Name and Status columns
+        $('#example thead tr:eq(1) th').each(function(i) {
+            var input = $('input', this);
+            if (input.length) {
+            input.on('keyup change', function() {
+                if (table.column(i).search() !== this.value) {
+                table
+                    .column(i)
+                    .search(this.value)
+                    .draw();
+                }
+            });
+            }
+        });
+    });
+
 
 
 
