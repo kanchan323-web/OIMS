@@ -79,31 +79,43 @@ class AdminStockController extends Controller
         $moduleName = "Stock";
 
         if ($request->ajax()) {
-            $data = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
-            ->select('stocks.id','stocks.location_id','stocks.location_name','stocks.qty','stocks.measurement','stocks.new_spareable',
-                'used_spareable','edps.edp_code','edps.category','edps.description','edps.section')
-            ->orderBy('stocks.updated_at', 'desc');
 
+            $query = Stock::join('edps', 'stocks.edp_code', '=', 'edps.id')
+                    ->select(
+                        'stocks.id',
+                        'stocks.location_id',
+                        'stocks.location_name',
+                        'stocks.qty',
+                        'stocks.measurement',
+                        'stocks.new_spareable',
+                        'stocks.used_spareable',
+                        'edps.edp_code',
+                        'edps.category',
+                        'edps.description',
+                        'edps.section'
+                    )->orderBy('stocks.updated_at', 'desc');
 
-            if ($request->location_name) {
-                $data->where('stocks.location_name', 'like', '%' . $request->location_name . '%');
-            }
+                if ($request->filled('location_name')) {
+                    $query->where(function ($q) use ($request) {
+                        $q->where('stocks.location_name', 'like', '%' . $request->location_name . '%')
+                        ->orWhere('stocks.location_id', 'like', '%' . $request->location_name . '%');
+                    });
+                }
+                if ($request->filled('category')) {
+                    $query->where('edps.category', 'like', '%' . $request->category . '%');
+                }
+                if ($request->filled('section')) {
+                    $query->where('edps.section', 'like', '%' . $request->section . '%');
+                }
+                if ($request->filled('edp_code')) {
+                    $query->where('edps.edp_code', 'like', '%' . $request->edp_code . '%');
+                }
+                if ($request->filled('description')) {
+                    $query->where('edps.description', 'like', '%' . $request->description . '%');
+                }
+                $data = $query->get(); 
 
-            if ($request->category) {
-                $data->where('stocks.category', 'like', '%' . $request->category . '%');
-            }
-
-            if ($request->section) {
-                $data->where('stocks.section', 'like', '%' . $request->section . '%');
-            }
-
-            if ($request->edp_code) {
-                $data->where('edps.edp_code', 'like', '%' . $request->edp_code . '%');
-            }
-        
-            $data->get();
-
-            return DataTables::of($data)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->editColumn('location_name', function ($row) {
                         return $row->location_name . ' (' . $row->location_id . ')';
@@ -767,6 +779,10 @@ class AdminStockController extends Controller
 
     public function downloadPdf(Request $request)
     {
+
+       // echo $request->get('location_name');;
+      //  die;
+
         $query = Stock::query()
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code')

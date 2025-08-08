@@ -30,7 +30,7 @@
 
                     <div class="col-lg-12">
                         <div class="table-responsive rounded mb-3">
-                            <table class="table  tbl-server-info" id="edpTable11">
+                            <table class="table  tbl-server-info" id="adminStockTable">
                                 <thead class="bg-white text-uppercase">
                                     <tr>
                                         <th>Sr.No</th>
@@ -46,13 +46,30 @@
                                     </tr>
                                      <tr>
                                         <th></th> <!-- For index, no input -->
-                                        <th><input type="text" placeholder="Search Location" /></th>
-                                        <th><input type="text" placeholder="Search EDP" /></th>
-                                        <th><input type="text" placeholder="Search Category" /></th>
-                                        <th><input type="text" placeholder="Search Section" /></th>
-                                        <th><input type="text" placeholder="Search Description" /></th>
-                                        <th></th>
-                                        <th></th>
+                                        <form id="filterForm">
+                                            <th><input type="text" name="location_name" placeholder="Search Location" /></th>
+                                            <th><input type="text" name="edp_code" placeholder="Search EDP" /></th>
+                                            <th><input type="text" name="category" placeholder="Search Category" /></th>
+                                            <th><input type="text" name="section" placeholder="Search Section" /></th>
+                                            <th><input type="text" name="description" placeholder="Search Description" /></th>
+                                        </form>
+                                        <th>
+                                            <button id="resetBtn" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Reset"><i class="fas fa-sync-alt" aria-hidden="true"></i></button>
+                                        </th>
+                                        <th>
+                                             <button class="btn btn-sm btn-warning"
+                                                id="downloadPdf" target="_blank" data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Export PDF">
+                                                <i class="fas fa-file-pdf mr-1"></i>  
+                                            </button>
+                                             <a href="{{ route('admin.stock_list_excel') }}"
+                                                class="btn btn-sm btn-primary"
+                                                id="downloadExcel" target="_blank" data-toggle="tooltip" data-placement="top"
+                                                        data-original-title="Export Excel">
+                                                <i class="fas fa-file-excel mr-1"></i> 
+                                            </a>
+                                        </th>
                                         <th></th>
                                         <th></th>
                                     </tr>
@@ -218,7 +235,7 @@
 
 <script type="text/javascript">
     $(function () {
-        var table = $('#edpTable11').DataTable({
+        var table = $('#adminStockTable').DataTable({
             processing: true,
             serverSide: true,
             //ajax: "{{ route('admin.stock_list_latest') }}",
@@ -226,48 +243,53 @@
                 url: "{{ route('admin.stock_list_latest') }}",
                 data: function (d) {
                     // Send filter values with AJAX request
-                    d.location_name = $('#edpTable11 thead input:eq(0)').val();
-                    d.edp_code = $('#edpTable11 thead input:eq(1)').val();
-                    d.category = $('#edpTable11 thead input:eq(2)').val();
-                    d.section = $('#edpTable11 thead input:eq(3)').val();
-                    d.description = $('#edpTable11 thead input:eq(4)').val();
+                    d.location_name = $('#adminStockTable thead input:eq(0)').val();
+                    d.edp_code = $('#adminStockTable thead input:eq(1)').val();
+                    d.category = $('#adminStockTable thead input:eq(2)').val();
+                    d.section = $('#adminStockTable thead input:eq(3)').val();
+                    d.description = $('#adminStockTable thead input:eq(4)').val();
                 }
             },
             columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false},
-                {data: 'location_name', name: 'location_name'},
-                {data: 'edp_code', name: 'edp_code'},
-                {data: 'category', name: 'category'},
-                {data: 'section', name: 'section'},
-                {data: 'description', name: 'description'},
-                {data: 'new_spareable', name: 'new_spareable'},
-                {data: 'used_spareable', name: 'used_spareable'},
-                {data: 'qty', name: 'qty'},
-                {
-            data: 'id', 
-            name: 'action',
-            orderable: false,
-            searchable: false,
-            render: function(data, type, row) {
-                // Base URL (adjust if needed)                           
-                var baseUrl = window.location.origin;
-                
-                // Edit button           
-                var viewBtn = '<a class="badge badge-info mr-2" data-toggle="modal" onclick="viewstockdata(' + data + ')" data-target=".bd-example-modal-xl" data-placement="top" title="View stock" href="#"><i class="ri-eye-line mr-0"></i> </a>';
-                
-                // Delete button
-                var editBtn = '<a class="badge bg-success mr-2" href="' + baseUrl + '/OIMS/admin/edit_stock/' + data + '" data-placement="top" title="Edit stock"><i class="ri-pencil-line"></i></a>';
-                
-                return viewBtn + '' + editBtn;
-            }
-        }
-            ]
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false},
+                    {data: 'location_name', name: 'location_name'},
+                    {data: 'edp_code', name: 'edp_code'},
+                    {data: 'category', name: 'category'},
+                    {data: 'section', name: 'section'},
+                    {data: 'description', name: 'description'},
+                    {data: 'new_spareable', name: 'new_spareable'},
+                    {data: 'used_spareable', name: 'used_spareable'},
+                    {data: 'qty', name: 'qty'},
+                    {
+                        data: 'id', 
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            // Base URL (adjust if needed)                           
+                            var baseUrl = window.location.origin;
+                            
+                            // view button           
+                            var viewBtn = '<a class="badge badge-info mr-2" data-toggle="modal" onclick="viewstockdata(' + data + ')" data-target=".bd-example-modal-xl" data-placement="top" title="View stock" href="#"><i class="ri-eye-line mr-0"></i> </a>';
+                            
+                            // edit button
+                            var editBtn = '<a class="badge bg-success mr-2" href="' + baseUrl + '/OIMS/admin/edit_stock/' + data + '" data-placement="top" title="Edit stock"><i class="ri-pencil-line"></i></a>';
+                            
+                            return viewBtn + '' + editBtn;
+                        }
+                    }
+                ]
         });
 
         // Apply search on input change
-        $('#edpTable11 thead input').on('keyup change', function () {
-           // alert('sdjgs');
+        $('#adminStockTable thead input').on('keyup change', function () {
             table.draw();
+        });
+
+        //Reset button logic
+        $('#resetBtn').click(function () {
+            $('#adminStockTable thead input').val('');
+            table.draw(); 
         });
     });
 </script>
@@ -390,11 +412,14 @@
 
             let baseUrl = "{{ route('admin.stock_list_pdf') }}";
             let formData = $("#filterForm").serializeArray();
+           console.log('Form Data:', formData);
 
             let filteredParams = formData
-                .filter(item => item.value.trim() !== "")
-                .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
-                .join("&");
+                    .filter(item => item.value.trim() !== "")
+                    .map(item => `${encodeURIComponent(item.name)}=${encodeURIComponent(item.value)}`)
+                    .join("&");
+
+            console.log('filteredParams'+filteredParams);
 
             let finalUrl = filteredParams ? `${baseUrl}?${filteredParams}` : baseUrl;
             window.open(finalUrl, '_blank');
