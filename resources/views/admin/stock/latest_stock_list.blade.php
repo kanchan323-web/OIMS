@@ -30,6 +30,7 @@
 
                     <div class="col-lg-12">
                         <div class="table-responsive rounded mb-3">
+                        <form id="filterForm">
                             <table class="table  tbl-server-info" id="adminStockTable">
                                 <thead class="bg-white text-uppercase">
                                     <tr>
@@ -45,14 +46,12 @@
                                         <th>Action</th>
                                     </tr>
                                      <tr>
-                                        <th></th> <!-- For index, no input -->
-                                        <form id="filterForm">
+                                        <th></th> 
                                             <th><input type="text" name="location_name" placeholder="Search Location" /></th>
                                             <th><input type="text" name="edp_code" placeholder="Search EDP" /></th>
                                             <th><input type="text" name="category" placeholder="Search Category" /></th>
                                             <th><input type="text" name="section" placeholder="Search Section" /></th>
-                                            <th><input type="text" name="description" placeholder="Search Description" /></th>
-                                        </form>
+                                            <th><input type="text" name="Description" placeholder="Search Description" /></th>
                                         <th>
                                             <button id="resetBtn" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top"
                                                         data-original-title="Reset"><i class="fas fa-sync-alt" aria-hidden="true"></i></button>
@@ -75,7 +74,8 @@
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
-                            </table>
+                              </table>
+                            </form>
                         </div>
                     </div>
 
@@ -412,7 +412,6 @@
 
             let baseUrl = "{{ route('admin.stock_list_pdf') }}";
             let formData = $("#filterForm").serializeArray();
-           console.log('Form Data:', formData);
 
             let filteredParams = formData
                     .filter(item => item.value.trim() !== "")
