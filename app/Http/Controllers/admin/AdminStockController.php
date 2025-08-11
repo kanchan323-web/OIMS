@@ -779,10 +779,6 @@ class AdminStockController extends Controller
 
     public function downloadPdf(Request $request)
     {
-
-       // echo $request->get('location_name');;
-      //  die;
-
         $query = Stock::query()
             ->leftJoin('edps', 'stocks.edp_code', '=', 'edps.id')
             ->select('stocks.*', 'edps.edp_code')
@@ -791,7 +787,7 @@ class AdminStockController extends Controller
         $filtersApplied = false;
 
         if ($request->has('edp_code') && $request->edp_code) {
-            $query->where('stocks.edp_code', $request->edp_code);
+            $query->where('edps.edp_code', 'like', '%' . $request->edp_code . '%');
             $filtersApplied = true;
         }
 
@@ -804,12 +800,16 @@ class AdminStockController extends Controller
             $query->where('stocks.location_name', 'LIKE', '%' . $request->location_name . '%');
             $filtersApplied = true;
         }
-
-    /*    if ($request->has('form_date') && $request->has('to_date')) {
-            $query->whereBetween('stocks.created_at', [$request->form_date, $request->to_date]);
+        
+        if ($request->has('category') && $request->category) {
+            $query->where('stocks.category', 'LIKE', '%' . $request->category . '%');
             $filtersApplied = true;
         }
-        */
+
+        if ($request->has('section') && $request->section) {
+            $query->where('stocks.section', 'LIKE', '%' . $request->section . '%');
+            $filtersApplied = true;
+        }
 
         $stockData = $query->orderBy('stocks.updated_at', 'desc')->get();
 
@@ -829,7 +829,7 @@ class AdminStockController extends Controller
         $filtersApplied = false;
 
         if ($request->has('edp_code') && $request->edp_code) {
-            $query->where('stocks.edp_code', $request->edp_code);
+            $query->where('edps.edp_code', 'like', '%' . $request->edp_code . '%');
             $filtersApplied = true;
         }
 
@@ -843,11 +843,17 @@ class AdminStockController extends Controller
             $filtersApplied = true;
         }
 
-    /*    if ($request->has('form_date') && $request->has('to_date')) {
-            $query->whereBetween('stocks.created_at', [$request->form_date, $request->to_date]);
+         if ($request->has('category') && $request->category) {
+            $query->where('stocks.category', 'LIKE', '%' . $request->category . '%');
             $filtersApplied = true;
         }
-    */
+
+        if ($request->has('section') && $request->section) {
+            $query->where('stocks.section', 'LIKE', '%' . $request->section . '%');
+            $filtersApplied = true;
+        }
+
+
         $stockDatas = $query->orderBy('stocks.updated_at', 'desc')->get();
 
 
